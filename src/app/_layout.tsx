@@ -28,7 +28,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded || error) {
-      SplashScreen.hideAsync();
+      const timer = setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 60000); // 60 seconds delay for debug/verification
+      return () => clearTimeout(timer);
     }
   }, [loaded, error]);
 
