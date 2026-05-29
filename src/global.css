@@ -40,11 +40,21 @@
 }
 
 @theme {
+  --font-manrope-light: 'Manrope-Light';
+  --font-manrope-regular: 'Manrope-Regular';
+  --font-manrope-medium: 'Manrope-Medium';
+  --font-manrope-semibold: 'Manrope-SemiBold';
+  --font-manrope-bold: 'Manrope-Bold';
+  --font-manrope-extrabold: 'Manrope-ExtraBold';
+
+  --font-sans: var(--font-manrope-regular);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
