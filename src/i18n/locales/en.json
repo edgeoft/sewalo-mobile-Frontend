@@ -1,0 +1,9 @@
+{
+  "onboarding": {
+    "welcome": "Welcome to Sewalo. Tap below to continue to authentication.",
+    "goToAuth": "Go to auth"
+  },
+  "common": {
+    "changeLanguage": "Change Language"
+  }
+}

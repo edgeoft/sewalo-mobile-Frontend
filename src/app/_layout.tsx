@@ -12,6 +12,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 import '../global.css';
+import '../i18n';
 
 SplashScreen.preventAutoHideAsync();
 
