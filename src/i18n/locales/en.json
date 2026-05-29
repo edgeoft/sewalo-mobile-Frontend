@@ -14,7 +14,9 @@
     "screen3": {
       "title": "Quality Guaranteed",
       "description": "Skilled professionals rated by real customers. From home repairs to personal services, excellence delivered."
-    }
+    },
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
   },
   "common": {
     "changeLanguage": "Change Language",
