@@ -40,14 +40,19 @@
 }
 
 @theme {
+  --font-sans: 'Manrope-Regular';
+  --font-sans-light: 'Manrope-Light';
+  --font-sans-medium: 'Manrope-Medium';
+  --font-sans-semibold: 'Manrope-SemiBold';
+  --font-sans-bold: 'Manrope-Bold';
+  --font-sans-extrabold: 'Manrope-ExtraBold';
+
   --font-manrope-light: 'Manrope-Light';
   --font-manrope-regular: 'Manrope-Regular';
   --font-manrope-medium: 'Manrope-Medium';
   --font-manrope-semibold: 'Manrope-SemiBold';
   --font-manrope-bold: 'Manrope-Bold';
   --font-manrope-extrabold: 'Manrope-ExtraBold';
-
-  --font-sans: var(--font-manrope-regular);
 
   --color-border: var(--border);
   --color-input: var(--input);
@@ -105,3 +110,12 @@
   --animate-float-delay: float 4s ease-in-out infinite 2s;
   --animate-sway-slow: sway 6s ease-in-out infinite;
 }
+
+/* Base style default rules for React Native text components compiled via Uniwind */
+Text {
+  font-family: 'Manrope-Regular';
+}
+TextInput {
+  font-family: 'Manrope-Regular';
+}
+

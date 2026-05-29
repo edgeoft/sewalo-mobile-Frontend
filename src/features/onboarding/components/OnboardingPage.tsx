@@ -10,7 +10,7 @@ export default function OnboardingPage({ title, description }: OnboardingPagePro
 
   return (
     <View style={{ width, height: '100%' }} className="items-center justify-between py-6 px-6 bg-transparent">
-      <View className="flex-1 justify-center items-center w-full max-h-95 bg-transparent border-0">
+      <View className="w-full h-72 justify-center items-center bg-transparent border-0">
         <Image
           source={require('@/assets/onboarding/illustration_one.png')}
           className="w-full h-full border-0"
@@ -18,9 +18,9 @@ export default function OnboardingPage({ title, description }: OnboardingPagePro
         />
       </View>
 
-      <View className="items-center justify-end w-full px-2 pb-6 bg-transparent border-0 mt-4">
-        <Text className="text-gray-900 text-[26px] font-manrope-bold text-center mb-3 leading-tight pt-1">{title}</Text>
-        <Text className="text-gray-600 text-[14px] font-manrope-medium text-center leading-5.5">{description}</Text>
+      <View className="items-center justify-start w-full px-2 mt-6 h-36">
+        <Text className="text-gray-900 text-[26px] font-sans-bold text-center mb-3 leading-tight pt-1">{title}</Text>
+        <Text className="text-gray-600 text-[14px] font-sans-medium text-center leading-5.5">{description}</Text>
       </View>
     </View>
   );
