@@ -1,6 +1,9 @@
+import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+
+import SelectionOption from './SelectionOption';
 
 const { height } = Dimensions.get('window');
 
@@ -24,11 +27,12 @@ export default function LanguageSelector() {
 
   return (
     <View>
-      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7} className="flex-row items-center">
+      <Pressable onPress={() => setModalVisible(true)} className="flex-row items-center active:opacity-75">
         <Text className="text-base mr-1">{activeLang.flag}</Text>
         <Text className="text-gray-800 font-sans-medium text-[13px] mr-1">{activeLang.name}</Text>
-        <Text className="text-gray-400 text-[10px]">▼</Text>
-      </TouchableOpacity>
+        <Feather name="chevron-down" size={13} color="#9ca3af" />
+      </Pressable>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -40,41 +44,36 @@ export default function LanguageSelector() {
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={styles.drawerContainer} className="bg-white px-5 pb-8 pt-4">
-            <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-6" />
+          <View style={styles.drawerContainer} className="bg-white px-5 pb-7 pt-4">
+            <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
-            <Text className="text-gray-900 text-lg font-sans-bold mb-4">{t('common.changeLanguage')}</Text>
+            <View className="flex-row items-center justify-between mb-1">
+              <Text className="text-gray-900 text-[19px] font-sans-extrabold">{t('common.changeLanguage')}</Text>
+              <Pressable
+                onPress={() => setModalVisible(false)}
+                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+              >
+                <Feather name="x" size={16} color="#64748b" />
+              </Pressable>
+            </View>
 
-            <View className="gap-y-3">
+            <Text className="text-gray-500 text-[13px] font-sans-medium mb-4">Choose your preferred app language</Text>
+
+            <View className="gap-y-2.5">
               {languages.map((lang) => {
                 const isSelected = currentLanguage.startsWith(lang.code);
                 return (
-                  <TouchableOpacity
+                  <SelectionOption
                     key={lang.code}
                     onPress={() => handleSelectLanguage(lang.code)}
-                    activeOpacity={0.7}
-                    className={`flex-row items-center justify-between p-4 rounded-xl border ${
-                      isSelected ? 'border-primary bg-primary/5' : 'border-gray-100 bg-gray-50/50'
-                    }`}
-                  >
-                    <View className="flex-row items-center">
-                      <Text className="text-2xl mr-3">{lang.flag}</Text>
-                      <View>
-                        <Text
-                          className={`text-base ${
-                            isSelected ? 'text-primary font-sans-semibold' : 'text-gray-800 font-sans-medium'
-                          }`}
-                        >
-                          {lang.label}
-                        </Text>
-                      </View>
-                    </View>
-                    {isSelected && (
-                      <View className="w-5 h-5 rounded-full bg-primary items-center justify-center">
-                        <Text className="text-white text-[10px] font-bold">✓</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
+                    title={lang.label}
+                    subtitle={isSelected ? 'Currently selected' : undefined}
+                    selected={isSelected}
+                    icon={<Text className="text-lg">{lang.flag}</Text>}
+                    iconStyle="plain"
+                    indicatorType="radio"
+                    gradientColors={['#eef0ff', '#f8fafc']}
+                  />
                 );
               })}
             </View>
@@ -102,6 +101,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 24,
-    maxHeight: height * 0.5,
+    maxHeight: height * 0.56,
   },
 });

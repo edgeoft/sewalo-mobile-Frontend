@@ -59,16 +59,16 @@ export default function SigninScreen() {
       >
         <View className="flex-1 justify-start">
           {/* Title and Subtitle Section */}
-          <View className="mb-8">
-            <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-2" style={{ letterSpacing: -0.8 }}>
+          <View>
+            <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
               {t('auth.loginIntoYourAccount')}
             </Text>
-            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5">
-              {t('auth.joinSewaloSubtitle')}
+            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5 mb-8">
+              {t('auth.signInSubtitle')}
             </Text>
           </View>
 
-          <View className="gap-y-3.5">
+          <View className="gap-y-2.5">
             <View className="w-full">
               <Text className="text-[13px] font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
                 {t('auth.mobileNumber')}
@@ -179,22 +179,6 @@ export default function SigninScreen() {
               </Pressable>
             </View>
           </View>
-        </View>
-
-        <View className="mt-12 items-center">
-          <Text className="text-[13px] font-sans-medium text-gray-500 text-center leading-5">
-            {t('auth.termsAndPrivacyPrefix')}{' '}
-            <Text
-              onPress={() => alert('Terms of Service pressed')}
-              className="text-primary font-sans-semibold underline"
-            >
-              {t('auth.termsOfService')}
-            </Text>
-            {t('auth.and')}
-            <Text onPress={() => alert('Privacy Policy pressed')} className="text-primary font-sans-semibold underline">
-              {t('auth.privacyPolicy')}
-            </Text>
-          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -9,6 +9,7 @@ export interface CheckboxProps {
   className?: string;
   labelClassName?: string;
   disabled?: boolean;
+  size?: 'sm' | 'md';
 }
 
 export default function Checkbox({
@@ -18,6 +19,7 @@ export default function Checkbox({
   className = '',
   labelClassName = '',
   disabled = false,
+  size = 'md',
 }: CheckboxProps) {
   const [scaleAnim] = useState(() => new Animated.Value(checked ? 1 : 0));
 
@@ -36,6 +38,10 @@ export default function Checkbox({
     }
   };
 
+  const boxSize = size === 'sm' ? 18 : 22;
+  const iconSize = size === 'sm' ? 12 : 14;
+  const borderRadius = size === 'sm' ? 5 : 6;
+
   return (
     <Pressable
       onPress={handlePress}
@@ -43,12 +49,13 @@ export default function Checkbox({
       className={`flex-row items-center active:opacity-80 ${disabled ? 'opacity-50' : ''} ${className}`}
     >
       <View
-        className={`w-[22px] h-[22px] rounded-md border items-center justify-center ${
+        style={{ width: boxSize, height: boxSize, borderRadius }}
+        className={`border items-center justify-center ${
           checked ? 'border-primary bg-primary' : 'border-gray-300 bg-white'
         }`}
       >
         <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <Feather name="check" size={14} color="white" />
+          <Feather name="check" size={iconSize} color="white" />
         </Animated.View>
       </View>
 

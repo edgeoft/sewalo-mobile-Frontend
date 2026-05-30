@@ -9,6 +9,7 @@ export interface SelectionOptionProps {
   selected: boolean;
   onPress: () => void;
   icon?: React.ReactNode;
+  iconStyle?: 'pill' | 'plain';
   indicatorType?: 'radio' | 'checkbox' | 'none';
   gradientColors?: [string, string];
   className?: string;
@@ -20,6 +21,7 @@ export default function SelectionOption({
   selected,
   onPress,
   icon,
+  iconStyle = 'pill',
   indicatorType = 'radio',
   gradientColors = ['#e8ebff', '#f8fafc'],
   className = '',
@@ -55,9 +57,11 @@ export default function SelectionOption({
         {/* Left Icon */}
         {icon && (
           <View
-            className={`w-9 h-9 rounded-full items-center justify-center mr-3 ${
-              selected ? 'bg-primary/10' : 'bg-gray-50'
-            }`}
+            className={
+              iconStyle === 'plain'
+                ? 'items-center justify-center mr-3'
+                : `w-9 h-9 rounded-full items-center justify-center mr-3 ${selected ? 'bg-primary/10' : 'bg-gray-50'}`
+            }
           >
             {icon}
           </View>

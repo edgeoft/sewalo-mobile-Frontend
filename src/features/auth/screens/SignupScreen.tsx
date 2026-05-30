@@ -80,20 +80,17 @@ export default function SignupScreen() {
       >
         <View className="flex-1 justify-start">
           {/* Title and Hook Phrase Section */}
-          <View className="mb-8">
-            <Text
-              className="text-2xl font-sans-extrabold text-gray-900 text-left mb-2.5"
-              style={{ letterSpacing: -0.8 }}
-            >
+          <View>
+            <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
               {t('auth.joinSewalo')}
             </Text>
-            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5">
+            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5 mb-8">
               {selectedRole === 'provider' ? t('auth.signUpSubtitleProvider') : t('auth.signUpSubtitleCustomer')}
             </Text>
           </View>
 
           {/* Form Container */}
-          <View className="gap-y-3.5">
+          <View className="gap-y-2.5">
             {/* Full Name Field */}
             <Controller
               control={control}
@@ -281,13 +278,14 @@ export default function SignupScreen() {
                   <Checkbox
                     checked={value}
                     onChange={onChange}
+                    size="sm"
                     label={
                       <Text className="text-sm font-sans-semibold text-gray-800 leading-4">
                         {t('auth.agreeToTermsPrefix')}
                         <Text onPress={() => alert('Terms of Service pressed')} className="text-primary underline">
                           {t('auth.termsOfService')}
                         </Text>
-                        {t('auth.and')}
+                        <Text className="ml-1">{`${t('auth.and')} `}</Text>
                         <Text onPress={() => alert('Privacy Policy pressed')} className="text-primary underline">
                           {t('auth.privacyPolicy')}
                         </Text>
@@ -301,8 +299,8 @@ export default function SignupScreen() {
               <Text className="text-xs font-sans-medium text-destructive ml-1">{errors.agreeToTerms.message}</Text>
             )}
 
-            {/* Signup Button Section */}
-            <View className="pt-2">
+            {/* Signup Button + Already have an account */}
+            <View className="gap-y-1.5 mt-2">
               <Button
                 title={t('auth.signUp')}
                 loading={loading}
@@ -310,14 +308,12 @@ export default function SignupScreen() {
                 className="w-full"
                 variant="primary"
               />
-            </View>
-
-            {/* Already have an account & Login redirect */}
-            <View className="flex-row items-center justify-center mt-2">
-              <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-              <Pressable onPress={() => router.replace('/auth/signin')}>
-                <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
-              </Pressable>
+              <View className="flex-row items-center justify-center">
+                <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
+                <Pressable onPress={() => router.replace('/auth/signin')}>
+                  <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </View>

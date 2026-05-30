@@ -1,13 +1,13 @@
-import { Feather } from '@expo/vector-icons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
-import SelectionOption from '@/components/SelectionOption';
 import { USER_ROLES, UserRole } from '@/types';
 import AuthHeader from '../components/AuthHeader';
+import RoleCard from '../components/RoleCard';
+import RoleIllustrationIcon from '../components/icons/RoleIllustrationIcon';
 
 export default function RoleSelectionScreen() {
   const { t } = useTranslation();
@@ -15,64 +15,45 @@ export default function RoleSelectionScreen() {
   const { fromSignin } = useLocalSearchParams<{ fromSignin: string }>();
   const [selectedRole, setSelectedRole] = useState<UserRole>(USER_ROLES.Customer);
 
-  const handleSelectRole = (role: UserRole) => {
-    setSelectedRole(role);
-  };
-
   const handleContinue = () => {
-    router.push({
-      pathname: '/auth/signup',
-      params: { role: selectedRole },
-    });
+    router.push({ pathname: '/auth/signup', params: { role: selectedRole } });
   };
-
   return (
     <View className="flex-1 bg-secondary">
       <AuthHeader showBackButton={fromSignin === 'true'} />
-      <View className="flex-1 px-6 pt-8 pb-8 justify-between">
+      <View className="flex-1 px-6 pt-6 pb-8 justify-between">
         <View>
-          <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
+          <Text className="text-2xl font-sans-extrabold text-gray-900 mb-1" style={{ letterSpacing: -0.8 }}>
             {t('auth.roleSelectionTitle')}
           </Text>
-          <Text className="text-sm font-sans-regular text-gray-500 text-left mb-8">
-            {t('auth.roleSelectionSubtitle')}
-          </Text>
+          <Text className="text-sm font-sans-regular text-gray-500 mb-8">{t('auth.roleSelectionSubtitle')}</Text>
 
-          <View className="gap-y-3">
-            {/* Customer Option */}
-            <SelectionOption
+          <View style={{ gap: 12 }}>
+            <RoleCard
               title={t('auth.customerRoleTitle')}
               subtitle={t('auth.customerRoleSubtitle')}
+              description={t('auth.customerRoleDescription')}
               selected={selectedRole === USER_ROLES.Customer}
-              onPress={() => handleSelectRole(USER_ROLES.Customer)}
-              icon={
-                <Feather
-                  name="shopping-bag"
-                  size={18}
-                  color={selectedRole === USER_ROLES.Customer ? '#485aff' : '#64748b'}
-                />
-              }
+              onPress={() => setSelectedRole(USER_ROLES.Customer)}
+              illustration={<RoleIllustrationIcon variant="customer" active={selectedRole === USER_ROLES.Customer} />}
             />
-
-            <SelectionOption
+            <RoleCard
               title={t('auth.providerRoleTitle')}
               subtitle={t('auth.providerRoleSubtitle')}
+              description={t('auth.providerRoleDescription')}
               selected={selectedRole === USER_ROLES.Provider}
-              onPress={() => handleSelectRole(USER_ROLES.Provider)}
-              icon={
-                <Feather name="tool" size={18} color={selectedRole === USER_ROLES.Provider ? '#485aff' : '#64748b'} />
-              }
+              onPress={() => setSelectedRole(USER_ROLES.Provider)}
+              illustration={<RoleIllustrationIcon variant="provider" active={selectedRole === USER_ROLES.Provider} />}
             />
           </View>
         </View>
 
-        <View className="gap-y-4">
+        <View style={{ gap: 8, marginTop: 24 }}>
           <Button
             title={selectedRole === USER_ROLES.Customer ? t('auth.joinAsCustomer') : t('auth.joinAsProvider')}
             onPress={handleContinue}
           />
-
-          <View className="flex-row items-center justify-center mt-2">
+          <View className="flex-row items-center justify-center mt-1">
             <Text className="text-gray-600 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
             <Pressable onPress={() => router.replace('/auth/signin')}>
               <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
