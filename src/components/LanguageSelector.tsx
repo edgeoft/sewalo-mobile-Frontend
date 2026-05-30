@@ -29,7 +29,7 @@ export default function LanguageSelector() {
     <View>
       <Pressable onPress={() => setModalVisible(true)} className="flex-row items-center active:opacity-75">
         <Text className="text-base mr-1">{activeLang.flag}</Text>
-        <Text className="text-gray-800 font-sans-medium text-[13px] mr-1">{activeLang.name}</Text>
+        <Text className="text-gray-800 font-sans-medium text-sm mr-1">{activeLang.name}</Text>
         <Feather name="chevron-down" size={13} color="#9ca3af" />
       </Pressable>
 
@@ -48,7 +48,7 @@ export default function LanguageSelector() {
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-[19px] font-sans-extrabold">{t('common.changeLanguage')}</Text>
+              <Text className="text-gray-900 text-2xl font-sans-extrabold">{t('common.changeLanguage')}</Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -57,7 +57,7 @@ export default function LanguageSelector() {
               </Pressable>
             </View>
 
-            <Text className="text-gray-500 text-[13px] font-sans-medium mb-4">Choose your preferred app language</Text>
+            <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose your preferred app language</Text>
 
             <View className="gap-y-2.5">
               {languages.map((lang) => {

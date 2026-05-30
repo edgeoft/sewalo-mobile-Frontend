@@ -63,16 +63,14 @@ export default function SigninScreen() {
             <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
               {t('auth.loginIntoYourAccount')}
             </Text>
-            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5 mb-8">
+            <Text className="text-sm font-sans-medium text-gray-500 text-left leading-5 mb-8">
               {t('auth.signInSubtitle')}
             </Text>
           </View>
 
           <View className="gap-y-2.5">
             <View className="w-full">
-              <Text className="text-[13px] font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
-                {t('auth.mobileNumber')}
-              </Text>
+              <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('auth.mobileNumber')}</Text>
               <View
                 className={`form-input-container ${
                   errors.phone ? 'form-input-container-error' : isPhoneFocused ? 'form-input-container-focus' : ''
@@ -87,7 +85,7 @@ export default function SigninScreen() {
               >
                 <View className="flex-row items-center pr-2.5">
                   <Text className="text-base mr-1">🇳🇵</Text>
-                  <Text className="text-[14px] font-sans-semibold text-gray-800">+977</Text>
+                  <Text className="text-sm font-sans-semibold text-gray-800">+977</Text>
                   <Feather name="chevron-down" size={14} color="#898f8f" style={{ marginLeft: 4 }} />
                 </View>
 

@@ -60,7 +60,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
@@ -111,12 +110,93 @@
   --animate-sway-slow: sway 6s ease-in-out infinite;
 }
 
+/* Design system font-size tokens (mobile) */
+:root {
+  --fs-page: 20px;
+  --lh-page: 28px;
+
+  --fs-card-heading: 16px;
+  --lh-card-heading: 22px;
+
+  --fs-primary: 15px;
+  --lh-primary: 22px;
+
+  --fs-secondary: 13px;
+  --lh-secondary: 20px;
+
+  --fs-tertiary: 11px;
+  --lh-tertiary: 16px;
+
+  --fs-smaller: 10px;
+  --lh-smaller: 16px;
+
+  --fs-num-primary: 20px;
+  --lh-num-primary: 24px;
+
+  --fs-num-secondary: 16px;
+  --lh-num-secondary: 22px;
+
+  --fs-table-field: 12px;
+  --lh-table-field: 36px;
+
+  --fs-table-heading: 14px;
+  --lh-table-heading: 36px;
+}
+
 /* Base style default rules for React Native text components compiled via Uniwind */
 Text {
   font-family: 'Manrope-Regular';
+  font-size: var(--fs-primary);
+  line-height: var(--lh-primary);
 }
 TextInput {
   font-family: 'Manrope-Regular';
+}
+
+/* Override common text utilities so existing classes map to the new scale */
+@utility text-2xl {
+  font-size: var(--fs-page);
+  line-height: var(--lh-page);
+}
+
+@utility text-xl {
+  font-size: 18px;
+  line-height: 26px;
+}
+
+@utility text-base {
+  font-size: var(--fs-primary);
+  line-height: var(--lh-primary);
+}
+
+@utility text-sm {
+  font-size: var(--fs-secondary);
+  line-height: var(--lh-secondary);
+}
+
+@utility text-xs {
+  font-size: var(--fs-tertiary);
+  line-height: var(--lh-tertiary);
+}
+
+@utility text-number-primary {
+  font-size: var(--fs-num-primary);
+  line-height: var(--lh-num-primary);
+}
+
+@utility text-number-secondary {
+  font-size: var(--fs-num-secondary);
+  line-height: var(--lh-num-secondary);
+}
+
+@utility text-table-field {
+  font-size: var(--fs-table-field);
+  line-height: var(--lh-table-field);
+}
+
+@utility text-table-heading {
+  font-size: var(--fs-table-heading);
+  line-height: var(--lh-table-heading);
 }
 
 @utility form-input-container {
@@ -132,7 +212,5 @@ TextInput {
 }
 
 @utility form-input-text {
-  @apply flex-1 h-full text-[15px] text-gray-900 pb-0.5;
+  @apply flex-1 h-full text-base text-gray-900 pb-0.5;
 }
-
-

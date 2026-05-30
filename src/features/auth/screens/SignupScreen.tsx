@@ -84,7 +84,7 @@ export default function SignupScreen() {
             <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
               {t('auth.joinSewalo')}
             </Text>
-            <Text className="text-[14px] font-sans-medium text-gray-500 text-left leading-5 mb-8">
+            <Text className="text-sm font-sans-medium text-gray-500 text-left leading-5 mb-8">
               {selectedRole === 'provider' ? t('auth.signUpSubtitleProvider') : t('auth.signUpSubtitleCustomer')}
             </Text>
           </View>
@@ -109,9 +109,7 @@ export default function SignupScreen() {
 
             {/* Combined Mobile Number Field */}
             <View className="w-full">
-              <Text className="text-[13px] font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
-                {t('auth.mobileNumber')}
-              </Text>
+              <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('auth.mobileNumber')}</Text>
               <View
                 className={`form-input-container ${
                   errors.phone ? 'form-input-container-error' : isPhoneFocused ? 'form-input-container-focus' : ''
@@ -127,7 +125,7 @@ export default function SignupScreen() {
                 {/* Country Code Flag and Dropdown */}
                 <View className="flex-row items-center pr-2.5">
                   <Text className="text-base mr-1">🇳🇵</Text>
-                  <Text className="text-[14px] font-sans-semibold text-gray-800">+977</Text>
+                  <Text className="text-sm font-sans-semibold text-gray-800">+977</Text>
                   <Feather name="chevron-down" size={14} color="#898f8f" style={{ marginLeft: 4 }} />
                 </View>
 
@@ -190,7 +188,7 @@ export default function SignupScreen() {
 
               {/* Password Requirement Checklist (Hints) */}
               <View className="mt-2 px-0.5 gap-y-1">
-                <Text className="text-[11px] font-sans-bold text-gray-500 mb-0.5">
+                <Text className="text-xs font-sans-bold text-gray-500 mb-0.5">
                   {t('auth.passwordRequirementsTitle')}
                 </Text>
                 <View className="flex-row items-center">
@@ -200,7 +198,7 @@ export default function SignupScreen() {
                     color={getRequirementStyle(hasMinLength).color}
                     style={{ marginRight: 6 }}
                   />
-                  <Text className={`text-[11px] ${getRequirementStyle(hasMinLength).textClass}`}>
+                  <Text className={`text-xs ${getRequirementStyle(hasMinLength).textClass}`}>
                     {t('auth.passwordRequirementLength')}
                   </Text>
                 </View>
@@ -212,7 +210,7 @@ export default function SignupScreen() {
                     color={getRequirementStyle(hasUppercase).color}
                     style={{ marginRight: 6 }}
                   />
-                  <Text className={`text-[11px] ${getRequirementStyle(hasUppercase).textClass}`}>
+                  <Text className={`text-xs ${getRequirementStyle(hasUppercase).textClass}`}>
                     {t('auth.passwordRequirementUppercase')}
                   </Text>
                 </View>
@@ -224,7 +222,7 @@ export default function SignupScreen() {
                     color={getRequirementStyle(hasNumber).color}
                     style={{ marginRight: 6 }}
                   />
-                  <Text className={`text-[11px] ${getRequirementStyle(hasNumber).textClass}`}>
+                  <Text className={`text-xs ${getRequirementStyle(hasNumber).textClass}`}>
                     {t('auth.passwordRequirementNumber')}
                   </Text>
                 </View>
@@ -236,7 +234,7 @@ export default function SignupScreen() {
                     color={getRequirementStyle(hasSpecialChar).color}
                     style={{ marginRight: 6 }}
                   />
-                  <Text className={`text-[11px] ${getRequirementStyle(hasSpecialChar).textClass}`}>
+                  <Text className={`text-xs ${getRequirementStyle(hasSpecialChar).textClass}`}>
                     {t('auth.passwordRequirementSpecial')}
                   </Text>
                 </View>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text, View } from 'react-native';
 
 export interface CountryCodeSelectorProps {
@@ -18,7 +17,7 @@ export default function CountryCodeSelector({ className = '' }: CountryCodeSelec
       }}
     >
       <Text className="text-lg mr-1.5">🇳🇵</Text>
-      <Text className="text-[15px] font-sans-semibold text-gray-900">+977</Text>
+      <Text className="text-base font-sans-semibold text-gray-900">+977</Text>
     </View>
   );
 }

@@ -69,7 +69,7 @@ export default function SelectionOption({
 
         {/* Text Area */}
         <View className="flex-1">
-          <Text className="text-[15px] font-sans-bold text-gray-900">{title}</Text>
+          <Text className="text-base font-sans-bold text-gray-900">{title}</Text>
           {subtitle && <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{subtitle}</Text>}
         </View>
 

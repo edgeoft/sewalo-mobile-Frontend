@@ -94,25 +94,27 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Manrope-ExtraBold',
     color: '#1e293b',
     marginBottom: 2,
+    lineHeight: 22,
   },
   cardTitleSelected: {
     color: '#485aff',
   },
   cardSubtitle: {
-    fontSize: 11,
+    fontSize: 13,
     fontFamily: 'Manrope-SemiBold',
     color: '#64748b',
     marginBottom: 4,
+    lineHeight: 20,
   },
   cardDescription: {
     fontSize: 11,
     fontFamily: 'Manrope-Regular',
     color: '#94a3b8',
-    lineHeight: 15,
+    lineHeight: 16,
   },
   radio: {
     width: 20,

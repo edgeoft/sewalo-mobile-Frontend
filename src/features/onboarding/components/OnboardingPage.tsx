@@ -20,8 +20,8 @@ export default function OnboardingPage({
       </View>
 
       <View className="items-center justify-start w-full px-2 h-28">
-        <Text className="text-gray-900 text-[22px] font-sans-bold text-center mb-3 leading-tight pt-1">{title}</Text>
-        <Text className="text-gray-600 text-[13px] font-sans-medium text-center leading-5.5">{description}</Text>
+        <Text className="text-gray-900 text-2xl font-sans-bold text-center mb-3 leading-tight pt-1">{title}</Text>
+        <Text className="text-gray-600 text-sm font-sans-medium text-center leading-5.5">{description}</Text>
       </View>
     </View>
   );

@@ -39,7 +39,7 @@ export default function Input({
 
   return (
     <View style={containerStyle} className={`w-full ${className}`}>
-      {label && <Text className="text-[13px] font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{label}</Text>}
+      {label && <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{label}</Text>}
 
       <View
         className={`form-input-container ${

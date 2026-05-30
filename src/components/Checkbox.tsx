@@ -62,7 +62,7 @@ export default function Checkbox({
       {label && (
         <View className="ml-2.5">
           {typeof label === 'string' ? (
-            <Text className={`text-[14px] font-sans-medium text-gray-700 ${labelClassName}`}>{label}</Text>
+            <Text className={`text-sm font-sans-medium text-gray-700 ${labelClassName}`}>{label}</Text>
           ) : (
             label
           )}
