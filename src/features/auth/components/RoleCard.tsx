@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export interface RoleCardProps {
@@ -12,48 +12,49 @@ export interface RoleCardProps {
 }
 
 export default function RoleCard({ title, subtitle, description, selected, onPress, illustration }: RoleCardProps) {
-  const [scaleAnim] = useState(() => new Animated.Value(1));
+  const [selectionOpacity] = useState(() => new Animated.Value(selected ? 1 : 0));
 
-  const handlePress = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, { toValue: 0.97, duration: 80, useNativeDriver: true }),
-      Animated.timing(scaleAnim, { toValue: 1, duration: 120, useNativeDriver: true }),
-    ]).start();
-    onPress();
-  };
+  useEffect(() => {
+    Animated.timing(selectionOpacity, {
+      toValue: selected ? 1 : 0,
+      duration: 160,
+      useNativeDriver: true,
+    }).start();
+  }, [selected, selectionOpacity]);
 
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <Pressable onPress={handlePress} style={[styles.card, selected ? styles.cardSelected : styles.cardDefault]}>
-        {selected && (
-          <LinearGradient
-            colors={['#eef0ff', '#f5f6ff']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        )}
+    <Pressable onPress={onPress} style={[styles.card, selected ? styles.cardSelected : styles.cardDefault]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[StyleSheet.absoluteFill, styles.selectionOverlay, { opacity: selectionOpacity }]}
+      >
+        <LinearGradient
+          colors={['#f4f6ff', '#f8f9ff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
 
-        <View style={[styles.illustrationWrap, selected && styles.illustrationWrapSelected]}>{illustration}</View>
+      <View style={[styles.illustrationWrap, selected && styles.illustrationWrapSelected]}>{illustration}</View>
 
-        <View style={styles.textBlock}>
-          <Text style={[styles.cardTitle, selected && styles.cardTitleSelected]}>{title}</Text>
-          <Text style={styles.cardSubtitle}>{subtitle}</Text>
-          <Text style={styles.cardDescription}>{description}</Text>
-        </View>
+      <View style={styles.textBlock}>
+        <Text style={[styles.cardTitle, selected && styles.cardTitleSelected]}>{title}</Text>
+        <Text style={styles.cardSubtitle}>{subtitle}</Text>
+        <Text style={styles.cardDescription}>{description}</Text>
+      </View>
 
-        <View style={[styles.radio, selected && styles.radioSelected]}>
-          {selected && <View style={styles.radioDot} />}
-        </View>
-      </Pressable>
-    </Animated.View>
+      <View style={[styles.radio, selected && styles.radioSelected]}>
+        {selected && <View style={styles.radioDot} />}
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    borderWidth: 2,
+    borderWidth: 1.5,
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
@@ -68,10 +69,13 @@ const styles = StyleSheet.create({
   cardSelected: {
     borderColor: '#485aff',
     shadowColor: '#485aff',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  selectionOverlay: {
+    borderRadius: 16,
   },
   illustrationWrap: {
     width: 72,
