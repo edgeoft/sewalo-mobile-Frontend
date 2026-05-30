@@ -60,6 +60,9 @@
     "enterConfirmPassword": "पुष्टि पासवर्ड प्रविष्ट गर्नुहोस्",
     "signUp": "साइन अप गर्नुहोस्",
     "agreeToTermsPrefix": "म सहमत छु ",
+    "agreeToTermsRequired": "तपाईं सेवाका सर्तहरू र गोपनीयता नीतिमा सहमत हुनुपर्दछ",
+    "passwordRequirementsTitle": "पासवर्डको आवश्यकताहरू",
+    "passwordValidationFailed": "पासवर्ड आवश्यकताहरूसँग मेल खाँदैन",
     "passwordRequirementLength": "कमसेकम ८ अक्षर",
     "passwordRequirementUppercase": "कमसेकम १ ठूलो अक्षर (uppercase)",
     "passwordRequirementNumber": "कमसेकम १ नम्बर",
@@ -67,6 +70,10 @@
     "termsAndPrivacyPrefix": "जारी राखेर, तपाईं हाम्रो",
     "termsOfService": "सेवाका सर्तहरू",
     "privacyPolicy": "गोपनीयता नीति",
-    "and": " र "
+    "and": " र ",
+    "passwordStrength": "पासवर्डको बलियोपन",
+    "passwordStrengthWeak": "कमजोर",
+    "passwordStrengthMedium": "मध्यम",
+    "passwordStrengthStrong": "बलियो"
   }
 }

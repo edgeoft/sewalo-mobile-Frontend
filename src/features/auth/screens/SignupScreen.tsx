@@ -29,6 +29,7 @@ export default function SignupScreen() {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(getSignupSchema(t)),
@@ -41,6 +42,21 @@ export default function SignupScreen() {
     },
   });
 
+  const passwordValue = watch('password', '');
+
+  const hasMinLength = passwordValue.length >= 8;
+  const hasUppercase = /[A-Z]/.test(passwordValue);
+  const hasNumber = /[0-9]/.test(passwordValue);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(passwordValue);
+  const getRequirementStyle = (isMet: boolean) => {
+    if (passwordValue.length === 0) {
+      return { icon: 'circle' as const, color: '#898f8f', textClass: 'text-gray-500 font-sans-medium' };
+    }
+    if (isMet) {
+      return { icon: 'check-circle' as const, color: '#10b981', textClass: 'text-emerald-600 font-sans-medium' };
+    }
+    return { icon: 'circle' as const, color: '#ef4444', textClass: 'text-destructive font-sans-medium' };
+  };
   const onSubmit = (data: SignupFormData) => {
     setLoading(true);
     setTimeout(() => {
@@ -174,6 +190,60 @@ export default function SignupScreen() {
                   />
                 )}
               />
+
+              {/* Password Requirement Checklist (Hints) */}
+              <View className="mt-2 px-0.5 gap-y-1">
+                <Text className="text-[11px] font-sans-bold text-gray-500 mb-0.5">
+                  {t('auth.passwordRequirementsTitle')}
+                </Text>
+                <View className="flex-row items-center">
+                  <Feather
+                    name={getRequirementStyle(hasMinLength).icon}
+                    size={11}
+                    color={getRequirementStyle(hasMinLength).color}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text className={`text-[11px] ${getRequirementStyle(hasMinLength).textClass}`}>
+                    {t('auth.passwordRequirementLength')}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Feather
+                    name={getRequirementStyle(hasUppercase).icon}
+                    size={11}
+                    color={getRequirementStyle(hasUppercase).color}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text className={`text-[11px] ${getRequirementStyle(hasUppercase).textClass}`}>
+                    {t('auth.passwordRequirementUppercase')}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Feather
+                    name={getRequirementStyle(hasNumber).icon}
+                    size={11}
+                    color={getRequirementStyle(hasNumber).color}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text className={`text-[11px] ${getRequirementStyle(hasNumber).textClass}`}>
+                    {t('auth.passwordRequirementNumber')}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Feather
+                    name={getRequirementStyle(hasSpecialChar).icon}
+                    size={11}
+                    color={getRequirementStyle(hasSpecialChar).color}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text className={`text-[11px] ${getRequirementStyle(hasSpecialChar).textClass}`}>
+                    {t('auth.passwordRequirementSpecial')}
+                  </Text>
+                </View>
+              </View>
             </View>
 
             {/* Confirm Password Field */}

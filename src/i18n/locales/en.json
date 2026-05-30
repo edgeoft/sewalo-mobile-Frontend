@@ -60,6 +60,9 @@
     "enterConfirmPassword": "Enter confirm password",
     "signUp": "Sign Up",
     "agreeToTermsPrefix": "I agree to ",
+    "agreeToTermsRequired": "You must agree to the Terms of Service & Privacy Policy",
+    "passwordRequirementsTitle": "Password Requirements",
+    "passwordValidationFailed": "Password does not meet the requirements",
     "passwordRequirementLength": "At least 8 characters",
     "passwordRequirementUppercase": "At least 1 uppercase letter",
     "passwordRequirementNumber": "At least 1 number",
@@ -67,6 +70,10 @@
     "termsAndPrivacyPrefix": "By continuing, you agree to our",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "and": " & "
+    "and": " & ",
+    "passwordStrength": "Password Strength",
+    "passwordStrengthWeak": "Weak",
+    "passwordStrengthMedium": "Medium",
+    "passwordStrengthStrong": "Strong"
   }
 }

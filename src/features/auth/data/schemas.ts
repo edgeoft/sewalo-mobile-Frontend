@@ -19,10 +19,10 @@ export const getSignupSchema = (t: (key: string) => string) =>
         .string()
         .min(9, t('auth.enterMobileNumber'))
         .regex(/^[0-9]+$/, t('auth.enterMobileNumber')),
-      password: z.string().min(8, t('auth.passwordRequirementLength')),
+      password: z.string().regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/, t('auth.passwordValidationFailed')),
       confirmPassword: z.string().min(1, t('auth.enterConfirmPassword')),
       agreeToTerms: z.boolean().refine((val) => val === true, {
-        message: 'You must agree to the Terms of Service',
+        message: t('auth.agreeToTermsRequired'),
       }),
     })
     .refine((data) => data.password === data.confirmPassword, {
