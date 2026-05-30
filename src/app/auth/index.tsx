@@ -1,1 +1,1 @@
-export { default } from '@/features/auth/screens/GettingStartedScreen';
+export { default } from '@/features/auth/screens/RoleSelectionScreen';

@@ -119,3 +119,20 @@ TextInput {
   font-family: 'Manrope-Regular';
 }
 
+@utility form-input-container {
+  @apply flex-row items-center border border-gray-200 rounded-xl h-14 px-4 bg-white;
+}
+
+@utility form-input-container-focus {
+  @apply border-primary;
+}
+
+@utility form-input-container-error {
+  @apply border-destructive;
+}
+
+@utility form-input-text {
+  @apply flex-1 h-full text-[15px] text-gray-900 pb-0.5;
+}
+
+
