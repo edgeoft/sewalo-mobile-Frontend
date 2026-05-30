@@ -22,5 +22,17 @@
     "changeLanguage": "भाषा परिवर्तन गर्नुहोस्",
     "english": "Eng(US)",
     "nepali": "नेपाली"
+  },
+  "auth": {
+    "roleSelectionTitle": "ग्राहक वा प्रदायकको रूपमा सामेल हुनुहोस्",
+    "roleSelectionSubtitle": "अगाडि बढ्नको लागि तल आफ्नो भूमिका चयन गर्नुहोस्",
+    "customerRoleTitle": "म एक ग्राहक हुँ",
+    "customerRoleSubtitle": "सेवाहरू खोज्दैछु",
+    "providerRoleTitle": "म एक प्रदायक हुँ",
+    "providerRoleSubtitle": "काम खोज्दैछु",
+    "joinAsCustomer": "ग्राहकको रूपमा सामेल हुनुहोस्",
+    "joinAsProvider": "प्रदायकको रूपमा सामेल हुनुहोस्",
+    "alreadyHaveAccount": "पहिले नै खाता छ?",
+    "login": "लगइन गर्नुहोस्"
   }
 }

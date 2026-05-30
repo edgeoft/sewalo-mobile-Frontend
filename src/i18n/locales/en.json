@@ -22,5 +22,17 @@
     "changeLanguage": "Change Language",
     "english": "Eng(US)",
     "nepali": "नेपाली"
+  },
+  "auth": {
+    "roleSelectionTitle": "Join as Customer or Provider",
+    "roleSelectionSubtitle": "Select your role below to continue",
+    "customerRoleTitle": "I'm a customer",
+    "customerRoleSubtitle": "Looking for Services",
+    "providerRoleTitle": "I'm a Provider",
+    "providerRoleSubtitle": "Looking for work",
+    "joinAsCustomer": "Join as customer",
+    "joinAsProvider": "Join as provider",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
   }
 }
