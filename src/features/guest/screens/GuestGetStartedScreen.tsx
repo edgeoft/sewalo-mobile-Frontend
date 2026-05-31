@@ -5,7 +5,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/constants/routes';
-import AuthHeader from '@/features/auth/components/AuthHeader';
+import Header from '@/components/Header';
 
 export default function GuestGetStartedScreen() {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export default function GuestGetStartedScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <AuthHeader />
+      <Header />
 
       <ScrollView
         contentContainerStyle={{

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
 import { ROUTES } from '@/constants/routes';
-import AuthHeader from '../components/AuthHeader';
+import Header from '@/components/Header';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
@@ -98,7 +98,7 @@ export default function OtpVerificationScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <AuthHeader showBackButton />
+      <Header showBackButton />
 
       <ScrollView
         contentContainerStyle={{

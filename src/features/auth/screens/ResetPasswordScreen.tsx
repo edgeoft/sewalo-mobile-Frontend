@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import { ROUTES } from '@/constants/routes';
-import AuthHeader from '../components/AuthHeader';
+import Header from '@/components/Header';
 import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
 
 export default function ResetPasswordScreen() {
@@ -64,7 +64,7 @@ export default function ResetPasswordScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <AuthHeader showBackButton />
+      <Header showBackButton />
 
       <ScrollView
         contentContainerStyle={{

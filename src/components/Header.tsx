@@ -3,14 +3,14 @@ import { useRouter } from 'expo-router';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import LanguageSelector from '@/components/LanguageSelector';
 import { LOGO } from '@/constants/images';
+import LanguageSelector from './LanguageSelector';
 
-interface AuthHeaderProps {
+interface HeaderProps {
   showBackButton?: boolean;
 }
 
-export default function AuthHeader({ showBackButton = false }: AuthHeaderProps) {
+export default function Header({ showBackButton = false }: HeaderProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 

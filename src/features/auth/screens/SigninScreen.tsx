@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
 import Input from '@/components/Input';
-import AuthHeader from '../components/AuthHeader';
+import Header from '@/components/Header';
 import { getSigninSchema, SigninFormData } from '../data/schemas';
 
 import { ROUTES } from '@/constants/routes';
@@ -58,7 +58,7 @@ export default function SigninScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <AuthHeader />
+      <Header />
 
       <ScrollView
         contentContainerStyle={{

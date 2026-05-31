@@ -8,11 +8,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
+import Header from '@/components/Header';
 import Input from '@/components/Input';
 import { ROUTES } from '@/constants/routes';
 import { UserRole } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import AuthHeader from '../components/AuthHeader';
 import { getSignupSchema, SignupFormData } from '../data/schemas';
 
 export default function SignupScreen() {
@@ -71,7 +71,7 @@ export default function SignupScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <AuthHeader showBackButton />
+      <Header showBackButton />
 
       <ScrollView
         contentContainerStyle={{

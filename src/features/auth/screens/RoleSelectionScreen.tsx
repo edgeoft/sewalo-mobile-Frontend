@@ -6,7 +6,7 @@ import { Pressable, Text, View } from 'react-native';
 import Button from '@/components/Button';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
-import AuthHeader from '../components/AuthHeader';
+import Header from '@/components/Header';
 import RoleCard from '../components/RoleCard';
 import RoleIllustrationIcon from '../components/icons/RoleIllustrationIcon';
 
@@ -21,7 +21,7 @@ export default function RoleSelectionScreen() {
   };
   return (
     <View className="flex-1 bg-secondary">
-      <AuthHeader showBackButton={fromSignin === 'true'} />
+      <Header showBackButton={fromSignin === 'true'} />
       <View className="flex-1 px-6 pt-6 pb-8 justify-between">
         <View>
           <Text className="text-2xl font-sans-extrabold text-gray-900 mb-1" style={{ letterSpacing: -0.8 }}>

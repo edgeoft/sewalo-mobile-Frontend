@@ -6,9 +6,9 @@ import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
 import SelectionOption from '@/components/SelectionOption';
+import Header from '@/components/Header';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
-import AuthHeader from '../components/AuthHeader';
 
 export default function GettingStartedScreen() {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export default function GettingStartedScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <AuthHeader />
+      <Header />
       <View className="flex-1 px-6 pt-8 pb-8 justify-between">
         <View>
           <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
