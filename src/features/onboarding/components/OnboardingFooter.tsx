@@ -29,7 +29,7 @@ export default function OnboardingFooter({
       </View>
 
       {/* Fixed height container to prevent layout jumping/flickering during page swaps */}
-      <View className="w-full h-[84px] justify-center items-center mt-6">
+      <View className="w-full h-[84px] justify-end items-center mt-6">
         {isLastPage ? (
           <View className="w-full items-center">
             <Button
@@ -47,15 +47,23 @@ export default function OnboardingFooter({
             </View>
           </View>
         ) : (
-          <View className="flex-row justify-between items-center w-full">
+          <View className="flex-row justify-between items-center w-full -mb-0.5">
             <Button
               variant="ghost"
-              size="md"
+              size="none"
               title={t('onboarding.skip')}
               onPress={onFinish}
-              textClassName="opacity-95"
+              textClassName="opacity-95 text-white text-base"
+              className="py-1"
             />
-            <Button variant="ghost" size="md" title={t('onboarding.next')} onPress={onNext} />
+            <Button
+              variant="ghost"
+              size="none"
+              title={t('onboarding.next')}
+              onPress={onNext}
+              textClassName="text-white text-base"
+              className="py-1"
+            />
           </View>
         )}
       </View>

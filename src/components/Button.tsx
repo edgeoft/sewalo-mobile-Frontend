@@ -13,7 +13,7 @@ import {
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
   title: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'light';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'none';
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
