@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -42,7 +42,7 @@ export default function Carousel<T>({
   const isInfinite = loop && hasMultipleItems;
   const activeIndexRef = useRef(isInfinite ? 1 : 0);
 
-  const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInteractingRef = useRef(false);
 
   const cardWidth = containerWidth > 0 ? containerWidth : windowWidth - 48; // default to screen width minus horizontal layout padding
