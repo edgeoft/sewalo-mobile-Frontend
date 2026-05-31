@@ -1,12 +1,14 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import Button from '@/components/Button';
+import ContentLayout from '@/components/ContentLayout';
+import Header from '@/components/Header';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
-import Header from '@/components/Header';
+import AuthFooterLink from '../components/AuthFooterLink';
 import RoleCard from '../components/RoleCard';
 import RoleIllustrationIcon from '../components/icons/RoleIllustrationIcon';
 
@@ -22,7 +24,7 @@ export default function RoleSelectionScreen() {
   return (
     <View className="flex-1 bg-secondary">
       <Header showBackButton={fromSignin === 'true'} />
-      <View className="flex-1 px-6 pt-6 pb-8 justify-between">
+      <ContentLayout className="flex-1 pt-6 pb-8 justify-between">
         <View>
           <Text className="text-2xl font-sans-extrabold text-gray-900 mb-1" style={{ letterSpacing: -0.8 }}>
             {t('auth.roleSelectionTitle')}
@@ -54,14 +56,15 @@ export default function RoleSelectionScreen() {
             title={selectedRole === USER_ROLES.Customer ? t('auth.joinAsCustomer') : t('auth.joinAsProvider')}
             onPress={handleContinue}
           />
-          <View className="flex-row items-center justify-center mt-1">
-            <Text className="text-gray-600 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-            <Pressable onPress={() => router.replace(ROUTES.auth.signin)}>
-              <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
-            </Pressable>
+          <View className="mt-1">
+            <AuthFooterLink
+              prompt={t('auth.alreadyHaveAccount')}
+              actionLabel={t('auth.login')}
+              onPress={() => router.replace(ROUTES.auth.signin)}
+            />
           </View>
         </View>
-      </View>
+      </ContentLayout>
     </View>
   );
 }

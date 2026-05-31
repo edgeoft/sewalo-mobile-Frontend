@@ -1,17 +1,15 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import Button from '@/components/Button';
 import { ROUTES } from '@/constants/routes';
-import Header from '@/components/Header';
+import AuthScreenLayout from '../components/AuthScreenLayout';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { phone, flow } = useLocalSearchParams<{ phone: string; flow: 'signup' | 'forgot-password' }>();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
@@ -97,89 +95,58 @@ export default function OtpVerificationScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <Header showBackButton />
-
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingBottom: Math.max(insets.bottom, 24),
-          paddingTop: 28,
-        }}
-        showsVerticalScrollIndicator={false}
-        className="px-6"
-      >
-        <View className="flex-1 justify-start">
-          {/* Title and Subtitle */}
-          <View>
-            <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
-              {t('auth.otpVerificationTitle')}
-            </Text>
-            <Text className="text-sm font-sans-medium text-gray-500 text-left leading-5 mb-8">
-              {t('auth.otpVerificationSubtitle', { phone: phone || '' })}
-            </Text>
-          </View>
-
-          {/* OTP Fields Grid */}
-          <View className="flex-row justify-center items-center mb-6 -mx-1">
-            {otp.map((digit, idx) => (
-              <View
-                key={idx}
-                className={`flex-1 aspect-square max-w-[48px] mx-1 border rounded-lg bg-white items-center justify-center ${
-                  digit ? 'border-primary' : 'border-gray-200'
-                }`}
-                style={{
-                  shadowColor: digit ? '#485aff' : '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: digit ? 0.05 : 0.015,
-                  shadowRadius: digit ? 4 : 2,
-                  elevation: digit ? 1 : 0,
-                }}
-              >
-                <TextInput
-                  ref={(ref) => {
-                    if (ref) inputRefs.current[idx] = ref;
-                  }}
-                  value={digit}
-                  onChangeText={(text) => handleChangeText(text, idx)}
-                  onKeyPress={(e) => handleKeyPress(e, idx)}
-                  keyboardType="number-pad"
-                  maxLength={6} // Set to 6 to handle fast typing/paste support
-                  className="w-full h-full text-center text-xl font-sans-bold text-gray-900 m-0 p-0"
-                  style={{ textAlignVertical: 'center', padding: 0, includeFontPadding: false, lineHeight: undefined }}
-                  selectTextOnFocus
-                />
-              </View>
-            ))}
-          </View>
-
-          {error && <Text className="text-xs font-sans-medium text-destructive mb-6 ml-1">{error}</Text>}
-
-          {/* Action Buttons */}
-          <View className="gap-y-4">
-            <Button
-              title={t('auth.continue')}
-              loading={loading}
-              onPress={handleVerify}
-              className="w-full"
-              variant="primary"
+    <AuthScreenLayout
+      title={t('auth.otpVerificationTitle')}
+      subtitle={t('auth.otpVerificationSubtitle', { phone: phone || '' })}
+      showBackButton
+    >
+      <View className="flex-row justify-center items-center mb-6 -mx-1">
+        {otp.map((digit, idx) => (
+          <View
+            key={idx}
+            className={`flex-1 aspect-square max-w-[48px] mx-1 border rounded-lg bg-white items-center justify-center ${
+              digit ? 'border-primary' : 'border-gray-200'
+            }`}
+            style={{
+              shadowColor: digit ? '#485aff' : '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: digit ? 0.05 : 0.015,
+              shadowRadius: digit ? 4 : 2,
+              elevation: digit ? 1 : 0,
+            }}
+          >
+            <TextInput
+              ref={(ref) => {
+                if (ref) inputRefs.current[idx] = ref;
+              }}
+              value={digit}
+              onChangeText={(text) => handleChangeText(text, idx)}
+              onKeyPress={(e) => handleKeyPress(e, idx)}
+              keyboardType="number-pad"
+              maxLength={6}
+              className="w-full h-full text-center text-xl font-sans-bold text-gray-900 m-0 p-0"
+              style={{ textAlignVertical: 'center', padding: 0, includeFontPadding: false, lineHeight: undefined }}
+              selectTextOnFocus
             />
-
-            {/* Resend Logic */}
-            <View className="flex-row items-center justify-center mt-2">
-              {timer > 0 ? (
-                <Text className="text-gray-500 font-sans-medium text-sm">
-                  {t('auth.resendCodeIn', { seconds: timer })}
-                </Text>
-              ) : (
-                <Pressable onPress={handleResend} className="active:opacity-60">
-                  <Text className="text-primary font-sans-bold text-sm">{t('auth.resendCode')}</Text>
-                </Pressable>
-              )}
-            </View>
           </View>
+        ))}
+      </View>
+
+      {error ? <Text className="text-xs font-sans-medium text-destructive mb-6 ml-1">{error}</Text> : null}
+
+      <View className="gap-y-4">
+        <Button title={t('auth.continue')} loading={loading} onPress={handleVerify} className="w-full" />
+
+        <View className="flex-row items-center justify-center mt-2">
+          {timer > 0 ? (
+            <Text className="text-gray-500 font-sans-medium text-sm">{t('auth.resendCodeIn', { seconds: timer })}</Text>
+          ) : (
+            <Pressable onPress={handleResend} className="active:opacity-60">
+              <Text className="text-primary font-sans-bold text-sm">{t('auth.resendCode')}</Text>
+            </Pressable>
+          )}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+    </AuthScreenLayout>
   );
 }

@@ -2,13 +2,15 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import Button from '@/components/Button';
-import SelectionOption from '@/components/SelectionOption';
+import ContentLayout from '@/components/ContentLayout';
 import Header from '@/components/Header';
+import SelectionOption from '@/components/SelectionOption';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
+import AuthFooterLink from '../components/AuthFooterLink';
 
 export default function GettingStartedScreen() {
   const { t } = useTranslation();
@@ -29,7 +31,7 @@ export default function GettingStartedScreen() {
   return (
     <View className="flex-1 bg-secondary">
       <Header />
-      <View className="flex-1 px-6 pt-8 pb-8 justify-between">
+      <ContentLayout className="flex-1 pt-8 pb-8 justify-between">
         <View>
           <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
             {t('auth.roleSelectionTitle')}
@@ -71,14 +73,15 @@ export default function GettingStartedScreen() {
             onPress={handleContinue}
           />
 
-          <View className="flex-row items-center justify-center mt-2">
-            <Text className="text-gray-600 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-            <Pressable onPress={() => router.push(ROUTES.auth.signin)}>
-              <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
-            </Pressable>
+          <View className="mt-2">
+            <AuthFooterLink
+              prompt={t('auth.alreadyHaveAccount')}
+              actionLabel={t('auth.login')}
+              onPress={() => router.push(ROUTES.auth.signin)}
+            />
           </View>
         </View>
-      </View>
+      </ContentLayout>
     </View>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
 import { BOTTOM_TAB_CONFIGS, TabConfig } from '@/constants/navigation';
@@ -20,7 +19,6 @@ export interface BottomTabBarProps {
 
 export default function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
 
   const bottomPadding = insets.bottom > 0 ? insets.bottom - 12 : 0;
   const barHeight = 56 + bottomPadding;
@@ -46,12 +44,11 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
           icon: (color) => <Feather name="help-circle" size={22} color={color} />,
         };
 
-        const activeColor = '#485aff'; // Brand primary blue
-        const inactiveColor = '#0f172a'; // Slate dark gray
+        const activeColor = '#485aff';
+        const inactiveColor = '#0f172a';
         const color = isFocused ? activeColor : inactiveColor;
 
         const onPress = () => {
-          // If custom action is defined (like guest "Get Started" which redirects to signup/login flow)
           if (config.action) {
             config.action();
             return;

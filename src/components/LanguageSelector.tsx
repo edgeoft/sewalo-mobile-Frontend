@@ -1,23 +1,21 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dimensions, Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
 
 import SelectionOption from './SelectionOption';
 
-const { height } = Dimensions.get('window');
+const languages = [
+  { code: 'en', name: 'Eng', flag: '🇺🇸', label: 'English' },
+  { code: 'ne', name: 'नेपाली', flag: '🇳🇵', label: 'नेपाली (Nepali)' },
+];
 
 export default function LanguageSelector() {
   const { t, i18n } = useTranslation();
+  const { height } = useWindowDimensions();
   const [modalVisible, setModalVisible] = useState(false);
 
   const currentLanguage = i18n.language || 'en';
-
-  const languages = [
-    { code: 'en', name: 'Eng(US)', flag: '🇺🇸', label: 'English (US)' },
-    { code: 'ne', name: 'नेपाली', flag: '🇳🇵', label: 'नेपाली (Nepali)' },
-  ];
-
   const activeLang = languages.find((l) => currentLanguage.startsWith(l.code)) || languages[0];
 
   const handleSelectLanguage = (code: string) => {
@@ -27,7 +25,12 @@ export default function LanguageSelector() {
 
   return (
     <View>
-      <Pressable onPress={() => setModalVisible(true)} className="flex-row items-center active:opacity-75">
+      <Pressable
+        onPress={() => setModalVisible(true)}
+        className="flex-row items-center active:opacity-75"
+        accessibilityRole="button"
+        accessibilityLabel="Change language"
+      >
         <Text className="text-base mr-1">{activeLang.flag}</Text>
         <Text className="text-gray-800 font-sans-medium text-sm mr-1">{activeLang.name}</Text>
         <Feather name="chevron-down" size={13} color="#9ca3af" />
@@ -44,7 +47,7 @@ export default function LanguageSelector() {
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={styles.drawerContainer} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.56 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -101,6 +104,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 24,
-    maxHeight: height * 0.56,
   },
 });
