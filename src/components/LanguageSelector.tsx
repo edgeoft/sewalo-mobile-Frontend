@@ -48,7 +48,7 @@ export default function LanguageSelector() {
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-2xl font-sans-extrabold">{t('common.changeLanguage')}</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('common.changeLanguage')}</Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
