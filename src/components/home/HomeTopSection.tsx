@@ -1,12 +1,8 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
-import DashboardTopBar from '@/components/navigation/DashboardTopBar';
-import { createGuestDrawerConfig, createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import { ROUTES } from '@/constants/routes';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
@@ -31,41 +27,22 @@ const heroCopyByVariant = {
     ),
     subtitle: 'Book verified service providers in minutes.',
     searchPlaceholder: 'What services are you looking for today?',
-    showNotifications: false,
   },
   customer: {
     backgroundHeight: 188,
     title: 'Your next booking starts here',
     subtitle: 'Find trusted professionals, compare options, and book the right fit for your home needs.',
     searchPlaceholder: 'Search services or providers for your next task',
-    showNotifications: true,
   },
 };
 
 export default function HomeTopSection({ variant }: HomeTopSectionProps) {
   const router = useRouter();
-  const { i18n } = useTranslation();
-  const [drawerVisible, setDrawerVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const handleSearchPress = () => {
     router.push(variant === 'customer' ? ROUTES.customer.findServices : ROUTES.guest.findServices);
   };
-
-  const handleLogout = () => {
-    setDrawerVisible(false);
-  };
-
-  const drawerConfig =
-    variant === 'guest'
-      ? createGuestDrawerConfig({
-          currentLanguage: i18n.language || 'en',
-          onLanguageChange: (code) => i18n.changeLanguage(code),
-        })
-      : createRoleDrawerConfig({
-          currentLanguage: i18n.language || 'en',
-          onLanguageChange: (code) => i18n.changeLanguage(code),
-          onLogout: handleLogout,
-        });
 
   const heroCopy = heroCopyByVariant[variant];
 
@@ -74,7 +51,8 @@ export default function HomeTopSection({ variant }: HomeTopSectionProps) {
       <HomeTopSectionBackground height={heroCopy.backgroundHeight} />
 
       <View className="gap-y-4 pb-4">
-        <DashboardTopBar showNotifications={heroCopy.showNotifications} onMenuPress={() => setDrawerVisible(true)} />
+        {/* Spacer to reserve room for absolute/sticky DashboardTopBar */}
+        <View style={{ height: 56 + Math.max(insets.top, 6) }} />
 
         <View>
           <Text className="max-w-62 text-[33px] font-sans-extrabold leading-9.5 tracking-tight text-gray-900">
@@ -93,14 +71,6 @@ export default function HomeTopSection({ variant }: HomeTopSectionProps) {
           ))}
         </View>
       </View>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </ContentLayout>
   );
 }
