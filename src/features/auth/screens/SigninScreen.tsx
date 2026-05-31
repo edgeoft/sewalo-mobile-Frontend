@@ -173,6 +173,22 @@ export default function SigninScreen() {
               />
             </View>
 
+            {/* Separator */}
+            <View className="flex-row items-center my-3">
+              <View className="flex-1 h-[1px] bg-gray-200" />
+              <Text className="text-xs font-sans-bold text-gray-400 px-3 uppercase">{t('auth.or')}</Text>
+              <View className="flex-1 h-[1px] bg-gray-200" />
+            </View>
+
+            {/* Continue as Guest Button */}
+            <Button
+              title={t('auth.continueAsGuest')}
+              onPress={() => alert('Continue as Guest pressed')}
+              className="w-full border border-gray-300 bg-white active:bg-gray-50"
+              textClassName="text-gray-800 font-sans-semibold"
+              variant="ghost"
+            />
+
             <View className="flex-row items-center justify-center mt-2">
               <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.dontHaveAccount')} </Text>
               <Pressable

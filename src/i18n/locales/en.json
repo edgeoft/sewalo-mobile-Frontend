@@ -91,6 +91,8 @@
     "passwordResetSuccess": "Password reset successfully!",
     "otpVerifiedSuccess": "OTP verified successfully!",
     "invalidOtp": "Invalid OTP code. Please try again.",
-    "enterOtp": "Please enter the 6-digit verification code."
+    "enterOtp": "Please enter the 6-digit verification code.",
+    "continueAsGuest": "Continue as Guest",
+    "or": "OR"
   }
 }
