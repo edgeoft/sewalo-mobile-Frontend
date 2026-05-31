@@ -4,22 +4,17 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
-import Checkbox from '@/components/Checkbox';
-import Input from '@/components/Input';
 import AuthHeader from '../components/AuthHeader';
-import { getSigninSchema, SigninFormData } from '../data/schemas';
+import { ForgotPasswordFormData, getForgotPasswordSchema } from '../data/schemas';
 
-export default function SigninScreen() {
+export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
 
@@ -27,48 +22,50 @@ export default function SigninScreen() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SigninFormData>({
-    resolver: zodResolver(getSigninSchema(t)),
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(getForgotPasswordSchema(t)),
     defaultValues: {
       phone: '',
-      password: '',
     },
   });
 
-  const onSubmit = (data: SigninFormData) => {
+  const onSubmit = (data: ForgotPasswordFormData) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      alert('Sign in attempt successful!');
-    }, 1500);
+      router.push({
+        pathname: '/auth/otp-verification',
+        params: { phone: data.phone, flow: 'forgot-password' },
+      });
+    }, 1200);
   };
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
-      <AuthHeader />
+      <AuthHeader showBackButton />
 
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: 'space-between',
-          paddingBottom: Math.max(insets.bottom, 16),
+          paddingBottom: Math.max(insets.bottom, 24),
           paddingTop: 28,
         }}
         showsVerticalScrollIndicator={false}
         className="px-6"
       >
         <View className="flex-1 justify-start">
-          {/* Title and Subtitle Section */}
+          {/* Title and Subtitle */}
           <View>
             <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
-              {t('auth.loginIntoYourAccount')}
+              {t('auth.forgotPasswordTitle')}
             </Text>
             <Text className="text-sm font-sans-medium text-gray-500 text-left leading-5 mb-8">
-              {t('auth.signInSubtitle')}
+              {t('auth.forgotPasswordSubtitle')}
             </Text>
           </View>
 
-          <View className="gap-y-2.5">
+          {/* Form */}
+          <View className="gap-y-6">
             <View className="w-full">
               <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('auth.mobileNumber')}</Text>
               <View
@@ -91,7 +88,6 @@ export default function SigninScreen() {
 
                 <View className="w-[1px] h-6 bg-gray-200 mr-3.5" />
 
-                {/* Phone Input Field */}
                 <Controller
                   control={control}
                   name="phone"
@@ -124,68 +120,13 @@ export default function SigninScreen() {
               )}
             </View>
 
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label={t('auth.password')}
-                  placeholder={t('auth.enterYourPassword')}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  secureTextEntry={!showPassword}
-                  error={errors.password?.message}
-                  rightIcon={
-                    <Pressable onPress={() => setShowPassword(!showPassword)} hitSlop={8} className="active:opacity-60">
-                      <Feather name={showPassword ? 'eye' : 'eye-off'} size={18} color="#898f8f" />
-                    </Pressable>
-                  }
-                />
-              )}
+            <Button
+              title={t('auth.continue')}
+              loading={loading}
+              onPress={handleSubmit(onSubmit)}
+              className="w-full"
+              variant="primary"
             />
-
-            <View className="flex-row justify-between items-center w-full mt-1 mb-2">
-              <View className="flex-1 mr-2">
-                <Checkbox
-                  checked={rememberMe}
-                  onChange={setRememberMe}
-                  label={t('auth.rememberMe')}
-                  labelClassName="text-sm font-sans-semibold text-gray-800"
-                  size="sm"
-                />
-              </View>
-              <Pressable
-                onPress={() => router.push('/auth/forgot-password')}
-                className="flex-shrink-0 active:opacity-60"
-              >
-                <Text className="text-primary font-sans-semibold text-sm">{t('auth.forgetPassword')}</Text>
-              </Pressable>
-            </View>
-
-            <View className="pt-2">
-              <Button
-                title={t('auth.login')}
-                loading={loading}
-                onPress={handleSubmit(onSubmit)}
-                className="w-full"
-                variant="primary"
-              />
-            </View>
-
-            <View className="flex-row items-center justify-center mt-2">
-              <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.dontHaveAccount')} </Text>
-              <Pressable
-                onPress={() =>
-                  router.push({
-                    pathname: '/auth',
-                    params: { fromSignin: 'true' },
-                  })
-                }
-              >
-                <Text className="text-primary font-sans-bold text-sm">{t('auth.createAccount')}</Text>
-              </Pressable>
-            </View>
           </View>
         </View>
       </ScrollView>

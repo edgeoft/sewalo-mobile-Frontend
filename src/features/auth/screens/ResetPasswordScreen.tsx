@@ -1,44 +1,36 @@
 import { Feather } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
-import Checkbox from '@/components/Checkbox';
 import Input from '@/components/Input';
-import { UserRole } from '@/types';
-import { zodResolver } from '@hookform/resolvers/zod';
 import AuthHeader from '../components/AuthHeader';
-import { getSignupSchema, SignupFormData } from '../data/schemas';
+import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
 
-export default function SignupScreen() {
+export default function ResetPasswordScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { role } = useLocalSearchParams<{ role: UserRole }>();
 
-  const selectedRole = role || 'customer';
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
 
   const {
     control,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<SignupFormData>({
-    resolver: zodResolver(getSignupSchema(t)),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(getResetPasswordSchema(t)),
     defaultValues: {
-      name: '',
-      phone: '',
       password: '',
       confirmPassword: '',
-      agreeToTerms: false,
     },
   });
 
@@ -48,6 +40,7 @@ export default function SignupScreen() {
   const hasUppercase = /[A-Z]/.test(passwordValue);
   const hasNumber = /[0-9]/.test(passwordValue);
   const hasSpecialChar = /[^A-Za-z0-9]/.test(passwordValue);
+
   const getRequirementStyle = (isMet: boolean) => {
     if (passwordValue.length === 0) {
       return { icon: 'circle' as const, color: '#898f8f', textClass: 'text-gray-500 font-sans-medium' };
@@ -57,14 +50,14 @@ export default function SignupScreen() {
     }
     return { icon: 'circle' as const, color: '#ef4444', textClass: 'text-destructive font-sans-medium' };
   };
-  const onSubmit = (data: SignupFormData) => {
+
+  const onSubmit = (data: ResetPasswordFormData) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push({
-        pathname: '/auth/otp-verification',
-        params: { phone: data.phone, flow: 'signup' },
-      });
+      alert(t('auth.passwordResetSuccess'));
+      // Replace layout state to Signin screen
+      router.replace('/auth/signin');
     }, 1500);
   };
 
@@ -82,101 +75,27 @@ export default function SignupScreen() {
         className="px-6"
       >
         <View className="flex-1 justify-start">
-          {/* Title and Hook Phrase Section */}
+          {/* Title and Subtitle */}
           <View>
             <Text className="text-2xl font-sans-extrabold text-gray-900 text-left mb-1" style={{ letterSpacing: -0.8 }}>
-              {t('auth.joinSewalo')}
+              {t('auth.resetPasswordTitle')}
             </Text>
             <Text className="text-sm font-sans-medium text-gray-500 text-left leading-5 mb-8">
-              {selectedRole === 'provider' ? t('auth.signUpSubtitleProvider') : t('auth.signUpSubtitleCustomer')}
+              {t('auth.resetPasswordSubtitle')}
             </Text>
           </View>
 
-          {/* Form Container */}
-          <View className="gap-y-2.5">
-            {/* Full Name Field */}
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label={t('auth.fullName')}
-                  placeholder={t('auth.enterFullName')}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={errors.name?.message}
-                />
-              )}
-            />
-
-            {/* Combined Mobile Number Field */}
-            <View className="w-full">
-              <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('auth.mobileNumber')}</Text>
-              <View
-                className={`form-input-container ${
-                  errors.phone ? 'form-input-container-error' : isPhoneFocused ? 'form-input-container-focus' : ''
-                }`}
-                style={{
-                  shadowColor: isPhoneFocused ? '#485aff' : '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: isPhoneFocused ? 0.08 : 0.015,
-                  shadowRadius: isPhoneFocused ? 4 : 2,
-                  elevation: isPhoneFocused ? 2 : 0,
-                }}
-              >
-                {/* Country Code Flag and Dropdown */}
-                <View className="flex-row items-center pr-2.5">
-                  <Text className="text-base mr-1">🇳🇵</Text>
-                  <Text className="text-sm font-sans-semibold text-gray-800">+977</Text>
-                  <Feather name="chevron-down" size={14} color="#898f8f" style={{ marginLeft: 4 }} />
-                </View>
-
-                {/* Vertical Divider */}
-                <View className="w-[1px] h-6 bg-gray-200 mr-3.5" />
-
-                {/* Phone Input Field */}
-                <Controller
-                  control={control}
-                  name="phone"
-                  render={({ field: { onChange, onBlur: fieldOnBlur, value } }) => (
-                    <TextInput
-                      placeholder={t('auth.enterMobileNumber')}
-                      placeholderTextColor="#898f8f"
-                      value={value}
-                      onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ''))}
-                      onFocus={() => setIsPhoneFocused(true)}
-                      onBlur={() => {
-                        setIsPhoneFocused(false);
-                        fieldOnBlur();
-                      }}
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                      className="form-input-text"
-                      style={{
-                        includeFontPadding: false,
-                        textAlignVertical: 'center',
-                        padding: 0,
-                        lineHeight: undefined,
-                      }}
-                    />
-                  )}
-                />
-              </View>
-              {errors.phone?.message && (
-                <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{errors.phone.message}</Text>
-              )}
-            </View>
-
-            {/* Password Field */}
+          {/* Form */}
+          <View className="gap-y-4">
+            {/* New Password Field */}
             <View>
               <Controller
                 control={control}
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    label={t('auth.password')}
-                    placeholder={t('auth.enterYourPassword')}
+                    label={t('auth.newPassword')}
+                    placeholder={t('auth.enterNewPassword')}
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -195,7 +114,7 @@ export default function SignupScreen() {
                 )}
               />
 
-              {/* Password Requirement Checklist (Hints) */}
+              {/* Requirements indicator checklist */}
               <View className="mt-2 px-0.5 gap-y-1">
                 <Text className="text-xs font-sans-bold text-gray-500 mb-0.5">
                   {t('auth.passwordRequirementsTitle')}
@@ -276,51 +195,14 @@ export default function SignupScreen() {
               )}
             />
 
-            {/* Agree to terms checkbox */}
-            <Controller
-              control={control}
-              name="agreeToTerms"
-              render={({ field: { onChange, value } }) => (
-                <View className="flex-row items-center w-full mt-1.5">
-                  <Checkbox
-                    checked={value}
-                    onChange={onChange}
-                    size="sm"
-                    label={
-                      <Text className="text-sm font-sans-semibold text-gray-800 leading-4">
-                        {t('auth.agreeToTermsPrefix')}
-                        <Text onPress={() => alert('Terms of Service pressed')} className="text-primary underline">
-                          {t('auth.termsOfService')}
-                        </Text>
-                        <Text className="ml-1">{`${t('auth.and')} `}</Text>
-                        <Text onPress={() => alert('Privacy Policy pressed')} className="text-primary underline">
-                          {t('auth.privacyPolicy')}
-                        </Text>
-                      </Text>
-                    }
-                  />
-                </View>
-              )}
-            />
-            {errors.agreeToTerms?.message && (
-              <Text className="text-xs font-sans-medium text-destructive ml-1">{errors.agreeToTerms.message}</Text>
-            )}
-
-            {/* Signup Button + Already have an account */}
-            <View className="gap-y-1.5 mt-2">
+            <View className="pt-2">
               <Button
-                title={t('auth.signUp')}
+                title={t('auth.resetPasswordTitle')}
                 loading={loading}
                 onPress={handleSubmit(onSubmit)}
                 className="w-full"
                 variant="primary"
               />
-              <View className="flex-row items-center justify-center">
-                <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-                <Pressable onPress={() => router.replace('/auth/signin')}>
-                  <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
-                </Pressable>
-              </View>
             </View>
           </View>
         </View>

@@ -77,6 +77,20 @@
     "passwordStrength": "Password Strength",
     "passwordStrengthWeak": "Weak",
     "passwordStrengthMedium": "Medium",
-    "passwordStrengthStrong": "Strong"
+    "passwordStrengthStrong": "Strong",
+    "forgotPasswordTitle": "Forgot Password",
+    "forgotPasswordSubtitle": "Enter your mobile number to receive a verification code.",
+    "otpVerificationTitle": "Verification Code",
+    "otpVerificationSubtitle": "We have sent a 6-digit OTP verification code to +977 {{phone}}",
+    "resendCode": "Resend Code",
+    "resendCodeIn": "Resend code in {{seconds}}s",
+    "resetPasswordTitle": "Reset Password",
+    "resetPasswordSubtitle": "Please enter a new password for your account.",
+    "newPassword": "New Password",
+    "enterNewPassword": "Enter new password",
+    "passwordResetSuccess": "Password reset successfully!",
+    "otpVerifiedSuccess": "OTP verified successfully!",
+    "invalidOtp": "Invalid OTP code. Please try again.",
+    "enterOtp": "Please enter the 6-digit verification code."
   }
 }

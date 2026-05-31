@@ -18,8 +18,9 @@ export default function AuthHeader({ showBackButton = false }: AuthHeaderProps) 
     <View
       style={{
         paddingTop: Math.max(insets.top, 6),
+        height: 56 + Math.max(insets.top, 6),
       }}
-      className="flex-row justify-between items-center px-4 pb-1 pt-0.5 bg-white border-b border-gray-100/50"
+      className="flex-row justify-between items-center px-4 bg-white border-b border-gray-100/50"
     >
       <View className="flex-row items-center">
         {showBackButton && (

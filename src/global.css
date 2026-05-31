@@ -2,7 +2,7 @@
 @import 'uniwind';
 
 :root {
-  --radius: 0.625rem;
+  --radius: 12px;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -101,9 +101,9 @@
   --color-form-field-placeholder: var(--form-field-placeholder);
 
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-xl: var(--radius);
 
   --animate-float-slow: float 4s ease-in-out infinite;
   --animate-float-delay: float 4s ease-in-out infinite 2s;
@@ -121,8 +121,8 @@
   --fs-primary: 15px;
   --lh-primary: 22px;
 
-  --fs-secondary: 13px;
-  --lh-secondary: 20px;
+  --fs-secondary: 12px;
+  --lh-secondary: 18px;
 
   --fs-tertiary: 11px;
   --lh-tertiary: 16px;
@@ -200,7 +200,7 @@ TextInput {
 }
 
 @utility form-input-container {
-  @apply flex-row items-center border border-gray-200 rounded-xl h-14 px-4 bg-white;
+  @apply flex-row items-center border border-gray-200 rounded-xl py-3 px-4 bg-white;
 }
 
 @utility form-input-container-focus {
@@ -212,5 +212,5 @@ TextInput {
 }
 
 @utility form-input-text {
-  @apply flex-1 h-full text-base text-gray-900 pb-0.5;
+  @apply flex-1 text-base text-gray-900 py-0;
 }

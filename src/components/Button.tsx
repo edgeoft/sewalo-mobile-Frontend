@@ -56,8 +56,8 @@ export default function Button({
   const sizeStyles = {
     none: 'p-0 border-0',
     sm: 'py-2 px-4 rounded-lg',
-    md: 'py-3 px-5 rounded-xl',
-    lg: 'py-4 px-8 rounded-2xl',
+    md: 'py-3 px-4 rounded-lg',
+    lg: 'py-4 px-8 rounded-lg',
   };
 
   const textSizeStyles = {
@@ -82,14 +82,14 @@ export default function Button({
         <ActivityIndicator size="small" color={variant === 'light' ? '#485aff' : '#ffffff'} className="mr-2" />
       ) : (
         <View className="flex-row items-center justify-center">
-          {leftIcon && <View className="mr-2">{leftIcon}</View>}
+          {leftIcon && <View className="mr-1">{leftIcon}</View>}
           <Text
             style={textStyle}
             className={`${textVariantStyles[variant]} ${textSizeStyles[size]} text-center ${textClassName}`}
           >
             {title}
           </Text>
-          {rightIcon && <View className="ml-2">{rightIcon}</View>}
+          {rightIcon && <View className="ml-1">{rightIcon}</View>}
         </View>
       )}
     </Pressable>
