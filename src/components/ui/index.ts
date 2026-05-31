@@ -5,3 +5,4 @@ export { default as HeaderIconButton } from './HeaderIconButton';
 export { default as Input } from './Input';
 export { default as LanguageSelector } from './LanguageSelector';
 export { default as SelectionOption } from './SelectionOption';
+export { default as Carousel } from './Carousel';

@@ -71,7 +71,7 @@ export default function HomeServiceCategoriesSection({
 }: HomeServiceCategoriesSectionProps) {
   return (
     <View className="pt-5">
-      <View className="mb-5 flex-row items-end justify-between">
+      <View className="mb-5 flex-row items-center justify-between">
         <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
 
         <Pressable onPress={onActionPress} accessibilityRole="button" accessibilityLabel={actionLabel}>

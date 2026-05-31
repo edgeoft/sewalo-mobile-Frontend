@@ -1,7 +1,12 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
-import { DEFAULT_HOME_SERVICE_CATEGORIES, HomeServiceCategoriesSection } from '@/components/home';
+import {
+  DEFAULT_HOME_SERVICE_CATEGORIES,
+  DEFAULT_POPULAR_PROVIDERS,
+  HomeServiceCategoriesSection,
+  PopularProvidersSection,
+} from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
@@ -21,6 +26,14 @@ export default function GuestHomeScreen() {
             categories={DEFAULT_HOME_SERVICE_CATEGORIES}
             onActionPress={() => router.push(ROUTES.guest.findServices)}
             onCategoryPress={() => router.push(ROUTES.guest.findServices)}
+          />
+
+          <PopularProvidersSection
+            title="Popular providers"
+            actionLabel="View All"
+            providers={DEFAULT_POPULAR_PROVIDERS}
+            onActionPress={() => router.push(ROUTES.guest.findServices)}
+            onProviderPress={() => router.push(ROUTES.guest.findServices)}
           />
         </ContentLayout>
       </ScrollView>
