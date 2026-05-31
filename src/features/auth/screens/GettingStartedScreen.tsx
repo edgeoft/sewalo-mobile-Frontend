@@ -38,7 +38,6 @@ export default function GettingStartedScreen() {
           </Text>
 
           <View className="gap-y-3">
-            {/* Customer Option */}
             <SelectionOption
               title={t('auth.customerRoleTitle')}
               subtitle={t('auth.customerRoleSubtitle')}

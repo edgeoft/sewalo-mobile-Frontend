@@ -93,6 +93,21 @@
     "invalidOtp": "Invalid OTP code. Please try again.",
     "enterOtp": "Please enter the 6-digit verification code.",
     "continueAsGuest": "Continue as Guest",
-    "or": "OR"
+    "or": "OR",
+    "getStarted": {
+      "welcomeTitle": "Welcome to Sewalo",
+      "welcomeSubtitle": "Find expert local service professionals for any task, or list your skills and grow your business today.",
+      "verifiedProsTitle": "Verified Professionals",
+      "verifiedProsDesc": "Background checked, certified, and rated service providers to ensure your safety.",
+      "instantBookingTitle": "Instant Booking",
+      "instantBookingDesc": "Book local repairs, home cleaning, beauty, or tutoring services in under a minute.",
+      "safePayoutsTitle": "Safe Payouts",
+      "safePayoutsDesc": "Secure digital escrow where providers are paid only after you approve the job.",
+      "agnosticTitle": "Get Started",
+      "needServiceTitle": "Need a Service?",
+      "needServiceDesc": "Find and hire local professionals, track jobs, and pay securely.",
+      "wantEarnTitle": "Want to Earn?",
+      "wantEarnDesc": "Offer your services, find local jobs, and build your reputation."
+    }
   }
 }

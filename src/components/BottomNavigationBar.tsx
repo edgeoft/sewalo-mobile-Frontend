@@ -48,7 +48,6 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
         return {
           label: 'Get Started',
           icon: (color) => <Feather name="user" size={22} color={color} />,
-          action: () => router.push('/auth'),
         };
       case 'bookings':
         return {
@@ -111,8 +110,13 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
       style={{
         paddingBottom: bottomPadding,
         height: barHeight,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        elevation: 8,
       }}
-      className="flex-row bg-white border-t border-gray-100 w-full"
+      className="flex-row bg-white border-t border-gray-100/50 w-full"
     >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
