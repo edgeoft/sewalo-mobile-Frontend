@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ContentLayout from '@/components/ContentLayout';
-import Header from '@/components/Header';
+import ContentLayout from '@/components/layout/ContentLayout';
+import Header from '@/components/navigation/Header';
 
 interface AuthScreenLayoutProps {
   title: string;

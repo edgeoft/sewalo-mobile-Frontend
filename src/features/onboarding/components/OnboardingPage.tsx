@@ -1,6 +1,6 @@
 import { Image, ImageSourcePropType, Text, View, useWindowDimensions } from 'react-native';
 
-import ContentLayout from '@/components/ContentLayout';
+import ContentLayout from '@/components/layout/ContentLayout';
 
 interface OnboardingPageProps {
   title: string;

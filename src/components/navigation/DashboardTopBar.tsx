@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import HeaderIconButton from './HeaderIconButton';
+import HeaderIconButton from '@/components/ui/HeaderIconButton';
 import TopBar from './TopBar';
 
 interface DashboardTopBarProps {

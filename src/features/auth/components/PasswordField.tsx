@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 
-import Input from '@/components/Input';
+import Input from '@/components/ui/Input';
 
 interface PasswordFieldProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;

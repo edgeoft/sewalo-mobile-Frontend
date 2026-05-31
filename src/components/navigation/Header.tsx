@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 
-import LanguageSelector from './LanguageSelector';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 import TopBar from './TopBar';
 
 interface HeaderProps {

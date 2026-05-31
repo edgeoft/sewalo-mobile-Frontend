@@ -5,7 +5,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';

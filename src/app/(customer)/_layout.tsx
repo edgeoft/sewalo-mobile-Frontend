@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import BottomNavigationBar from '@/components/BottomNavigationBar';
+import BottomNavigationBar from '@/components/navigation/BottomNavigationBar';
 
 export default function CustomerLayout() {
   return (

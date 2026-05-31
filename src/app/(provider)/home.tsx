@@ -1,11 +1,11 @@
-import ContentLayout from '@/components/ContentLayout';
+import ContentLayout from '@/components/layout/ContentLayout';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import DashboardTopBar from '@/components/DashboardTopBar';
-import { createRoleDrawerConfig } from '@/components/RoleDrawerConfig';
-import SideDrawer from '@/components/SideDrawer';
+import DashboardTopBar from '@/components/navigation/DashboardTopBar';
+import { createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
+import SideDrawer from '@/components/navigation/SideDrawer';
 
 export default function ProviderHomeScreen() {
   const { i18n } = useTranslation();

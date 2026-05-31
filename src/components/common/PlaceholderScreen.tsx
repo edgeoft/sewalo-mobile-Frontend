@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
 
-import ContentLayout from './ContentLayout';
+import ContentLayout from '@/components/layout/ContentLayout';
 
 interface PlaceholderScreenProps {
   title: string;

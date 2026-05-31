@@ -1,6 +1,6 @@
 import { Image, View } from 'react-native';
 
-import LanguageSelector from '@/components/LanguageSelector';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 import { LOGO } from '@/constants/images';
 
 interface OnboardingHeaderProps {

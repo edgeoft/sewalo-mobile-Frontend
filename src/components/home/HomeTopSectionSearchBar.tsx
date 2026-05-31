@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import Input from './Input';
+import Input from '@/components/ui/Input';
 
 interface HomeTopSectionSearchBarProps {
   placeholder: string;

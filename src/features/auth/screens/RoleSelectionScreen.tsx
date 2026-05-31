@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import Button from '@/components/Button';
-import ContentLayout from '@/components/ContentLayout';
-import Header from '@/components/Header';
+import Button from '@/components/ui/Button';
+import ContentLayout from '@/components/layout/ContentLayout';
+import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
 import AuthFooterLink from '../components/AuthFooterLink';

@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
-import Button from '@/components/Button';
-import Checkbox from '@/components/Checkbox';
+import Button from '@/components/ui/Button';
+import Checkbox from '@/components/ui/Checkbox';
 import AuthFooterLink from '../components/AuthFooterLink';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';

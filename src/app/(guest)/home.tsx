@@ -1,6 +1,6 @@
 import { ScrollView, View } from 'react-native';
 
-import HomeTopSection from '@/components/HomeTopSection';
+import HomeTopSection from '@/components/home/HomeTopSection';
 
 export default function GuestHomeScreen() {
   return (

@@ -5,9 +5,9 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import Button from '@/components/Button';
-import Checkbox from '@/components/Checkbox';
-import Input from '@/components/Input';
+import Button from '@/components/ui/Button';
+import Checkbox from '@/components/ui/Checkbox';
+import Input from '@/components/ui/Input';
 import { ROUTES } from '@/constants/routes';
 import { UserRole } from '@/types';
 import AuthFooterLink from '../components/AuthFooterLink';

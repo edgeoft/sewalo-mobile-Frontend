@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
-import Button from '@/components/Button';
+import Button from '@/components/ui/Button';
 import PaginationDots from './PaginationDots';
 
 interface OnboardingFooterProps {

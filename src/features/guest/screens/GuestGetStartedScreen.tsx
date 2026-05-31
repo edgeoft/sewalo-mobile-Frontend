@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ContentLayout from '@/components/ContentLayout';
-import Header from '@/components/Header';
-import { createGuestDrawerConfig } from '@/components/RoleDrawerConfig';
-import SideDrawer from '@/components/SideDrawer';
+import ContentLayout from '@/components/layout/ContentLayout';
+import Header from '@/components/navigation/Header';
+import { createGuestDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
+import SideDrawer from '@/components/navigation/SideDrawer';
 import { ROUTES } from '@/constants/routes';
 import AuthFooterLink from '@/features/auth/components/AuthFooterLink';
 import GuestFeatureCard from '../components/GuestFeatureCard';
@@ -86,18 +86,6 @@ export default function GuestGetStartedScreen() {
           </Text>
         </View>
 
-        <View className="gap-y-4 mb-6">
-          {features.map((item) => (
-            <GuestFeatureCard
-              key={item.title}
-              icon={item.icon}
-              color={item.color}
-              title={item.title}
-              description={item.description}
-            />
-          ))}
-        </View>
-
         <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3.5 ml-1">
           {t('auth.getStarted.agnosticTitle')}
         </Text>
@@ -116,6 +104,18 @@ export default function GuestGetStartedScreen() {
             description={t('auth.getStarted.wantEarnDesc')}
             onPress={() => handleJoinRole('provider')}
           />
+        </View>
+
+        <View className="gap-y-4 mb-6">
+          {features.map((item) => (
+            <GuestFeatureCard
+              key={item.title}
+              icon={item.icon}
+              color={item.color}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
         </View>
 
         <View className="mt-auto">

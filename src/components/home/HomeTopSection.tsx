@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import ContentLayout from '@/components/ContentLayout';
+import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
-import DashboardTopBar from './DashboardTopBar';
+import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 import HomeTopSectionServiceChip from './HomeTopSectionServiceChip';
-import { createGuestDrawerConfig, createRoleDrawerConfig } from './RoleDrawerConfig';
-import SideDrawer from './SideDrawer';
+import { createGuestDrawerConfig, createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
+import SideDrawer from '@/components/navigation/SideDrawer';
 
 type HomeTopSectionVariant = 'guest' | 'customer';
 
