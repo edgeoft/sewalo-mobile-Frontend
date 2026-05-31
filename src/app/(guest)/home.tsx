@@ -8,6 +8,8 @@ import {
   DEFAULT_POPULAR_PROVIDERS,
   HomeServiceCategoriesSection,
   PopularProvidersSection,
+  HomeArticleSection,
+  HomePromotionBanner,
 } from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -64,6 +66,10 @@ export default function GuestHomeScreen() {
             onActionPress={() => router.push(ROUTES.guest.findServices)}
             onProviderPress={() => router.push(ROUTES.guest.findServices)}
           />
+
+          <HomeArticleSection onPress={() => router.push(ROUTES.guest.beProvider)} />
+
+          <HomePromotionBanner onPress={() => router.push(ROUTES.guest.findServices)} />
         </ContentLayout>
       </ScrollView>
 

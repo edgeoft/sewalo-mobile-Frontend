@@ -70,7 +70,7 @@ export default function HomeServiceCategoriesSection({
   onCategoryPress,
 }: HomeServiceCategoriesSectionProps) {
   return (
-    <View className="pt-5">
+    <View className="pt-8">
       <View className="mb-5 flex-row items-center justify-between">
         <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
 

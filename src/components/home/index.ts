@@ -9,3 +9,5 @@ export { default as HomeTopSectionSearchBar } from './HomeTopSectionSearchBar';
 export { default as HomeTopSectionServiceChip } from './HomeTopSectionServiceChip';
 export { default as PopularProviderCard } from './PopularProviderCard';
 export { DEFAULT_POPULAR_PROVIDERS, default as PopularProvidersSection } from './PopularProvidersSection';
+export { default as HomeArticleSection } from './HomeArticleSection';
+export { default as HomePromotionBanner } from './HomePromotionBanner';
