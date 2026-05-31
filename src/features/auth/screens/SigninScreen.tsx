@@ -13,10 +13,14 @@ import Input from '@/components/Input';
 import AuthHeader from '../components/AuthHeader';
 import { getSigninSchema, SigninFormData } from '../data/schemas';
 
+import { useAuth } from '@/providers/AuthProvider';
+import { USER_ROLES } from '@/types';
+
 export default function SigninScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { setRole } = useAuth();
 
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +43,15 @@ export default function SigninScreen() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      alert('Sign in attempt successful!');
+      // Mock role determination: if phone ends with 9, login as provider, else customer
+      const determinedRole = data.phone.endsWith('9') ? USER_ROLES.Provider : USER_ROLES.Customer;
+      setRole(determinedRole);
+
+      if (determinedRole === USER_ROLES.Provider) {
+        router.replace('/(provider)/home');
+      } else {
+        router.replace('/(customer)/home');
+      }
     }, 1500);
   };
 
@@ -183,7 +195,10 @@ export default function SigninScreen() {
             {/* Continue as Guest Button */}
             <Button
               title={t('auth.continueAsGuest')}
-              onPress={() => alert('Continue as Guest pressed')}
+              onPress={() => {
+                setRole(USER_ROLES.Guest);
+                router.replace('/(guest)/home');
+              }}
               className="w-full border border-gray-300 bg-white active:bg-gray-50"
               textClassName="text-gray-800 font-sans-semibold"
               variant="ghost"
