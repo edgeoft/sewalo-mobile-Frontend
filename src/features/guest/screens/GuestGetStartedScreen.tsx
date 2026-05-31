@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/constants/routes';
 import AuthHeader from '@/features/auth/components/AuthHeader';
 
 export default function GuestGetStartedScreen() {
@@ -13,7 +14,7 @@ export default function GuestGetStartedScreen() {
 
   const handleJoinRole = (role: 'customer' | 'provider') => {
     router.push({
-      pathname: '/auth/signup',
+      pathname: ROUTES.auth.signup,
       params: { role },
     });
   };
@@ -133,7 +134,7 @@ export default function GuestGetStartedScreen() {
         {/* Footer SignIn redirection link */}
         <View className="flex-row items-center justify-center mt-auto">
           <Text className="text-gray-500 font-sans-regular text-xs">{t('auth.alreadyHaveAccount')} </Text>
-          <Pressable onPress={() => router.push('/auth/signin')}>
+          <Pressable onPress={() => router.push(ROUTES.auth.signin)}>
             <Text className="text-primary font-sans-bold text-xs">{t('auth.login')}</Text>
           </Pressable>
         </View>

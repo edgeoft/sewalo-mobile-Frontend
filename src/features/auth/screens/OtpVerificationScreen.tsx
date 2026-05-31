@@ -5,6 +5,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput,
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
+import { ROUTES } from '@/constants/routes';
 import AuthHeader from '../components/AuthHeader';
 
 export default function OtpVerificationScreen() {
@@ -85,12 +86,12 @@ export default function OtpVerificationScreen() {
       if (flow === 'forgot-password') {
         // Reset password screen: replace so we don't go back to OTP screen
         router.replace({
-          pathname: '/auth/reset-password',
+          pathname: ROUTES.auth.resetPassword,
           params: { phone },
         });
       } else {
         // Signup verified: redirect to Sign In
-        router.replace('/auth/signin');
+        router.replace(ROUTES.auth.signin);
       }
     }, 1500);
   };

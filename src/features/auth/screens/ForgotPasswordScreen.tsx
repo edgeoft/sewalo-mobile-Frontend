@@ -8,6 +8,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } fro
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
+import { ROUTES } from '@/constants/routes';
 import AuthHeader from '../components/AuthHeader';
 import { ForgotPasswordFormData, getForgotPasswordSchema } from '../data/schemas';
 
@@ -34,7 +35,7 @@ export default function ForgotPasswordScreen() {
     setTimeout(() => {
       setLoading(false);
       router.push({
-        pathname: '/auth/otp-verification',
+        pathname: ROUTES.auth.otpVerification,
         params: { phone: data.phone, flow: 'forgot-password' },
       });
     }, 1200);

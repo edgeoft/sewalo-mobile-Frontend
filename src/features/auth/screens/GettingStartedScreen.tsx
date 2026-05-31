@@ -6,6 +6,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
 import SelectionOption from '@/components/SelectionOption';
+import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
 import AuthHeader from '../components/AuthHeader';
 
@@ -20,7 +21,7 @@ export default function GettingStartedScreen() {
 
   const handleContinue = () => {
     router.push({
-      pathname: '/auth/signup',
+      pathname: ROUTES.auth.signup,
       params: { role: selectedRole },
     });
   };
@@ -72,7 +73,7 @@ export default function GettingStartedScreen() {
 
           <View className="flex-row items-center justify-center mt-2">
             <Text className="text-gray-600 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-            <Pressable onPress={() => router.push('/auth/signin')}>
+            <Pressable onPress={() => router.push(ROUTES.auth.signin)}>
               <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
             </Pressable>
           </View>

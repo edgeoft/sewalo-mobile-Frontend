@@ -13,6 +13,7 @@ import Input from '@/components/Input';
 import AuthHeader from '../components/AuthHeader';
 import { getSigninSchema, SigninFormData } from '../data/schemas';
 
+import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
 
@@ -48,9 +49,9 @@ export default function SigninScreen() {
       setRole(determinedRole);
 
       if (determinedRole === USER_ROLES.Provider) {
-        router.replace('/(provider)/home');
+        router.replace(ROUTES.provider.home);
       } else {
-        router.replace('/(customer)/home');
+        router.replace(ROUTES.customer.home);
       }
     }, 1500);
   };
@@ -168,7 +169,7 @@ export default function SigninScreen() {
                 />
               </View>
               <Pressable
-                onPress={() => router.push('/auth/forgot-password')}
+                onPress={() => router.push(ROUTES.auth.forgotPassword)}
                 className="flex-shrink-0 active:opacity-60"
               >
                 <Text className="text-primary font-sans-semibold text-sm">{t('auth.forgetPassword')}</Text>
@@ -197,7 +198,7 @@ export default function SigninScreen() {
               title={t('auth.continueAsGuest')}
               onPress={() => {
                 setRole(USER_ROLES.Guest);
-                router.replace('/(guest)/home');
+                router.replace(ROUTES.guest.home);
               }}
               className="w-full border border-gray-300 bg-white active:bg-gray-50"
               textClassName="text-gray-800 font-sans-semibold"
@@ -209,7 +210,7 @@ export default function SigninScreen() {
               <Pressable
                 onPress={() =>
                   router.push({
-                    pathname: '/auth',
+                    pathname: ROUTES.auth.roleSelection,
                     params: { fromSignin: 'true' },
                   })
                 }

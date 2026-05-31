@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import { ROUTES } from '@/constants/routes';
 import AuthHeader from '../components/AuthHeader';
 import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
 
@@ -57,7 +58,7 @@ export default function ResetPasswordScreen() {
       setLoading(false);
       alert(t('auth.passwordResetSuccess'));
       // Replace layout state to Signin screen
-      router.replace('/auth/signin');
+      router.replace(ROUTES.auth.signin);
     }, 1500);
   };
 

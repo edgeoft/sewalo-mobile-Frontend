@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/Button';
+import { ROUTES } from '@/constants/routes';
 import { USER_ROLES, UserRole } from '@/types';
 import AuthHeader from '../components/AuthHeader';
 import RoleCard from '../components/RoleCard';
@@ -16,7 +17,7 @@ export default function RoleSelectionScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole>(USER_ROLES.Customer);
 
   const handleContinue = () => {
-    router.push({ pathname: '/auth/signup', params: { role: selectedRole } });
+    router.push({ pathname: ROUTES.auth.signup, params: { role: selectedRole } });
   };
   return (
     <View className="flex-1 bg-secondary">
@@ -55,7 +56,7 @@ export default function RoleSelectionScreen() {
           />
           <View className="flex-row items-center justify-center mt-1">
             <Text className="text-gray-600 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-            <Pressable onPress={() => router.replace('/auth/signin')}>
+            <Pressable onPress={() => router.replace(ROUTES.auth.signin)}>
               <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
             </Pressable>
           </View>

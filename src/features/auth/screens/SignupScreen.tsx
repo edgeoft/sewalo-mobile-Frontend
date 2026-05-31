@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
 import Input from '@/components/Input';
+import { ROUTES } from '@/constants/routes';
 import { UserRole } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthHeader from '../components/AuthHeader';
@@ -62,7 +63,7 @@ export default function SignupScreen() {
     setTimeout(() => {
       setLoading(false);
       router.push({
-        pathname: '/auth/otp-verification',
+        pathname: ROUTES.auth.otpVerification,
         params: { phone: data.phone, flow: 'signup' },
       });
     }, 1500);
@@ -317,7 +318,7 @@ export default function SignupScreen() {
               />
               <View className="flex-row items-center justify-center">
                 <Text className="text-gray-500 font-sans-regular text-sm">{t('auth.alreadyHaveAccount')} </Text>
-                <Pressable onPress={() => router.replace('/auth/signin')}>
+                <Pressable onPress={() => router.replace(ROUTES.auth.signin)}>
                   <Text className="text-primary font-sans-bold text-sm">{t('auth.login')}</Text>
                 </Pressable>
               </View>

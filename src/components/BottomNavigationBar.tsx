@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
+import { BOTTOM_TAB_CONFIGS, TabConfig } from '@/constants/navigation';
+
 export interface BottomTabBarProps {
   state: {
     routes: any[];
@@ -16,91 +18,9 @@ export interface BottomTabBarProps {
   };
 }
 
-export interface TabConfig {
-  label: string;
-  icon: (color: string, focused: boolean) => React.ReactNode;
-  action?: () => void;
-}
-
 export default function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-
-  // Helper to render custom styled icons to match images exactly
-  const getTabConfig = (routeName: string): TabConfig => {
-    switch (routeName) {
-      case 'home':
-        return {
-          label: 'Home',
-          icon: (color) => <Feather name="home" size={22} color={color} />,
-        };
-      case 'find-services':
-        return {
-          label: 'Find Services',
-          icon: (color) => <Feather name="search" size={22} color={color} />,
-        };
-      case 'be-provider':
-        return {
-          label: 'Be a Provider',
-          icon: (color) => <Feather name="briefcase" size={22} color={color} />,
-        };
-      case 'get-started':
-        return {
-          label: 'Get Started',
-          icon: (color) => <Feather name="user" size={22} color={color} />,
-        };
-      case 'bookings':
-        return {
-          label: 'Bookings',
-          icon: (color) => <Feather name="calendar" size={22} color={color} />,
-        };
-      case 'favourites':
-        return {
-          label: 'Favourites',
-          icon: (color) => <Feather name="heart" size={22} color={color} />,
-        };
-      case 'account':
-        return {
-          label: 'Account',
-          icon: (color) => <Feather name="user" size={22} color={color} />,
-        };
-      case 'services':
-        return {
-          label: 'Services',
-          icon: (color) => (
-            <View className="relative items-center justify-center w-6 h-6">
-              <Feather name="hexagon" size={22} color={color} />
-              <View
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: 2.5,
-                  backgroundColor: color,
-                  position: 'absolute',
-                }}
-              />
-            </View>
-          ),
-        };
-      case 'earnings':
-        return {
-          label: 'Earnings',
-          icon: (color) => (
-            <View
-              className="border rounded-full items-center justify-center"
-              style={{ width: 22, height: 22, borderColor: color }}
-            >
-              <Feather name="dollar-sign" size={14} color={color} />
-            </View>
-          ),
-        };
-      default:
-        return {
-          label: routeName,
-          icon: (color) => <Feather name="help-circle" size={22} color={color} />,
-        };
-    }
-  };
 
   const bottomPadding = insets.bottom > 0 ? insets.bottom - 12 : 0;
   const barHeight = 56 + bottomPadding;
@@ -121,7 +41,10 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-        const config = getTabConfig(route.name);
+        const config: TabConfig = BOTTOM_TAB_CONFIGS[route.name] || {
+          label: route.name,
+          icon: (color) => <Feather name="help-circle" size={22} color={color} />,
+        };
 
         const activeColor = '#485aff'; // Brand primary blue
         const inactiveColor = '#0f172a'; // Slate dark gray
