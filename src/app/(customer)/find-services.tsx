@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import FindServicesScreen from '@/features/services/screens/FindServicesScreen';
 
 export default function CustomerFindServicesScreen() {
-  return <PlaceholderScreen title="Customer Find Services Screen" />;
+  return <FindServicesScreen />;
 }

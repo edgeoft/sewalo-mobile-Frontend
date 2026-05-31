@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { Animated, View } from 'react-native';
+import { Animated } from 'react-native';
 
-import HeaderIconButton from '@/components/ui/HeaderIconButton';
-import TopBar from './TopBar';
+import Header from './Header';
 
 interface DashboardTopBarProps {
   onMenuPress: () => void;
+  onNotificationsPress?: () => void;
   showNotifications?: boolean;
   isScrolled?: boolean;
   scrollYAnimated?: Animated.Value;
@@ -13,6 +13,7 @@ interface DashboardTopBarProps {
 
 export default function DashboardTopBar({
   onMenuPress,
+  onNotificationsPress,
   showNotifications = false,
   isScrolled = false,
   scrollYAnimated,
@@ -72,15 +73,13 @@ export default function DashboardTopBar({
       className="-mx-6"
     >
       <StatusBar style="dark" />
-      <TopBar
+      <Header
+        variant="menu"
+        onMenuPress={onMenuPress}
+        onNotificationsPress={onNotificationsPress}
+        showNotifications={showNotifications}
         containerClassName="bg-transparent"
         includeBottomBorder={false}
-        rightContent={
-          <View className="flex-row items-center gap-x-3">
-            {showNotifications ? <HeaderIconButton icon="bell" accessibilityLabel="Open notifications" /> : null}
-            <HeaderIconButton icon="menu" accessibilityLabel="Open menu" onPress={onMenuPress} />
-          </View>
-        }
       />
     </Animated.View>
   );

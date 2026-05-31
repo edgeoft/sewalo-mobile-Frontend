@@ -1,8 +1,7 @@
-import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -55,18 +54,7 @@ export default function GuestGetStartedScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header
-        rightContent={
-          <Pressable
-            onPress={() => setDrawerVisible(true)}
-            className="h-9 w-9 items-center justify-center rounded-full bg-white active:opacity-80"
-            accessibilityRole="button"
-            accessibilityLabel="Open menu"
-          >
-            <Feather name="menu" size={18} color="#0f172a" />
-          </Pressable>
-        }
-      />
+      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} />
 
       <ContentLayout
         scrollable
