@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import GuestBeProviderScreenContent from '@/features/guest/screens/GuestBeProviderScreen';
 
 export default function GuestBeProviderScreen() {
-  return <PlaceholderScreen title="Be a Provider Screen" />;
+  return <GuestBeProviderScreenContent />;
 }
