@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import CustomerFavouritesScreen from '@/features/customer/screens/CustomerFavouritesScreen';
 
-export default function CustomerFavouritesScreen() {
-  return <PlaceholderScreen title="Customer Favourites Screen" />;
+export default function CustomerFavouritesRoute() {
+  return <CustomerFavouritesScreen />;
 }
