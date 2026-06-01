@@ -51,7 +51,7 @@ export default function FindServicesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} />
+      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} showNotifications={!isGuest} />
 
       <ContentLayout
         scrollable
