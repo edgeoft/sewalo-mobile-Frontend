@@ -1,15 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Image, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createGuestDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import Button from '@/components/ui/Button';
 import { BECOME_PROVIDER } from '@/constants/images';
 import { ROUTES } from '@/constants/routes';
@@ -95,13 +91,6 @@ const faqs = [
 export default function GuestBeProviderScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { i18n } = useTranslation();
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
-  const drawerConfig = createGuestDrawerConfig({
-    currentLanguage: i18n.language || 'en',
-    onLanguageChange: (code) => i18n.changeLanguage(code),
-  });
 
   const handleGetStarted = () => {
     router.push({
@@ -112,7 +101,7 @@ export default function GuestBeProviderScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} />
+      <Header variant="menu" />
 
       <ContentLayout
         scrollable
@@ -180,14 +169,6 @@ export default function GuestBeProviderScreen() {
           />
         </View>
       </ContentLayout>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

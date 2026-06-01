@@ -5,6 +5,7 @@ import { ProviderCard } from '@/components/common';
 import { Carousel } from '@/components/ui';
 
 export interface PopularProvider {
+  id: string;
   avatarUri: string;
   name: string;
   serviceLabel: string;
@@ -16,6 +17,7 @@ export interface PopularProvider {
 
 export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
   {
+    id: 'pepper-potts',
     avatarUri: 'https://i.pravatar.cc/300?img=47',
     name: 'Pepper Potts',
     serviceLabel: 'Design',
@@ -25,6 +27,7 @@ export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
     startingFromPrice: 'Rs. 2300',
   },
   {
+    id: 'amina-shrestha',
     avatarUri: 'https://i.pravatar.cc/300?img=32',
     name: 'Amina Shrestha',
     serviceLabel: 'Cleaning',
@@ -34,6 +37,7 @@ export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
     startingFromPrice: 'Rs. 1800',
   },
   {
+    id: 'raj-khatri',
     avatarUri: 'https://i.pravatar.cc/300?img=12',
     name: 'Raj Khatri',
     serviceLabel: 'Plumbing',
@@ -43,6 +47,7 @@ export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
     startingFromPrice: 'Rs. 1500',
   },
   {
+    id: 'sita-rana',
     avatarUri: 'https://i.pravatar.cc/300?img=20',
     name: 'Sita Rana',
     serviceLabel: 'Beauty',
@@ -52,6 +57,7 @@ export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
     startingFromPrice: 'Rs. 1200',
   },
   {
+    id: 'nabin-gurung',
     avatarUri: 'https://i.pravatar.cc/300?img=8',
     name: 'Nabin Gurung',
     serviceLabel: 'Electrical',

@@ -1,14 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments } from 'expo-router';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createGuestDrawerConfig, createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import Input from '@/components/ui/Input';
 
 const CATEGORIES = [
@@ -28,22 +25,8 @@ export default function FindServicesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const segments = useSegments() as string[];
-  const { i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
   const isGuest = segments.includes('(guest)');
-
-  const drawerConfig = isGuest
-    ? createGuestDrawerConfig({
-        currentLanguage: i18n.language || 'en',
-        onLanguageChange: (code) => i18n.changeLanguage(code),
-      })
-    : createRoleDrawerConfig({
-        currentLanguage: i18n.language || 'en',
-        onLanguageChange: (code) => i18n.changeLanguage(code),
-        onLogout: () => setDrawerVisible(false),
-      });
 
   // Filter categories based on search query
   const filteredCategories = CATEGORIES.filter((category) =>
@@ -52,12 +35,7 @@ export default function FindServicesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header
-        variant="menu"
-        onMenuPress={() => setDrawerVisible(true)}
-        showNotifications={!isGuest}
-        onNotificationsPress={() => router.push('/notifications')}
-      />
+      <Header variant="menu" showNotifications={!isGuest} onNotificationsPress={() => router.push('/notifications')} />
 
       <ContentLayout
         scrollable
@@ -139,15 +117,6 @@ export default function FindServicesScreen() {
           )}
         </View>
       </ContentLayout>
-
-      {/* Role-based Drawer */}
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

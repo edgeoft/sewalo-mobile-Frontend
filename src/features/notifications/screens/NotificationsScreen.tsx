@@ -1,15 +1,11 @@
 import { Feather } from '@expo/vector-icons';
-import { useSegments } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createGuestDrawerConfig, createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import { SegmentedControl } from '@/components/ui';
 import type { SegmentedControlOption } from '@/components/ui/SegmentedControl';
 import { NOTIFICATION_FILTERS, type NotificationFilter, type NotificationItem } from '@/types';
@@ -17,25 +13,9 @@ import NotificationCard from '../components/NotificationCard';
 import { MOCK_NOTIFICATIONS } from '../constants/notifications';
 
 export default function NotificationsScreen() {
-  const { i18n } = useTranslation();
   const insets = useSafeAreaInsets();
-  const segments = useSegments() as string[];
-  const [drawerVisible, setDrawerVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>(NOTIFICATION_FILTERS.All);
   const [notifications, setNotifications] = useState<NotificationItem[]>(MOCK_NOTIFICATIONS);
-
-  const isGuest = segments.includes('(guest)');
-
-  const drawerConfig = isGuest
-    ? createGuestDrawerConfig({
-        currentLanguage: i18n.language || 'en',
-        onLanguageChange: (code) => i18n.changeLanguage(code),
-      })
-    : createRoleDrawerConfig({
-        currentLanguage: i18n.language || 'en',
-        onLanguageChange: (code) => i18n.changeLanguage(code),
-        onLogout: () => setDrawerVisible(false),
-      });
 
   const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -89,13 +69,7 @@ export default function NotificationsScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header
-        variant="menu"
-        onMenuPress={() => setDrawerVisible(true)}
-        showNotifications={false}
-        includeBottomBorder={false}
-        showBackButton
-      />
+      <Header variant="menu" showNotifications={false} includeBottomBorder={false} showBackButton />
 
       <ContentLayout
         scrollable
@@ -152,14 +126,6 @@ export default function NotificationsScreen() {
           )}
         />
       </ContentLayout>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

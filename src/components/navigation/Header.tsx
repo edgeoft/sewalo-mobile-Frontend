@@ -1,10 +1,14 @@
-import { useRouter } from 'expo-router';
-import { type ReactNode } from 'react';
+import { useRouter, useSegments } from 'expo-router';
+import { type ReactNode, useState } from 'react';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import HeaderIconButton from '@/components/ui/HeaderIconButton';
 import TopBar from './TopBar';
+import SideDrawer from './SideDrawer';
+import { createGuestDrawerConfig, createRoleDrawerConfig } from './RoleDrawerConfig';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface HeaderBaseProps {
   showBackButton?: boolean;
@@ -20,7 +24,7 @@ type LanguageHeaderProps = HeaderBaseProps & {
 
 type MenuHeaderProps = HeaderBaseProps & {
   variant: 'menu';
-  onMenuPress: () => void;
+  onMenuPress?: () => void;
   showNotifications?: boolean;
   onNotificationsPress?: () => void;
 };
@@ -34,7 +38,34 @@ type HeaderProps = LanguageHeaderProps | MenuHeaderProps | CustomHeaderProps;
 
 export default function Header(props: HeaderProps) {
   const router = useRouter();
+  const { i18n } = useTranslation();
+  const { role } = useAuth();
+  const segments = useSegments() as string[];
+
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const { showBackButton = false, leadingContent, containerClassName, contentClassName, includeBottomBorder } = props;
+
+  const isGuest = role === 'guest' || segments.includes('(guest)');
+  const drawerConfig = isGuest
+    ? createGuestDrawerConfig({
+        currentLanguage: i18n.language || 'en',
+        onLanguageChange: (code) => i18n.changeLanguage(code),
+      })
+    : createRoleDrawerConfig({
+        currentLanguage: i18n.language || 'en',
+        onLanguageChange: (code) => i18n.changeLanguage(code),
+        onLogout: () => setDrawerVisible(false),
+      });
+
+  const handleMenuPress = () => {
+    if (props.variant === 'menu') {
+      if (props.onMenuPress) {
+        props.onMenuPress();
+      } else {
+        setDrawerVisible(true);
+      }
+    }
+  };
 
   const renderRightContent = () => {
     if (props.variant === 'custom') {
@@ -51,7 +82,7 @@ export default function Header(props: HeaderProps) {
               onPress={props.onNotificationsPress}
             />
           ) : null}
-          <HeaderIconButton icon="menu" accessibilityLabel="Open menu" onPress={props.onMenuPress} />
+          <HeaderIconButton icon="menu" accessibilityLabel="Open menu" onPress={handleMenuPress} />
         </View>
       );
     }
@@ -60,14 +91,25 @@ export default function Header(props: HeaderProps) {
   };
 
   return (
-    <TopBar
-      leadingContent={leadingContent}
-      showBackButton={showBackButton}
-      onBackPress={() => router.back()}
-      rightContent={renderRightContent()}
-      containerClassName={containerClassName}
-      contentClassName={contentClassName}
-      includeBottomBorder={includeBottomBorder}
-    />
+    <>
+      <TopBar
+        leadingContent={leadingContent}
+        showBackButton={showBackButton}
+        onBackPress={() => router.back()}
+        rightContent={renderRightContent()}
+        containerClassName={containerClassName}
+        contentClassName={contentClassName}
+        includeBottomBorder={includeBottomBorder}
+      />
+      {props.variant === 'menu' && (
+        <SideDrawer
+          visible={drawerVisible}
+          onClose={() => setDrawerVisible(false)}
+          title="Menu"
+          sections={drawerConfig.sections}
+          footerAction={drawerConfig.footerAction}
+        />
+      )}
+    </>
   );
 }

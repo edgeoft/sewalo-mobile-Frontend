@@ -1,28 +1,19 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createGuestDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import { ROUTES } from '@/constants/routes';
 import AuthFooterLink from '@/features/auth/components/AuthFooterLink';
 import GuestFeatureCard from '../components/GuestFeatureCard';
 import GuestRoleActionCard from '../components/GuestRoleActionCard';
 
 export default function GuestGetStartedScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
-  const drawerConfig = createGuestDrawerConfig({
-    currentLanguage: i18n.language || 'en',
-    onLanguageChange: (code) => i18n.changeLanguage(code),
-  });
 
   const handleJoinRole = (role: 'customer' | 'provider') => {
     router.push({
@@ -54,7 +45,7 @@ export default function GuestGetStartedScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} />
+      <Header variant="menu" />
 
       <ContentLayout
         scrollable
@@ -115,14 +106,6 @@ export default function GuestGetStartedScreen() {
           />
         </View>
       </ContentLayout>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

@@ -1,36 +1,26 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import Input from '@/components/ui/Input';
 import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { CUSTOMER_BOOKINGS_MOCK } from '../constants/customerBookings';
+import { ROUTES } from '@/constants/routes';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
-  const { i18n } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [drawerVisible, setDrawerVisible] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
-
-  const drawerConfig = createRoleDrawerConfig({
-    currentLanguage: i18n.language || 'en',
-    onLanguageChange: (code) => i18n.changeLanguage(code),
-    onLogout: () => setDrawerVisible(false),
-  });
 
   const countsByStatus = useMemo(() => {
     const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(
@@ -67,12 +57,7 @@ export default function CustomerBookingsScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header
-        variant="menu"
-        onMenuPress={() => setDrawerVisible(true)}
-        showNotifications
-        onNotificationsPress={() => router.push('/notifications')}
-      />
+      <Header variant="menu" showNotifications onNotificationsPress={() => router.push('/notifications')} />
 
       <ContentLayout
         scrollable
@@ -162,20 +147,16 @@ export default function CustomerBookingsScreen() {
               bookingStatus={booking.status}
               actionLabel="View Details"
               variant="booking"
+              onPress={() => {
+                const providerId = booking.name.toLowerCase().replace(' ', '-');
+                router.push(ROUTES.providerDetail(providerId));
+              }}
             />
           )}
         />
 
         <View className="h-3" />
       </ContentLayout>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

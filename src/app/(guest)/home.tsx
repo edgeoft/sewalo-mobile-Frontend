@@ -1,6 +1,4 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
 import {
@@ -14,32 +12,18 @@ import {
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
-import { createGuestDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 
 export default function GuestHomeScreen() {
   const router = useRouter();
-  const { i18n } = useTranslation();
-  const [drawerVisible, setDrawerVisible] = useState(false);
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
-
-  const drawerConfig = createGuestDrawerConfig({
-    currentLanguage: i18n.language || 'en',
-    onLanguageChange: (code) => i18n.changeLanguage(code),
-  });
 
   return (
     <View className="flex-1 bg-secondary">
       {/* Sticky Header absolutely positioned */}
       <View className="absolute top-0 left-0 right-0 z-50 px-6">
-        <DashboardTopBar
-          isScrolled={isScrolled}
-          scrollYAnimated={scrollYAnimated}
-          showNotifications={false}
-          onMenuPress={() => setDrawerVisible(true)}
-        />
+        <DashboardTopBar isScrolled={isScrolled} scrollYAnimated={scrollYAnimated} showNotifications={false} />
       </View>
 
       <ScrollView
@@ -64,7 +48,7 @@ export default function GuestHomeScreen() {
             actionLabel="View All"
             providers={DEFAULT_POPULAR_PROVIDERS}
             onActionPress={() => router.push(ROUTES.guest.findServices)}
-            onProviderPress={() => router.push(ROUTES.guest.findServices)}
+            onProviderPress={(provider) => router.push(ROUTES.providerDetail(provider.id))}
           />
 
           <HomeArticleSection onPress={() => router.push(ROUTES.guest.beProvider)} />
@@ -72,14 +56,6 @@ export default function GuestHomeScreen() {
           <HomePromotionBanner onPress={() => router.push(ROUTES.guest.findServices)} />
         </ContentLayout>
       </ScrollView>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }

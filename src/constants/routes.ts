@@ -28,4 +28,5 @@ export const ROUTES = {
     earnings: '/(provider)/earnings',
     account: '/(provider)/account',
   },
+  providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;

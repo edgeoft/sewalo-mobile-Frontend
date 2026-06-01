@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 import Header from './Header';
 
 interface DashboardTopBarProps {
-  onMenuPress: () => void;
+  onMenuPress?: () => void;
   onNotificationsPress?: () => void;
   showNotifications?: boolean;
   isScrolled?: boolean;

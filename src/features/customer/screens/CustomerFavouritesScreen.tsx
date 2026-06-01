@@ -1,36 +1,20 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig';
-import SideDrawer from '@/components/navigation/SideDrawer';
 import { CUSTOMER_FAVOURITES_MOCK } from '../constants/customerFavourites';
+import { ROUTES } from '@/constants/routes';
 
 export default function CustomerFavouritesScreen() {
   const router = useRouter();
-  const { i18n } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
-  const drawerConfig = createRoleDrawerConfig({
-    currentLanguage: i18n.language || 'en',
-    onLanguageChange: (code) => i18n.changeLanguage(code),
-    onLogout: () => setDrawerVisible(false),
-  });
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header
-        variant="menu"
-        onMenuPress={() => setDrawerVisible(true)}
-        showNotifications
-        onNotificationsPress={() => router.push('/notifications')}
-      />
+      <Header variant="menu" showNotifications onNotificationsPress={() => router.push('/notifications')} />
 
       <ContentLayout
         scrollable
@@ -66,20 +50,16 @@ export default function CustomerFavouritesScreen() {
               startingFromPrice={item.startingFromPrice}
               actionLabel="View Details"
               variant="details"
+              onPress={() => {
+                const providerId = item.name.toLowerCase().replace(' ', '-');
+                router.push(ROUTES.providerDetail(providerId));
+              }}
             />
           )}
         />
 
         <View className="h-3" />
       </ContentLayout>
-
-      <SideDrawer
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        title="Menu"
-        sections={drawerConfig.sections}
-        footerAction={drawerConfig.footerAction}
-      />
     </View>
   );
 }
