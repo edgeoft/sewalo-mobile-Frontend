@@ -76,7 +76,12 @@ export default function CustomerBookingsScreen() {
           paddingBottom: Math.max(insets.bottom, 24),
         }}
       >
-        <SectionHeader title="My Bookings" description="Track all bookings and filter by status." className="mb-5" />
+        <SectionHeader
+          title="My Bookings"
+          description="Track all bookings and filter by status."
+          className="mb-5"
+          titleClassName="text-2xl"
+        />
 
         <View className="mb-4 flex-row items-center gap-3">
           <View className="flex-1">

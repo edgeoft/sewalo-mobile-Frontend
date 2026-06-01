@@ -8,6 +8,7 @@ interface SectionHeaderProps {
   actionLabel?: string;
   onActionPress?: () => void;
   className?: string;
+  titleClassName?: string;
 }
 
 export default function SectionHeader({
@@ -17,6 +18,7 @@ export default function SectionHeader({
   actionLabel,
   onActionPress,
   className = '',
+  titleClassName = '',
 }: SectionHeaderProps) {
   return (
     <View className={className}>
@@ -25,7 +27,9 @@ export default function SectionHeader({
       ) : null}
 
       <View className="mb-2 flex-row items-center justify-between gap-2">
-        <Text className="flex-1 text-xl font-sans-extrabold text-gray-950 tracking-tight">{title}</Text>
+        <Text className={`flex-1 text-xl font-sans-extrabold text-gray-950 tracking-tight ${titleClassName}`}>
+          {title}
+        </Text>
 
         {actionLabel ? (
           <Pressable
