@@ -12,13 +12,14 @@ export interface ProviderCardProps {
   name: string;
   serviceLabel: string;
   location: string;
-  ordersCompleted: string;
+  ordersCompleted?: string;
   rating: string;
   startingFromPrice: string;
   bookingStatus?: BookingStatus;
   actionLabel?: string;
   width?: number;
   onPress?: () => void;
+  variant?: 'details' | 'booking';
 }
 
 export default function ProviderCard({
@@ -33,7 +34,9 @@ export default function ProviderCard({
   actionLabel = 'View Details',
   width,
   onPress,
+  variant = 'details',
 }: ProviderCardProps) {
+  const isBookingVariant = variant === 'booking';
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
     <Feather name={icon} size={size} color={color} />
   );
@@ -64,13 +67,15 @@ export default function ProviderCard({
             <Text className="flex-1 text-base font-sans-bold text-gray-900" numberOfLines={1}>
               {name}
             </Text>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Save ${name}`}
-              className="ml-2 h-7 w-7 items-center justify-center rounded-xl bg-gray-50"
-            >
-              {renderIcon('heart', '#94a3b8', 14)}
-            </Pressable>
+            {!isBookingVariant && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Save ${name}`}
+                className="ml-2 h-7 w-7 items-center justify-center rounded-xl bg-gray-50"
+              >
+                {renderIcon('heart', '#94a3b8', 14)}
+              </Pressable>
+            )}
           </View>
 
           <View className="flex-row items-center gap-2">
@@ -92,12 +97,21 @@ export default function ProviderCard({
               </Text>
             </View>
 
-            <View className="flex-row items-center gap-1">
-              {renderIcon('award', '#64748b', 12)}
-              <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
-                {ordersCompleted}
-              </Text>
-            </View>
+            {isBookingVariant ? (
+              <View className="flex-row items-center gap-1">
+                {renderIcon('dollar-sign', '#64748b', 12)}
+                <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
+                  {startingFromPrice}
+                </Text>
+              </View>
+            ) : (
+              <View className="flex-row items-center gap-1">
+                {renderIcon('award', '#64748b', 12)}
+                <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
+                  {ordersCompleted}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -118,12 +132,12 @@ export default function ProviderCard({
               {statusPresentation.label}
             </Text>
           </View>
-        ) : (
+        ) : !isBookingVariant ? (
           <View className="flex-row items-center">
             <Text className="text-xs font-sans-medium text-gray-400">Starting from </Text>
             <Text className="text-sm font-sans-bold text-primary">{startingFromPrice}</Text>
           </View>
-        )}
+        ) : null}
 
         <View className="rounded-md bg-primary px-4 py-2">
           <Text className="text-xs font-sans-semibold text-white">{actionLabel}</Text>

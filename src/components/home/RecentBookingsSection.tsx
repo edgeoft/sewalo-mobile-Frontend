@@ -1,14 +1,14 @@
 import { ProviderCard, SectionHeader } from '@/components/common';
 import { View } from 'react-native';
 
-import type { PopularProvider } from './PopularProvidersSection';
+import type { CustomerBookingItem } from '@/features/customer/constants/customerBookings';
 
 export interface RecentBookingsSectionProps {
   title: string;
   actionLabel: string;
-  bookings: PopularProvider[];
+  bookings: CustomerBookingItem[];
   onActionPress?: () => void;
-  onBookingPress?: (booking: PopularProvider) => void;
+  onBookingPress?: (booking: CustomerBookingItem) => void;
 }
 
 export default function RecentBookingsSection({
@@ -25,15 +25,16 @@ export default function RecentBookingsSection({
       <View className="gap-4">
         {bookings.slice(0, 2).map((booking) => (
           <ProviderCard
-            key={booking.name}
+            key={booking.id}
             avatarUri={booking.avatarUri}
             name={booking.name}
             serviceLabel={booking.serviceLabel}
             location={booking.location}
-            ordersCompleted={booking.ordersCompleted}
             rating={booking.rating}
-            startingFromPrice={booking.startingFromPrice}
+            startingFromPrice={booking.bookedPrice}
+            bookingStatus={booking.status}
             onPress={() => onBookingPress?.(booking)}
+            variant="booking"
           />
         ))}
       </View>

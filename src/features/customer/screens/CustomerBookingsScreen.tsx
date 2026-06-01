@@ -150,11 +150,11 @@ export default function CustomerBookingsScreen() {
               name={booking.name}
               serviceLabel={booking.serviceLabel}
               location={booking.location}
-              ordersCompleted={booking.ordersCompleted}
               rating={booking.rating}
               startingFromPrice={booking.bookedPrice}
               bookingStatus={booking.status}
               actionLabel="View Details"
+              variant="booking"
             />
           )}
         />

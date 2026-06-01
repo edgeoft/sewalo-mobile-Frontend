@@ -5,10 +5,10 @@ import { ScrollView, View } from 'react-native';
 
 import {
   DEFAULT_HOME_SERVICE_CATEGORIES,
-  DEFAULT_POPULAR_PROVIDERS,
   HomeServiceCategoriesSection,
   RecentBookingsSection,
 } from '@/components/home';
+import { CUSTOMER_BOOKINGS_MOCK } from '@/features/customer/constants/customerBookings';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
@@ -61,7 +61,7 @@ export default function CustomerHomeScreen() {
           <RecentBookingsSection
             title="Recent Bookings"
             actionLabel="View All"
-            bookings={DEFAULT_POPULAR_PROVIDERS}
+            bookings={CUSTOMER_BOOKINGS_MOCK}
             onActionPress={() => router.push(ROUTES.customer.bookings)}
             onBookingPress={() => router.push(ROUTES.customer.bookings)}
           />
