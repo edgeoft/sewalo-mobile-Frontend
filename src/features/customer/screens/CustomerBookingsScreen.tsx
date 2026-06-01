@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
@@ -148,8 +148,10 @@ export default function CustomerBookingsScreen() {
               actionLabel="View Details"
               variant="booking"
               onPress={() => {
-                const providerId = booking.name.toLowerCase().replace(' ', '-');
-                router.push(ROUTES.providerDetail(providerId));
+                Alert.alert(
+                  'Booking Details',
+                  `Booking with ${booking.name}\nService: ${booking.serviceLabel}\nStatus: ${booking.status}\nPrice: ${booking.bookedPrice}`,
+                );
               }}
             />
           )}
