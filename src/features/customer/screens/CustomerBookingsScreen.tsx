@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
@@ -17,6 +18,7 @@ import EmptyBookingsState from '../components/EmptyBookingsState';
 import { CUSTOMER_BOOKINGS_MOCK } from '../constants/customerBookings';
 
 export default function CustomerBookingsScreen() {
+  const router = useRouter();
   const { i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -65,7 +67,12 @@ export default function CustomerBookingsScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} showNotifications />
+      <Header
+        variant="menu"
+        onMenuPress={() => setDrawerVisible(true)}
+        showNotifications
+        onNotificationsPress={() => router.push('/notifications')}
+      />
 
       <ContentLayout
         scrollable

@@ -20,3 +20,21 @@ export const BOOKING_STATUSES = {
 } as const;
 
 export type BookingStatus = (typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES];
+
+export const NOTIFICATION_FILTERS = {
+  All: 'all',
+  Unread: 'unread',
+} as const;
+
+export type NotificationFilter = (typeof NOTIFICATION_FILTERS)[keyof typeof NOTIFICATION_FILTERS];
+
+export interface NotificationItem {
+  id: string;
+  type: 'booking' | 'payment' | 'review' | 'promo' | 'system';
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  actionable?: boolean;
+  relatedId?: string;
+}

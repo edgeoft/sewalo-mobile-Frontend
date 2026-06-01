@@ -1,4 +1,5 @@
 export const ROUTES = {
+  notifications: '/notifications',
   auth: {
     signin: '/auth/signin',
     signup: '/auth/signup',

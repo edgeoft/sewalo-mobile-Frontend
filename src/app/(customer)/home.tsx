@@ -37,6 +37,7 @@ export default function CustomerHomeScreen() {
           isScrolled={isScrolled}
           scrollYAnimated={scrollYAnimated}
           showNotifications={true}
+          onNotificationsPress={() => router.push('/notifications')}
           onMenuPress={() => setDrawerVisible(true)}
         />
       </View>

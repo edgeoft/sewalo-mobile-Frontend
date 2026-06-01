@@ -109,5 +109,20 @@
       "wantEarnTitle": "Want to Earn?",
       "wantEarnDesc": "Offer your services, find local jobs, and build your reputation."
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "all": "All",
+    "unread": "Unread",
+    "markAllRead": "Mark All Read",
+    "emptyAll": "No notifications yet",
+    "emptyAllDesc": "You'll see updates here when something new arrives.",
+    "emptyUnread": "No unread notifications",
+    "emptyUnreadDesc": "You've read all your notifications.",
+    "markRead": "Mark Read",
+    "delete": "Delete",
+    "new": "New",
+    "unreadCount": "{{count}} unread notification",
+    "unreadCount_plural": "{{count}} unread notifications"
   }
 }

@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,7 @@ import { createRoleDrawerConfig } from '@/components/navigation/RoleDrawerConfig
 import SideDrawer from '@/components/navigation/SideDrawer';
 
 export default function ProviderHomeScreen() {
+  const router = useRouter();
   const { i18n } = useTranslation();
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -19,7 +21,11 @@ export default function ProviderHomeScreen() {
 
   return (
     <ContentLayout className="flex-1 bg-secondary">
-      <DashboardTopBar showNotifications onMenuPress={() => setDrawerVisible(true)} />
+      <DashboardTopBar
+        showNotifications
+        onNotificationsPress={() => router.push('/notifications')}
+        onMenuPress={() => setDrawerVisible(true)}
+      />
 
       <View className="flex-1 items-center justify-center">
         <Text className="text-xl font-sans-bold text-gray-900">Provider Home Screen</Text>

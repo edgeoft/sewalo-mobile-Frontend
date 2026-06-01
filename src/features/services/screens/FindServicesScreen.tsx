@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useSegments } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -25,6 +25,7 @@ const CATEGORIES = [
 ];
 
 export default function FindServicesScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const segments = useSegments() as string[];
   const { i18n } = useTranslation();
@@ -51,7 +52,12 @@ export default function FindServicesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} showNotifications={!isGuest} />
+      <Header
+        variant="menu"
+        onMenuPress={() => setDrawerVisible(true)}
+        showNotifications={!isGuest}
+        onNotificationsPress={() => router.push('/notifications')}
+      />
 
       <ContentLayout
         scrollable

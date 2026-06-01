@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -11,6 +12,7 @@ import SideDrawer from '@/components/navigation/SideDrawer';
 import { CUSTOMER_FAVOURITES_MOCK } from '../constants/customerFavourites';
 
 export default function CustomerFavouritesScreen() {
+  const router = useRouter();
   const { i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -23,7 +25,12 @@ export default function CustomerFavouritesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" onMenuPress={() => setDrawerVisible(true)} showNotifications />
+      <Header
+        variant="menu"
+        onMenuPress={() => setDrawerVisible(true)}
+        showNotifications
+        onNotificationsPress={() => router.push('/notifications')}
+      />
 
       <ContentLayout
         scrollable
