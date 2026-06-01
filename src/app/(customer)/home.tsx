@@ -62,8 +62,8 @@ export default function CustomerHomeScreen() {
             title="Recent Bookings"
             actionLabel="View All"
             bookings={DEFAULT_POPULAR_PROVIDERS}
-            onActionPress={() => router.push(ROUTES.customer.findServices)}
-            onBookingPress={() => router.push(ROUTES.customer.findServices)}
+            onActionPress={() => router.push(ROUTES.customer.bookings)}
+            onBookingPress={() => router.push(ROUTES.customer.bookings)}
           />
         </ContentLayout>
       </ScrollView>

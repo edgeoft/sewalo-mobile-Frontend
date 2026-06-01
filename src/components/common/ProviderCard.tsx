@@ -2,6 +2,9 @@ import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
+import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
+import type { BookingStatus } from '@/types';
+
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
 export interface ProviderCardProps {
@@ -12,6 +15,8 @@ export interface ProviderCardProps {
   ordersCompleted: string;
   rating: string;
   startingFromPrice: string;
+  bookingStatus?: BookingStatus;
+  actionLabel?: string;
   width?: number;
   onPress?: () => void;
 }
@@ -24,12 +29,15 @@ export default function ProviderCard({
   ordersCompleted,
   rating,
   startingFromPrice,
+  bookingStatus,
+  actionLabel = 'View Details',
   width,
   onPress,
 }: ProviderCardProps) {
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
     <Feather name={icon} size={size} color={color} />
   );
+  const statusPresentation = bookingStatus ? BOOKING_STATUS_PRESENTATION[bookingStatus] : null;
 
   return (
     <Pressable
@@ -97,13 +105,28 @@ export default function ProviderCard({
       <View className="my-2.5 border-t border-gray-100" />
 
       <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <Text className="text-xs font-sans-medium text-gray-400">Starting from </Text>
-          <Text className="text-sm font-sans-bold text-primary">{startingFromPrice}</Text>
-        </View>
+        {statusPresentation ? (
+          <View
+            className="flex-row items-center rounded-xl px-2.5 py-1"
+            style={{ backgroundColor: statusPresentation.backgroundColor }}
+          >
+            <View
+              className="h-1.5 w-1.5 rounded-full mr-1.5"
+              style={{ backgroundColor: statusPresentation.dotColor }}
+            />
+            <Text className="text-xs font-sans-medium" style={{ color: statusPresentation.textColor }}>
+              {statusPresentation.label}
+            </Text>
+          </View>
+        ) : (
+          <View className="flex-row items-center">
+            <Text className="text-xs font-sans-medium text-gray-400">Starting from </Text>
+            <Text className="text-sm font-sans-bold text-primary">{startingFromPrice}</Text>
+          </View>
+        )}
 
         <View className="rounded-md bg-primary px-4 py-2">
-          <Text className="text-xs font-sans-semibold text-white">View Details</Text>
+          <Text className="text-xs font-sans-semibold text-white">{actionLabel}</Text>
         </View>
       </View>
     </Pressable>
