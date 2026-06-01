@@ -4,7 +4,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
-export interface PopularProviderCardProps {
+export interface ProviderCardProps {
   avatarUri: string;
   name: string;
   serviceLabel: string;
@@ -16,7 +16,7 @@ export interface PopularProviderCardProps {
   onPress?: () => void;
 }
 
-export default function PopularProviderCard({
+export default function ProviderCard({
   avatarUri,
   name,
   serviceLabel,
@@ -26,7 +26,7 @@ export default function PopularProviderCard({
   startingFromPrice,
   width,
   onPress,
-}: PopularProviderCardProps) {
+}: ProviderCardProps) {
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
     <Feather name={icon} size={size} color={color} />
   );
@@ -48,14 +48,10 @@ export default function PopularProviderCard({
       accessibilityRole="button"
       accessibilityLabel={name}
     >
-      {/* Top Section: Image on Left, Details on Right */}
       <View className="flex-row gap-3">
-        {/* Left Side: Photo */}
         <Image source={{ uri: avatarUri }} resizeMode="cover" className="h-24 w-24 rounded-xl bg-gray-50" />
 
-        {/* Right Side: Info & Metadata */}
         <View className="flex-1 justify-between py-0.5">
-          {/* Header: Name & Save Icon */}
           <View className="flex-row items-center justify-between">
             <Text className="flex-1 text-base font-sans-bold text-gray-900" numberOfLines={1}>
               {name}
@@ -69,7 +65,6 @@ export default function PopularProviderCard({
             </Pressable>
           </View>
 
-          {/* Middle Row: Tag Badge & Rating */}
           <View className="flex-row items-center gap-2">
             <View className="rounded-xl bg-[#eef1ff] px-2 py-0.5">
               <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
@@ -81,7 +76,6 @@ export default function PopularProviderCard({
             </View>
           </View>
 
-          {/* Bottom Info: Location & Completed Count */}
           <View className="gap-1 mt-1">
             <View className="flex-row items-center gap-1">
               {renderIcon('map-pin', '#64748b', 12)}
@@ -100,10 +94,8 @@ export default function PopularProviderCard({
         </View>
       </View>
 
-      {/* Divider */}
       <View className="my-2.5 border-t border-gray-100" />
 
-      {/* Bottom Section: Pricing & Action Button */}
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Text className="text-xs font-sans-medium text-gray-400">Starting from </Text>

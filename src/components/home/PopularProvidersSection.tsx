@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
 
+import { ProviderCard } from '@/components/common';
 import { Carousel } from '@/components/ui';
-import PopularProviderCard from './PopularProviderCard';
 
 export interface PopularProvider {
   avatarUri: string;
@@ -97,7 +97,7 @@ export default function PopularProvidersSection({
         autoplay={true}
         autoplayInterval={10000}
         renderItem={({ item: provider, cardWidth }) => (
-          <PopularProviderCard
+          <ProviderCard
             avatarUri={provider.avatarUri}
             name={provider.name}
             serviceLabel={provider.serviceLabel}

@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
-import { DEFAULT_HOME_SERVICE_CATEGORIES, HomeServiceCategoriesSection } from '@/components/home';
+import {
+  DEFAULT_HOME_SERVICE_CATEGORIES,
+  DEFAULT_POPULAR_PROVIDERS,
+  HomeServiceCategoriesSection,
+  RecentBookingsSection,
+} from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
@@ -51,6 +56,14 @@ export default function CustomerHomeScreen() {
             categories={DEFAULT_HOME_SERVICE_CATEGORIES}
             onActionPress={() => router.push(ROUTES.customer.findServices)}
             onCategoryPress={() => router.push(ROUTES.customer.findServices)}
+          />
+
+          <RecentBookingsSection
+            title="Recent Bookings"
+            actionLabel="View All"
+            bookings={DEFAULT_POPULAR_PROVIDERS}
+            onActionPress={() => router.push(ROUTES.customer.findServices)}
+            onBookingPress={() => router.push(ROUTES.customer.findServices)}
           />
         </ContentLayout>
       </ScrollView>
