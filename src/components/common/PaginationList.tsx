@@ -1,0 +1,112 @@
+import React, { useMemo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+export interface PaginationListProps<T> {
+  data: T[];
+  keyExtractor: (item: T, index: number) => string;
+  renderItem: (item: T, index: number, pageIndex: number) => React.ReactNode;
+  pageSize?: number;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  emptyContent?: React.ReactNode;
+  listClassName?: string;
+}
+
+export default function PaginationList<T>({
+  data,
+  keyExtractor,
+  renderItem,
+  pageSize = 5,
+  emptyTitle = 'No records found',
+  emptyDescription = 'Try changing your filters or searching.',
+  emptyContent,
+  listClassName = 'gap-3',
+}: PaginationListProps<T>) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Total pages calculation
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(data.length / pageSize));
+  }, [data.length, pageSize]);
+
+  // Adjust page if data length changes
+  const activePage = Math.min(currentPage, totalPages);
+
+  // Slice data for the active page
+  const pageItems = useMemo(() => {
+    const start = (activePage - 1) * pageSize;
+    const end = start + pageSize;
+    return data.slice(start, end);
+  }, [data, activePage, pageSize]);
+
+  const handlePrevPage = () => {
+    if (activePage > 1) {
+      setCurrentPage(activePage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (activePage < totalPages) {
+      setCurrentPage(activePage + 1);
+    }
+  };
+
+  if (data.length === 0) {
+    if (emptyContent) {
+      return <>{emptyContent}</>;
+    }
+
+    return (
+      <View className="rounded-xl border border-gray-200 bg-white px-5 py-8 items-center">
+        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{emptyTitle}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5">{emptyDescription}</Text>
+      </View>
+    );
+  }
+
+  const isFirstPage = activePage === 1;
+  const isLastPage = activePage === totalPages;
+
+  return (
+    <View className="flex-1">
+      <View className={listClassName}>
+        {pageItems.map((item, index) => {
+          const globalIndex = (activePage - 1) * pageSize + index;
+          return <View key={keyExtractor(item, globalIndex)}>{renderItem(item, globalIndex, index)}</View>;
+        })}
+      </View>
+
+      {/* Pagination Controls */}
+      <View className="flex-row items-center justify-between pt-5 pb-2 px-1">
+        <Pressable
+          onPress={handlePrevPage}
+          disabled={isFirstPage}
+          accessibilityRole="button"
+          accessibilityLabel="Previous Page"
+          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
+            isFirstPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
+          }`}
+        >
+          <Feather name="chevron-left" size={18} color="#64748b" />
+        </Pressable>
+
+        <Text className="text-xs font-sans-semibold text-gray-500">
+          Page {activePage} of {totalPages}
+        </Text>
+
+        <Pressable
+          onPress={handleNextPage}
+          disabled={isLastPage}
+          accessibilityRole="button"
+          accessibilityLabel="Next Page"
+          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
+            isLastPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
+          }`}
+        >
+          <Feather name="chevron-right" size={18} color="#64748b" />
+        </Pressable>
+      </View>
+    </View>
+  );
+}

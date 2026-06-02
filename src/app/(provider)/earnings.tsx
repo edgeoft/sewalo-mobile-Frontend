@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import ProviderEarningsScreen from '@/features/provider/screens/ProviderEarningsScreen';
 
-export default function ProviderEarningsScreen() {
-  return <PlaceholderScreen title="Provider Earnings Screen" />;
+export default function EarningsRoute() {
+  return <ProviderEarningsScreen />;
 }
