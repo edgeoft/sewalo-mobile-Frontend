@@ -1,0 +1,116 @@
+import React from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
+import { BOOKING_STATUSES } from '@/types';
+import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
+
+interface ProviderOrderCardProps {
+  order: ProviderBookingItem;
+  onAccept?: (id: string) => void;
+  onDecline?: (id: string) => void;
+  onPress?: () => void;
+}
+
+export default function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrderCardProps) {
+  const statusPresentation = BOOKING_STATUS_PRESENTATION[order.status];
+  const isPending = order.status === BOOKING_STATUSES.Pending;
+
+  const cardShadow = {
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 2,
+  };
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={cardShadow}
+      className="rounded-xl border border-gray-200 bg-white p-3 active:opacity-95"
+      accessibilityRole="button"
+      accessibilityLabel={`Order from ${order.customerName}`}
+    >
+      <View className="flex-row gap-3">
+        {/* Customer Avatar */}
+        <Image source={{ uri: order.customerAvatar }} className="h-16 w-16 rounded-xl bg-gray-50" resizeMode="cover" />
+
+        {/* Customer & Order Details */}
+        <View className="flex-1 justify-center">
+          <View className="flex-row items-center justify-between mb-1">
+            <Text className="text-base font-sans-bold text-gray-900" numberOfLines={1}>
+              {order.customerName}
+            </Text>
+            {statusPresentation && (
+              <View
+                className="flex-row items-center rounded-full px-2 py-0.5"
+                style={{ backgroundColor: statusPresentation.backgroundColor }}
+              >
+                <View
+                  className="h-1.5 w-1.5 rounded-full mr-1"
+                  style={{ backgroundColor: statusPresentation.dotColor }}
+                />
+                <Text className="text-[10px] font-sans-semibold" style={{ color: statusPresentation.textColor }}>
+                  {statusPresentation.label}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <Text className="text-xs font-sans-bold text-primary mb-1.5">{order.serviceLabel}</Text>
+
+          <View className="gap-y-1">
+            {/* Scheduled Date/Time */}
+            <View className="flex-row items-center gap-1.5">
+              <Feather name="calendar" size={12} color="#64748b" />
+              <Text className="text-xs font-sans-medium text-gray-500">{order.bookingDate}</Text>
+            </View>
+
+            {/* Location */}
+            <View className="flex-row items-center gap-1.5">
+              <Feather name="map-pin" size={12} color="#64748b" />
+              <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
+                {order.location}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Divider */}
+      <View className="my-2.5 border-t border-gray-100" />
+
+      {/* Bottom Bar: Price & Action Buttons */}
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className="text-[10px] font-sans-medium text-gray-400">Total Price</Text>
+          <Text className="text-base font-sans-bold text-gray-900">{order.bookedPrice}</Text>
+        </View>
+
+        {isPending ? (
+          <View className="flex-row gap-2">
+            <Pressable
+              onPress={() => onDecline?.(order.id)}
+              className="rounded-xl border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
+            >
+              <Text className="text-xs font-sans-bold text-red-600">Decline</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => onAccept?.(order.id)}
+              className="rounded-xl bg-primary px-4 py-2 active:opacity-90"
+            >
+              <Text className="text-xs font-sans-bold text-white">Accept</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable onPress={onPress} className="rounded-xl bg-[#eef1ff] px-4 py-2 active:opacity-90">
+            <Text className="text-xs font-sans-bold text-primary">View Details</Text>
+          </Pressable>
+        )}
+      </View>
+    </Pressable>
+  );
+}

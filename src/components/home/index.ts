@@ -11,3 +11,6 @@ export { default as HomeTopSectionSearchBar } from './HomeTopSectionSearchBar';
 export { default as HomeTopSectionServiceChip } from './HomeTopSectionServiceChip';
 export { DEFAULT_POPULAR_PROVIDERS, default as PopularProvidersSection } from './PopularProvidersSection';
 export { default as RecentBookingsSection } from './RecentBookingsSection';
+export { default as ProviderOrderCard } from './ProviderOrderCard';
+export { default as RecentOrdersSection } from './RecentOrdersSection';
+export { default as PerformanceMetricsSection } from './PerformanceMetricsSection';
