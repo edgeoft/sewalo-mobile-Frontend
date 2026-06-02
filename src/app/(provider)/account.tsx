@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import ProviderAccountScreen from '@/features/provider/screens/ProviderAccountScreen';
 
-export default function ProviderAccountScreen() {
-  return <PlaceholderScreen title="Provider Account Screen" />;
+export default function ProviderAccountRoute() {
+  return <ProviderAccountScreen />;
 }

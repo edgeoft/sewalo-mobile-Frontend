@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import CustomerAccountScreen from '@/features/customer/screens/CustomerAccountScreen';
 
-export default function CustomerAccountScreen() {
-  return <PlaceholderScreen title="Customer Account Screen" />;
+export default function CustomerAccountRoute() {
+  return <CustomerAccountScreen />;
 }

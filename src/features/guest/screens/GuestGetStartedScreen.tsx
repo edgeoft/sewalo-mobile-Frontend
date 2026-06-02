@@ -1,14 +1,15 @@
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
-import AuthFooterLink from '@/features/auth/components/AuthFooterLink';
+
 import GuestFeatureCard from '../components/GuestFeatureCard';
 import GuestRoleActionCard from '../components/GuestRoleActionCard';
+import AccountMenuItem from '@/features/customer/components/AccountMenuItem';
 
 export default function GuestGetStartedScreen() {
   const { t } = useTranslation();
@@ -83,6 +84,13 @@ export default function GuestGetStartedScreen() {
             description={t('auth.getStarted.wantEarnDesc')}
             onPress={() => handleJoinRole('provider')}
           />
+
+          <GuestRoleActionCard
+            variant="outline"
+            title={t('auth.alreadyHaveAccount')}
+            description="Sign in to access your saved profile and active bookings"
+            onPress={() => router.push(ROUTES.auth.signin)}
+          />
         </View>
 
         <View className="gap-y-4 mb-6">
@@ -97,12 +105,57 @@ export default function GuestGetStartedScreen() {
           ))}
         </View>
 
-        <View className="mt-auto">
-          <AuthFooterLink
-            prompt={t('auth.alreadyHaveAccount')}
-            actionLabel={t('auth.login')}
-            onPress={() => router.push(ROUTES.auth.signin)}
-            size="xs"
+        {/* Support & Information Section */}
+        <View
+          style={{
+            shadowColor: '#0f172a',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.03,
+            shadowRadius: 8,
+            elevation: 1,
+          }}
+          className="rounded-xl border border-gray-200 bg-white overflow-hidden mb-6"
+        >
+          <View className="bg-gray-50/50 px-4 py-2 border-b border-gray-100">
+            <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider">
+              Support & Information
+            </Text>
+          </View>
+          <AccountMenuItem
+            icon="star"
+            title="Rate the app"
+            subtitle="Share your feedback"
+            onPress={() => Alert.alert('Rate App', 'Thank you for your rating!')}
+          />
+          <AccountMenuItem
+            icon="info"
+            title="About Sewalo"
+            subtitle="Learn more about the app"
+            onPress={() => Alert.alert('About App', 'Sewalo Mobile version 1.0.0')}
+          />
+          <AccountMenuItem
+            icon="shield"
+            title="Privacy policy"
+            subtitle="Read how your data is handled"
+            onPress={() => Alert.alert('Privacy Policy', 'Display privacy statement.')}
+          />
+          <AccountMenuItem
+            icon="file-text"
+            title="Terms & conditions"
+            subtitle="Review usage terms"
+            onPress={() => Alert.alert('Terms & Conditions', 'Display user agreement.')}
+          />
+          <AccountMenuItem
+            icon="alert-triangle"
+            title="Report a problem"
+            subtitle="Send an issue or bug report"
+            onPress={() => Alert.alert('Report Problem', 'Send bug report forms.')}
+          />
+          <AccountMenuItem
+            icon="message-circle"
+            title="Contact support"
+            subtitle="Reach the Sewalo support team"
+            onPress={() => Alert.alert('Contact Support', 'Connecting to support chat...')}
           />
         </View>
       </ContentLayout>
