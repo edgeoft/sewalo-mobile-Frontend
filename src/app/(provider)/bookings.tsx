@@ -1,5 +1,5 @@
-import PlaceholderScreen from '@/components/common/PlaceholderScreen';
+import ProviderBookingsScreen from '@/features/provider/screens/ProviderBookingsScreen';
 
-export default function ProviderBookingsScreen() {
-  return <PlaceholderScreen title="Provider Bookings Screen" />;
+export default function BookingsRoute() {
+  return <ProviderBookingsScreen />;
 }
