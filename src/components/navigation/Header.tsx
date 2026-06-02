@@ -23,6 +23,7 @@ type MenuHeaderProps = HeaderBaseProps & {
   variant: 'menu';
   showNotifications?: boolean;
   onNotificationsPress?: () => void;
+  onMenuPress?: () => void;
 };
 
 type CustomHeaderProps = HeaderBaseProps & {

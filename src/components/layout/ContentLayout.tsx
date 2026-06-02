@@ -18,7 +18,7 @@ export default function ContentLayout({
   contentContainerStyle,
   showsVerticalScrollIndicator = false,
 }: ContentLayoutProps) {
-  const layoutClassName = `${className} px-6`.trim();
+  const layoutClassName = `${className} px-4`.trim();
 
   if (scrollable) {
     return (
