@@ -100,7 +100,7 @@
   --color-form-field-stroke: var(--form-field-stroke);
   --color-form-field-placeholder: var(--form-field-placeholder);
 
-  --radius-lg: var(--radius);
+  --radius-lg: 10px;
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 6px);
   --radius-xl: var(--radius);
@@ -200,7 +200,7 @@ TextInput {
 }
 
 @utility form-input-container {
-  @apply flex-row items-center border border-gray-200 rounded-xl py-3 px-4 bg-white;
+  @apply flex-row items-center border border-gray-200 rounded-lg py-3 px-4 bg-white;
 }
 
 @utility form-input-container-focus {
@@ -212,5 +212,5 @@ TextInput {
 }
 
 @utility form-input-text {
-  @apply flex-1 text-base text-gray-900 py-0;
+  @apply flex-1 text-sm text-gray-900 py-0;
 }

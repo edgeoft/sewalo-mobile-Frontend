@@ -39,7 +39,7 @@ export default function SelectionOption({
   return (
     <Pressable
       onPress={onPress}
-      className={`rounded-xl border overflow-hidden relative ${
+      className={`rounded-lg border overflow-hidden relative ${
         selected ? 'border-primary' : 'border-gray-200'
       } bg-white ${className}`}
     >
@@ -53,7 +53,7 @@ export default function SelectionOption({
         />
       </Animated.View>
 
-      <View className="flex-row items-center py-4 px-5 bg-transparent">
+      <View className="flex-row items-center py-2.5 px-3.5 bg-transparent">
         {/* Left Icon */}
         {icon && (
           <View
@@ -69,7 +69,9 @@ export default function SelectionOption({
 
         {/* Text Area */}
         <View className="flex-1">
-          <Text className="text-base font-sans-bold text-gray-900">{title}</Text>
+          <Text className={`text-sm text-gray-900 ${selected ? 'font-sans-semibold' : 'font-sans-medium'}`}>
+            {title}
+          </Text>
           {subtitle && <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{subtitle}</Text>}
         </View>
 

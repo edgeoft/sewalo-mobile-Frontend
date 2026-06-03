@@ -10,6 +10,7 @@ import { Carousel } from '@/components/ui';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
+import { ROUTES } from '@/constants/routes';
 
 // Mock active service data
 const ACTIVE_SERVICE_MOCK = {
@@ -84,14 +85,14 @@ const ACTIVE_SERVICE_MOCK = {
 export default function ProviderServicesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [hasService, setHasService] = useState(true);
+  const [hasService] = useState(true);
 
   const handleCreateService = () => {
-    setHasService(true);
+    router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } });
   };
 
   const handleEditService = () => {
-    Alert.alert('Edit Service', 'Edit service configuration and forms will open here.');
+    router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'edit' } });
   };
 
   const handleOpenPortfolio = () => {

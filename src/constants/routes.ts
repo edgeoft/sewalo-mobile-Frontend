@@ -27,6 +27,7 @@ export const ROUTES = {
     bookings: '/(provider)/bookings',
     earnings: '/(provider)/earnings',
     account: '/(provider)/account',
+    serviceEdit: '/provider/service-edit',
   },
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;
