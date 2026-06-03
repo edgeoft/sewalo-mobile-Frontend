@@ -43,8 +43,8 @@ export default function Input({
 
       <View
         className={`form-input-container ${
-          error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''
-        }`}
+          props.multiline ? 'form-input-container-multiline' : 'form-input-container-single'
+        } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''}`}
         style={{
           shadowColor: isFocused ? '#485aff' : '#000',
           shadowOffset: { width: 0, height: 2 },

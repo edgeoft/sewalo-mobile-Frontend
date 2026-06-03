@@ -108,7 +108,7 @@ export default function ServiceFormBasics({
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Category *</Text>
           <Pressable
             onPress={() => setCatModalVisible(true)}
-            className={`form-input-container justify-between ${
+            className={`form-input-container form-input-container-single justify-between ${
               errors.categoryId ? 'border-destructive' : 'border-gray-200'
             }`}
             style={{
@@ -117,7 +117,6 @@ export default function ServiceFormBasics({
               shadowOpacity: 0.015,
               shadowRadius: 2,
               elevation: 0,
-              paddingVertical: 10,
               paddingHorizontal: 14,
             }}
           >
@@ -137,7 +136,7 @@ export default function ServiceFormBasics({
           {watchCategoryId ? (
             <Pressable
               onPress={() => setTypeModalVisible(true)}
-              className={`form-input-container justify-between ${
+              className={`form-input-container form-input-container-single justify-between ${
                 errors.serviceTypeIds ? 'border-destructive' : 'border-gray-200'
               }`}
               style={{
@@ -146,7 +145,6 @@ export default function ServiceFormBasics({
                 shadowOpacity: 0.015,
                 shadowRadius: 2,
                 elevation: 0,
-                paddingVertical: 10,
                 paddingHorizontal: 14,
               }}
             >

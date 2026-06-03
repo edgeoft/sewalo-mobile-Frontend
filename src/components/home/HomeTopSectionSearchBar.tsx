@@ -15,7 +15,6 @@ export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTo
       onPressIn={onPress}
       leftIcon={null}
       rightIcon={<Feather name="search" size={20} color="#485aff" />}
-      className="h-14"
       inputClassName="text-sm font-sans-medium text-gray-500"
       containerStyle={{
         shadowColor: '#0f172a',

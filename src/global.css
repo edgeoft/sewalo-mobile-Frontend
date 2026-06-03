@@ -200,7 +200,15 @@ TextInput {
 }
 
 @utility form-input-container {
-  @apply flex-row items-center border border-gray-200 rounded-lg py-3 px-4 bg-white;
+  @apply flex-row items-center border border-gray-200 rounded-lg px-4 bg-white;
+}
+
+@utility form-input-container-single {
+  @apply h-12;
+}
+
+@utility form-input-container-multiline {
+  @apply py-3;
 }
 
 @utility form-input-container-focus {

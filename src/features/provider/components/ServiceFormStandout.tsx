@@ -199,7 +199,7 @@ export default function ServiceFormStandout({
           {/* Add Tag Trigger or Inline Input */}
           {showTagInput ? (
             <View
-              className={`form-input-container w-full ${isTagFocused ? 'form-input-container-focus' : ''}`}
+              className={`form-input-container form-input-container-single w-full ${isTagFocused ? 'form-input-container-focus' : ''}`}
               style={{
                 shadowColor: isTagFocused ? '#485aff' : '#000',
                 shadowOffset: { width: 0, height: 2 },

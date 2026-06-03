@@ -102,7 +102,7 @@ export default function RateCard({
             <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Billing Basis</Text>
             <Pressable
               onPress={() => setBasisModalVisible(true)}
-              className={`form-input-container justify-between ${
+              className={`form-input-container form-input-container-single justify-between ${
                 billingBasisError ? 'border-destructive' : 'border-gray-200'
               }`}
               style={{
@@ -111,7 +111,6 @@ export default function RateCard({
                 shadowOpacity: 0.015,
                 shadowRadius: 2,
                 elevation: 0,
-                paddingVertical: 10,
                 paddingHorizontal: 14,
               }}
             >
@@ -143,14 +142,13 @@ export default function RateCard({
           <View className="flex-1">
             <Pressable
               onPress={() => setUnitModalVisible(true)}
-              className="form-input-container justify-between"
+              className="form-input-container form-input-container-single justify-between"
               style={{
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.015,
                 shadowRadius: 2,
                 elevation: 0,
-                paddingVertical: 10,
                 paddingHorizontal: 14,
               }}
             >
