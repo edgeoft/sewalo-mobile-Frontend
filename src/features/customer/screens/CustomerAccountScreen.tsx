@@ -20,7 +20,7 @@ export default function CustomerAccountScreen() {
   const { logout } = useAuth();
 
   const handleEditProfile = () => {
-    Alert.alert('Edit Profile', 'Profile edit forms will open here.');
+    router.push(ROUTES.customer.editProfile);
   };
 
   const handleLogout = () => {

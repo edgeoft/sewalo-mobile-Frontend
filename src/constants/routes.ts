@@ -20,6 +20,7 @@ export const ROUTES = {
     findServices: '/(customer)/find-services',
     favourites: '/(customer)/favourites',
     account: '/(customer)/account',
+    editProfile: '/customer/edit-profile',
   },
   provider: {
     home: '/(provider)/home',
@@ -28,6 +29,7 @@ export const ROUTES = {
     earnings: '/(provider)/earnings',
     account: '/(provider)/account',
     serviceEdit: '/provider/service-edit',
+    editProfile: '/provider/edit-profile',
   },
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;

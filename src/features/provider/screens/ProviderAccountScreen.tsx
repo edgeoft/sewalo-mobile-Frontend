@@ -19,7 +19,7 @@ export default function ProviderAccountScreen() {
   const { logout } = useAuth();
 
   const handleEditProfile = () => {
-    Alert.alert('Edit Partner Profile', 'Provider detail forms will open here.');
+    router.push(ROUTES.provider.editProfile);
   };
 
   const handlePayoutSettings = () => {

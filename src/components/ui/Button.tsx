@@ -56,7 +56,7 @@ export default function Button({
   const sizeStyles = {
     none: 'p-0 border-0',
     sm: 'py-2 px-4 rounded-lg',
-    md: 'py-3 px-4 rounded-lg',
+    md: 'h-12 px-4 rounded-lg',
     lg: 'py-4 px-8 rounded-lg',
   };
 
