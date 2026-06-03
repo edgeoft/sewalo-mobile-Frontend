@@ -27,6 +27,7 @@ const defaultValues: ServiceFormData = {
   workSamples: [],
   hashtags: [],
   portfolioUrl: '',
+  packages: [],
 };
 
 // Map of mock service data for edit mode
@@ -63,6 +64,21 @@ const mockEditData: ServiceFormData = {
   ],
   hashtags: ['DeepCleaning', 'Sanitization', 'KathmanduServices', 'EcoFriendly', 'CleanHome'],
   portfolioUrl: 'https://www.cleansewalo.com',
+  packages: [
+    {
+      id: 'pkg-1',
+      title: 'Standard Home Makeover',
+      description:
+        'Includes full kitchen sanitization, bathroom deep cleaning, and sofa shampooing with a 2-day warranty.',
+      price: '4500',
+    },
+    {
+      id: 'pkg-2',
+      title: 'Express Dusting & Sanitization',
+      description: 'Includes full living room and kitchen sanitization, vacuuming, and trash disposal.',
+      price: '2200',
+    },
+  ],
 };
 
 export default function ServiceEditScreen() {
@@ -93,6 +109,7 @@ export default function ServiceEditScreen() {
   const watchDeliveryTypes = watch('deliveryTypes') || [];
   const watchWorkSamples = watch('workSamples') || [];
   const watchHashtags = watch('hashtags') || [];
+  const watchPackages = watch('packages') || [];
 
   const onSubmit = (data: ServiceFormData) => {
     setLoading(true);
@@ -154,6 +171,7 @@ export default function ServiceEditScreen() {
           setValue={setValue}
           watchServiceTypeIds={watchServiceTypeIds}
           watchRates={watchRates}
+          watchPackages={watchPackages}
         />
 
         <ServiceFormDelivery

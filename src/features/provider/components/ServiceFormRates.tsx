@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
+import Input from '@/components/ui/Input';
 import { SERVICE_TYPES } from '../constants/serviceOptions';
 import { ServiceFormData } from '../data/serviceSchemas';
 import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
@@ -12,6 +14,7 @@ interface ServiceFormRatesProps {
   setValue: UseFormSetValue<ServiceFormData>;
   watchServiceTypeIds: string[];
   watchRates: ServiceFormData['rates'];
+  watchPackages?: ServiceFormData['packages'];
 }
 
 export default function ServiceFormRates({
@@ -20,7 +23,14 @@ export default function ServiceFormRates({
   setValue,
   watchServiceTypeIds,
   watchRates = {},
+  watchPackages = [],
 }: ServiceFormRatesProps) {
+  const [showPkgForm, setShowPkgForm] = useState(false);
+  const [pkgTitle, setPkgTitle] = useState('');
+  const [pkgPrice, setPkgPrice] = useState('');
+  const [pkgDescription, setPkgDescription] = useState('');
+  const [pkgErrors, setPkgErrors] = useState<{ title?: string; price?: string; description?: string }>({});
+
   // Ensure that each selected service type has a rate structure initialized
   useEffect(() => {
     const currentRates = { ...watchRates };
@@ -77,6 +87,56 @@ export default function ServiceFormRates({
       durationUnit: value,
     };
     setValue('rates', currentRates, { shouldValidate: true });
+  };
+
+  const handleAddPackage = () => {
+    const newErrors: { title?: string; price?: string; description?: string } = {};
+    if (!pkgTitle.trim() || pkgTitle.trim().length < 3) {
+      newErrors.title = 'Package title must be at least 3 characters';
+    }
+    const priceNum = Number(pkgPrice);
+    if (!pkgPrice.trim()) {
+      newErrors.price = 'Price is required';
+    } else if (isNaN(priceNum) || priceNum <= 0) {
+      newErrors.price = 'Price must be a positive number';
+    }
+    if (!pkgDescription.trim() || pkgDescription.trim().length < 10) {
+      newErrors.description = 'Description must be at least 10 characters';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setPkgErrors(newErrors);
+      return;
+    }
+
+    const newPkg = {
+      id: `pkg-${Date.now()}`,
+      title: pkgTitle.trim(),
+      description: pkgDescription.trim(),
+      price: pkgPrice.trim(),
+    };
+
+    setValue('packages', [...(watchPackages || []), newPkg], { shouldValidate: true });
+
+    // Reset inline form state
+    setPkgTitle('');
+    setPkgPrice('');
+    setPkgDescription('');
+    setPkgErrors({});
+    setShowPkgForm(false);
+  };
+
+  const handleRemovePackage = (index: number) => {
+    const updated = (watchPackages || []).filter((_, i) => i !== index);
+    setValue('packages', updated, { shouldValidate: true });
+  };
+
+  const handleCancelCreate = () => {
+    setPkgTitle('');
+    setPkgPrice('');
+    setPkgDescription('');
+    setPkgErrors({});
+    setShowPkgForm(false);
   };
 
   return (
@@ -142,6 +202,91 @@ export default function ServiceFormRates({
               </View>
             );
           })}
+
+          {/* Packages Section */}
+          <View className="border-t border-gray-100 pt-4 mt-4">
+            <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
+              Package <Text className="text-gray-400 font-sans-medium">(Optional)</Text>
+            </Text>
+
+            {watchPackages.length > 0 && (
+              <View className="gap-y-3 mb-2">
+                {watchPackages.map((pkg, idx) => (
+                  <View key={pkg.id || idx} className="bg-gray-50 border border-gray-100 rounded-xl p-3.5 relative">
+                    <View className="pr-8">
+                      <Text className="text-xs font-sans-bold text-gray-900 mb-1">{pkg.title}</Text>
+                      <Text className="text-[10px] font-sans-medium text-gray-500 mb-2 leading-normal">
+                        {pkg.description}
+                      </Text>
+                      <Text className="text-xs font-sans-bold text-primary">Rs. {pkg.price}</Text>
+                    </View>
+                    <Pressable
+                      onPress={() => handleRemovePackage(idx)}
+                      className="absolute top-3.5 right-3.5 h-6 w-6 rounded-full bg-red-50/80 border border-red-100/50 items-center justify-center active:bg-red-100"
+                    >
+                      <Feather name="trash-2" size={12} color="#ef4444" />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {showPkgForm ? (
+              <View className="border border-indigo-50 bg-indigo-50/10 rounded-xl p-3.5 mt-2">
+                <Text className="text-xs font-sans-bold text-gray-900 mb-3">Create a Package</Text>
+
+                <View className="gap-y-3">
+                  <Input
+                    label="Package Title"
+                    placeholder="e.g. Standard Home Makeover"
+                    value={pkgTitle}
+                    onChangeText={setPkgTitle}
+                    error={pkgErrors.title}
+                  />
+
+                  <Input
+                    label="Price"
+                    placeholder="e.g. 4500"
+                    keyboardType="numeric"
+                    value={pkgPrice}
+                    onChangeText={setPkgPrice}
+                    error={pkgErrors.price}
+                    leftIcon={<Text className="text-xs font-sans-bold text-gray-500">Rs.</Text>}
+                  />
+
+                  <Input
+                    label="Description"
+                    placeholder="Describe what is included in this package..."
+                    multiline
+                    numberOfLines={3}
+                    value={pkgDescription}
+                    onChangeText={setPkgDescription}
+                    error={pkgErrors.description}
+                  />
+                </View>
+
+                <View className="flex-row justify-end gap-x-2 mt-4">
+                  <Pressable
+                    onPress={handleCancelCreate}
+                    className="px-4 py-2 rounded-lg border border-gray-200 bg-white active:bg-gray-50"
+                  >
+                    <Text className="text-xs font-sans-semibold text-gray-600">Cancel</Text>
+                  </Pressable>
+                  <Pressable onPress={handleAddPackage} className="px-4 py-2 rounded-lg bg-primary active:opacity-90">
+                    <Text className="text-xs font-sans-semibold text-white">Add Package</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <Pressable
+                onPress={() => setShowPkgForm(true)}
+                className="py-3 border border-dashed border-gray-300 rounded-lg bg-gray-50/50 flex-row items-center justify-center active:bg-gray-100"
+              >
+                <Feather name="plus" size={12} color="#485aff" className="mr-1.5" />
+                <Text className="text-xs font-sans-semibold text-primary">Create a Package</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
       )}
     </View>

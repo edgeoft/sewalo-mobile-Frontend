@@ -25,6 +25,14 @@ export interface ServiceFormData {
   workSamples: { uri: string; uploaded: boolean }[];
   hashtags: string[]; // stored without #, displayed with #
   portfolioUrl: string;
+
+  // Packages (Optional)
+  packages?: {
+    id?: string;
+    title: string;
+    description: string;
+    price: string;
+  }[];
 }
 
 export const serviceFormSchema = z
@@ -69,6 +77,25 @@ export const serviceFormSchema = z
     ),
     hashtags: z.array(z.string()),
     portfolioUrl: z.string().optional().or(z.literal('')),
+    packages: z
+      .array(
+        z.object({
+          id: z.string().optional(),
+          title: z.string().min(3, 'Package title must be at least 3 characters'),
+          description: z.string().min(10, 'Description must be at least 10 characters'),
+          price: z
+            .string()
+            .min(1, 'Price is required')
+            .refine(
+              (val) => {
+                const num = Number(val);
+                return !isNaN(num) && num > 0;
+              },
+              { message: 'Price must be a positive number' },
+            ),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
     // Validate that every selected service type ID has a rate card filled out
