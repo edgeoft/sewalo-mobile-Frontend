@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import { SERVICE_TYPES } from '../constants/serviceOptions';
 import { ServiceFormData } from '../data/serviceSchemas';
 import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
+import BillingBasisGuideModal from './BillingBasisGuideModal';
 
 interface ServiceFormRatesProps {
   control: Control<ServiceFormData>;
@@ -25,6 +26,7 @@ export default function ServiceFormRates({
   watchRates = {},
   watchPackages = [],
 }: ServiceFormRatesProps) {
+  const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPkgForm, setShowPkgForm] = useState(false);
   const [pkgTitle, setPkgTitle] = useState('');
   const [pkgPrice, setPkgPrice] = useState('');
@@ -155,7 +157,9 @@ export default function ServiceFormRates({
         <Text className="text-base font-sans-bold text-gray-950 mb-1">Your Services & Rates</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
           List the specific tasks you perform and how much you charge for them. Refer to the{' '}
-          <Text className="text-primary underline">guideline</Text>
+          <Text onPress={() => setShowGuideModal(true)} className="text-primary underline font-sans-semibold">
+            guideline
+          </Text>
         </Text>
       </View>
 
@@ -289,6 +293,7 @@ export default function ServiceFormRates({
           </View>
         </View>
       )}
+      <BillingBasisGuideModal visible={showGuideModal} onClose={() => setShowGuideModal(false)} />
     </View>
   );
 }
