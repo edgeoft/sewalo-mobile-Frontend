@@ -65,7 +65,7 @@ export default function ProviderAccountScreen() {
         Alert.alert('Privacy Settings', 'Update privacy settings.');
         break;
       case 'change-password':
-        Alert.alert('Change Password', 'Reset credential forms.');
+        router.push(ROUTES.provider.changePassword);
         break;
       case 'help-faq':
         Alert.alert('Help & FAQ', 'Open support articles.');

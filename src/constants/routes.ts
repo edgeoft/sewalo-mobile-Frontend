@@ -21,6 +21,7 @@ export const ROUTES = {
     favourites: '/(customer)/favourites',
     account: '/(customer)/account',
     editProfile: '/customer/edit-profile',
+    changePassword: '/customer/change-password',
   },
   provider: {
     home: '/(provider)/home',
@@ -30,6 +31,7 @@ export const ROUTES = {
     account: '/(provider)/account',
     serviceEdit: '/provider/service-edit',
     editProfile: '/provider/edit-profile',
+    changePassword: '/provider/change-password',
   },
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;

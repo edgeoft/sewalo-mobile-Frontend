@@ -58,7 +58,7 @@ export default function CustomerAccountScreen() {
         Alert.alert('Privacy Settings', 'Update privacy settings.');
         break;
       case 'change-password':
-        Alert.alert('Change Password', 'Reset credential forms.');
+        router.push(ROUTES.customer.changePassword);
         break;
       case 'help-faq':
         Alert.alert('Help & FAQ', 'Open support articles.');

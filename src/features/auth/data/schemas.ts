@@ -54,3 +54,17 @@ export const getResetPasswordSchema = (t: (key: string) => string) =>
     });
 
 export type ResetPasswordFormData = z.infer<ReturnType<typeof getResetPasswordSchema>>;
+
+export const getChangePasswordSchema = (t: (key: string) => string) =>
+  z
+    .object({
+      currentPassword: z.string().min(1, t('auth.enterYourPassword')),
+      newPassword: z.string().regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/, t('auth.passwordValidationFailed')),
+      confirmPassword: z.string().min(1, t('auth.enterConfirmPassword')),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('auth.enterConfirmPassword'),
+      path: ['confirmPassword'],
+    });
+
+export type ChangePasswordFormData = z.infer<ReturnType<typeof getChangePasswordSchema>>;
