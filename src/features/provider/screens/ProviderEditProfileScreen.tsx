@@ -36,12 +36,14 @@ export default function ProviderEditProfileScreen() {
       dateOfBirth: '1995-10-12',
       languages: ['English', 'Nepali'],
       bio: 'Professional designer with 5+ years of experience in interior and web design.',
+      avatar: 'https://i.pravatar.cc/300?img=47',
     },
     mode: 'onBlur',
   });
 
   const watchLanguages = watch('languages') || [];
   const watchDateOfBirth = watch('dateOfBirth') || '';
+  const watchAvatar = watch('avatar') || '';
 
   const handleSaveBasicInfo = (data: BasicInfoFormData) => {
     setBasicLoading(true);
@@ -133,6 +135,7 @@ export default function ProviderEditProfileScreen() {
           setValue={setValue}
           watchLanguages={watchLanguages}
           watchDateOfBirth={watchDateOfBirth}
+          watchAvatar={watchAvatar}
           onSave={handleSubmit(handleSaveBasicInfo)}
           loading={basicLoading}
         />

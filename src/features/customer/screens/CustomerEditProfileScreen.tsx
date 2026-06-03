@@ -16,6 +16,7 @@ const initialCustomerData: BasicInfoFormData = {
   dateOfBirth: '1998-05-15',
   languages: ['English', 'Nepali'],
   bio: 'Hi, I am Aayush. I love using Sewalo for quick home services!',
+  avatar: 'https://i.pravatar.cc/300?img=11',
 };
 
 export default function CustomerEditProfileScreen() {
@@ -36,6 +37,7 @@ export default function CustomerEditProfileScreen() {
 
   const watchLanguages = watch('languages') || [];
   const watchDateOfBirth = watch('dateOfBirth') || '';
+  const watchAvatar = watch('avatar') || '';
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
     setLoading(true);
@@ -75,6 +77,7 @@ export default function CustomerEditProfileScreen() {
           setValue={setValue}
           watchLanguages={watchLanguages}
           watchDateOfBirth={watchDateOfBirth}
+          watchAvatar={watchAvatar}
           onSave={handleSubmit(handleSaveProfile)}
           loading={loading}
         />

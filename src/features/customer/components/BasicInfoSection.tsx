@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import {
+  Alert,
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -12,6 +14,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
@@ -24,6 +27,7 @@ export interface BasicInfoFormData {
   dateOfBirth?: string;
   languages?: string[];
   bio?: string;
+  avatar?: string;
 }
 
 interface BasicInfoSectionProps {
@@ -32,6 +36,7 @@ interface BasicInfoSectionProps {
   setValue: (name: any, value: any, options?: any) => void;
   watchLanguages: string[];
   watchDateOfBirth: string;
+  watchAvatar: string;
   onSave: () => void;
   loading?: boolean;
 }
@@ -65,12 +70,38 @@ export default function BasicInfoSection({
   setValue,
   watchLanguages = [],
   watchDateOfBirth = '',
+  watchAvatar = '',
   onSave,
   loading = false,
 }: BasicInfoSectionProps) {
   const { height } = useWindowDimensions();
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
+
+  const handlePickAvatar = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need access to your photo library to select a profile picture.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const pickedUri = result.assets[0].uri;
+        setValue('avatar', pickedUri, { shouldValidate: true });
+      }
+    } catch (error) {
+      console.log('Error picking avatar:', error);
+      Alert.alert('Error', 'Something went wrong while picking the avatar.');
+    }
+  };
 
   // Date picker state helper
   const [tempDay, setTempDay] = useState('01');
@@ -133,6 +164,25 @@ export default function BasicInfoSection({
       </View>
 
       <View className="gap-y-4">
+        {/* Profile Avatar Selection Section */}
+        <View className="items-center mb-2">
+          <Pressable onPress={handlePickAvatar} className="relative active:opacity-90">
+            {watchAvatar ? (
+              <Image
+                source={{ uri: watchAvatar }}
+                className="h-24 w-24 rounded-full border-2 border-gray-100 bg-gray-50"
+                resizeMode="cover"
+              />
+            ) : (
+              <View className="h-24 w-24 rounded-full border-2 border-gray-200 bg-gray-50 items-center justify-center">
+                <Feather name="user" size={40} color="#898f8f" />
+              </View>
+            )}
+            <View className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm">
+              <Feather name="camera" size={14} color="#ffffff" />
+            </View>
+          </Pressable>
+        </View>
         {/* Full Name */}
         <Controller
           control={control}
