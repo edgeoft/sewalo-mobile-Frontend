@@ -22,6 +22,7 @@ export const ROUTES = {
     account: '/(customer)/account',
     editProfile: '/customer/edit-profile',
     changePassword: '/customer/change-password',
+    identityVerification: '/customer/identity-verification',
   },
   provider: {
     home: '/(provider)/home',
@@ -32,6 +33,7 @@ export const ROUTES = {
     serviceEdit: '/provider/service-edit',
     editProfile: '/provider/edit-profile',
     changePassword: '/provider/change-password',
+    verificationDocuments: '/provider/verification-documents',
   },
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;

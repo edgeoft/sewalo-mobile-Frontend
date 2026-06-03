@@ -46,7 +46,7 @@ export default function CustomerAccountScreen() {
         Alert.alert('My Reviews', 'Opening list of your reviews.');
         break;
       case 'identity-verification':
-        Alert.alert('Identity Verification', 'Upload verification documents.');
+        router.push(ROUTES.customer.identityVerification);
         break;
       case 'refer-friend':
         Alert.alert('Refer a Friend', 'Share your referral code: SEWALO50');

@@ -56,7 +56,7 @@ export default function ProviderAccountScreen() {
         handlePayoutSettings();
         break;
       case 'verification-documents':
-        Alert.alert('Verification Documents', 'Upload verification documents.');
+        router.push(ROUTES.provider.verificationDocuments);
         break;
       case 'notification-settings':
         Alert.alert('Notification Settings', 'Update notifications.');
