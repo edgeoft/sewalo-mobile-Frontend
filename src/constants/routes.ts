@@ -23,6 +23,7 @@ export const ROUTES = {
     editProfile: '/customer/edit-profile',
     changePassword: '/customer/change-password',
     identityVerification: '/customer/identity-verification',
+    bookingDetail: (id: string) => `/customer/booking-detail/${id}` as const,
   },
   provider: {
     home: '/(provider)/home',

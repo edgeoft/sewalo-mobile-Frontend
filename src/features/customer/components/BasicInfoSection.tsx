@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import {
   Alert,
   Image,
@@ -31,9 +31,9 @@ export interface BasicInfoFormData {
 }
 
 interface BasicInfoSectionProps {
-  control: Control<any>;
-  errors: FieldErrors<any>;
-  setValue: (name: any, value: any, options?: any) => void;
+  control: Control<BasicInfoFormData>;
+  errors: FieldErrors<BasicInfoFormData>;
+  setValue: UseFormSetValue<BasicInfoFormData>;
   watchLanguages: string[];
   watchDateOfBirth: string;
   watchAvatar: string;
