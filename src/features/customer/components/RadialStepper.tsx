@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface RadialStepperProps {
   status: BookingStatus;
@@ -119,7 +122,22 @@ export default function RadialStepper({ status, size = 64, strokeWidth = 4 }: Ra
 
   // For cancelled/rejected, we show full circle colored red/orange or just no progress
   const fillPercentage = isCancelledOrRejected ? 100 : currentStep / totalSteps;
-  const strokeDashoffset = circumference - fillPercentage * circumference;
+  const targetOffset = circumference - fillPercentage * circumference;
+
+  const strokeDashoffset = useSharedValue(circumference); // Start empty
+
+  useEffect(() => {
+    strokeDashoffset.value = withSpring(targetOffset, {
+      damping: 15,
+      stiffness: 90,
+    });
+  }, [targetOffset, strokeDashoffset]);
+
+  const animatedProps = useAnimatedProps(() => {
+    return {
+      strokeDashoffset: strokeDashoffset.value,
+    };
+  });
 
   return (
     <View
@@ -138,14 +156,14 @@ export default function RadialStepper({ status, size = 64, strokeWidth = 4 }: Ra
           {/* Background Circle */}
           <Circle cx={center} cy={center} r={radius} stroke="#f1f5f9" strokeWidth={strokeWidth} fill="none" />
           {/* Active Arc */}
-          <Circle
+          <AnimatedCircle
             cx={center}
             cy={center}
             r={radius}
             stroke={config.progressColor}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
+            animatedProps={animatedProps}
             strokeLinecap="round"
             fill="none"
           />

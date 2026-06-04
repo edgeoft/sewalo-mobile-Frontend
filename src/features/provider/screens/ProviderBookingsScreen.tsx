@@ -156,10 +156,7 @@ export default function ProviderBookingsScreen() {
               onAccept={handleAcceptOrder}
               onDecline={handleDeclineOrder}
               onPress={() => {
-                Alert.alert(
-                  'Order Details',
-                  `Customer: ${booking.customerName}\nService: ${booking.serviceLabel}\nStatus: ${booking.status}\nTotal Price: ${booking.bookedPrice}`,
-                );
+                router.push(`/provider/booking/${booking.id}`);
               }}
             />
           )}

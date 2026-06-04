@@ -10,6 +10,17 @@ export interface CustomerBookingItem {
   rating: string;
   bookedPrice: string;
   status: BookingStatus;
+  phoneNumber?: string;
+  email?: string;
+  reviewsCount?: number;
+  dateTime?: string;
+  specialInstructions?: string;
+  serviceName?: string;
+  categoryName?: string;
+  descriptionText?: string;
+  basePrice?: string;
+  vatAmount?: string;
+  totalPrice?: string;
 }
 
 export const CUSTOMER_BOOKINGS_MOCK: CustomerBookingItem[] = [
@@ -23,6 +34,9 @@ export const CUSTOMER_BOOKINGS_MOCK: CustomerBookingItem[] = [
     rating: '4.2',
     bookedPrice: 'Rs. 2300',
     status: BOOKING_STATUSES.Pending,
+    phoneNumber: '+9779802117361',
+    email: 'pepperpotts@gmail.com',
+    reviewsCount: 13,
   },
   {
     id: 'booking-2',

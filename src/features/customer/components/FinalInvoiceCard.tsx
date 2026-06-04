@@ -1,0 +1,80 @@
+import React from 'react';
+import { View, Text } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import Button from '@/components/ui/Button';
+import { type CustomerBookingItem } from '../constants/customerBookings';
+
+interface FinalInvoiceCardProps {
+  booking: CustomerBookingItem;
+  basePriceValue: number;
+  platformFeeValue: number;
+  vatValue: number;
+  couponDiscountValue: number;
+  loyaltyDiscountValue: number;
+  totalPayableValue: number;
+  onPayNow: () => void;
+  onDownloadInvoice: () => void;
+}
+
+export default function FinalInvoiceCard({
+  booking,
+  basePriceValue,
+  platformFeeValue,
+  vatValue,
+  couponDiscountValue,
+  loyaltyDiscountValue,
+  totalPayableValue,
+  onPayNow,
+  onDownloadInvoice,
+}: FinalInvoiceCardProps) {
+  const cardShadow = {
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 2,
+  };
+
+  const renderInvoiceRow = (label: string, value: string, isDiscount = false) => (
+    <View className="flex-row items-center justify-between py-1">
+      <Text className="text-xs font-sans-medium text-gray-500">{label}</Text>
+      <Text className={`text-xs font-sans-semibold ${isDiscount ? 'text-green-600' : 'text-gray-900'}`}>
+        {isDiscount ? `- Rs. ${value}` : `Rs. ${value}`}
+      </Text>
+    </View>
+  );
+
+  return (
+    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">Final Invoice</Text>
+
+      <View className="gap-0.5">
+        {renderInvoiceRow(booking.serviceName ?? booking.serviceLabel, basePriceValue.toLocaleString())}
+        {renderInvoiceRow('Platform Fee', platformFeeValue.toLocaleString())}
+        {renderInvoiceRow('VAT (13%)', vatValue.toLocaleString())}
+
+        {couponDiscountValue > 0 && renderInvoiceRow('Coupon Discount', couponDiscountValue.toLocaleString(), true)}
+        {loyaltyDiscountValue > 0 && renderInvoiceRow('Loyalty Discount', loyaltyDiscountValue.toLocaleString(), true)}
+
+        <View className="border-t border-gray-100 my-2" />
+
+        <View className="flex-row items-center justify-between py-1">
+          <Text className="text-base font-sans-bold text-gray-900">Total :</Text>
+          <Text className="text-lg font-sans-bold text-gray-900">Rs. {totalPayableValue.toLocaleString()}</Text>
+        </View>
+      </View>
+
+      {/* Buttons */}
+      <View className="mt-4 gap-3">
+        <Button
+          title="Download Invoice"
+          onPress={onDownloadInvoice}
+          className="border-gray-200 bg-white active:bg-gray-50 h-12"
+          textClassName="text-gray-900 font-sans-semibold"
+          leftIcon={<Feather name="download" size={16} color="#0f172a" />}
+        />
+        <Button title="Pay Now" variant="primary" onPress={onPayNow} className="h-12" />
+      </View>
+    </View>
+  );
+}
