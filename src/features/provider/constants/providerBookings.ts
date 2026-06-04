@@ -9,6 +9,8 @@ export interface ProviderBookingItem {
   bookingDate: string;
   bookedPrice: string;
   status: BookingStatus;
+  cancelReason?: string;
+  rejectReason?: string;
 }
 
 export const PROVIDER_BOOKINGS_MOCK: ProviderBookingItem[] = [
@@ -51,5 +53,6 @@ export const PROVIDER_BOOKINGS_MOCK: ProviderBookingItem[] = [
     bookingDate: 'May 30, 4:15 PM',
     bookedPrice: 'Rs. 1,200',
     status: BOOKING_STATUSES.Cancelled,
+    cancelReason: 'Customer requested cancellation due to personal reasons.',
   },
 ];

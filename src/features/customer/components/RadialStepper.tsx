@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import Animated, { useSharedValue, useAnimatedProps, withSpring } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 
@@ -9,6 +9,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface RadialStepperProps {
   status: BookingStatus;
+  role?: 'customer' | 'provider';
   size?: number;
   strokeWidth?: number;
 }
@@ -16,6 +17,10 @@ interface RadialStepperProps {
 interface StepConfig {
   stepNumber: number;
   label: string;
+  subtitles: {
+    customer: string;
+    provider: string;
+  };
   nextLabel: string;
   iconName: keyof typeof Feather.glyphMap;
   iconColor: string;
@@ -27,6 +32,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Pending]: {
     stepNumber: 1,
     label: 'Request Sent',
+    subtitles: {
+      customer: 'Sending request to provider!\nHang tight for confirmation.',
+      provider: 'New booking request received!\nReview and accept it now.',
+    },
     nextLabel: 'Accept',
     iconName: 'send',
     iconColor: '#485aff',
@@ -36,6 +45,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Confirmed]: {
     stepNumber: 2,
     label: 'Booking Confirmed',
+    subtitles: {
+      customer: 'Yay! Provider accepted the booking.\nThey will start work soon.',
+      provider: 'Nice job! You confirmed the booking.\nGet ready to start work.',
+    },
     nextLabel: 'Job Started',
     iconName: 'calendar',
     iconColor: '#485aff',
@@ -45,6 +58,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.InProgress]: {
     stepNumber: 3,
     label: 'Job Started',
+    subtitles: {
+      customer: 'Awesome, service is starting!\nProvider is performing the job.',
+      provider: "Let's do this! Work is in progress.\nPerform the service.",
+    },
     nextLabel: 'Completed',
     iconName: 'tool',
     iconColor: '#485aff',
@@ -54,6 +71,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Completed]: {
     stepNumber: 4,
     label: 'Job Completed',
+    subtitles: {
+      customer: 'Job completed successfully!\nWaiting for provider to send invoice.',
+      provider: 'Great work! Job is completed.\nCreate and send the final invoice.',
+    },
     nextLabel: 'Ready to Pay',
     iconName: 'award',
     iconColor: '#485aff',
@@ -63,6 +84,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.ReadyToPay]: {
     stepNumber: 5,
     label: 'Ready to Pay',
+    subtitles: {
+      customer: 'Your invoice is ready for review!\nCheckout now to complete booking.',
+      provider: 'Invoice sent to customer!\nAwaiting customer payment.',
+    },
     nextLabel: 'Payment Initiated',
     iconName: 'file-text',
     iconColor: '#485aff',
@@ -72,6 +97,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.PaymentInitiated]: {
     stepNumber: 6,
     label: 'Payment Initiated',
+    subtitles: {
+      customer: 'Processing your payment...\nWe are finalizing the booking.',
+      provider: 'Payment has been initiated!\nPlease confirm receipt.',
+    },
     nextLabel: 'Jobs Completed',
     iconName: 'refresh-cw',
     iconColor: '#485aff',
@@ -81,6 +110,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Paid]: {
     stepNumber: 7,
     label: 'Jobs Completed',
+    subtitles: {
+      customer: 'All paid! Thanks for choosing us.\nEnjoy your completed service!',
+      provider: 'Sweet! Payment confirmed.\nThis booking is fully completed!',
+    },
     nextLabel: 'Enjoy your service!',
     iconName: 'check',
     iconColor: '#485aff',
@@ -91,6 +124,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Cancelled]: {
     stepNumber: 0,
     label: 'Cancelled',
+    subtitles: {
+      customer: 'This booking has been cancelled.\nContact support for help.',
+      provider: 'This booking has been cancelled.\nNo further action is needed.',
+    },
     nextLabel: 'Booking has been cancelled',
     iconName: 'x-circle',
     iconColor: '#ef4444',
@@ -100,6 +137,10 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   [BOOKING_STATUSES.Rejected]: {
     stepNumber: 0,
     label: 'Rejected',
+    subtitles: {
+      customer: 'This booking request was rejected.\nTry booking another provider.',
+      provider: 'You rejected this request.\nThis booking is closed.',
+    },
     nextLabel: 'Booking has been rejected',
     iconName: 'alert-triangle',
     iconColor: '#f97316',
@@ -108,7 +149,7 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   },
 };
 
-export default function RadialStepper({ status, size = 64, strokeWidth = 4 }: RadialStepperProps) {
+export default function RadialStepper({ status, role = 'customer', size = 64, strokeWidth = 4 }: RadialStepperProps) {
   const config = STEP_CONFIGS[status] || STEP_CONFIGS[BOOKING_STATUSES.Pending];
   const isCancelledOrRejected = status === BOOKING_STATUSES.Cancelled || status === BOOKING_STATUSES.Rejected;
 
@@ -121,15 +162,15 @@ export default function RadialStepper({ status, size = 64, strokeWidth = 4 }: Ra
   const circumference = 2 * Math.PI * radius;
 
   // For cancelled/rejected, we show full circle colored red/orange or just no progress
-  const fillPercentage = isCancelledOrRejected ? 100 : currentStep / totalSteps;
+  const fillPercentage = isCancelledOrRejected ? 1.0 : currentStep / totalSteps;
   const targetOffset = circumference - fillPercentage * circumference;
 
   const strokeDashoffset = useSharedValue(circumference); // Start empty
 
   useEffect(() => {
-    strokeDashoffset.value = withSpring(targetOffset, {
-      damping: 15,
-      stiffness: 90,
+    strokeDashoffset.value = withTiming(targetOffset, {
+      duration: 600,
+      easing: Easing.out(Easing.quad),
     });
   }, [targetOffset, strokeDashoffset]);
 
@@ -182,10 +223,10 @@ export default function RadialStepper({ status, size = 64, strokeWidth = 4 }: Ra
 
       {/* Steps Metadata */}
       <View className="flex-1 justify-center">
-        <Text className="text-xs font-sans-bold uppercase tracking-wider text-gray-400">
-          {isCancelledOrRejected ? 'Status' : `Step ${currentStep} of ${totalSteps}`}
+        <Text className="text-base font-sans-bold text-gray-950 leading-snug">{config.label}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 mt-0.5" numberOfLines={2}>
+          {config.subtitles[role]}
         </Text>
-        <Text className="text-lg font-sans-bold text-gray-950 leading-tight py-0.5">{config.label}</Text>
       </View>
     </View>
   );

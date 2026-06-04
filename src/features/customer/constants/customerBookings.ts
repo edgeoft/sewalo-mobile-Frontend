@@ -21,6 +21,8 @@ export interface CustomerBookingItem {
   basePrice?: string;
   vatAmount?: string;
   totalPrice?: string;
+  cancelReason?: string;
+  rejectReason?: string;
 }
 
 export const CUSTOMER_BOOKINGS_MOCK: CustomerBookingItem[] = [
@@ -70,6 +72,7 @@ export const CUSTOMER_BOOKINGS_MOCK: CustomerBookingItem[] = [
     rating: '4.6',
     bookedPrice: 'Rs. 1200',
     status: BOOKING_STATUSES.Cancelled,
+    cancelReason: 'Client requested cancellation due to a change in travel plans.',
   },
   {
     id: 'booking-5',
@@ -81,6 +84,7 @@ export const CUSTOMER_BOOKINGS_MOCK: CustomerBookingItem[] = [
     rating: '4.9',
     bookedPrice: 'Rs. 2100',
     status: BOOKING_STATUSES.Rejected,
+    rejectReason: 'Provider is unavailable during the requested time slot.',
   },
   {
     id: 'booking-6',

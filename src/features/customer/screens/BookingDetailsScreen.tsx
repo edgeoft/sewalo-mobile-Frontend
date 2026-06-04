@@ -7,6 +7,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import RadialStepper from '../components/RadialStepper';
+import StatusReasonCard from '../components/StatusReasonCard';
 import BookingProviderCard from '../components/BookingProviderCard';
 import BookingInfoCard from '../components/BookingInfoCard';
 import ServiceInfoCard from '../components/ServiceInfoCard';
@@ -121,9 +122,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const isReadyToPay = booking.status === BOOKING_STATUSES.ReadyToPay;
 
   const isPaymentCompletedOrInitiated =
-    booking.status === BOOKING_STATUSES.Completed ||
-    booking.status === BOOKING_STATUSES.PaymentInitiated ||
-    booking.status === BOOKING_STATUSES.Paid;
+    booking.status === BOOKING_STATUSES.PaymentInitiated || booking.status === BOOKING_STATUSES.Paid;
 
   return (
     <View className="flex-1 bg-secondary">
@@ -145,11 +144,13 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         />
 
         {/* Progress Tracker (Radial Stepper) */}
-        <RadialStepper status={booking.status} />
+        <RadialStepper status={booking.status} role="customer" />
 
         <View className="gap-4">
           {/* Provider Details Card */}
           <BookingProviderCard booking={booking} />
+
+          <StatusReasonCard booking={booking} />
 
           {/* Dynamic Detail Sections (Visible till Completed) */}
           {showDetailsCards && (
@@ -194,11 +195,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <CompletedBookingSummaryCard
                 totalPayableValue={totalPayableValue}
                 onDownloadInvoice={handleDownloadInvoice}
-                onRateProvider={
-                  booking.status === BOOKING_STATUSES.Paid || booking.status === BOOKING_STATUSES.Completed
-                    ? handleRateProvider
-                    : undefined
-                }
+                onRateProvider={booking.status === BOOKING_STATUSES.Paid ? handleRateProvider : undefined}
               />
             </>
           )}

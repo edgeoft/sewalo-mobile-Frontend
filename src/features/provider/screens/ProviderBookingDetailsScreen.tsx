@@ -6,6 +6,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import RadialStepper from '@/features/customer/components/RadialStepper';
+import StatusReasonCard from '@/features/customer/components/StatusReasonCard';
 import BookingInfoCard from '@/features/customer/components/BookingInfoCard';
 import ServiceInfoCard from '@/features/customer/components/ServiceInfoCard';
 import CustomerDetailCard from '../components/CustomerDetailCard';
@@ -85,10 +86,12 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
-        <RadialStepper status={currentStatus} />
+        <RadialStepper status={currentStatus} role="provider" />
 
         <View className="gap-4">
           <CustomerDetailCard booking={initialBooking} />
+
+          <StatusReasonCard booking={{ ...initialBooking, status: currentStatus }} />
 
           {/* Reusing existing cards from customer flow since layout is identical */}
           <BookingInfoCard booking={mappedBooking} />
