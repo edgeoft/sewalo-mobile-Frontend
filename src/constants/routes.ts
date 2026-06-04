@@ -35,6 +35,7 @@ export const ROUTES = {
     editProfile: '/provider/edit-profile',
     changePassword: '/provider/change-password',
     verificationDocuments: '/provider/verification-documents',
+    bookingDetail: (id: string) => `/provider/booking/${id}` as const,
   },
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;

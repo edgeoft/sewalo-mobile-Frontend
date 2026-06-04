@@ -9,6 +9,7 @@ import { ProviderOrderCard } from '@/components/home';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Input from '@/components/ui/Input';
+import { ROUTES } from '@/constants/routes';
 import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
@@ -156,7 +157,7 @@ export default function ProviderBookingsScreen() {
               onAccept={handleAcceptOrder}
               onDecline={handleDeclineOrder}
               onPress={() => {
-                router.push(`/provider/booking/${booking.id}`);
+                router.push(ROUTES.provider.bookingDetail(booking.id));
               }}
             />
           )}
