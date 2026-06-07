@@ -1,5 +1,4 @@
 import { Feather } from '@expo/vector-icons';
-import { ROUTES } from '@/constants/routes';
 
 export interface AccountMenuItemOption {
   id: string;

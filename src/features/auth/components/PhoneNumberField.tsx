@@ -22,7 +22,7 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
 
   return (
     <View className="w-full">
-      <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{label}</Text>
+      {label ? <Text className="text-sm font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{label}</Text> : null}
       <View
         className={`form-input-container form-input-container-single ${
           error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''

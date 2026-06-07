@@ -43,37 +43,37 @@ export default function CustomerAccountScreen() {
         handleEditProfile();
         break;
       case 'my-reviews':
-        Alert.alert('My Reviews', 'Opening list of your reviews.');
+        router.push(ROUTES.customer.myReviews);
         break;
       case 'identity-verification':
         router.push(ROUTES.customer.identityVerification);
         break;
       case 'refer-friend':
-        Alert.alert('Refer a Friend', 'Share your referral code: SEWALO50');
+        router.push(ROUTES.customer.referFriend);
         break;
       case 'notification-settings':
-        Alert.alert('Notification Settings', 'Update preferences.');
+        router.push(ROUTES.customer.notificationSettings);
         break;
       case 'privacy-settings':
-        Alert.alert('Privacy Settings', 'Update privacy settings.');
+        router.push(ROUTES.customer.privacySettings);
         break;
       case 'change-password':
         router.push(ROUTES.customer.changePassword);
         break;
       case 'help-faq':
-        Alert.alert('Help & FAQ', 'Open support articles.');
+        router.push(ROUTES.customer.helpFaq);
         break;
       case 'contact-support':
-        Alert.alert('Contact Support', 'Submit custom support ticket.');
+        router.push(ROUTES.customer.contactSupport);
         break;
       case 'terms-of-service':
-        Alert.alert('Terms of Service', 'Display legal agreement.');
+        router.push(ROUTES.customer.termsOfService);
         break;
       case 'privacy-policy':
-        Alert.alert('Privacy Policy', 'Display privacy statement.');
+        router.push(ROUTES.customer.privacyPolicy);
         break;
       case 'rate-app':
-        Alert.alert('Rate App', 'Thank you for your rating!');
+        router.push(ROUTES.customer.rateApp);
         break;
       case 'logout':
         handleLogout();

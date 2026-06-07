@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -125,37 +125,37 @@ export default function GuestGetStartedScreen() {
             icon="star"
             title="Rate the app"
             subtitle="Share your feedback"
-            onPress={() => Alert.alert('Rate App', 'Thank you for your rating!')}
+            onPress={() => router.push(ROUTES.guest.rateApp)}
           />
           <AccountMenuItem
             icon="info"
             title="About Sewalo"
             subtitle="Learn more about the app"
-            onPress={() => Alert.alert('About App', 'Sewalo Mobile version 1.0.0')}
+            onPress={() => router.push(ROUTES.guest.aboutSewalo)}
           />
           <AccountMenuItem
             icon="shield"
             title="Privacy policy"
             subtitle="Read how your data is handled"
-            onPress={() => Alert.alert('Privacy Policy', 'Display privacy statement.')}
+            onPress={() => router.push(ROUTES.guest.privacyPolicy)}
           />
           <AccountMenuItem
             icon="file-text"
             title="Terms & conditions"
             subtitle="Review usage terms"
-            onPress={() => Alert.alert('Terms & Conditions', 'Display user agreement.')}
+            onPress={() => router.push(ROUTES.guest.termsOfService)}
           />
           <AccountMenuItem
             icon="alert-triangle"
             title="Report a problem"
             subtitle="Send an issue or bug report"
-            onPress={() => Alert.alert('Report Problem', 'Send bug report forms.')}
+            onPress={() => router.push(ROUTES.guest.reportProblem)}
           />
           <AccountMenuItem
             icon="message-circle"
             title="Contact support"
             subtitle="Reach the Sewalo support team"
-            onPress={() => Alert.alert('Contact Support', 'Connecting to support chat...')}
+            onPress={() => router.push(ROUTES.guest.contactSupport)}
           />
         </View>
       </ContentLayout>

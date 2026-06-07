@@ -22,17 +22,6 @@ export default function ProviderAccountScreen() {
     router.push(ROUTES.provider.editProfile);
   };
 
-  const handlePayoutSettings = () => {
-    Alert.alert(
-      'Payout Settings',
-      'Manage your receiving payout methods:\n\n1. eSewa Wallet (Active)\n2. Nepal Investment Bank (Secondary)\n3. Khalti Wallet',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Manage Bank', onPress: () => Alert.alert('Bank Account', 'Manage bank account details.') },
-      ],
-    );
-  };
-
   const handleLogout = () => {
     Alert.alert('Log Out', 'Are you sure you want to log out of your provider partner account?', [
       { text: 'Cancel', style: 'cancel' },
@@ -53,34 +42,34 @@ export default function ProviderAccountScreen() {
         handleEditProfile();
         break;
       case 'payout-accounts':
-        handlePayoutSettings();
+        router.push(ROUTES.provider.payoutAccounts);
         break;
       case 'verification-documents':
         router.push(ROUTES.provider.verificationDocuments);
         break;
       case 'notification-settings':
-        Alert.alert('Notification Settings', 'Update notifications.');
+        router.push(ROUTES.provider.notificationSettings);
         break;
       case 'privacy-settings':
-        Alert.alert('Privacy Settings', 'Update privacy settings.');
+        router.push(ROUTES.provider.privacySettings);
         break;
       case 'change-password':
         router.push(ROUTES.provider.changePassword);
         break;
       case 'help-faq':
-        Alert.alert('Help & FAQ', 'Open support articles.');
+        router.push(ROUTES.provider.helpFaq);
         break;
       case 'contact-support':
-        Alert.alert('Contact Support', 'Connecting to support agents...');
+        router.push(ROUTES.provider.contactSupport);
         break;
       case 'terms-of-service':
-        Alert.alert('Terms of Service', 'Display legal agreement.');
+        router.push(ROUTES.provider.termsOfService);
         break;
       case 'privacy-policy':
-        Alert.alert('Privacy Policy', 'Display privacy statement.');
+        router.push(ROUTES.provider.privacyPolicy);
         break;
       case 'rate-app':
-        Alert.alert('Rate App', 'Thank you for your rating!');
+        router.push(ROUTES.provider.rateApp);
         break;
       case 'logout':
         handleLogout();
