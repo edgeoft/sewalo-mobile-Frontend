@@ -7,6 +7,7 @@ export const ROUTES = {
     otpVerification: '/auth/otp-verification',
     resetPassword: '/auth/reset-password',
     roleSelection: '/auth/role-selection',
+    gettingStarted: '/auth/getting-started',
   },
   guest: {
     home: '/(guest)/(tabs)/home',

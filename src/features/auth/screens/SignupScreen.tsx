@@ -48,7 +48,7 @@ export default function SignupScreen() {
       setLoading(false);
       router.push({
         pathname: ROUTES.auth.otpVerification,
-        params: { phone: data.phone, flow: 'signup' },
+        params: { phone: data.phone, flow: 'signup', role: selectedRole },
       });
     }, 1500);
   };

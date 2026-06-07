@@ -8,10 +8,18 @@ import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface RadialStepperProps {
-  status: BookingStatus;
+  status?: BookingStatus;
   role?: 'customer' | 'provider';
   size?: number;
   strokeWidth?: number;
+  currentStep?: number;
+  totalSteps?: number;
+  label?: string;
+  subtitle?: string;
+  iconName?: keyof typeof Feather.glyphMap;
+  iconColor?: string;
+  progressColor?: string;
+  bgColor?: string;
 }
 
 interface StepConfig {
@@ -120,7 +128,6 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
     progressColor: '#485aff',
     bgColor: '#f4f6ff',
   },
-  // Fallbacks for non-linear states
   [BOOKING_STATUSES.Cancelled]: {
     stepNumber: 0,
     label: 'Cancelled',
@@ -149,12 +156,50 @@ const STEP_CONFIGS: Record<string, StepConfig> = {
   },
 };
 
-export default function RadialStepper({ status, role = 'customer', size = 64, strokeWidth = 4 }: RadialStepperProps) {
-  const config = STEP_CONFIGS[status] || STEP_CONFIGS[BOOKING_STATUSES.Pending];
-  const isCancelledOrRejected = status === BOOKING_STATUSES.Cancelled || status === BOOKING_STATUSES.Rejected;
+export default function RadialStepper({
+  status,
+  role = 'customer',
+  size = 64,
+  strokeWidth = 4,
+  currentStep,
+  totalSteps,
+  label,
+  subtitle,
+  iconName,
+  iconColor,
+  progressColor,
+  bgColor,
+}: RadialStepperProps) {
+  const isCustom = !status;
 
-  const totalSteps = 7;
-  const currentStep = config.stepNumber;
+  const resolvedConfig = isCustom
+    ? {
+        stepNumber: currentStep || 1,
+        label: label || '',
+        subtitle: subtitle || '',
+        iconName: iconName || 'help-circle',
+        iconColor: iconColor || '#485aff',
+        progressColor: progressColor || '#485aff',
+        bgColor: bgColor || '#f4f6ff',
+      }
+    : (() => {
+        const config = STEP_CONFIGS[status] || STEP_CONFIGS[BOOKING_STATUSES.Pending];
+        return {
+          stepNumber: config.stepNumber,
+          label: config.label,
+          subtitle: config.subtitles[role],
+          iconName: config.iconName,
+          iconColor: config.iconColor,
+          progressColor: config.progressColor,
+          bgColor: config.bgColor,
+        };
+      })();
+
+  const isCancelledOrRejected =
+    !isCustom && (status === BOOKING_STATUSES.Cancelled || status === BOOKING_STATUSES.Rejected);
+
+  const total = isCustom ? totalSteps || 1 : 7;
+  const current = resolvedConfig.stepNumber;
 
   // SVG calculations
   const center = size / 2;
@@ -162,7 +207,7 @@ export default function RadialStepper({ status, role = 'customer', size = 64, st
   const circumference = 2 * Math.PI * radius;
 
   // For cancelled/rejected, we show full circle colored red/orange or just no progress
-  const fillPercentage = isCancelledOrRejected ? 1.0 : currentStep / totalSteps;
+  const fillPercentage = isCancelledOrRejected ? 1.0 : current / total;
   const targetOffset = circumference - fillPercentage * circumference;
 
   const strokeDashoffset = useSharedValue(circumference); // Start empty
@@ -189,6 +234,7 @@ export default function RadialStepper({ status, role = 'customer', size = 64, st
         shadowOpacity: 0.04,
         shadowRadius: 10,
         elevation: 2,
+        backgroundColor: resolvedConfig.bgColor,
       }}
     >
       {/* Circle Container */}
@@ -201,7 +247,7 @@ export default function RadialStepper({ status, role = 'customer', size = 64, st
             cx={center}
             cy={center}
             r={radius}
-            stroke={config.progressColor}
+            stroke={resolvedConfig.progressColor}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             animatedProps={animatedProps}
@@ -217,15 +263,15 @@ export default function RadialStepper({ status, role = 'customer', size = 64, st
             height: size - strokeWidth * 2,
           }}
         >
-          <Feather name={config.iconName} size={22} color={config.iconColor} />
+          <Feather name={resolvedConfig.iconName} size={22} color={resolvedConfig.iconColor} />
         </View>
       </View>
 
       {/* Steps Metadata */}
-      <View className="flex-1 justify-center">
-        <Text className="text-base font-sans-bold text-gray-950 leading-snug">{config.label}</Text>
+      <View className="flex-1 justify-center bg-transparent">
+        <Text className="text-base font-sans-bold text-gray-950 leading-snug">{resolvedConfig.label}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 mt-0.5" numberOfLines={2}>
-          {config.subtitles[role]}
+          {resolvedConfig.subtitle}
         </Text>
       </View>
     </View>

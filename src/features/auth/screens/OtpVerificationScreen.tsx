@@ -10,7 +10,11 @@ import AuthScreenLayout from '../components/AuthScreenLayout';
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { phone, flow } = useLocalSearchParams<{ phone: string; flow: 'signup' | 'forgot-password' }>();
+  const { phone, flow, role } = useLocalSearchParams<{
+    phone: string;
+    flow: 'signup' | 'forgot-password';
+    role?: string;
+  }>();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [timer, setTimer] = useState(60);
@@ -88,8 +92,11 @@ export default function OtpVerificationScreen() {
           params: { phone },
         });
       } else {
-        // Signup verified: redirect to Sign In
-        router.replace(ROUTES.auth.signin);
+        // Signup verified: redirect to Getting Started onboarding form
+        router.replace({
+          pathname: ROUTES.auth.gettingStarted as any,
+          params: { role: role || 'customer', phone: phone || '' },
+        });
       }
     }, 1500);
   };

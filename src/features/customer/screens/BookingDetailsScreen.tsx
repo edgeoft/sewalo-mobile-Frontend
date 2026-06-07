@@ -6,7 +6,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import { type CustomerBookingItem } from '../constants/customerBookings';
-import RadialStepper from '../components/RadialStepper';
+import RadialStepper from '@/components/common/RadialStepper';
 import StatusReasonCard from '../components/StatusReasonCard';
 import BookingProviderCard from '../components/BookingProviderCard';
 import BookingInfoCard from '../components/BookingInfoCard';

@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import RadialStepper from '@/features/customer/components/RadialStepper';
+import RadialStepper from '@/components/common/RadialStepper';
 import StatusReasonCard from '@/features/customer/components/StatusReasonCard';
 import BookingInfoCard from '@/features/customer/components/BookingInfoCard';
 import ServiceInfoCard from '@/features/customer/components/ServiceInfoCard';
