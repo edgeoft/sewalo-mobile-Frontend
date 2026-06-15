@@ -1,20 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import Button from '@/components/ui/Button';
-import { ROUTES } from '@/constants/routes';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PhoneNumberField from '../components/PhoneNumberField';
 import { ForgotPasswordFormData, getForgotPasswordSchema } from '../data/schemas';
 
+import { useForgotPassword } from '../api/hooks';
+
 export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const forgotPasswordMutation = useForgotPassword();
 
   const {
     control,
@@ -28,14 +26,7 @@ export default function ForgotPasswordScreen() {
   });
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push({
-        pathname: ROUTES.auth.otpVerification,
-        params: { phone: data.phone, flow: 'forgot-password' },
-      });
-    }, 1200);
+    forgotPasswordMutation.mutate({ phone: data.phone });
   };
 
   return (
@@ -49,7 +40,12 @@ export default function ForgotPasswordScreen() {
           error={errors.phone?.message}
         />
 
-        <Button title={t('auth.continue')} loading={loading} onPress={handleSubmit(onSubmit)} className="w-full" />
+        <Button
+          title={t('auth.continue')}
+          loading={forgotPasswordMutation.isPending}
+          onPress={handleSubmit(onSubmit)}
+          className="w-full"
+        />
       </View>
     </AuthScreenLayout>
   );

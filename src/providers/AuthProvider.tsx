@@ -1,31 +1,48 @@
-import React, { createContext, useContext, useState } from 'react';
-import { USER_ROLES, UserRole } from '@/types';
+import React, { createContext, useContext, useEffect } from 'react';
+import { UserRole } from '@/types';
+import { useAuthStore } from '@/store/useAuthStore';
+import { UserProfile } from '@/features/auth/api/types';
+import { ActivityIndicator, View } from 'react-native';
 
 interface AuthContextType {
   role: UserRole;
   setRole: (role: UserRole) => void;
   isLoggedIn: boolean;
-  login: (role: UserRole) => void;
-  logout: () => void;
+  user: UserProfile | null;
+  isLoading: boolean;
+  login: (user: UserProfile, accessToken: string, refreshToken?: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Default to guest for testing and initial loading
-  const [role, setRole] = useState<UserRole>(USER_ROLES.Guest);
+  const role = useAuthStore((state) => state.role);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const setRole = useAuthStore((state) => state.setRole);
+  const login = useAuthStore((state) => state.login);
+  const logout = useAuthStore((state) => state.logout);
+  const initialize = useAuthStore((state) => state.initialize);
 
-  const isLoggedIn = role !== USER_ROLES.Guest;
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
-  const login = (newRole: UserRole) => {
-    setRole(newRole);
-  };
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center">
+        <ActivityIndicator size="large" color="#485aff" />
+      </View>
+    );
+  }
 
-  const logout = () => {
-    setRole(USER_ROLES.Guest);
-  };
-
-  return <AuthContext.Provider value={{ role, setRole, isLoggedIn, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ role, setRole, isLoggedIn, user, isLoading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

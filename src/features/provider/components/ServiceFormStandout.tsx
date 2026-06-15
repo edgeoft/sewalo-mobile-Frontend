@@ -77,7 +77,6 @@ export default function ServiceFormStandout({
         }, 300);
       }
     } catch (error) {
-      console.log('Error picking image:', error);
       Alert.alert('Error', 'Something went wrong while picking the image.');
     }
   };

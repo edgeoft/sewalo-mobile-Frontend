@@ -17,13 +17,15 @@ import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
 
+import { useLogin } from '../api/hooks';
+
 export default function SigninScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { setRole } = useAuth();
 
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loginMutation = useLogin();
 
   const {
     control,
@@ -38,19 +40,10 @@ export default function SigninScreen() {
   });
 
   const onSubmit = (data: SigninFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      // Mock role determination: if phone ends with 9, login as provider, else customer
-      const determinedRole = data.phone.endsWith('9') ? USER_ROLES.Provider : USER_ROLES.Customer;
-      setRole(determinedRole);
-
-      if (determinedRole === USER_ROLES.Provider) {
-        router.replace(ROUTES.provider.home);
-      } else {
-        router.replace(ROUTES.customer.home);
-      }
-    }, 1500);
+    loginMutation.mutate({
+      phone: data.phone,
+      password: data.password,
+    });
   };
 
   return (
@@ -96,7 +89,12 @@ export default function SigninScreen() {
         </View>
 
         <View className="pt-2">
-          <Button title={t('auth.login')} loading={loading} onPress={handleSubmit(onSubmit)} className="w-full" />
+          <Button
+            title={t('auth.login')}
+            loading={loginMutation.isPending}
+            onPress={handleSubmit(onSubmit)}
+            className="w-full"
+          />
         </View>
 
         <View className="flex-row items-center my-3">

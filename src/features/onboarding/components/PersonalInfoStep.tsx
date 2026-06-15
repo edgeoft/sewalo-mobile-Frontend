@@ -107,7 +107,6 @@ export default function PersonalInfoStep({
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
     } catch (error) {
-      console.log('Error picking avatar:', error);
       Alert.alert('Error', 'Something went wrong while picking the avatar.');
     }
   };

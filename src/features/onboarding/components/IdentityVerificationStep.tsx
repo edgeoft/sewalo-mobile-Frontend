@@ -46,7 +46,6 @@ export default function IdentityVerificationStep({
         setDocumentImage(result.assets[0].uri);
       }
     } catch (error) {
-      console.log('Error picking document image:', error);
       Alert.alert('Error', 'Something went wrong while selecting the image.');
     }
   };

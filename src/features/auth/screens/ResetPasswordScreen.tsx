@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -11,11 +10,13 @@ import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
 import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
+import { useResetPassword } from '../api/hooks';
 
 export default function ResetPasswordScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { phone, otp } = useLocalSearchParams<{ phone: string; otp: string }>();
+  const resetPasswordMutation = useResetPassword();
 
   const {
     control,
@@ -31,13 +32,13 @@ export default function ResetPasswordScreen() {
 
   const passwordValue = useWatch({ control, name: 'password' }) ?? '';
 
-  const onSubmit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert(t('auth.passwordResetSuccess'));
-      router.replace(ROUTES.auth.signin);
-    }, 1500);
+  const onSubmit = (data: ResetPasswordFormData) => {
+    resetPasswordMutation.mutate({
+      phone: phone || '',
+      otp: otp || '',
+      password: data.password,
+      password_confirmation: data.confirmPassword,
+    });
   };
 
   return (
@@ -74,7 +75,7 @@ export default function ResetPasswordScreen() {
         <View className="pt-2">
           <Button
             title={t('auth.resetPasswordTitle')}
-            loading={loading}
+            loading={resetPasswordMutation.isPending}
             onPress={handleSubmit(onSubmit)}
             className="w-full"
           />

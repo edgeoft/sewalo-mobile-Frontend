@@ -32,7 +32,7 @@ interface StepInfo {
 
 export default function GettingStartedScreen() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { setRole } = useAuth();
   const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
 
   // Determine user role
@@ -190,7 +190,7 @@ export default function GettingStartedScreen() {
     setTimeout(() => {
       setLoading(false);
       // Determine display role
-      login(role as UserRole);
+      setRole(role as UserRole);
 
       if (role === 'provider') {
         router.replace(ROUTES.provider.home as any);

@@ -6,6 +6,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import AuthScreenLayout from '../components/AuthScreenLayout';
+import { useVerifyOtp, useResendOtp } from '../api/hooks';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
@@ -18,10 +19,15 @@ export default function OtpVerificationScreen() {
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [timer, setTimer] = useState(60);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const inputRefs = useRef<TextInput[]>([]);
+
+  const verifyOtpMutation = useVerifyOtp();
+  const resendOtpMutation = useResendOtp(() => {
+    setTimer(60);
+    setLocalError(null);
+  });
 
   // Start resend countdown timer
   useEffect(() => {
@@ -33,18 +39,15 @@ export default function OtpVerificationScreen() {
   }, [timer]);
 
   const handleChangeText = (text: string, index: number) => {
-    // Only allow numbers
     const cleanText = text.replace(/[^0-9]/g, '');
     const newOtp = [...otp];
 
     if (cleanText.length > 0) {
-      // Take only the last character if pasted/entered
       const char = cleanText[cleanText.length - 1];
       newOtp[index] = char;
       setOtp(newOtp);
-      setError(null);
+      setLocalError(null);
 
-      // Auto focus next input
       if (index < 5 && inputRefs.current[index + 1]) {
         inputRefs.current[index + 1].focus();
       }
@@ -67,39 +70,27 @@ export default function OtpVerificationScreen() {
 
   const handleResend = () => {
     if (timer > 0) return;
-    setTimer(60);
-    setError(null);
-    alert('A new OTP has been sent successfully!');
+    resendOtpMutation.mutate({
+      phone: phone || '',
+      type: flow === 'forgot-password' ? 'reset_password' : 'signup',
+    });
   };
 
   const handleVerify = () => {
     const code = otp.join('');
     if (code.length < 6) {
-      setError(t('auth.enterOtp'));
+      setLocalError(t('auth.enterOtp'));
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      // For mock purposes: accept '123456' or any 6 digits for testing
-      alert(t('auth.otpVerifiedSuccess'));
-
-      if (flow === 'forgot-password') {
-        // Reset password screen: replace so we don't go back to OTP screen
-        router.replace({
-          pathname: ROUTES.auth.resetPassword,
-          params: { phone },
-        });
-      } else {
-        // Signup verified: redirect to Getting Started onboarding form
-        router.replace({
-          pathname: ROUTES.auth.gettingStarted as any,
-          params: { role: role || 'customer', phone: phone || '' },
-        });
-      }
-    }, 1500);
+    verifyOtpMutation.mutate({
+      phone: phone || '',
+      otp: code,
+      type: flow === 'forgot-password' ? 'reset_password' : 'signup',
+    });
   };
+
+  const errorMsg = localError || (verifyOtpMutation.error as any)?.message || (resendOtpMutation.error as any)?.message;
 
   return (
     <AuthScreenLayout
@@ -139,10 +130,15 @@ export default function OtpVerificationScreen() {
         ))}
       </View>
 
-      {error ? <Text className="text-xs font-sans-medium text-destructive mb-6 ml-1">{error}</Text> : null}
+      {errorMsg ? <Text className="text-xs font-sans-medium text-destructive mb-6 ml-1">{errorMsg}</Text> : null}
 
       <View className="gap-y-4">
-        <Button title={t('auth.continue')} loading={loading} onPress={handleVerify} className="w-full" />
+        <Button
+          title={t('auth.continue')}
+          loading={verifyOtpMutation.isPending}
+          onPress={handleVerify}
+          className="w-full"
+        />
 
         <View className="flex-row items-center justify-center mt-2">
           {timer > 0 ? (

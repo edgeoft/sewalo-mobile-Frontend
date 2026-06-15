@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
@@ -16,6 +15,7 @@ import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
 import PhoneNumberField from '../components/PhoneNumberField';
 import { getSignupSchema, SignupFormData } from '../data/schemas';
+import { useSignup } from '../api/hooks';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export default function SignupScreen() {
   const { role } = useLocalSearchParams<{ role: UserRole }>();
 
   const selectedRole = role || 'customer';
-  const [loading, setLoading] = useState(false);
+  const signupMutation = useSignup();
 
   const {
     control,
@@ -43,14 +43,13 @@ export default function SignupScreen() {
   const passwordValue = useWatch({ control, name: 'password' }) ?? '';
 
   const onSubmit = (data: SignupFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push({
-        pathname: ROUTES.auth.otpVerification,
-        params: { phone: data.phone, flow: 'signup', role: selectedRole },
-      });
-    }, 1500);
+    signupMutation.mutate({
+      name: data.name,
+      phone: data.phone,
+      password: data.password,
+      password_confirmation: data.confirmPassword,
+      role: selectedRole,
+    });
   };
 
   return (
@@ -141,7 +140,12 @@ export default function SignupScreen() {
         ) : null}
 
         <View className="gap-y-1.5 mt-2">
-          <Button title={t('auth.signUp')} loading={loading} onPress={handleSubmit(onSubmit)} className="w-full" />
+          <Button
+            title={t('auth.signUp')}
+            loading={signupMutation.isPending}
+            onPress={handleSubmit(onSubmit)}
+            className="w-full"
+          />
           <AuthFooterLink
             prompt={t('auth.alreadyHaveAccount')}
             actionLabel={t('auth.login')}
