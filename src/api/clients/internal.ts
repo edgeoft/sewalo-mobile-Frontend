@@ -1,9 +1,10 @@
 import { createApiClient } from '../client/factory';
+import { ENV } from '@/constants/env';
 
 // Configured singleton instance of the API Client for our internal backend
 export const internalClient = createApiClient({
   name: 'internal-backend',
-  baseURL: 'http://localhost:8000/api',
+  baseURL: ENV.API_BASE_URL,
   env: 'dev',
   timeout: 10000,
   auth: {

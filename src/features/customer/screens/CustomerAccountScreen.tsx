@@ -13,11 +13,12 @@ import { ROUTES } from '@/constants/routes';
 import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
 import { CUSTOMER_ACCOUNT_MENU } from '../constants/accountMenu';
+import { getImageUrl } from '../../auth/utils/image';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleEditProfile = () => {
     router.push(ROUTES.customer.editProfile);
@@ -121,7 +122,7 @@ export default function CustomerAccountScreen() {
           <View className="flex-row items-center flex-1">
             <View className="relative">
               <Image
-                source={{ uri: 'https://i.pravatar.cc/300?img=11' }}
+                source={{ uri: getImageUrl(user?.avatar) || 'https://i.pravatar.cc/300?img=11' }}
                 className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
                 resizeMode="cover"
               />
@@ -129,15 +130,21 @@ export default function CustomerAccountScreen() {
             </View>
 
             <View className="ml-4 flex-1">
-              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">Aayush Shrestha</Text>
-              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">aayush.shrestha@gmail.com</Text>
-              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">+977 9801234567</Text>
+              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">
+                {user?.name || 'Guest User'}
+              </Text>
+              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                {user?.email || 'No email provided'}
+              </Text>
+              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                {user?.phone || 'No phone number'}
+              </Text>
             </View>
           </View>
         </View>
 
         {/* 2. Loyalty Points Card */}
-        <LoyaltyPointsCard points={2450} />
+        <LoyaltyPointsCard points={user?.loyalty_points ?? 0} />
 
         {/* 3. Settings Categories (Config Driven) */}
         <View className="gap-y-5">

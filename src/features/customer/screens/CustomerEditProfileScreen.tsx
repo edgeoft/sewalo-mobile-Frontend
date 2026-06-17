@@ -9,20 +9,16 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSection';
 
-const initialCustomerData: BasicInfoFormData = {
-  fullName: 'Aayush Shrestha',
-  mobileNumber: '9801234567',
-  location: 'Kathmandu, Bagmati Province, Nepal',
-  dateOfBirth: '1998-05-15',
-  languages: ['English', 'Nepali'],
-  bio: 'Hi, I am Aayush. I love using Sewalo for quick home services!',
-  avatar: 'https://i.pravatar.cc/300?img=11',
-};
+import { useAuth } from '@/providers/AuthProvider';
+import { getImageUrl } from '../../auth/utils/image';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const locationStr = [user?.address, user?.city, user?.state, user?.country].filter(Boolean).join(', ');
 
   const {
     control,
@@ -31,7 +27,15 @@ export default function CustomerEditProfileScreen() {
     watch,
     formState: { errors },
   } = useForm<BasicInfoFormData>({
-    defaultValues: initialCustomerData,
+    defaultValues: {
+      fullName: user?.name || '',
+      mobileNumber: user?.phone || '',
+      location: locationStr,
+      dateOfBirth: user?.dob || '',
+      languages: user?.language || [],
+      bio: user?.description || '',
+      avatar: getImageUrl(user?.avatar) || '',
+    },
     mode: 'onBlur',
   });
 

@@ -12,14 +12,20 @@ import BasicInfoSection, { BasicInfoFormData } from '@/features/customer/compone
 import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../components/SkillsExperienceSection';
 import AvailabilitySection from '../components/AvailabilitySection';
 
+import { useAuth } from '@/providers/AuthProvider';
+import { getImageUrl } from '../../auth/utils/image';
+
 export default function ProviderEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
 
   // Loading states per section
   const [basicLoading, setBasicLoading] = useState(false);
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
+
+  const locationStr = [user?.address, user?.city, user?.state, user?.country].filter(Boolean).join(', ');
 
   // 1. Basic Info Form State
   const {
@@ -30,13 +36,13 @@ export default function ProviderEditProfileScreen() {
     formState: { errors },
   } = useForm<BasicInfoFormData>({
     defaultValues: {
-      fullName: 'Pepper Potts',
-      mobileNumber: '9802117361',
-      location: 'Kathmandu, Bagmati Province, Nepal',
-      dateOfBirth: '1995-10-12',
-      languages: ['English', 'Nepali'],
-      bio: 'Professional designer with 5+ years of experience in interior and web design.',
-      avatar: 'https://i.pravatar.cc/300?img=47',
+      fullName: user?.name || '',
+      mobileNumber: user?.phone || '',
+      location: locationStr,
+      dateOfBirth: user?.dob || '',
+      languages: user?.language || [],
+      bio: user?.description || '',
+      avatar: getImageUrl(user?.avatar) || '',
     },
     mode: 'onBlur',
   });
@@ -54,23 +60,41 @@ export default function ProviderEditProfileScreen() {
   };
 
   // 2. Skills & Experience State
-  const [educationList, setEducationList] = useState<EducationItem[]>([
-    {
-      degree: 'Bachelor in Interior Design',
-      institution: 'Kathmandu University',
-      startYear: '2013',
-      endYear: '2017',
-    },
-  ]);
+  const [educationList, setEducationList] = useState<EducationItem[]>(
+    user?.education && user.education.length > 0
+      ? user.education.map((edu: any) => ({
+          degree: edu.degree || '',
+          institution: edu.institute || '',
+          startYear: edu.start_date ? edu.start_date.split('-')[0] : '',
+          endYear: edu.end_date ? edu.end_date.split('-')[0] : 'Present',
+        }))
+      : [
+          {
+            degree: 'Bachelor in Interior Design',
+            institution: 'Kathmandu University',
+            startYear: '2013',
+            endYear: '2017',
+          },
+        ],
+  );
 
-  const [experienceList, setExperienceList] = useState<ExperienceItem[]>([
-    {
-      title: 'Lead Decorator',
-      company: 'Decor Sewa',
-      startYear: '2018',
-      endYear: 'Present',
-    },
-  ]);
+  const [experienceList, setExperienceList] = useState<ExperienceItem[]>(
+    user?.experience && user.experience.length > 0
+      ? user.experience.map((exp: any) => ({
+          title: exp.title || '',
+          company: exp.company_name || '',
+          startYear: exp.start_date ? exp.start_date.split('-')[0] : '',
+          endYear: exp.end_date ? exp.end_date.split('-')[0] : 'Present',
+        }))
+      : [
+          {
+            title: 'Lead Decorator',
+            company: 'Decor Sewa',
+            startYear: '2018',
+            endYear: 'Present',
+          },
+        ],
+  );
 
   const handleAddEducation = (item: EducationItem) => {
     setEducationList((prev) => [...prev, item]);
@@ -97,9 +121,11 @@ export default function ProviderEditProfileScreen() {
   };
 
   // 3. Availability State
-  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
-  const [workingHoursStart, setWorkingHoursStart] = useState('10:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState('06:00 PM');
+  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>(
+    (user?.availability as any) || 'sunday_friday',
+  );
+  const [workingHoursStart, setWorkingHoursStart] = useState(user?.start_time || '10:00 AM');
+  const [workingHoursEnd, setWorkingHoursEnd] = useState(user?.end_time || '06:00 PM');
 
   const handleSaveAvailability = () => {
     setAvailabilityLoading(true);

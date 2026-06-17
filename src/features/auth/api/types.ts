@@ -18,6 +18,21 @@ export interface UserProfile {
   loyalty_points: number;
   phone_verified_at: string | null;
   email_verified_at: string | null;
+  description: string | null;
+  education: any[] | null;
+  experience: any[] | null;
+  document: string | null;
+  coordinates: { lat: number; lng: number } | null;
+  availability: string | null;
+  availability_days: string[] | null;
+  start_time: string | null;
+  end_time: string | null;
+  profile_views: number | null;
+  avg_rating: number | null;
+  profile_verified_at: string | null;
+  last_login_at: string | null;
+  certificates: string[] | null;
+  language: string[] | null;
 }
 
 export interface SignupInput {

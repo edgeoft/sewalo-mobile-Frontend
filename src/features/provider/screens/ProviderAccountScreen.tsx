@@ -12,11 +12,12 @@ import { useAuth } from '@/providers/AuthProvider';
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import { Feather } from '@expo/vector-icons';
 import { PROVIDER_ACCOUNT_MENU } from '../constants/accountMenu';
+import { getImageUrl } from '../../auth/utils/image';
 
 export default function ProviderAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleEditProfile = () => {
     router.push(ROUTES.provider.editProfile);
@@ -117,28 +118,36 @@ export default function ProviderAccountScreen() {
           <View className="flex-row items-center flex-1">
             <View className="relative">
               <Image
-                source={{ uri: 'https://i.pravatar.cc/300?img=47' }}
+                source={{ uri: getImageUrl(user?.avatar) || 'https://i.pravatar.cc/300?img=47' }}
                 className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
                 resizeMode="cover"
               />
-              <View className="absolute bottom-0 right-0 h-4.5 w-4.5 rounded-full bg-blue-500 border-2 border-white items-center justify-center">
-                <Feather name="check" size={10} color="#ffffff" />
-              </View>
+              {user?.status === 'verified' && (
+                <View className="absolute bottom-0 right-0 h-4.5 w-4.5 rounded-full bg-blue-500 border-2 border-white items-center justify-center">
+                  <Feather name="check" size={10} color="#ffffff" />
+                </View>
+              )}
             </View>
 
             <View className="ml-4 flex-1">
-              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">Pepper Potts</Text>
-              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">pepperpotts@gmail.com</Text>
-              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">+977 9802117361</Text>
+              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">{user?.name || 'Partner'}</Text>
+              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                {user?.email || 'No email provided'}
+              </Text>
+              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                {user?.phone || 'No phone number'}
+              </Text>
 
-              {/* Rating and Services */}
+              {/* Rating */}
               <View className="flex-row items-center gap-1.5 mt-1.5">
-                <Text className="text-xs font-sans-bold text-gray-700">UI/UX & Design</Text>
-                <View className="h-1 w-1 rounded-full bg-gray-300" />
                 <View className="flex-row items-center gap-0.5">
                   <Feather name="star" size={10} color="#f59e0b" fill="#f59e0b" />
-                  <Text className="text-[10px] font-sans-bold text-gray-600">4.9</Text>
-                  <Text className="text-[10px] font-sans-medium text-gray-400">(128)</Text>
+                  <Text className="text-[10px] font-sans-bold text-gray-600">
+                    {user?.avg_rating !== null && user?.avg_rating !== undefined ? user.avg_rating.toFixed(1) : '0.0'}
+                  </Text>
+                  <Text className="text-[10px] font-sans-medium text-gray-400">
+                    ({user?.avg_rating !== null && user?.avg_rating !== undefined ? '1' : '0'})
+                  </Text>
                 </View>
               </View>
             </View>
