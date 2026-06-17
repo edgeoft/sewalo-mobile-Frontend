@@ -1,25 +1,25 @@
+import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/providers/AuthProvider';
+import { USER_ROLES } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/providers/AuthProvider';
-import { ROUTES } from '@/constants/routes';
-import { USER_ROLES } from '@/types';
+import { formatPhone } from '../utils/phone';
 import {
-  signupAction,
-  loginAction,
-  verifyOtpAction,
-  resendOtpAction,
   forgotPasswordAction,
+  loginAction,
+  resendOtpAction,
   resetPasswordAction,
+  signupAction,
+  verifyOtpAction,
 } from './actions';
 import {
-  SignupInput,
-  LoginInput,
-  VerifyOtpInput,
-  ResendOtpInput,
   ForgotPasswordInput,
+  LoginInput,
+  ResendOtpInput,
   ResetPasswordInput,
+  SignupInput,
+  VerifyOtpInput,
 } from './types';
-import { formatPhone } from '../utils/phone';
 
 export const useSignup = () => {
   const router = useRouter();

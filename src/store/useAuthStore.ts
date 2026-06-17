@@ -1,8 +1,8 @@
-import { create } from 'zustand';
-import { USER_ROLES, UserRole } from '@/types';
 import { internalClient } from '@/api';
 import { getProfileAction, logoutAction } from '@/features/auth/api/actions';
 import { UserProfile } from '@/features/auth/api/types';
+import { USER_ROLES, UserRole } from '@/types';
+import { create } from 'zustand';
 
 interface AuthState {
   role: UserRole;
