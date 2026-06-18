@@ -5,6 +5,7 @@ import { correlationIdInterceptor } from '../interceptors/correlationId.intercep
 import { loggingInterceptor } from '../interceptors/logging.interceptor';
 import { telemetryInterceptor } from '../interceptors/telemetry.interceptor';
 import { authInterceptor } from '../interceptors/auth.interceptor';
+import { cleanS3Interceptor } from '../interceptors/cleanS3.interceptor';
 import { createSingleTokenManager } from '../auth/singleTokenManager';
 import { createSlotTokenManager } from '../auth/slotManager';
 import { secureStorageAdapter } from '../auth/storage';
@@ -50,6 +51,7 @@ export const createApiClient = (
   const buildRunner = () => {
     const interceptors = [
       correlationIdInterceptor,
+      cleanS3Interceptor,
       loggingInterceptor({ ...config, env }),
       telemetryInterceptor(config.telemetry),
       ...(cacheStore ? [cacheInterceptor(cacheStore)] : []),
