@@ -7,3 +7,5 @@ export { default as LanguageSelector } from './LanguageSelector';
 export { default as SelectionOption } from './SelectionOption';
 export { default as Carousel } from './Carousel';
 export { default as SegmentedControl } from './SegmentedControl';
+export { default as LocationSelector } from './LocationSelector';
+export { default as LocationMapPicker } from './LocationMapPicker';

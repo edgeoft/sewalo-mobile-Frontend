@@ -1,20 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import Button from '@/components/ui/Button';
-import { ROUTES } from '@/constants/routes';
+import { useResetPassword } from '../api/hooks';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
 import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
-import { useResetPassword } from '../api/hooks';
 
 export default function ResetPasswordScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { phone, otp } = useLocalSearchParams<{ phone: string; otp: string }>();
   const resetPasswordMutation = useResetPassword();
 

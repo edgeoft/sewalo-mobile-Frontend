@@ -13,6 +13,7 @@ interface AuthState {
   login: (user: UserProfile, accessToken: string, refreshToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
+  updateUser: (user: UserProfile) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -25,6 +26,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       role,
       isLoggedIn: role !== USER_ROLES.Guest,
+    }),
+
+  updateUser: (user: UserProfile) =>
+    set({
+      user,
+      role: user.current_role || user.role,
     }),
 
   login: async (user: UserProfile, accessToken: string, refreshToken?: string) => {

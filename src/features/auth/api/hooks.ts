@@ -1,8 +1,10 @@
+import { Alert } from 'react-native';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
+import { ApiError } from '@/api';
 import { formatPhone } from '../utils/phone';
 import {
   forgotPasswordAction,
@@ -30,12 +32,14 @@ export const useSignup = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
-      if (res.otp) {
-        alert(`OTP Code: ${res.otp}`);
-      }
       router.push({
         pathname: ROUTES.auth.otpVerification,
-        params: { phone: formatPhone(variables.phone), flow: 'signup', role: variables.role },
+        params: {
+          phone: formatPhone(variables.phone),
+          flow: 'signup',
+          role: variables.role,
+          otp: res.otp,
+        },
       });
     },
   });
@@ -53,18 +57,30 @@ export const useLogin = () => {
     onSuccess: async (res) => {
       await login(res.user, res.access_token);
       const role = res.user.current_role || res.user.role;
-      if (role === USER_ROLES.Provider) {
-        router.replace(ROUTES.provider.home);
+      if (res.user.status === 'pending') {
+        router.replace({
+          pathname: ROUTES.auth.gettingStarted as any,
+          params: { role, phone: formatPhone(res.user.phone) },
+        });
       } else {
-        router.replace(ROUTES.customer.home);
+        if (role === USER_ROLES.Provider) {
+          router.replace(ROUTES.provider.home);
+        } else {
+          router.replace(ROUTES.customer.home);
+        }
       }
     },
-    onError: (err: any, variables) => {
-      if (err.status === 403 && err.details?.user) {
-        alert(err.message || 'Phone number not verified. Redirecting to OTP verification.');
+    onError: (err: unknown, variables) => {
+      const apiError = err as ApiError;
+      if (apiError.status === 403) {
         router.push({
           pathname: ROUTES.auth.otpVerification,
-          params: { phone: formatPhone(variables.phone), flow: 'signup', role: err.details.user.role },
+          params: {
+            phone: formatPhone(variables.phone),
+            flow: 'login',
+            role: apiError.details?.user?.role || 'customer',
+            otp: apiError.details?.otp,
+          },
         });
       }
     },
@@ -81,22 +97,40 @@ export const useVerifyOtp = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: async (res, variables) => {
-      alert('OTP verified successfully!');
-      if (variables.type === 'reset_password') {
-        router.replace({
-          pathname: ROUTES.auth.resetPassword,
-          params: { phone: formatPhone(variables.phone), otp: variables.otp },
-        });
-      } else {
-        if (res.user && res.access_token) {
-          await login(res.user, res.access_token);
+      const handleNavigation = async () => {
+        if (variables.type === 'reset_password') {
+          router.replace({
+            pathname: ROUTES.auth.resetPassword,
+            params: { phone: formatPhone(variables.phone), otp: variables.otp },
+          });
+        } else {
+          if (res.user && res.access_token) {
+            await login(res.user, res.access_token);
+          }
+          const userRole = res.user?.current_role || res.user?.role || 'customer';
+          if (res.user && (res.user.status === 'completed' || res.user.status === 'verified')) {
+            if (userRole === USER_ROLES.Provider) {
+              router.replace(ROUTES.provider.home);
+            } else {
+              router.replace(ROUTES.customer.home);
+            }
+          } else {
+            router.replace({
+              pathname: ROUTES.auth.gettingStarted as any,
+              params: { role: userRole, phone: formatPhone(variables.phone) },
+            });
+          }
         }
-        const userRole = res.user?.current_role || res.user?.role || 'customer';
-        router.replace({
-          pathname: ROUTES.auth.gettingStarted as any,
-          params: { role: userRole, phone: formatPhone(variables.phone) },
-        });
-      }
+      };
+
+      Alert.alert('Success', 'OTP verified successfully!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            void handleNavigation();
+          },
+        },
+      ]);
     },
   });
 };
@@ -109,11 +143,10 @@ export const useResendOtp = (onSuccess?: () => void) => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res) => {
-      if (res.otp) {
-        alert(`OTP Code: ${res.otp}`);
-      }
-      alert('A new OTP has been sent successfully!');
-      onSuccess?.();
+      const msg = res.otp
+        ? `A new OTP has been sent successfully!\n\nOTP Code: ${res.otp}`
+        : 'A new OTP has been sent successfully!';
+      Alert.alert('Success', msg, [{ text: 'OK', onPress: () => onSuccess?.() }]);
     },
   });
 };
@@ -127,12 +160,13 @@ export const useForgotPassword = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
-      if (res.otp) {
-        alert(`OTP Code: ${res.otp}`);
-      }
       router.push({
         pathname: ROUTES.auth.otpVerification,
-        params: { phone: formatPhone(variables.phone), flow: 'forgot-password' },
+        params: {
+          phone: formatPhone(variables.phone),
+          flow: 'forgot-password',
+          otp: res.otp,
+        },
       });
     },
   });
@@ -147,8 +181,9 @@ export const useResetPassword = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: () => {
-      alert('Password reset successfully!');
-      router.replace(ROUTES.auth.signin);
+      Alert.alert('Success', 'Password reset successfully!', [
+        { text: 'OK', onPress: () => router.replace(ROUTES.auth.signin) },
+      ]);
     },
   });
 };

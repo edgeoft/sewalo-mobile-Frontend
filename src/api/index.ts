@@ -12,8 +12,6 @@ export {
   MultiSlotConfig,
   AuthConfig,
   RetryConfig,
-  CircuitState,
-  CircuitBreakerConfig,
   CacheConfig,
   TelemetryHooks,
   MockConfig,

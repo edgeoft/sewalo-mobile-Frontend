@@ -11,7 +11,6 @@ import { secureStorageAdapter } from '../auth/storage';
 import { createCacheStore } from '../cache/cacheStore';
 import { cacheInterceptor } from '../cache/invalidation';
 import { createDeduplicator, deduplicationInterceptor } from '../resilience/deduplication';
-import { createCircuitBreaker, circuitBreakerInterceptor } from '../resilience/circuitBreaker';
 import { retryInterceptor } from '../resilience/retry';
 import { createOfflineQueue } from '../resilience/offlineQueue';
 
@@ -34,15 +33,6 @@ export const createApiClient = (
     shouldRetry: config.retry?.shouldRetry,
   };
 
-  const circuitBreakerConfig = config.circuitBreaker
-    ? {
-        failureThreshold: config.circuitBreaker.failureThreshold ?? 5,
-        successThreshold: config.circuitBreaker.successThreshold ?? 2,
-        recoveryWindowMs: config.circuitBreaker.recoveryWindowMs ?? 30000,
-        onStateChange: config.circuitBreaker.onStateChange,
-      }
-    : undefined;
-
   let tokenManager: TokenManager | undefined;
   if (config.auth) {
     if (config.auth.mode === 'single') {
@@ -54,9 +44,6 @@ export const createApiClient = (
 
   const cacheStore = config.cache ? createCacheStore(config.cache) : undefined;
   const deduplicator = createDeduplicator();
-  const circuitBreaker = circuitBreakerConfig
-    ? createCircuitBreaker(circuitBreakerConfig, config.telemetry)
-    : undefined;
 
   const baseAdapter = axiosAdapter;
 
@@ -69,7 +56,6 @@ export const createApiClient = (
       ...(tokenManager ? [authInterceptor(tokenManager)] : []),
       deduplicationInterceptor(deduplicator),
       retryInterceptor(retryConfig, config.telemetry),
-      ...(circuitBreaker ? [circuitBreakerInterceptor(circuitBreaker)] : []),
       ...(config.interceptors || []),
     ];
     return compose(interceptors, baseAdapter);

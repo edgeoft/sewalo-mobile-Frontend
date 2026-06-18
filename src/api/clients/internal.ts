@@ -29,11 +29,6 @@ export const internalClient = createApiClient({
     jitter: true,
     retryableStatuses: [408, 429, 500, 502, 503, 504],
   },
-  circuitBreaker: {
-    failureThreshold: 5,
-    successThreshold: 2,
-    recoveryWindowMs: 30000,
-  },
   cache: {
     ttl: 30000, // 30 seconds
   },

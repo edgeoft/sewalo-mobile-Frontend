@@ -1,20 +1,23 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
-import { ROUTES } from '@/constants/routes';
+import { useResendOtp, useVerifyOtp } from '../api/hooks';
 import AuthScreenLayout from '../components/AuthScreenLayout';
-import { useVerifyOtp, useResendOtp } from '../api/hooks';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const { phone, flow, role } = useLocalSearchParams<{
+  const {
+    phone,
+    flow,
+    otp: routeOtp,
+  } = useLocalSearchParams<{
     phone: string;
-    flow: 'signup' | 'forgot-password';
+    flow: 'signup' | 'forgot-password' | 'login';
     role?: string;
+    otp?: string;
   }>();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
@@ -22,6 +25,16 @@ export default function OtpVerificationScreen() {
   const [localError, setLocalError] = useState<string | null>(null);
 
   const inputRefs = useRef<TextInput[]>([]);
+
+  // Show OTP Alert on mount in non-production/dev environments (if routeOtp parameter exists)
+  useEffect(() => {
+    if (routeOtp) {
+      const timerId = setTimeout(() => {
+        Alert.alert('OTP Sent', `OTP Code: ${routeOtp}`);
+      }, 300);
+      return () => clearTimeout(timerId);
+    }
+  }, [routeOtp]);
 
   const verifyOtpMutation = useVerifyOtp();
   const resendOtpMutation = useResendOtp(() => {
@@ -72,7 +85,7 @@ export default function OtpVerificationScreen() {
     if (timer > 0) return;
     resendOtpMutation.mutate({
       phone: phone || '',
-      type: flow === 'forgot-password' ? 'reset_password' : 'signup',
+      type: flow === 'forgot-password' ? 'reset_password' : flow === 'login' ? 'login' : 'signup',
     });
   };
 
@@ -86,7 +99,7 @@ export default function OtpVerificationScreen() {
     verifyOtpMutation.mutate({
       phone: phone || '',
       otp: code,
-      type: flow === 'forgot-password' ? 'reset_password' : 'signup',
+      type: flow === 'forgot-password' ? 'reset_password' : flow === 'login' ? 'login' : 'signup',
     });
   };
 

@@ -31,20 +31,19 @@ export const telemetryInterceptor = (telemetry?: TelemetryHooks): Interceptor =>
       return responseWithTiming;
     } catch (error: any) {
       const durationMs = Date.now() - start;
-      const updatedError = {
-        ...error,
-        durationMs,
-      };
+      if (error && typeof error === 'object') {
+        error.durationMs = durationMs;
+      }
 
       if (telemetry?.onError) {
         try {
-          telemetry.onError(updatedError, ctx);
+          telemetry.onError(error, ctx);
         } catch (err) {
           console.warn('Telemetry onError callback failed', err);
         }
       }
 
-      throw updatedError;
+      throw error;
     }
   };
 };

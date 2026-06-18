@@ -104,15 +104,6 @@ export type RetryConfig = {
   shouldRetry?: (error: ApiError) => boolean;
 };
 
-export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
-
-export type CircuitBreakerConfig = {
-  failureThreshold: number;
-  successThreshold: number;
-  recoveryWindowMs: number;
-  onStateChange?: (host: string, state: CircuitState) => void;
-};
-
 export type CacheConfig = {
   ttl: number;
   keyStrategy?: (req: RequestCtx) => string;
@@ -124,7 +115,6 @@ export type TelemetryHooks = {
   onResponse?: (ctx: ResponseCtx) => void;
   onError?: (error: ApiError, ctx: RequestCtx) => void;
   onRetry?: (attempt: number, ctx: RequestCtx) => void;
-  onCircuitStateChange?: (host: string, state: CircuitState) => void;
   onTokenRefreshed?: (slot: string) => void;
   onTokenExpired?: (slot: string) => void;
 };
@@ -142,7 +132,6 @@ export type ApiClientConfig = {
   env?: 'dev' | 'staging' | 'prod';
   auth?: AuthConfig;
   retry?: RetryConfig;
-  circuitBreaker?: CircuitBreakerConfig;
   cache?: CacheConfig;
   interceptors?: Interceptor[];
   telemetry?: TelemetryHooks;

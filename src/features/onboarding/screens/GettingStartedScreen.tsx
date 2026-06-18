@@ -1,207 +1,59 @@
-import React, { useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import React from 'react';
+import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import TopBar from '@/components/navigation/TopBar';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import RadialStepper from '@/components/common/RadialStepper';
 import Button from '@/components/ui/Button';
-import { ROUTES } from '@/constants/routes';
-import { useAuth } from '@/providers/AuthProvider';
-import { UserRole } from '@/types';
 import ContentLayout from '@/components/layout/ContentLayout';
-import Animated, { FadeIn } from 'react-native-reanimated';
 
 // Step components
 import OnboardingIllustration from '../components/OnboardingIllustration';
-import PersonalInfoStep, { PersonalInfoData } from '../components/PersonalInfoStep';
-import SkillsExperienceStep, { EducationItem, ExperienceItem } from '../components/SkillsExperienceStep';
+import PersonalInfoStep from '../components/PersonalInfoStep';
+import SkillsExperienceStep from '../components/SkillsExperienceStep';
 import AvailabilityStep from '../components/AvailabilityStep';
-import FinancialDetailsStep, { FinancialData } from '../components/FinancialDetailsStep';
+import FinancialDetailsStep from '../components/FinancialDetailsStep';
 import IdentityVerificationStep from '../components/IdentityVerificationStep';
 import FinishOnboardingStep from '../components/FinishOnboardingStep';
 
-interface StepInfo {
-  key: string;
-  label: string;
-  subtitle?: string;
-  icon?: keyof typeof Feather.glyphMap;
-}
+// Hook
+import { useOnboarding } from '../hooks/useOnboarding';
 
 export default function GettingStartedScreen() {
-  const router = useRouter();
-  const { setRole } = useAuth();
-  const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
-
-  // Determine user role
-  const role: 'customer' | 'provider' = rawRole === 'provider' ? 'provider' : 'customer';
-
-  // Active Screen Index
-  // 0 = Welcome screen
-  // 1+ = Dynamic Form Steps
-  // Last = Finish Setup screen
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  // --- Step 1: Personal Info Form State ---
   const {
-    control: personalInfoControl,
-    handleSubmit: handlePersonalInfoSubmit,
-    setValue: setPersonalInfoValue,
-    watch: watchPersonalInfo,
-    formState: { errors: personalInfoErrors },
-  } = useForm<PersonalInfoData>({
-    defaultValues: {
-      fullName: '',
-      email: '',
-      mobileNumber: phone || '',
-      location: '',
-      languages: [],
-      avatar: '',
-      dateOfBirth: '',
-    },
-    mode: 'onBlur',
-  });
-
-  const watchLanguages = watchPersonalInfo('languages') || [];
-  const watchDateOfBirth = watchPersonalInfo('dateOfBirth') || '';
-  const watchAvatar = watchPersonalInfo('avatar') || '';
-
-  // --- Step 2: Skills & Experience Form State (Provider Only) ---
-  const [education, setEducation] = useState<EducationItem[]>([
-    { id: '1', degree: '', institute: '', startDate: '', endDate: '' },
-  ]);
-  const [experience, setExperience] = useState<ExperienceItem[]>([
-    { id: '1', title: '', companyName: '', startDate: '', endDate: '' },
-  ]);
-
-  // --- Step 3: Availability Form State (Provider Only) ---
-  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
-  const [workingHoursStart, setWorkingHoursStart] = useState('10:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState('06:00 PM');
-
-  const handleHoursChange = (start: string, end: string) => {
-    setWorkingHoursStart(start);
-    setWorkingHoursEnd(end);
-  };
-
-  // --- Step 4: Financial Details Form State (Provider Only) ---
-  const {
-    control: financialControl,
-    handleSubmit: handleFinancialSubmit,
-    formState: { errors: financialErrors },
-  } = useForm<FinancialData>({
-    defaultValues: {
-      accountHolderName: '',
-      bankName: '',
-      accountNumber: '',
-      branchName: '',
-    },
-    mode: 'onBlur',
-  });
-
-  // --- Step 5: Identity Verification Form State ---
-  const [documentImage, setDocumentImage] = useState<string | null>(null);
-
-  // --- Configuration of form steps based on Role ---
-  // Step 0 = Welcome, last step = Finish.
-  const steps: StepInfo[] =
-    role === 'provider'
-      ? [
-          { key: 'welcome', label: 'Welcome' },
-          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 5: Personal Details', icon: 'user' },
-          {
-            key: 'skills_experience',
-            label: 'Skills & Experience',
-            subtitle: 'Step 2 of 5: Skills & Experience',
-            icon: 'briefcase',
-          },
-          { key: 'availability', label: 'Availability', subtitle: 'Step 3 of 5: Weekly Schedule', icon: 'calendar' },
-          {
-            key: 'financial_details',
-            label: 'Financial Details',
-            subtitle: 'Step 4 of 5: Bank Details',
-            icon: 'dollar-sign',
-          },
-          {
-            key: 'identity_verification',
-            label: 'Identity Verification',
-            subtitle: 'Step 5 of 5: ID Document',
-            icon: 'shield',
-          },
-          { key: 'finish', label: 'Finish' },
-        ]
-      : [
-          { key: 'welcome', label: 'Welcome' },
-          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 2: Personal Details', icon: 'user' },
-          {
-            key: 'identity_verification',
-            label: 'Identity Verification',
-            subtitle: 'Step 2 of 2: ID Document',
-            icon: 'shield',
-          },
-          { key: 'finish', label: 'Finish' },
-        ];
-
-  const totalFormSteps = steps.length - 2; // Subtracting Welcome & Finish screens
-
-  const handleNext = () => {
-    const currentStepKey = steps[activeIndex].key;
-
-    if (currentStepKey === 'welcome') {
-      setActiveIndex(1);
-      return;
-    }
-
-    if (currentStepKey === 'personal_info') {
-      handlePersonalInfoSubmit(() => {
-        setActiveIndex(activeIndex + 1);
-      })();
-      return;
-    }
-
-    if (currentStepKey === 'financial_details') {
-      handleFinancialSubmit(() => {
-        setActiveIndex(activeIndex + 1);
-      })();
-      return;
-    }
-
-    // Default increment
-    setActiveIndex(activeIndex + 1);
-  };
-
-  const handleSkip = () => {
-    setActiveIndex(activeIndex + 1);
-  };
-
-  const handleBack = () => {
-    if (activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
-    } else {
-      router.back();
-    }
-  };
-
-  const handleFinish = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      // Determine display role
-      setRole(role as UserRole);
-
-      if (role === 'provider') {
-        router.replace(ROUTES.provider.home as any);
-      } else {
-        router.replace(ROUTES.customer.home as any);
-      }
-    }, 1500);
-  };
-
-  const currentStep = steps[activeIndex];
-  const isFormStep = currentStep.key !== 'welcome' && currentStep.key !== 'finish';
+    activeIndex,
+    loading,
+    role,
+    totalFormSteps,
+    isFormStep,
+    currentStep,
+    personalInfoControl,
+    personalInfoErrors,
+    setPersonalInfoValue,
+    watchLanguages,
+    watchDateOfBirth,
+    watchAvatar,
+    education,
+    setEducation,
+    experience,
+    setExperience,
+    workingDays,
+    setWorkingDays,
+    workingHoursStart,
+    workingHoursEnd,
+    handleHoursChange,
+    financialControl,
+    financialErrors,
+    documentImage,
+    setDocumentImage,
+    handleNext,
+    handleSkip,
+    handleBack,
+    handleFinish,
+    user,
+  } = useOnboarding();
 
   const stepper = isFormStep ? (
     <RadialStepper
@@ -225,7 +77,9 @@ export default function GettingStartedScreen() {
               {/* Header and Welcome */}
               <View className="flex-row justify-between items-start mb-4">
                 <View className="flex-1 mr-4">
-                  <Text className="text-2xl font-sans-extrabold text-gray-950 leading-tight">Hi Ash Bud,</Text>
+                  <Text className="text-2xl font-sans-extrabold text-gray-950 leading-tight">
+                    Hi {user?.name || 'User'},
+                  </Text>
                   <Text className="text-sm font-sans-semibold text-gray-500 mt-1">
                     {role === 'provider'
                       ? 'Ready to showcase your skills and connect with customers in your area?'
@@ -242,7 +96,7 @@ export default function GettingStartedScreen() {
                 </View>
               </View>
 
-              {/* Pure SVG banner Illustration - Flex container to center it my-4 */}
+              {/* Pure SVG banner Illustration */}
               <View className="flex-1 justify-center items-center my-4">
                 <OnboardingIllustration role={role} />
               </View>
@@ -357,6 +211,16 @@ export default function GettingStartedScreen() {
       <Animated.View key={currentStep.key} entering={FadeIn.duration(250)} className="flex-1 bg-transparent">
         {renderStepContent()}
       </Animated.View>
+
+      {/* Loading overlay for step updates & final complete profile requests */}
+      {loading && (
+        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
+          <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
+            <ActivityIndicator size="large" color="#485aff" />
+            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Saving progress...</Text>
+          </View>
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 }

@@ -20,16 +20,9 @@ import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import LocationSelector from '@/components/ui/LocationSelector';
 
-export interface PersonalInfoData {
-  fullName: string;
-  email: string;
-  mobileNumber: string;
-  location: string;
-  dateOfBirth?: string;
-  languages?: string[];
-  avatar?: string;
-}
+import { PersonalInfoData } from '../data/schemas';
 
 interface PersonalInfoStepProps {
   control: Control<PersonalInfoData>;
@@ -217,21 +210,33 @@ export default function PersonalInfoStep({
             />
 
             {/* Location */}
-            <Controller
-              control={control}
-              name="location"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Location (City/Address) *"
-                  placeholder="e.g. Kathmandu, Nepal"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  inputStyle={{ padding: 0 }}
-                  error={errors.location?.message as string}
-                />
-              )}
-            />
+            <View>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Location (City/Address) *</Text>
+              <Controller
+                control={control}
+                name="location"
+                render={({ field: { onChange, value } }) => {
+                  const formValues = control._formValues;
+                  return (
+                    <LocationSelector
+                      value={value}
+                      lat={formValues.lat || 27.700769}
+                      lng={formValues.lng || 85.30014}
+                      placeholder="Select your location in the map..."
+                      onChange={(data) => {
+                        onChange(data.address);
+                        setValue('lat', data.lat);
+                        setValue('lng', data.lng);
+                        setValue('city', data.city);
+                        setValue('state', data.state);
+                        setValue('country', data.country);
+                      }}
+                      error={errors.location?.message as string}
+                    />
+                  );
+                }}
+              />
+            </View>
 
             {/* Date of Birth */}
             <View>

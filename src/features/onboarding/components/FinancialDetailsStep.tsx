@@ -7,12 +7,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 
-export interface FinancialData {
-  accountHolderName: string;
-  bankName: string;
-  accountNumber: string;
-  branchName?: string;
-}
+import { FinancialData } from '../data/schemas';
 
 interface FinancialDetailsStepProps {
   control: Control<FinancialData>;
