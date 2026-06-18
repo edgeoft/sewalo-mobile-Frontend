@@ -32,7 +32,7 @@ export default function CustomerAccountScreen() {
         style: 'destructive',
         onPress: () => {
           logout();
-          router.replace('/auth/signin');
+          router.replace(ROUTES.auth.signin);
         },
       },
     ]);

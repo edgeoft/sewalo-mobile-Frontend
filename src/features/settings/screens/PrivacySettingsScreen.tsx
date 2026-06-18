@@ -7,6 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
+import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 
 export default function PrivacySettingsScreen() {
@@ -58,7 +59,7 @@ export default function PrivacySettingsScreen() {
                   style: 'destructive',
                   onPress: () => {
                     logout();
-                    router.replace('/auth/signup');
+                    router.replace(ROUTES.auth.signup);
                   },
                 },
               ],

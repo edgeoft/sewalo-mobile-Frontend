@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
+import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { ProviderDetail } from '../types';
 
@@ -145,7 +146,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
     setIsBookingModalVisible(false);
 
     router.push({
-      pathname: '/booking-confirmation',
+      pathname: ROUTES.bookingConfirmation,
       params: {
         providerName: provider.name,
         providerAvatar: provider.avatarUri,
@@ -195,7 +196,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
         variant="menu"
         showBackButton={true}
         showNotifications={!isGuest}
-        onNotificationsPress={() => router.push('/notifications')}
+        onNotificationsPress={() => router.push(ROUTES.notifications)}
       />
 
       <ScrollView

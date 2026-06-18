@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { PaginationList, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
+import { ROUTES } from '@/constants/routes';
 import {
   RECEIVABLE_EARNINGS_MOCK,
   COMMISSIONS_DUE_MOCK,
@@ -61,7 +62,7 @@ export default function ProviderEarningsScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" showNotifications onNotificationsPress={() => router.push('/notifications')} />
+      <Header variant="menu" showNotifications onNotificationsPress={() => router.push(ROUTES.notifications)} />
 
       <ContentLayout
         scrollable

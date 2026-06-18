@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Input from '@/components/ui/Input';
+import { ROUTES } from '@/constants/routes';
 
 const CATEGORIES = [
   { id: 'computers', label: 'Computers & IT', icon: 'monitor' as const },
@@ -35,7 +36,11 @@ export default function FindServicesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" showNotifications={!isGuest} onNotificationsPress={() => router.push('/notifications')} />
+      <Header
+        variant="menu"
+        showNotifications={!isGuest}
+        onNotificationsPress={() => router.push(ROUTES.notifications)}
+      />
 
       <ContentLayout
         scrollable

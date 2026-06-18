@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/constants/routes';
 import OnboardingFooter from '../components/OnboardingFooter';
 import OnboardingHeader from '../components/OnboardingHeader';
 import OnboardingPage from '../components/OnboardingPage';
@@ -42,7 +43,7 @@ export default function OnboardingScreen() {
   const isLastPage = activeIndex === pages.length - 1;
 
   const handleFinish = useCallback(() => {
-    router.replace('/auth');
+    router.replace(ROUTES.auth.signin);
   }, [router]);
 
   const handleNext = useCallback(() => {

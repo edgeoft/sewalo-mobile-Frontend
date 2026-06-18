@@ -1,6 +1,7 @@
 import { Redirect, Stack } from 'expo-router';
 import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES } from '@/types';
+import { ROUTES } from '@/constants/routes';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function ProviderLayout() {
@@ -18,15 +19,15 @@ export default function ProviderLayout() {
   }
 
   if (!isLoggedIn) {
-    return <Redirect href="/auth/signin" />;
+    return <Redirect href={ROUTES.auth.signin} />;
   }
 
   if (user?.status === 'pending') {
-    return <Redirect href={{ pathname: '/auth/getting-started', params: { role, phone: user.phone } } as any} />;
+    return <Redirect href={{ pathname: ROUTES.auth.gettingStarted, params: { role, phone: user.phone } } as any} />;
   }
 
   if (role !== USER_ROLES.Provider) {
-    return <Redirect href={role === USER_ROLES.Customer ? '/(customer)/(tabs)/home' : '/auth/signin'} />;
+    return <Redirect href={role === USER_ROLES.Customer ? ROUTES.customer.home : ROUTES.auth.signin} />;
   }
 
   return (

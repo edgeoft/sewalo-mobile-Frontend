@@ -61,5 +61,6 @@ export const ROUTES = {
     privacyPolicy: '/provider/privacy-policy',
     rateApp: '/provider/rate-app',
   },
+  bookingConfirmation: '/booking-confirmation',
   providerDetail: (id: string) => `/provider/${id}` as const,
 } as const;
