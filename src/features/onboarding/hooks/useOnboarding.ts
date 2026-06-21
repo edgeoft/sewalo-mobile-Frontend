@@ -211,9 +211,8 @@ export function useOnboarding() {
       setDocumentImage(profile.document);
     }
 
-    // If email exists, resume onboarding at the correct screen instead of welcome page
-    // Only run this auto-resume logic once on initial mount (when activeIndex === 0)
-    // to prevent any subsequent mutations/refetches from resetting the current step.
+    // Resume onboarding at the first incomplete step
+    // Only runs on initial mount (activeIndex === 0) to prevent refetches from resetting progress.
     if (profile.email && activeIndex === 0) {
       const getInitialStepIndex = () => {
         const personalInfoValid = personalInfoSchema.safeParse({
@@ -226,9 +225,18 @@ export function useOnboarding() {
         if (!personalInfoValid) return 1;
 
         if (role === 'provider') {
-          if (!profile.start_time || !profile.end_time) return 3; // Step 3: Availability
+          const hasEducation = profile.education && profile.education.length > 0;
+          const hasExperience = profile.experience && profile.experience.length > 0;
+          if (!hasEducation && !hasExperience) return 2;
+
+          if (!profile.start_time || !profile.end_time) return 3;
+
+          if (!profile.document) return 5;
+        } else {
+          if (!profile.document) return 2;
         }
-        return 1;
+
+        return steps.length - 1;
       };
       setActiveIndex(getInitialStepIndex());
     }
