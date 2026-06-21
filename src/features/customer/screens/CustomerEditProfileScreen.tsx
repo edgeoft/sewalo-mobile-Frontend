@@ -49,27 +49,27 @@ export default function CustomerEditProfileScreen() {
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {
-      updateProfile(
-        {
-          name: data.fullName,
-          phone: data.mobileNumber,
-          address: data.location,
-          dob: data.dateOfBirth,
-          language: data.languages,
-          description: data.bio,
-          avatar: avatarPath,
+      const payload: any = {
+        name: data.fullName,
+        phone: data.mobileNumber,
+        address: data.location,
+        dob: data.dateOfBirth,
+        language: data.languages,
+        description: data.bio,
+      };
+      if (avatarPath) {
+        payload.avatar = avatarPath;
+      }
+      updateProfile(payload, {
+        onSuccess: () => {
+          Alert.alert('Success', 'Profile updated successfully!', [
+            {
+              text: 'OK',
+              onPress: () => router.back(),
+            },
+          ]);
         },
-        {
-          onSuccess: () => {
-            Alert.alert('Success', 'Profile updated successfully!', [
-              {
-                text: 'OK',
-                onPress: () => router.back(),
-              },
-            ]);
-          },
-        },
-      );
+      });
     };
 
     if (data.avatar && data.avatar !== getImageUrl(user?.avatar)) {

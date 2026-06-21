@@ -54,22 +54,22 @@ export default function ProviderEditProfileScreen() {
 
   const handleSaveBasicInfo = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {
-      updateProfile(
-        {
-          name: data.fullName,
-          phone: data.mobileNumber,
-          address: data.location,
-          dob: data.dateOfBirth,
-          language: data.languages,
-          description: data.bio,
-          avatar: avatarPath,
+      const payload: any = {
+        name: data.fullName,
+        phone: data.mobileNumber,
+        address: data.location,
+        dob: data.dateOfBirth,
+        language: data.languages,
+        description: data.bio,
+      };
+      if (avatarPath) {
+        payload.avatar = avatarPath;
+      }
+      updateProfile(payload, {
+        onSuccess: () => {
+          Alert.alert('Success', 'Basic information saved successfully!');
         },
-        {
-          onSuccess: () => {
-            Alert.alert('Success', 'Basic information saved successfully!');
-          },
-        },
-      );
+      });
     };
 
     if (data.avatar && data.avatar !== getImageUrl(user?.avatar)) {
