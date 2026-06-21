@@ -30,3 +30,6 @@ export { globalErrorHandler } from './query/errorHandler';
 
 // Configured client singletons
 export { internalClient } from './clients/internal';
+
+// User API
+export * from './user';

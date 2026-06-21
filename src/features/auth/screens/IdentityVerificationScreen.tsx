@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, Modal, Pressable, ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert, Image, Modal, Pressable, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,12 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 
+import { useAuth } from '@/providers/AuthProvider';
+import { useVerificationStatus } from '@/hooks/useVerificationStatus';
+import { useUploadFile } from '@/api/files/hooks';
+import { useUpdateProfile } from '@/api/user';
+import { getImageUrl } from '@/features/auth/utils/image';
+
 interface IdentityVerificationScreenProps {
   role: 'customer' | 'provider';
 }
@@ -17,6 +23,7 @@ interface IdentityVerificationScreenProps {
 export default function IdentityVerificationScreen({ role }: IdentityVerificationScreenProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
 
   const isProvider = role === 'provider';
   const pageTitle = isProvider ? 'Verification Documents' : 'Identity Verification';
@@ -24,14 +31,18 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     ? 'Upload government ID to get verified partner status and build trust with clients.'
     : 'Verify your identity to increase trust, secure bookings, and unlock account features.';
 
-  // Local mock state for demonstration
-  const [status, setStatus] = useState<'empty' | 'pending' | 'verified' | 'rejected'>('empty');
-  const [documentImage, setDocumentImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { status, isRejected, isVerified, isCompleted, hasMissingId, getMessage } = useVerificationStatus();
+
+  const [documentImage, setDocumentImage] = useState<string | null>(getImageUrl(user?.document) || null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [rejectionReason, setRejectionReason] = useState<string>(
-    'The uploaded image was too blurry. Please ensure all text on your ID card is clearly readable.',
-  );
+
+  const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
+
+  const loading = isUploading || isUpdatingProfile;
+
+  // The UI renders 'empty' mode if the user doesn't have a document or their status is 'pending'
+  const isFormEmptyMode = hasMissingId || status === 'pending' || status === null;
 
   const handlePickImage = async () => {
     try {
@@ -59,18 +70,22 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     setDocumentImage(null);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!documentImage) {
       Alert.alert('Incomplete Upload', 'Please upload your ID document image.');
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setStatus('pending');
-      Alert.alert('Submitted', 'Your document has been submitted for verification review.');
-    }, 1200);
+    try {
+      const uploadRes = await uploadFile({ uri: documentImage, folder: 'documents' });
+      await updateProfile({ document: uploadRes.url });
+
+      Alert.alert('Submitted', 'Your document has been submitted for verification review.', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to submit document');
+    }
   };
 
   const handleRequestChange = () => {
@@ -85,7 +100,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         text: 'Proceed',
         style: 'destructive',
         onPress: () => {
-          setStatus('empty');
+          setDocumentImage(null);
         },
       },
     ]);
@@ -101,67 +116,67 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
   // Status helper text mapping (borderless, with soft backgrounds and a subtle shadow)
   const renderStatusInfoText = () => {
-    switch (status) {
-      case 'empty':
-        if (isProvider) {
-          return (
-            <View style={cardShadow} className="mb-6 p-4 bg-blue-50 rounded-xl">
-              <Text className="text-xs font-sans-medium text-blue-800 leading-normal">
-                To receive customer bookings, please complete your partner registration by uploading your verification
-                document. Verification helps keep our marketplace safe.
-              </Text>
-            </View>
-          );
-        } else {
-          return (
-            <View style={cardShadow} className="mb-6 p-4 bg-gray-50 rounded-xl">
-              <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-                Verifying your identity is optional but highly recommended to build trust with providers and secure
-                bookings faster.
-              </Text>
-            </View>
-          );
-        }
-      case 'pending':
+    if (isFormEmptyMode) {
+      if (isProvider) {
         return (
-          <View style={cardShadow} className="mb-6 p-4 bg-amber-50 rounded-xl flex-row items-start">
-            <Feather name="clock" size={16} color="#d97706" style={{ marginTop: 2, marginRight: 8 }} />
-            <View className="flex-1">
-              <Text className="text-xs font-sans-bold text-amber-900">Awaiting Approval</Text>
-              <Text className="text-[11px] font-sans-medium text-amber-700 mt-0.5 leading-normal">
-                We are currently reviewing your document. This process usually takes 1-2 business days. We will notify
-                you once approved.
-              </Text>
-            </View>
+          <View style={cardShadow} className="mb-6 p-4 bg-blue-50 rounded-xl">
+            <Text className="text-xs font-sans-medium text-blue-800 leading-normal">
+              To receive customer bookings, please complete your partner registration by uploading your verification
+              document. Verification helps keep our marketplace safe.
+            </Text>
           </View>
         );
-      case 'verified':
+      } else {
         return (
-          <View style={cardShadow} className="mb-6 p-4 bg-emerald-50 rounded-xl flex-row items-start">
-            <Feather name="check-circle" size={16} color="#059669" style={{ marginTop: 2, marginRight: 8 }} />
-            <View className="flex-1">
-              <Text className="text-xs font-sans-bold text-emerald-900">Verified</Text>
-              <Text className="text-[11px] font-sans-medium text-emerald-700 mt-0.5 leading-normal">
-                Your document has been approved and your profile is now verified.
-              </Text>
-            </View>
+          <View style={cardShadow} className="mb-6 p-4 bg-gray-50 rounded-xl">
+            <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
+              Verifying your identity is optional but highly recommended to build trust with providers and secure
+              bookings faster.
+            </Text>
           </View>
         );
-      case 'rejected':
-        return (
-          <View style={cardShadow} className="mb-6 p-4 bg-rose-50 rounded-xl flex-row items-start">
-            <Feather name="alert-triangle" size={16} color="#dc2626" style={{ marginTop: 2, marginRight: 8 }} />
-            <View className="flex-1">
-              <Text className="text-xs font-sans-bold text-rose-900">Verification Rejected</Text>
-              <Text className="text-[11px] font-sans-semibold text-rose-700 mt-0.5 leading-normal">
-                Reason: {rejectionReason}
-              </Text>
-            </View>
-          </View>
-        );
-      default:
-        return null;
+      }
     }
+
+    if (isCompleted) {
+      return (
+        <View style={cardShadow} className="mb-6 p-4 bg-amber-50 rounded-xl flex-row items-start">
+          <Feather name="clock" size={16} color="#d97706" style={{ marginTop: 2, marginRight: 8 }} />
+          <View className="flex-1">
+            <Text className="text-xs font-sans-bold text-amber-900">Awaiting Approval</Text>
+            <Text className="text-[11px] font-sans-medium text-amber-700 mt-0.5 leading-normal">{getMessage()}</Text>
+          </View>
+        </View>
+      );
+    }
+
+    if (isVerified) {
+      return (
+        <View style={cardShadow} className="mb-6 p-4 bg-emerald-50 rounded-xl flex-row items-start">
+          <Feather name="check-circle" size={16} color="#059669" style={{ marginTop: 2, marginRight: 8 }} />
+          <View className="flex-1">
+            <Text className="text-xs font-sans-bold text-emerald-900">Verified</Text>
+            <Text className="text-[11px] font-sans-medium text-emerald-700 mt-0.5 leading-normal">{getMessage()}</Text>
+          </View>
+        </View>
+      );
+    }
+
+    if (isRejected) {
+      return (
+        <View style={cardShadow} className="mb-6 p-4 bg-rose-50 rounded-xl flex-row items-start">
+          <Feather name="alert-triangle" size={16} color="#dc2626" style={{ marginTop: 2, marginRight: 8 }} />
+          <View className="flex-1">
+            <Text className="text-xs font-sans-bold text-rose-900">Verification Rejected</Text>
+            <Text className="text-[11px] font-sans-semibold text-rose-700 mt-0.5 leading-normal">
+              Reason: {getMessage()}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -192,16 +207,16 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
           <View className="gap-y-4">
             <View>
-              {documentImage || status !== 'empty' ? (
+              {documentImage ? (
                 <View className="relative h-56 w-full rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
                   <Image
                     source={{
-                      uri: documentImage || 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?q=80&w=600',
+                      uri: documentImage,
                     }}
                     className="w-full h-full"
                     resizeMode="cover"
                   />
-                  {(status === 'empty' || status === 'rejected') && (
+                  {(isFormEmptyMode || isRejected) && (
                     <TouchableOpacity
                       onPress={handleRemoveImage}
                       className="absolute top-2.5 right-2.5 h-8 w-8 bg-black/60 rounded-full items-center justify-center active:opacity-75"
@@ -210,23 +225,19 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                     </TouchableOpacity>
                   )}
                   <Pressable
-                    onPress={() =>
-                      setPreviewImage(
-                        documentImage || 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?q=80&w=600',
-                      )
-                    }
+                    onPress={() => setPreviewImage(documentImage)}
                     className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
                   >
                     <Feather name="eye" size={12} color="#ffffff" />
                     <Text className="text-[10px] font-sans-bold text-white ml-1">View Image</Text>
                   </Pressable>
-                  {status === 'verified' && (
+                  {isVerified && (
                     <View className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-emerald-500 rounded-full flex-row items-center">
                       <Feather name="check" size={12} color="#ffffff" />
                       <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">Approved</Text>
                     </View>
                   )}
-                  {status === 'rejected' && (
+                  {isRejected && (
                     <View className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-rose-500 rounded-full flex-row items-center">
                       <Feather name="x" size={12} color="#ffffff" />
                       <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">Rejected</Text>
@@ -250,11 +261,11 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         </View>
 
         {/* 3. ACTION BUTTONS */}
-        {status === 'empty' || status === 'rejected' ? (
+        {isFormEmptyMode || isRejected ? (
           <Button
-            title={status === 'rejected' ? 'Re-submit for Verification' : 'Submit for Verification'}
+            title={isRejected ? 'Re-submit for Verification' : 'Submit for Verification'}
             loading={loading}
-            disabled={!documentImage}
+            disabled={!documentImage || loading}
             onPress={handleSubmit}
             className="w-full bg-primary"
           />

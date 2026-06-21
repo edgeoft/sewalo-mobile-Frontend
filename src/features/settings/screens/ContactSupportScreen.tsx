@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Alert, Linking, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +12,8 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 
+import { useSubmitContact } from '../api/hooks/contact';
+
 interface SupportTicketFormData {
   fullName: string;
   email: string;
@@ -23,7 +25,7 @@ interface SupportTicketFormData {
 export default function ContactSupportScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [loading, setLoading] = useState(false);
+  const { mutate: submitContact, isPending } = useSubmitContact();
 
   const {
     control,
@@ -45,10 +47,33 @@ export default function ContactSupportScreen() {
   const watchMessage = watch('message') || '';
 
   const handleCallSupport = () => {
-    const phone = '+97714001234';
-    Linking.openURL(`tel:${phone}`).catch(() => {
-      Alert.alert('Error', 'Call function is not supported on this device. Number: ' + phone);
-    });
+    Alert.alert(
+      'Call Support',
+      'Select a support number to call:',
+      [
+        {
+          text: 'NTC (9744985161)',
+          onPress: () => {
+            Linking.openURL('tel:+9779744985161').catch(() => {
+              Alert.alert('Error', 'Call function is not supported on this device.');
+            });
+          },
+        },
+        {
+          text: 'Ncell (9713969243)',
+          onPress: () => {
+            Linking.openURL('tel:+9779713969243').catch(() => {
+              Alert.alert('Error', 'Call function is not supported on this device.');
+            });
+          },
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   const handleLiveChat = () => {
@@ -59,29 +84,41 @@ export default function ContactSupportScreen() {
   };
 
   const handleTicketSubmit = (data: SupportTicketFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert(
-        'Message Sent',
-        'Thank you, ' +
-          data.fullName +
-          '! Your message has been received. Ticket ID: #SWL-' +
-          Math.floor(100000 + Math.random() * 900000) +
-          '.\n\nOur support team will respond to you via email at ' +
-          data.email +
-          ' within 2-4 hours.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              reset();
-              router.back();
-            },
-          },
-        ],
-      );
-    }, 1500);
+    submitContact(
+      {
+        name: data.fullName,
+        email: data.email,
+        phone_no: data.phoneNumber,
+        subject: data.subject,
+        message: data.message,
+      },
+      {
+        onSuccess: (res) => {
+          Alert.alert(
+            'Message Sent',
+            'Thank you, ' +
+              data.fullName +
+              '! Your message has been received. Ticket ID: #SWL-' +
+              (res.data?.id || Math.floor(100000 + Math.random() * 900000)) +
+              '.\n\nOur support team will respond to you via email at ' +
+              data.email +
+              ' within 2-4 hours.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  reset();
+                  router.back();
+                },
+              },
+            ],
+          );
+        },
+        onError: (error) => {
+          Alert.alert('Error', error.message || 'Failed to submit contact request. Please try again.');
+        },
+      },
+    );
   };
 
   const cardShadow = {
@@ -137,7 +174,7 @@ export default function ContactSupportScreen() {
               <Feather name="phone-call" size={18} color="#485aff" />
             </View>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">Call Support</Text>
-            <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">+977 1-4001234</Text>
+            <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">9744985161 / 9713969243</Text>
           </Pressable>
         </View>
 
@@ -269,7 +306,7 @@ export default function ContactSupportScreen() {
           <Button
             title="Send Message"
             variant="primary"
-            loading={loading}
+            loading={isPending}
             onPress={handleSubmit(handleTicketSubmit)}
             className="w-full h-12 bg-primary border-primary rounded-xl"
             leftIcon={<Feather name="send" size={16} color="#ffffff" />}

@@ -129,5 +129,557 @@
     "new": "New",
     "unreadCount": "{{count}} unread notification",
     "unreadCount_plural": "{{count}} unread notifications"
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms and Conditions",
+      "description": "Read the terms and conditions for using Sewalo services."
+    },
+    "pageTitle": "Terms & Conditions",
+    "sections": {
+      "intro": {
+        "title": "Introductory",
+        "content": [
+          {
+            "type": "p",
+            "text": "Effective Date: Baisakh 1, 2083"
+          },
+          {
+            "type": "p",
+            "text": "Welcome to Sewalo, a digital platform designed to connect customers with skilled service providers across Nepal. These Terms and Conditions (\"Terms\") govern your access and use of Sewalo, whether as a service provider (as defined below) or a customer (as defined below). Please read these Terms carefully. By creating an account and using the Service (as defined below), you agree that you have read, understood, accepted and agreed with the Terms which are applicable to you. These terms constitute a legally binding agreement between you and Edgeoft Technology Pvt.Ltd. (the “Company”). If you do not agree to or fall within the Terms of the Service and wish to discontinue using this Application or Service, please do not continue using this Application or Service."
+          },
+          {
+            "type": "p",
+            "text": "To access and use the Service, you must accept the Terms and Conditions outlined below. By using the application provided by the Company (the “Application”), and by downloading, installing, or using any related software provided by the Company (the “Software”), you expressly acknowledge and agree to comply with these Terms and Conditions, along with any future amendments or modifications that may be published periodically through the Application."
+          }
+        ]
+      },
+      "services": {
+        "title": "Services",
+        "content": [
+          {
+            "type": "p",
+            "text": "Sewalo is an online marketplace that links reliable local service providers with individuals seeking their expertise. Whether you need an electrician, graphic designer, plumber, yoga instructor, or tutor, Sewalo simplifies the process of discovering, booking, and confidently choosing the right professional. All providers are verified, services are locally based, and the platform is founded on trust."
+          }
+        ]
+      },
+      "definitions": {
+        "title": "1. Definitions",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "\"Platform\" refers to Sewalo’s web and mobile services.",
+              "\"Customer\" refers to any individual seeking services.",
+              "\"Provider\" refers to freelancers, businesses, or individuals offering services.",
+              "\"User\" refers to both Customers and Providers.",
+              "\"Services\" refer to the professional tasks listed and provided via Sewalo."
+            ]
+          }
+        ]
+      },
+      "representation": {
+        "title": "2. Representation and warrants",
+        "content": [
+          {
+            "type": "p",
+            "text": "By using the Service and/or Platform, you represent, warrant and undertake that:"
+          },
+          {
+            "type": "ul",
+            "items": [
+              "You are legally entitled to accept and agree to the Terms and Conditions and that you are at least eighteen (18) years old. The service is not available to persons under the age of eighteen (18) or such persons that are forbidden for any reason whatsoever to enter into a contractual relationship as provisioned by the Contract law of Nepal;",
+              "You are a Nepalese resident or legal entity registered in Nepal and when using the Service you agree to comply with all applicable laws of Nepal;",
+              "You will provide true, accurate, not misleading, current and complete information as required for the Service and undertake the responsibility to maintain and update your information in a timely manner to keep it true, accurate, not misleading, current and complete at all times during the term of the Agreement. You agree that Sewalo may rely on your information as true, accurate, not misleading, current and complete. You acknowledge that if your information is untrue, inaccurate, misleading, not current or incomplete in any respect, Sewalo has the right but not the obligation to terminate this Agreement and your use of the Service at any time with or without notice;",
+              "Your use of the Service is for your own sole, personal use. You undertake not to authorize others to use your identity or user status, and you may not assign or otherwise transfer your user account to any other person or entity;",
+              "You will provide us with whatever proof of identity or any other documents, including but not limited to National ID Card, permits, licenses or approvals which we may reasonably request or require;",
+              "You, as the service provider, hold all necessary licenses, certificates, and authorizations required to lawfully provide and operate your services, and possess the requisite approvals and authority to conduct such operations;",
+              "You must not engage in any activity intended to deceive the Company or gain personal benefit by any means, whether fraudulent or otherwise, including but not limited to any event, promotion, or campaign organized by the Company to promote new subscriptions or usage of the Service.",
+              "As the service provider, you acknowledge that standard telecommunication charges may apply when responding to customer requests for your services, and you shall be solely responsible for bearing such costs.",
+              "As the service provider, you agree that the Service is provided on a reasonable effort basis;",
+              "You agree that your use of the Service will be subject to the Sewalo Policies as may be amended from time to time;",
+              "You agree to assist Sewalo with any internal or external investigations as may be required by Sewalo in complying with any prevailing laws or regulations in place;",
+              "You agree to assume full responsibility and liability for all loss or damage suffered by yourself, Sewalo or any other party as a result of your breach of this Agreement;"
+            ]
+          }
+        ]
+      },
+      "account": {
+        "title": "3. Account Registration",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "You shall provide accurate, complete, and up-to-date information at all times.",
+              "You shall maintain the security and confidentiality of your account credentials, including your password and any identification or access credentials provided to you for use of the Service.",
+              "You shall not impersonate any person or entity, nor create multiple, false, or misleading user accounts.",
+              "You agree to immediately notify Sewalo of any unauthorized use of your account or any suspected breach of security.",
+              "Sewalo may require users to verify their email address or mobile number through a one-time password (OTP), either during registration or when performing key actions, including but not limited to logging in using a phone number, booking a service, or posting a service."
+            ]
+          }
+        ]
+      },
+      "platformUse": {
+        "title": "4. Platform Use",
+        "content": [
+          {
+            "type": "p",
+            "text": "Users agree to:"
+          },
+          {
+            "type": "ul",
+            "items": [
+              "Utilize Sewalo exclusively for lawful and legitimate purposes;",
+              "Refrain from uploading, transmitting, or storing any content or material that is offensive, defamatory, inaccurate, or misleading;",
+              "Refrain from engaging in any form of harassment, fraudulent activity, disrespectful conduct, or any behavior that causes inconvenience or nuisance to Sewalo or any third party;",
+              "Adhere to community guidelines and maintain professional ethics at all times;",
+              "As a service provider, you shall not contact Consumers for any purpose unrelated to the provision of the Service, and the same restriction shall apply vice versa."
+            ]
+          }
+        ]
+      },
+      "profile": {
+        "title": "5. Profile Completion and Verification",
+        "content": [
+          {
+            "type": "p",
+            "text": "Users may be shown profile completion progress or gentle reminders to upload verification documents. Completing your profile helps increase credibility and visibility."
+          }
+        ]
+      },
+      "communication": {
+        "title": "6. Communication on Platform",
+        "content": [
+          {
+            "type": "p",
+            "text": "Sewalo does not currently provide an in-app messaging or communication feature between Customers and Service Providers. Any communication between Users conducted outside the platform shall be undertaken at the Users’ sole discretion and risk. Any in-app communication features introduced in the future shall be subject to revised or updated terms and conditions."
+          }
+        ]
+      },
+      "personalData": {
+        "title": "7. Personal Data Protection",
+        "content": [
+          {
+            "type": "p",
+            "text": "You hereby acknowledge and consent to the Company’s collection, use, and processing of your personal information for the purposes and in the manner outlined below."
+          },
+          {
+            "type": "p",
+            "text": "For the purposes of this Agreement, “Personal Data” refers to any information that can identify you, either directly or indirectly. This includes, but is not limited to, your name, identification number, passport number, nationality, address, contact number, gender, date of birth, and email address, as well as any details you have submitted to the Company through registration forms, applications, or similar documents. It also encompasses information that the Company may collect, store, or process from time to time, including sensitive data such as details concerning your health, religious beliefs, or comparable personal attributes."
+          },
+          {
+            "type": "p",
+            "text": "Providing your Personal Data is entirely voluntary. However, failure to do so may result in an incomplete application, preventing the Company from processing your information for the purposes stated below and potentially restricting your access to the Service."
+          },
+          {
+            "type": "p",
+            "text": "The Company may collect, use, and process your Personal Data in connection with its operations and activities, which include, but are not limited to, the following purposes (“the Purpose”):"
+          },
+          {
+            "type": "ol",
+            "items": [
+              "To perform the Company’s obligations in respect of any contract entered into with you;",
+              "To provide you with any services pursuant to the Terms and Conditions herein;",
+              "Process, manage or verify your application for the Service pursuant to the Terms and Conditions herein;",
+              "To develop, enhance and provide what is required pursuant to the Terms and Conditions herein to meet your needs;",
+              "To facilitate or enable any checks as may be required pursuant to the Terms and Conditions herein;",
+              "To respond to questions, comments and feedback from you;",
+              "To communicate with you for any of the purposes listed herein;",
+              "For the purposes of detection, prevention and prosecution of crime;",
+              "For the Company to comply with its obligations under law;",
+              "To send you alerts, newsletters, updates, mailers, promotional materials, special privileges, festive greetings from the Company, its partners, advertisers, and/or sponsors;"
+            ]
+          },
+          {
+            "type": "p",
+            "text": "If you do not agree to the Company processing your Personal Data for any of the stated purposes, you are requested to inform Sewalo through the support contact information provided in the Application."
+          },
+          {
+            "type": "p",
+            "text": "In the event that any of your Personal Data changes—such as your email address, contact number, payment information—or if you wish to terminate your account, please notify the Company by submitting an update request using the same support contact details available in the Application. The Company will make reasonable efforts to implement the requested changes within fourteen (14) working days from the date of receiving your notice."
+          },
+          {
+            "type": "p",
+            "text": "By providing your information, you acknowledge and agree that it may be used in accordance with the terms outlined in the submission form and this Agreement."
+          }
+        ]
+      },
+      "serviceListings": {
+        "title": "8. Service Listings (Providers)",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "Service Providers shall be solely responsible for the accuracy, completeness, and correctness of their service descriptions, representations, and pricing.",
+              "Sewalo reserves the right, at its sole discretion, to remove, suspend, or disable any service listing that violates applicable laws, regulations, or platform policies.",
+              "Sewalo makes no representation, warranty, or guarantee regarding the availability of bookings or the generation of earnings for Service Providers.",
+              "Providers must possess all the appropriate licenses, approvals, permits, consents, authority and mandatory insurance policies related to or in connection with services you provide.",
+              "Providers shall be solely responsible for any and all claims, judgements and liabilities resulting from any accident, loss or damage including, but not limited to, personal injuries, death, total loss and property damage which is due to or is alleged to be a result of the Services provided by you;",
+              "Providers shall obey all local laws related to your Services and will be solely responsible for any violations of such local laws;",
+              "Providers shall not contact consumers for purposes other than in connection with the Service;",
+              "Providers shall not reverse look-up, trace or seek to trace any information on any other user of or visitor to the Application, or any Consumers, including without limitation any user account not owned by you, to its source, or exploit the Application or any service or information made available or offered by or through the Platform, in any way where the purpose is to reveal any information, including but shall not be limited to personal identification information, other than your own information, as provided for by the Application.",
+              "You agree that you are forbidden from giving out coupons and suggesting any other form of discounts to the Consumers."
+            ]
+          }
+        ]
+      },
+      "bookingPayments": {
+        "title": "9. Booking and Payments Terms",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "All fees charged by the Company for the use of the Service (the “Service Fee”) shall be due and payable immediately upon accrual and shall be strictly non-refundable. This no-refund policy shall remain in effect under all circumstances, including but not limited to your decision to discontinue use of the Service, the Company’s decision to suspend or terminate your access, or any disruption to the Service, whether planned, accidental, intentional, or arising from any other cause.",
+              "Customers agree to pay for services in accordance with the prices listed on the platform.",
+              "The estimated fee for a service may be determined based on prevailing market demand. Once the fee has been finalized and mutually agreed upon between the Customer and the Service Provider, Sewalo shall bear no responsibility or liability for any subsequent modification, revision, or adjustment to the agreed-upon charge.",
+              "Sewalo has partnered with its authorized payment service provider, eSewa. Under the current version of the Sewalo platform, all payments shall be made either directly between the Customer and the Service Provider or through the payment gateway made available on the Sewalo website in partnership with eSewa.",
+              "Any dispute relating to a service shall be reported within twenty-four (24) hours of the completion of the service.",
+              "Service Providers may update the status of a service through in-app indicators, including but not limited to “Started” or “Completed.” Customers are encouraged to verify the completion of the service prior to confirming payment, where applicable."
+            ]
+          }
+        ]
+      },
+      "nonCircumvention": {
+        "title": "10. Non-Circumvention & Repeat Bookings",
+        "content": [
+          {
+            "type": "p",
+            "text": "Customers and Service Providers who connect through Sewalo agree to continue booking future services via the platform. Users must not arrange services privately, share direct contact information, or bypass Sewalo for payments or scheduling. Violations may result in account suspension or removal."
+          }
+        ]
+      },
+      "cancellations": {
+        "title": "11. Cancellations and Refunds",
+        "content": [
+          {
+            "type": "p",
+            "text": "Service Providers and Customers are required to communicate in a timely and reasonable manner regarding any delays, rescheduling, or cancellations of services. Sewalo may, at its discretion, facilitate or intervene in dispute resolution; however, it does not warrant or guarantee refunds unless expressly stated otherwise in its policies or required by applicable law."
+          }
+        ]
+      },
+      "reviews": {
+        "title": "12. Reviews and Ratings",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "Customers may submit reviews based solely on their genuine and actual experiences with a service.",
+              "Service Providers shall not manipulate, influence, fabricate, or exchange reviews, ratings, or feedback in any manner.",
+              "Sewalo reserves the right, at its sole discretion, to remove or moderate any review that is abusive, misleading, fraudulent, or otherwise in violation of applicable laws or platform policies.",
+              "Sewalo encourages Users to provide authentic and honest feedback after a service has been marked as completed.",
+              "Reviews and feedback may be publicly visible to other Users and may be used by Sewalo to promote transparency, trust, and service quality on the platform."
+            ]
+          }
+        ]
+      },
+      "notifications": {
+        "title": "13. Notifications",
+        "content": [
+          {
+            "type": "p",
+            "text": "Sewalo may send notifications to Users through in-app messages (including toast notifications), short message service (SMS), or email for the purpose of informing them of important events, including but not limited to bookings, verification requests, and account-related updates. Users may manage their notification preferences through the account settings, where applicable."
+          }
+        ]
+      },
+      "suspension": {
+        "title": "14. Suspension and Termination",
+        "content": [
+          {
+            "type": "p",
+            "text": "Repeated failure to verify account information or misuse of referral or incentive programs may result in the suspension of a User’s account."
+          },
+          {
+            "type": "p",
+            "text": "Sewalo reserves the right, at its sole discretion, to suspend or terminate any account that:"
+          },
+          {
+            "type": "ol",
+            "items": [
+              "violates these Terms & Conditions, or;",
+              "engages in fraudulent, abusive, unlawful, or otherwise prohibited activities."
+            ]
+          }
+        ]
+      },
+      "ip": {
+        "title": "15. Intellectual Property",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "All intellectual property rights in and to the application, including but not limited to its software, source code, algorithms, databases, user interface, designs, text, graphics, logos, trademarks, service marks, and any other content or materials made available through the application, are owned by or licensed to the Company and are protected by applicable intellectual property laws.",
+              "The Company grants the user a limited, non-exclusive, non-transferable, non-sub licensable, and revocable license to access and use the Application solely for its intended purposes and in accordance with these Terms and Conditions. This license does not grant the user any ownership rights in the Application or any related intellectual property.",
+              "Except as expressly permitted under these Terms, the user shall not copy, reproduce, modify, distribute, transmit, publicly display, sell, license, reverse engineer, decompile, or otherwise exploit any part of the Application without the Company’s prior written consent.",
+              "Any feedback, suggestions, or ideas provided by users regarding the Application may be used by the Company without restriction, obligation, or compensation.",
+              "All rights not expressly granted under these Terms are reserved by the Company."
+            ]
+          }
+        ]
+      },
+      "liability": {
+        "title": "16. Limitation of Liability",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "Sewalo acts solely as a facilitator and intermediary platform and does not itself provide any services listed on the platform.",
+              "To the fullest extent permitted by law, Sewalo shall not be liable for any direct, indirect, incidental, consequential, or special loss, damage, theft, injury, or unlawful act arising out of or occurring before, during, or after any service interaction between Users.",
+              "The service, application, and/or software may occasionally experience limitations, delays, or other issues that are inherent to the use of the internet and electronic communications. Such issues may also arise from problems with your device, including malfunction, connectivity failure, being out of range, switched off, or otherwise not operating properly. The company shall not be held liable for any delays, delivery errors, damages, or losses resulting from these circumstances.",
+              "Sewalo does not conduct criminal background checks on Users; however, it may perform identity verification measures for the purpose of enhancing trust and platform integrity.",
+              "Users are solely responsible for exercising their own judgment and taking reasonable safety precautions, including but not limited to verifying identities, supervising service providers where appropriate, and safeguarding personal property.",
+              "In the event of any criminal conduct, including but not limited to theft, physical harm, or fraud, the individual responsible shall bear sole personal liability and may be subject to investigation and action by the relevant law enforcement authorities.",
+              "Sewalo shall fully cooperate with law enforcement agencies in connection with any investigation and may disclose user information where required by applicable law or lawful request.",
+              "Users are strongly encouraged to promptly report any suspicious or unlawful behavior through the in-app support system or by contacting Sewalo at support@sewalo.com"
+            ]
+          }
+        ]
+      },
+      "mvp": {
+        "title": "17. MVP Disclaimer",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "Sewalo is currently operating in its Minimum Viable Product (MVP) phase. Certain platform features, including but not limited to integrated messaging and advanced notification systems, are under development and may not be available at this time.",
+              "By accessing or using the Sewalo platform, Users acknowledge and agree that certain services and functionalities may be limited during this phase and that additional features may be introduced progressively. Any new or enhanced functionality shall be communicated clearly and shall be subject to revised or updated terms and conditions.",
+              "Sewalo welcomes and encourages user feedback during the MVP phase for the purpose of improving platform performance, usability, and overall user experience."
+            ]
+          }
+        ]
+      },
+      "law": {
+        "title": "18. Governing Law",
+        "content": [
+          {
+            "type": "ul",
+            "items": [
+              "These Terms and Conditions, and any dispute, claim, or controversy arising out of or in connection with these Terms, the Application, or the services provided through the Application, shall be governed by and construed in accordance with the laws of Nepal, without regard to its conflict of law principles.",
+              "In the event of any dispute arising between the Company and a user or service provider in connection with these Terms or the use of the Application, the parties shall first attempt to resolve the dispute amicably through good-faith negotiation.",
+              "If the dispute is not resolved through negotiation within a reasonable period, such dispute shall be subject to the exclusive jurisdiction of the competent courts of Nepal.",
+              "The use of the Application from any jurisdiction shall not be deemed to subject the Company to the laws or jurisdiction of any country other than Nepal."
+            ]
+          }
+        ]
+      },
+      "platformFee": {
+        "title": "19. Platform Fees and Commission (for Providers)",
+        "content": [
+          {
+            "type": "p",
+            "text": "Sewalo shall charge a commission of fifteen percent (15%) on the total amount earned by Service Providers for each successfully completed booking. Such commission is levied to support the operation, maintenance, user support services, and continued development of the platform."
+          },
+          {
+            "type": "p",
+            "text": "Commission amounts payable to the Company shall be accumulated in the Service Provider’s account. The Service Provider shall be obligated to remit such accumulated commission to the Company accordingly. Upon the total outstanding commission reaching NPR 500, the Service Provider must settle the payable amount with Sewalo."
+          },
+          {
+            "type": "p",
+            "text": "In the event that the Service Provider fails to clear the outstanding commission upon reaching this threshold, Sewalo reserves the right:"
+          },
+          {
+            "type": "ol",
+            "items": [
+              "To temporarily restrict the Service Provider from receiving new bookings;",
+              "To hide or deprioritize the Service Provider’s services in search results, and/or;",
+              "To suspend the Service Provider’s account until all outstanding dues are fully settled."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Sewalo reserves the right to amend or revise its commission policies, including applicable rates or thresholds, from time to time. Any such changes shall be communicated to the Service Provider in advance."
+          }
+        ]
+      },
+      "warranties": {
+        "title": "20. Disclaimer of Warranties",
+        "content": [
+          {
+            "type": "p",
+            "text": "The company makes no representation, warranty, or guarantee as to the reliability, timeliness, quality, suitability, availability, accuracy or completeness of the services, application and/or the software. The Company does not represent or warrant that:"
+          },
+          {
+            "type": "ol",
+            "items": [
+              "The use of the service, application and/or the software will be secure, timely, uninterrupted or error-free;",
+              "The Service will meet your requirements or expectations;",
+              "Any stored date will be accurate or reliable;",
+              "Errors or defects in the application and/or the software will be corrected,or",
+              "The application or the server(s) that make the application available are free of viruses or other harmful components, or"
+            ]
+          },
+          {
+            "type": "p",
+            "text": "The Service is provided to you solely on an ‘as is’ basis. All conditions, representations, and warranties; whether express, implied, statutory, or otherwise, are expressly excluded to the fullest extent permitted by law. This includes, without limitation, any implied warranties of merchantability, fitness for a particular purpose, and non-infringement of third-party rights."
+          },
+          {
+            "type": "p",
+            "text": "The company makes no representation, warranty, or guarantee as to the reliability, timeliness, quality, suitability, availability of any services, including but not limited to the services provided by you to customers through the use of the service, application and/or the software. You acknowledge and agree that the entire risk arising out of such use of the services remains solely and absolutely with you and you shall have no recourse whatsoever against the company."
+          }
+        ]
+      }
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "description": "Read Sewalo’s Privacy Policy to understand how we collect, use, and protect your personal information. Learn about our data practices and your rights as a user."
+    },
+    "pageTitle": "Privacy Policy",
+    "sections": {
+      "introduction": {
+        "title": "Introduction",
+        "content": [
+          "Effective Date: Baisakh 1, 2083",
+          "This Privacy Policy explains how Edgeoft Private Limited and the Sewalo application collect, use, process, store, disclose, share, and protect the personal information and data obtained through the application (the “Application”, “we”, “our”, or “us”). This Policy also applies to any websites and other related applications developed or operated by us in connection with our services. Accordingly, references to the “Application”, “we”, “our”, or “us” shall be deemed to include such websites and related applications, unless the context requires otherwise.",
+          "Please review this Policy carefully to understand our information practices. By accessing or using the Application, you acknowledge that you have read, understood, and agree to be bound by the terms and practices described herein."
+        ]
+      },
+      "purpose": {
+        "title": "Purpose of Data Collection",
+        "content": [
+          "We collect and use personal and service-related information for the following purposes:",
+          "Dispute Resolution: To investigate and resolve any disputes or issues that may arise between users or service providers.",
+          "Safety and Fraud Prevention: To protect the safety of users and prevent fraudulent or unauthorized activities on the platform.",
+          "Customer Service Enhancement: To improve the quality, efficiency, and responsiveness of our services."
+        ]
+      },
+      "dataCollection": {
+        "title": "1. Data We Collect",
+        "content": [
+          "We may collect the following categories of information in connection with your use of the Application in order to give you the best service:",
+          "Personal Information: Information that may be used to identify you, including your name, email address, contact number, location-related information, and profile photograph.",
+          "Verification Information: Documents and related information submitted for the purpose of verifying your identity or profile status on the Application.",
+          "Service Data: Information generated through your use of the services, including service listings, booking details.",
+          "Payment Information: Sewalo has partnered with eSewa to facilitate secure in-application payments. In doing so, Sewalo collects only the minimum payment-related information necessary for transaction processing, which is handled exclusively by the authorized third-party payment processor. Payment information is processed in accordance with eSewa’s security and privacy standards, and Sewalo does not store user’s sensitive financial data.",
+          "Usage and Technical Data: Information related to your interaction with the Application, including log files, cookies, device information, and similar technical data."
+        ]
+      },
+      "chatAndCall": {
+        "title": "2. Chat and Call Records",
+        "content": [
+          "At present, Sewalo does not offer an in-application messaging or chat feature between users. Any communications conducted outside the Application are neither monitored nor recorded by Sewalo and are not subject to Sewalo’s privacy or data protection measures.",
+          "In the event that in-application messaging or communication features are introduced in the future, this Privacy Policy will be revised accordingly to specify how such communications and related records are collected, processed, stored, and used."
+        ]
+      },
+      "dataUse": {
+        "title": "3. Use of Your Data",
+        "content": [
+          "By using the Sewalo platform, you acknowledge and consent that we may collect, process, and use your personal information for the following purposes:",
+          "Identity Verification and Safety: To verify user identities and promote trust, safety, and security on the platform.",
+          "Service Facilitation: To enable and manage interactions between Customers and Service Providers.",
+          "Platform Improvement: To enhance, personalize, and optimize platform features, functionality, and user experience.",
+          "Communication: To send important updates, notifications, and promotional messages, subject to your consent where required by law.",
+          "Legal Compliance: To fulfill applicable legal, regulatory, and contractual obligations.",
+          "Verification: To confirm your email address or mobile number via one-time passwords (OTPs) or other verification mechanisms.",
+          "Reminders and Alerts: To provide reminders regarding account or profile completion, missing documents, or other platform requirements.",
+          "Booking and Task Updates: To notify you of the status of bookings, tasks, or services.",
+          "Referral and Reward Tracking: To track referrals, assign rewards, and manage incentive programs in accordance with platform rules.",
+          "",
+          "Note: Sewalo uses your data solely for the purposes described above and shall not be responsible for any consequences arising from inaccurate or incomplete information provided by Users."
+        ]
+      },
+      "dataSharing": {
+        "title": "4. Sharing of Your Data",
+        "content": [
+          "We may share your personal information in the following circumstances:",
+          "Service Providers: With Service Providers, as necessary to facilitate and fulfill a confirmed booking or service request.",
+          "Third-Party Service Providers: With authorized third-party partners, such as payment processors, analytics providers, or other service providers, to support platform operations and functionality.",
+          "Legal Compliance: With governmental, regulatory, or law enforcement authorities when required by applicable law, regulation, or legal process."
+        ]
+      },
+      "aggregatedData": {
+        "title": "5. Use of Aggregated and Anonymous Data",
+        "content": [
+          "We may collect, process, and analyze anonymized data in aggregate form to better understand user interactions with the Sewalo platform, enhance our services, and optimize the overall user experience. Such data does not include personally identifiable information, including but not limited to your name, phone number, or email address.",
+          "Sewalo reserves the right to license, share, or sell aggregated and de-identified information to third parties for purposes including, but not limited to:",
+          "Industry research and market analysis;",
+          "Demographic profiling and trend assessment;",
+          "Insights into platform performance, usage patterns, and service optimization.",
+          "This information is strictly de-identified and cannot be used to identify individual users. All handling of such data shall comply with applicable industry standards and best practices for privacy and data protection."
+        ]
+      },
+      "cookies": {
+        "title": "6. Cookies and Tracking",
+        "content": [
+          "Sewalo uses cookies and similar tracking technologies to enhance user experience, facilitate login, personalize content, and collect analytics for platform optimization and performance monitoring.",
+          "",
+          "Types of Cookies Used:",
+          "Essential Cookies: Necessary for basic platform functionality, including login, session management, and secure access.",
+          "Performance and Analytics Cookies: Collect anonymous information on platform usage and user interactions to improve features, usability, and overall service quality.",
+          "Functional Cookies: Enable personalization of content and preferences to enhance user experience.",
+          "Third-Party Cookies: May be set by third-party service providers for analytics, advertising, or integration with other services.",
+          "",
+          "Managing Cookies:",
+          "Users may manage, disable, or delete cookies through their browser or device settings. Please note that disabling or removing certain cookies may affect the functionality or performance of the platform.",
+          "",
+          "Consent:",
+          "By continuing to use the Sewalo platform, Users consent to the use of cookies and similar tracking technologies as described herein, unless applicable law requires explicit consent, in which case Sewalo will obtain such consent prior to placement."
+        ]
+      },
+      "userRights": {
+        "title": "7. User Rights",
+        "content": [
+          "As a User of the Sewalo platform, you have the following rights with respect to your personal data:",
+          "Access and Correction: You may view, review, and update your profile information to ensure accuracy and completeness.",
+          "Account Deletion: You may request the deletion of your account and associated personal data, subject to any legal or contractual obligations.",
+          "Marketing and Communications: You may opt out of receiving promotional or marketing communications from Sewalo at any time."
+        ]
+      },
+      "dataRetention": {
+        "title": "8. Data Retention",
+        "content": [
+          "Sewalo retains personal data for as long as your account remains active. Upon account closure or deactivation, certain information may continue to be retained for a limited period as necessary to comply with legal obligations, prevent fraud, resolve disputes, enforce agreements, or for other legitimate business purposes."
+        ]
+      },
+      "security": {
+        "title": "9. Security",
+        "content": [
+          "Sewalo implements industry-standard security measures, including SSL encryption, secure hosting, and periodic security audits, to protect user data and platform integrity. Users are advised not to share passwords, authentication credentials, or any other sensitive information through chat or other unsecured communication channels."
+        ]
+      },
+      "children": {
+        "title": "10. Children’s Privacy",
+        "content": ["Sewalo is not intended for users under 18."]
+      },
+      "location": {
+        "title": "11. Location Information",
+        "content": [
+          "Sewalo may collect and use information about your location in the following ways:",
+          "General Location: Determined based on your IP address, network information, or other indirect indicators.",
+          "Precise Geolocation: Obtained directly from your device, only if you have granted explicit permission for location access.",
+          "",
+          "Location information may be used for the following purposes:",
+          "Service Matching: To connect Customers with nearby Service Providers.",
+          "Personalized Results: To display services, offers, or content relevant to your geographic area.",
+          "Trust and Safety: To enhance platform security, prevent fraud, and verify service areas.",
+          "",
+          "Users may control the sharing of precise geolocation data through their device settings. Please note that declining or disabling location access may limit certain location-based features and functionality on the platform."
+        ]
+      },
+      "limitations": {
+        "title": "12. Limitations of Platform Oversight",
+        "content": [
+          "Sewalo shall not be responsible or liable for any interactions, communications, transactions, or disputes that occur outside the Sewalo platform. Where a Customer or Service Provider independently arranges or conducts a service without booking through the Sewalo platform, Sewalo shall have no obligation to provide support, dispute resolution, data protection, or any related assistance in connection with such off-platform transactions."
+        ]
+      },
+      "notifications": {
+        "title": "13. Notifications",
+        "content": [
+          "Sewalo may send alerts, notifications, and reminders to Users through in-app messages (including toast notifications), short message service (SMS), or email. Such communications may include, but are not limited to, profile or document verification reminders, updates regarding booking status (including confirmation, commencement, or completion of services), and invoice or payment-related notifications. Users may manage and adjust their communication preferences through their account or profile settings, where such options are made available."
+        ]
+      },
+      "wallet": {
+        "title": "14. Virtual Wallet and Invoices",
+        "content": [
+          "Certain Service Providers may have access to a virtual wallet feature for the purpose of viewing earnings and issuing invoices through the Sewalo platform. Wallet and invoice-related data shall be used solely for facilitating services and related transactions and shall not be shared with third parties, except where required by applicable law or necessary for payment processing and platform operations."
+        ]
+      },
+      "updates": {
+        "title": "15. Policy Updates",
+        "content": [
+          "Sewalo reserves the right to amend or update this Privacy Policy from time to time. Continued access to or use of the Sewalo platform following the publication of any updates shall constitute acceptance of the revised Privacy Policy."
+        ]
+      }
+    }
   }
 }

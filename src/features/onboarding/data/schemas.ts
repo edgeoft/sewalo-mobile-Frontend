@@ -43,16 +43,5 @@ export interface PersonalInfoData {
   avatar?: string;
 }
 
-export const financialSchema = z.object({
-  accountHolderName: z.string().min(1, { message: 'Account holder name is required' }),
-  bankName: z.string().min(1, { message: 'Bank name is required' }),
-  accountNumber: z.string().min(1, { message: 'Account number is required' }),
-  branchName: z.string().optional(),
-});
-
-export interface FinancialData {
-  accountHolderName: string;
-  bankName: string;
-  accountNumber: string;
-  branchName?: string;
-}
+export { financeAccountSchema as financialSchema } from '@/features/provider/data/schemas';
+export type { FinanceAccountFormValues as FinancialData } from '@/features/provider/data/schemas';

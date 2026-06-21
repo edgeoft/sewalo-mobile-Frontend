@@ -10,25 +10,23 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { UserRole } from '@/types';
 import { ROUTES } from '@/constants/routes';
 
-import { personalInfoSchema, financialSchema, PersonalInfoData, FinancialData } from '../data/schemas';
+import { personalInfoSchema, PersonalInfoData } from '../data/schemas';
 
 import {
   useGetProfileQuery,
-  useGetFinanceAccountsQuery,
   useUpdateProfile,
   useCompleteProfile,
-  useCreateFinanceAccount,
-} from '../api/hooks';
-import { useUploadFile } from '@/api/files/hooks';
-
-import {
-  FinanceAccountType,
   UpdateProfilePayload,
   CompleteProfilePayload,
   Availability,
   EducationItemPayload,
   ExperienceItemPayload,
-} from '../api/types';
+  LocationData,
+} from '@/api/user';
+import { useGetFinanceAccountsQuery, useCreateFinanceAccount } from '@/features/provider/api/hooks';
+import { useUploadFile } from '@/api/files/hooks';
+
+import { FinanceAccountType } from '@/features/provider/types/finance';
 
 import { parseTime12h, convertTimeTo24h } from '@/utils/time';
 
@@ -104,21 +102,8 @@ export function useOnboarding() {
   };
 
   // --- Step 4: Financial Details Form State (Provider Only) ---
-  const {
-    control: financialControl,
-    handleSubmit: handleFinancialSubmit,
-    setValue: setFinancialValue,
-    formState: { errors: financialErrors },
-  } = useForm<FinancialData>({
-    resolver: zodResolver(financialSchema),
-    defaultValues: {
-      accountHolderName: '',
-      bankName: '',
-      accountNumber: '',
-      branchName: '',
-    },
-    mode: 'onBlur',
-  });
+  // Financial Details are now fully managed directly by PayoutAccountsManager
+  // so no local react-hook-form state is needed here anymore.
 
   // --- Step 5: Identity Verification Form State ---
   const [documentImage, setDocumentImage] = useState<string | null>(null);
@@ -254,21 +239,7 @@ export function useOnboarding() {
   }, [profileResponse, role, setPersonalInfoValue, activeIndex]);
 
   // --- Prepopulate Finance Accounts when Query Returns ---
-  useEffect(() => {
-    if (role !== 'provider' || !financeAccountsResponse?.data || financeAccountsResponse.data.length === 0) return;
-    const primaryAccount = financeAccountsResponse.data.find((a) => a.is_default) || financeAccountsResponse.data[0];
-    let branch = '';
-    let bankName = primaryAccount.name;
-    const match = bankName.match(/(.+?)\s*\((.+?)\)/);
-    if (match) {
-      bankName = match[1];
-      branch = match[2];
-    }
-    setFinancialValue('accountHolderName', primaryAccount.account_holder_name);
-    setFinancialValue('bankName', bankName);
-    setFinancialValue('accountNumber', primaryAccount.account_no);
-    if (branch) setFinancialValue('branchName', branch);
-  }, [financeAccountsResponse, role, setFinancialValue]);
+  // Handled entirely by PayoutAccountsManager using its own query hook
 
   const handleNext = async () => {
     const currentStepKey = steps[activeIndex].key;
@@ -354,7 +325,7 @@ export function useOnboarding() {
           .map((e) => ({
             title: e.title,
             company_name: e.companyName,
-            start_date: `${e.startDate}-01-01`,
+            start_date: e.startDate ? `${e.startDate}-01-01` : '',
             end_date: e.endDate ? `${e.endDate}-01-01` : null,
           }));
 
@@ -402,26 +373,7 @@ export function useOnboarding() {
     }
 
     if (currentStepKey === 'financial_details') {
-      handleFinancialSubmit(async (data) => {
-        setLoading(true);
-        try {
-          const payload = {
-            name: `${data.bankName}${data.branchName ? ` (${data.branchName})` : ''}`,
-            account_holder_name: data.accountHolderName,
-            account_no: data.accountNumber,
-            type: FinanceAccountType.BANK,
-            is_default: true,
-          };
-
-          await createFinanceAccount(payload);
-          setActiveIndex(activeIndex + 1);
-        } catch (err) {
-          const errMsg = err instanceof Error ? err.message : 'Failed to save financial bank details.';
-          Alert.alert('Error', errMsg);
-        } finally {
-          setLoading(false);
-        }
-      })();
+      setActiveIndex(activeIndex + 1);
       return;
     }
 
@@ -559,9 +511,6 @@ export function useOnboarding() {
     workingHoursStart,
     workingHoursEnd,
     handleHoursChange,
-    financialControl,
-    financialErrors,
-    setFinancialValue,
     documentImage,
     setDocumentImage,
     handleNext,

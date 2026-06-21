@@ -1,4 +1,7 @@
 import { UserProfile } from '@/features/auth/api/types';
+import { FinanceAccountType } from '@/features/provider/types/finance';
+
+export { FinanceAccountType };
 
 export type UserStatus = 'pending' | 'completed' | 'verified' | 'rejected' | 'suspended';
 export type Availability = 'always' | 'weekends' | 'weekdays';
@@ -49,62 +52,10 @@ export interface UpdateProfilePayload {
   education?: EducationItemPayload[];
   experience?: ExperienceItemPayload[];
   language?: string[];
-}
-
-export interface CompleteProfilePayload {
-  email: string;
-  city: string;
-  state: string;
-  country: string;
-  address: string;
-  dob: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-  avatar?: string | null;
-  document?: string | null;
   description?: string;
-  education?: EducationItemPayload[];
-  experience?: ExperienceItemPayload[];
-  availability?: Availability | string;
-  start_time?: string;
-  end_time?: string;
-  language?: string[];
 }
 
 export interface UpdateProfileResponse {
   message: string;
   user: UserProfile;
-}
-
-export enum FinanceAccountType {
-  BANK = 'bank',
-  WALLET = 'wallet',
-}
-
-export interface FinanceAccount {
-  id: number;
-  user_id: string;
-  name: string;
-  account_holder_name: string;
-  account_no: string;
-  type: FinanceAccountType;
-  is_default: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateFinanceAccountPayload {
-  name: string;
-  account_holder_name: string;
-  account_no: string;
-  type: FinanceAccountType;
-  is_default?: boolean;
-}
-
-export interface GetFinanceAccountsResponse {
-  current_page: number;
-  data: FinanceAccount[];
-  total: number;
 }

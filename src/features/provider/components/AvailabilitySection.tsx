@@ -4,9 +4,11 @@ import { Feather } from '@expo/vector-icons';
 
 import Button from '@/components/ui/Button';
 
+import { Availability } from '@/api/user';
+
 interface AvailabilitySectionProps {
-  workingDays: 'everyday' | 'sunday_friday' | 'weekend';
-  onChangeWorkingDays: (days: 'everyday' | 'sunday_friday' | 'weekend') => void;
+  workingDays: Availability;
+  onChangeWorkingDays: (days: Availability) => void;
   workingHoursStart: string; // e.g. "10:00 AM"
   workingHoursEnd: string; // e.g. "06:00 PM"
   onChangeHours: (start: string, end: string) => void;
@@ -81,15 +83,15 @@ export default function AvailabilitySection({
           <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Select your working days</Text>
           <View className="gap-y-2">
             {[
-              { id: 'everyday', label: 'Everyday', description: 'Available seven days a week' },
-              { id: 'sunday_friday', label: 'Sunday - Friday', description: 'Standard weekdays availability' },
-              { id: 'weekend', label: 'Weekend (Sat)', description: 'Available only on Saturdays' },
+              { id: 'always', label: 'Everyday', description: 'Available seven days a week' },
+              { id: 'weekdays', label: 'Sunday - Friday', description: 'Standard weekdays availability' },
+              { id: 'weekends', label: 'Weekend (Sat)', description: 'Available only on Saturdays' },
             ].map((day) => {
               const isSelected = workingDays === day.id;
               return (
                 <Pressable
                   key={day.id}
-                  onPress={() => onChangeWorkingDays(day.id as any)}
+                  onPress={() => onChangeWorkingDays(day.id as Availability)}
                   className={`form-input-container justify-between py-2.5 ${
                     isSelected ? 'border-primary bg-primary/5' : 'border-gray-200'
                   }`}

@@ -20,6 +20,8 @@ import FinishOnboardingStep from '../components/FinishOnboardingStep';
 
 // Hook
 import { useOnboarding } from '../hooks/useOnboarding';
+import { Control, FieldErrors } from 'react-hook-form';
+import { FinancialData } from '../data/schemas';
 
 export default function GettingStartedScreen() {
   const {
@@ -44,8 +46,6 @@ export default function GettingStartedScreen() {
     workingHoursStart,
     workingHoursEnd,
     handleHoursChange,
-    financialControl,
-    financialErrors,
     documentImage,
     setDocumentImage,
     handleNext,
@@ -167,15 +167,7 @@ export default function GettingStartedScreen() {
         );
 
       case 'financial_details':
-        return (
-          <FinancialDetailsStep
-            control={financialControl}
-            errors={financialErrors}
-            onNext={handleNext}
-            onSkip={handleSkip}
-            stepper={stepper}
-          />
-        );
+        return <FinancialDetailsStep onNext={handleNext} onSkip={handleSkip} stepper={stepper} />;
 
       case 'identity_verification':
         return (

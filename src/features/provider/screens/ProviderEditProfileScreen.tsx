@@ -14,16 +14,17 @@ import AvailabilitySection from '../components/AvailabilitySection';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
+import { useUpdateProfile, Availability } from '@/api/user';
+import { useUploadFile } from '@/api/files/hooks';
+import ProfileFormSkeleton from '@/components/ui/ProfileFormSkeleton';
 
 export default function ProviderEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  // Loading states per section
-  const [basicLoading, setBasicLoading] = useState(false);
-  const [skillsLoading, setSkillsLoading] = useState(false);
-  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
   const locationStr = [user?.address, user?.city, user?.state, user?.country].filter(Boolean).join(', ');
 
@@ -52,11 +53,37 @@ export default function ProviderEditProfileScreen() {
   const watchAvatar = watch('avatar') || '';
 
   const handleSaveBasicInfo = (data: BasicInfoFormData) => {
-    setBasicLoading(true);
-    setTimeout(() => {
-      setBasicLoading(false);
-      Alert.alert('Success', 'Basic information saved successfully!');
-    }, 1000);
+    const saveProfileData = (avatarPath: string | null) => {
+      updateProfile(
+        {
+          name: data.fullName,
+          phone: data.mobileNumber,
+          address: data.location,
+          dob: data.dateOfBirth,
+          language: data.languages,
+          description: data.bio,
+          avatar: avatarPath,
+        },
+        {
+          onSuccess: () => {
+            Alert.alert('Success', 'Basic information saved successfully!');
+          },
+        },
+      );
+    };
+
+    if (data.avatar && data.avatar !== getImageUrl(user?.avatar)) {
+      uploadFile(
+        { uri: data.avatar, folder: 'profile' },
+        {
+          onSuccess: (uploadRes) => {
+            saveProfileData(uploadRes.path);
+          },
+        },
+      );
+    } else {
+      saveProfileData(user?.avatar || null);
+    }
   };
 
   // 2. Skills & Experience State
@@ -68,14 +95,7 @@ export default function ProviderEditProfileScreen() {
           startYear: edu.start_date ? edu.start_date.split('-')[0] : '',
           endYear: edu.end_date ? edu.end_date.split('-')[0] : 'Present',
         }))
-      : [
-          {
-            degree: 'Bachelor in Interior Design',
-            institution: 'Kathmandu University',
-            startYear: '2013',
-            endYear: '2017',
-          },
-        ],
+      : [],
   );
 
   const [experienceList, setExperienceList] = useState<ExperienceItem[]>(
@@ -86,14 +106,7 @@ export default function ProviderEditProfileScreen() {
           startYear: exp.start_date ? exp.start_date.split('-')[0] : '',
           endYear: exp.end_date ? exp.end_date.split('-')[0] : 'Present',
         }))
-      : [
-          {
-            title: 'Lead Decorator',
-            company: 'Decor Sewa',
-            startYear: '2018',
-            endYear: 'Present',
-          },
-        ],
+      : [],
   );
 
   const handleAddEducation = (item: EducationItem) => {
@@ -113,85 +126,106 @@ export default function ProviderEditProfileScreen() {
   };
 
   const handleSaveSkills = () => {
-    setSkillsLoading(true);
-    setTimeout(() => {
-      setSkillsLoading(false);
-      Alert.alert('Success', 'Skills and experience saved successfully!');
-    }, 1000);
+    updateProfile(
+      {
+        education: educationList.map((edu) => ({
+          degree: edu.degree,
+          institute: edu.institution,
+          start_date: edu.startYear ? `${edu.startYear}-01-01` : '',
+          end_date: edu.endYear && edu.endYear !== 'Present' ? `${edu.endYear}-12-31` : null,
+        })),
+        experience: experienceList.map((exp) => ({
+          title: exp.title,
+          company_name: exp.company,
+          start_date: exp.startYear ? `${exp.startYear}-01-01` : '',
+          end_date: exp.endYear && exp.endYear !== 'Present' ? `${exp.endYear}-12-31` : null,
+        })),
+      },
+      {
+        onSuccess: () => Alert.alert('Success', 'Skills and experience saved successfully!'),
+      },
+    );
   };
 
   // 3. Availability State
-  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>(
-    (user?.availability as any) || 'sunday_friday',
-  );
+  const [workingDays, setWorkingDays] = useState<Availability>((user?.availability as Availability) || 'weekdays');
   const [workingHoursStart, setWorkingHoursStart] = useState(user?.start_time || '10:00 AM');
   const [workingHoursEnd, setWorkingHoursEnd] = useState(user?.end_time || '06:00 PM');
 
   const handleSaveAvailability = () => {
-    setAvailabilityLoading(true);
-    setTimeout(() => {
-      setAvailabilityLoading(false);
-      Alert.alert('Success', 'Availability schedule saved successfully!');
-    }, 1000);
+    updateProfile(
+      {
+        availability: workingDays,
+        start_time: workingHoursStart,
+        end_time: workingHoursEnd,
+      },
+      {
+        onSuccess: () => Alert.alert('Success', 'Availability schedule saved successfully!'),
+      },
+    );
   };
 
   return (
     <View className="flex-1 bg-secondary">
       <Header variant="menu" showBackButton={true} showNotifications={false} />
 
-      <ContentLayout
-        scrollable
-        className="flex-1"
-        contentContainerStyle={{
-          paddingTop: 20,
-          paddingBottom: Math.max(insets.bottom, 24),
-        }}
-      >
-        <SectionHeader
-          title="Edit Partner Profile"
-          description="Manage your business profile information, experience details, and availability."
-          className="mb-6"
-          titleClassName="text-2xl text-gray-950 font-sans-extrabold"
-        />
-
-        {/* Basic Info Block */}
-        <BasicInfoSection
-          control={control}
-          errors={errors}
-          setValue={setValue}
-          watchLanguages={watchLanguages}
-          watchDateOfBirth={watchDateOfBirth}
-          watchAvatar={watchAvatar}
-          onSave={handleSubmit(handleSaveBasicInfo)}
-          loading={basicLoading}
-        />
-
-        {/* Skills & Experience Block */}
-        <SkillsExperienceSection
-          educationList={educationList}
-          experienceList={experienceList}
-          onAddEducation={handleAddEducation}
-          onRemoveEducation={handleRemoveEducation}
-          onAddExperience={handleAddExperience}
-          onRemoveExperience={handleRemoveExperience}
-          onSave={handleSaveSkills}
-          loading={skillsLoading}
-        />
-
-        {/* Availability Block */}
-        <AvailabilitySection
-          workingDays={workingDays}
-          onChangeWorkingDays={setWorkingDays}
-          workingHoursStart={workingHoursStart}
-          workingHoursEnd={workingHoursEnd}
-          onChangeHours={(start, end) => {
-            setWorkingHoursStart(start);
-            setWorkingHoursEnd(end);
+      {isLoading ? (
+        <ProfileFormSkeleton />
+      ) : (
+        <ContentLayout
+          scrollable
+          className="flex-1"
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: Math.max(insets.bottom, 24),
           }}
-          onSave={handleSaveAvailability}
-          loading={availabilityLoading}
-        />
-      </ContentLayout>
+        >
+          <SectionHeader
+            title="Edit Partner Profile"
+            description="Manage your business profile information, experience details, and availability."
+            className="mb-6"
+            titleClassName="text-2xl text-gray-950 font-sans-extrabold"
+          />
+
+          {/* Basic Info Block */}
+          <BasicInfoSection
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            watchLanguages={watchLanguages}
+            watchDateOfBirth={watchDateOfBirth}
+            watchAvatar={watchAvatar}
+            onSave={handleSubmit(handleSaveBasicInfo)}
+            loading={isUpdating || isUploading}
+          />
+
+          {/* Skills & Experience Block */}
+          <SkillsExperienceSection
+            educationList={educationList}
+            experienceList={experienceList}
+            onAddEducation={handleAddEducation}
+            onRemoveEducation={handleRemoveEducation}
+            onAddExperience={handleAddExperience}
+            onRemoveExperience={handleRemoveExperience}
+            onSave={handleSaveSkills}
+            loading={isUpdating}
+          />
+
+          {/* Availability Block */}
+          <AvailabilitySection
+            workingDays={workingDays}
+            onChangeWorkingDays={setWorkingDays}
+            workingHoursStart={workingHoursStart}
+            workingHoursEnd={workingHoursEnd}
+            onChangeHours={(start, end) => {
+              setWorkingHoursStart(start);
+              setWorkingHoursEnd(end);
+            }}
+            onSave={handleSaveAvailability}
+            loading={isUpdating}
+          />
+        </ContentLayout>
+      )}
     </View>
   );
 }

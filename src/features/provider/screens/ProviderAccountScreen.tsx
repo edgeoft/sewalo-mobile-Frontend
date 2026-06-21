@@ -118,7 +118,9 @@ export default function ProviderAccountScreen() {
           <View className="flex-row items-center flex-1">
             <View className="relative">
               <Image
-                source={{ uri: getImageUrl(user?.avatar) || 'https://i.pravatar.cc/300?img=47' }}
+                source={
+                  user?.avatar ? { uri: getImageUrl(user.avatar) } : require('@/assets/images/avatar-default.png')
+                }
                 className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
                 resizeMode="cover"
               />

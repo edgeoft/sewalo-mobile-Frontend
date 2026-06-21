@@ -1,46 +1,40 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 
+const SECTION_IDS = [
+  'introduction',
+  'purpose',
+  'dataCollection',
+  'chatAndCall',
+  'dataUse',
+  'dataSharing',
+  'aggregatedData',
+  'cookies',
+  'userRights',
+  'dataRetention',
+  'security',
+  'children',
+  'location',
+  'limitations',
+  'notifications',
+  'wallet',
+  'updates',
+] as const;
+
+interface SectionData {
+  title: string;
+  content: string[];
+}
+
 export default function PrivacyPolicyScreen() {
   const insets = useSafeAreaInsets();
-
-  const sections = [
-    {
-      title: '1. Information We Collect',
-      content:
-        'We collect personal information you provide directly to us, including your full name, email, mobile phone number, location information, billing credentials, profile avatar, and documentation for verification purposes.',
-    },
-    {
-      title: '2. How We Use Information',
-      content:
-        'Your data is utilized to operate, maintain, and personalize Sewalo services. This includes coordinating bookings, validating identities, processing payouts, improving security safeguards, and communicating critical service updates.',
-    },
-    {
-      title: '3. Data Sharing and Location Information',
-      content:
-        'To facilitate service execution, we share relevant details (like name, address, and mobile number) with the service provider selected for your booking. We do not sell or lease your personal identifiers to marketing third parties.',
-    },
-    {
-      title: '4. Information Security',
-      content:
-        'We implement industry-standard secure storage and encryption technologies to shield your personal details from unauthorized access, modification, or destruction. However, no electronic transmission mechanism is 100% secure.',
-    },
-    {
-      title: '5. Your Privacy Rights',
-      content:
-        'You have full access to inspect, correct, or request deletion of your personal details stored on Sewalo. Account deletion requests can be triggered directly via Account > Privacy Settings.',
-    },
-    {
-      title: '6. Policy Changes',
-      content:
-        'We may periodically update this Privacy Policy to reflect changes in our operational procedures. We will notify you of any material changes by posting the updated policy in this section.',
-    },
-  ];
+  const { t } = useTranslation();
 
   const cardShadow = {
     shadowColor: '#0f172a',
@@ -64,24 +58,35 @@ export default function PrivacyPolicyScreen() {
         }}
       >
         <SectionHeader
-          title="Privacy Policy"
-          description="Last Updated: June 2026. This policy outlines how we safeguard your personal details."
+          title={t('privacy.pageTitle') || 'Privacy Policy'}
+          description={t('privacy.meta.description') || 'This policy outlines how we safeguard your personal details.'}
           className="mb-5"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
         <View style={cardShadow} className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-          <Text className="text-xs font-sans-bold text-primary mb-4 uppercase tracking-wider">
-            Data Collection & Safety Policy
-          </Text>
+          <ScrollView scrollEnabled={false} className="gap-y-6">
+            {SECTION_IDS.map((id) => {
+              const section = t(`privacy.sections.${id}`, { returnObjects: true }) as SectionData;
+              if (!section || !section.title) return null;
 
-          <ScrollView scrollEnabled={false} className="gap-y-5">
-            {sections.map((sec, idx) => (
-              <View key={idx} className="mb-4">
-                <Text className="text-xs font-sans-bold text-gray-900 mb-1.5">{sec.title}</Text>
-                <Text className="text-xs font-sans-regular text-gray-500 leading-5">{sec.content}</Text>
-              </View>
-            ))}
+              return (
+                <View key={id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                  <Text className="text-sm font-sans-bold text-gray-900 mb-3">{section.title}</Text>
+                  <View className="gap-y-3">
+                    {Array.isArray(section.content) &&
+                      section.content.map((paragraph, index) => {
+                        if (!paragraph) return null;
+                        return (
+                          <Text key={index} className="text-xs font-sans-regular text-gray-500 leading-5">
+                            {paragraph}
+                          </Text>
+                        );
+                      })}
+                  </View>
+                </View>
+              );
+            })}
           </ScrollView>
         </View>
 

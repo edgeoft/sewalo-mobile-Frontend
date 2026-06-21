@@ -169,13 +169,15 @@ export default function BasicInfoSection({
             {watchAvatar ? (
               <Image
                 source={{ uri: watchAvatar }}
-                className="h-24 w-24 rounded-full border-2 border-gray-100 bg-gray-50"
+                className="h-20 w-20 rounded-full bg-gray-50 border-2 border-white"
                 resizeMode="cover"
               />
             ) : (
-              <View className="h-24 w-24 rounded-full border-2 border-gray-200 bg-gray-50 items-center justify-center">
-                <Feather name="user" size={40} color="#898f8f" />
-              </View>
+              <Image
+                source={require('@/assets/images/avatar-default.png')}
+                className="h-20 w-20 rounded-full bg-gray-100 border-2 border-white"
+                resizeMode="cover"
+              />
             )}
             <View className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm">
               <Feather name="camera" size={14} color="#ffffff" />

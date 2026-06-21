@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
@@ -14,11 +14,13 @@ import PasswordField from '../components/PasswordField';
 import EnhancedPasswordRequirements from '../components/EnhancedPasswordRequirements';
 import { getChangePasswordSchema, ChangePasswordFormData } from '../data/schemas';
 
+import { useChangePassword } from '@/api';
+
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [loading, setLoading] = useState(false);
+  const { mutate: changePassword, isPending } = useChangePassword();
 
   const {
     control,
@@ -37,17 +39,29 @@ export default function ChangePasswordScreen() {
   const newPasswordValue = useWatch({ control, name: 'newPassword' }) ?? '';
 
   const onSubmit = (data: ChangePasswordFormData) => {
-    setLoading(true);
-    // Simulate API update request
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert(t('success') || 'Success', t('auth.passwordChangedSuccess'), [
-        {
-          text: t('ok') || 'OK',
-          onPress: () => router.back(),
+    changePassword(
+      {
+        old_password: data.currentPassword,
+        new_password: data.newPassword,
+        confirm_password: data.confirmPassword,
+      },
+      {
+        onSuccess: () => {
+          Alert.alert(t('success') || 'Success', t('auth.passwordChangedSuccess'), [
+            {
+              text: t('ok') || 'OK',
+              onPress: () => router.back(),
+            },
+          ]);
         },
-      ]);
-    }, 1200);
+        onError: (error) => {
+          Alert.alert(
+            t('error') || 'Error',
+            error.message || t('auth.passwordChangeFailed') || 'Failed to change password',
+          );
+        },
+      },
+    );
   };
 
   return (
@@ -113,7 +127,7 @@ export default function ChangePasswordScreen() {
 
           <Button
             title={t('auth.changePassword')}
-            loading={loading}
+            loading={isPending}
             onPress={handleSubmit(onSubmit)}
             className="w-full mt-4"
           />

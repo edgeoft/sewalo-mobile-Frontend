@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
@@ -11,12 +11,16 @@ import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSect
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
+import { useUpdateProfile } from '@/api/user';
+import { useUploadFile } from '@/api/files/hooks';
+import ProfileFormSkeleton from '@/components/ui/ProfileFormSkeleton';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { user, isLoading } = useAuth();
+  const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
+  const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
   const locationStr = [user?.address, user?.city, user?.state, user?.country].filter(Boolean).join(', ');
 
@@ -44,48 +48,78 @@ export default function CustomerEditProfileScreen() {
   const watchAvatar = watch('avatar') || '';
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert('Success', 'Profile updated successfully!', [
+    const saveProfileData = (avatarPath: string | null) => {
+      updateProfile(
         {
-          text: 'OK',
-          onPress: () => router.back(),
+          name: data.fullName,
+          phone: data.mobileNumber,
+          address: data.location,
+          dob: data.dateOfBirth,
+          language: data.languages,
+          description: data.bio,
+          avatar: avatarPath,
         },
-      ]);
-    }, 1200);
+        {
+          onSuccess: () => {
+            Alert.alert('Success', 'Profile updated successfully!', [
+              {
+                text: 'OK',
+                onPress: () => router.back(),
+              },
+            ]);
+          },
+        },
+      );
+    };
+
+    if (data.avatar && data.avatar !== getImageUrl(user?.avatar)) {
+      uploadFile(
+        { uri: data.avatar, folder: 'profile' },
+        {
+          onSuccess: (uploadRes) => {
+            saveProfileData(uploadRes.path);
+          },
+        },
+      );
+    } else {
+      saveProfileData(user?.avatar || null);
+    }
   };
 
   return (
     <View className="flex-1 bg-secondary">
       <Header variant="menu" showBackButton={true} showNotifications={false} />
 
-      <ContentLayout
-        scrollable
-        className="flex-1"
-        contentContainerStyle={{
-          paddingTop: 20,
-          paddingBottom: Math.max(insets.bottom, 24),
-        }}
-      >
-        <SectionHeader
-          title="Edit Profile"
-          description="Manage your account profile information."
-          className="mb-6"
-          titleClassName="text-2xl text-gray-950 font-sans-extrabold"
-        />
+      {isLoading ? (
+        <ProfileFormSkeleton />
+      ) : (
+        <ContentLayout
+          scrollable
+          className="flex-1"
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: Math.max(insets.bottom, 24),
+          }}
+        >
+          <SectionHeader
+            title="Edit Profile"
+            description="Manage your account profile information."
+            className="mb-6"
+            titleClassName="text-2xl text-gray-950 font-sans-extrabold"
+          />
 
-        <BasicInfoSection
-          control={control}
-          errors={errors}
-          setValue={setValue}
-          watchLanguages={watchLanguages}
-          watchDateOfBirth={watchDateOfBirth}
-          watchAvatar={watchAvatar}
-          onSave={handleSubmit(handleSaveProfile)}
-          loading={loading}
-        />
-      </ContentLayout>
+          <BasicInfoSection
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            watchLanguages={watchLanguages}
+            watchDateOfBirth={watchDateOfBirth}
+            watchAvatar={watchAvatar}
+            onSave={handleSubmit(handleSaveProfile)}
+            loading={isUpdating || isUploading}
+          />
+        </ContentLayout>
+      )}
     </View>
   );
 }

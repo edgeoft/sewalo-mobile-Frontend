@@ -73,6 +73,12 @@ export const createApiClient = (
     }
 
     const res = await runner(reqCtx);
+
+    // Auto-invalidate cache on successful mutations
+    if (cacheStore && reqCtx.method !== 'GET') {
+      cacheStore.invalidateAll();
+    }
+
     return res.data as T;
   };
 

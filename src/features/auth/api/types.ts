@@ -9,6 +9,7 @@ export interface UserProfile {
   role: UserRole;
   current_role: UserRole;
   status: string;
+  status_message?: string;
   avatar: string | null;
   city: string | null;
   state: string | null;
@@ -19,8 +20,24 @@ export interface UserProfile {
   phone_verified_at: string | null;
   email_verified_at: string | null;
   description: string | null;
-  education: any[] | null;
-  experience: any[] | null;
+  education:
+    | {
+        id: number;
+        degree: string;
+        institute: string;
+        start_date: string;
+        end_date?: string | null;
+      }[]
+    | null;
+  experience:
+    | {
+        id: number;
+        title: string;
+        company_name: string;
+        start_date: string;
+        end_date: string | null;
+      }[]
+    | null;
   document: string | null;
   coordinates: { lat: number; lng: number } | null;
   availability: string | null;

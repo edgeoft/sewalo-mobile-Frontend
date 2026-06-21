@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
@@ -16,6 +16,7 @@ import { getSigninSchema, SigninFormData } from '../data/schemas';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
+import { useAuthStore } from '@/store/useAuthStore';
 
 import { useLogin } from '../api/hooks';
 
@@ -23,6 +24,27 @@ export default function SigninScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { setRole } = useAuth();
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const role = useAuthStore((state) => state.role);
+  const user = useAuthStore((state) => state.user);
+
+  useEffect(() => {
+    if (isLoggedIn && user) {
+      if (user.status === 'pending') {
+        router.replace({
+          pathname: ROUTES.auth.gettingStarted as any,
+          params: { role, phone: user.phone },
+        });
+      } else {
+        if (role === USER_ROLES.Provider) {
+          router.replace(ROUTES.provider.home);
+        } else {
+          router.replace(ROUTES.customer.home);
+        }
+      }
+    }
+  }, [isLoggedIn, role, user, router]);
 
   const [rememberMe, setRememberMe] = useState(false);
   const loginMutation = useLogin();

@@ -95,10 +95,11 @@ export const useAuthStore = create<AuthState>((set) => ({
           isLoading: false,
         });
       }
-    } catch (error) {
-      console.warn('[AuthStore] Initialization session verification failed, clearing tokens:', error);
-      // Clean up session if token is invalid or expired
-      if (internalClient.tokenManager) {
+    } catch (error: any) {
+      console.warn('[AuthStore] Initialization session verification failed:', error);
+      // Clean up session only if token is invalid or expired (401/403)
+      const isAuthError = error?.status === 401 || error?.status === 403;
+      if (isAuthError && internalClient.tokenManager) {
         await internalClient.tokenManager.clearTokens();
       }
       set({
