@@ -1,4 +1,4 @@
-import { internalClient } from '@/api';
+import { internalClient } from '@/api/clients/internal';
 import { getProfileAction, logoutAction } from '@/features/auth/api/actions';
 import { UserProfile } from '@/features/auth/api/types';
 import { USER_ROLES, UserRole } from '@/types';
