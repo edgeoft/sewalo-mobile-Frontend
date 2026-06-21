@@ -11,13 +11,13 @@ import { Skeleton } from '@/components/ui';
 
 import FinancialAccountForm from './FinancialAccountForm';
 import { financeAccountSchema, FinanceAccountFormValues } from '../data/schemas';
-import { FinanceAccountType, FinanceAccount } from '../types/finance';
+import { FinanceAccountType, FinanceAccount } from '../api/types/finance';
 import {
   useCreateFinanceAccount,
   useDeleteFinanceAccount,
   useGetFinanceAccountsQuery,
   useUpdateFinanceAccount,
-} from '../api/hooks';
+} from '../api/hooks/finance';
 
 const cardShadow = {
   shadowColor: '#0f172a',

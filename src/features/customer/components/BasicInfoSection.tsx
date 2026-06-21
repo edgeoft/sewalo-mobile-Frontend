@@ -27,7 +27,7 @@ export interface BasicInfoFormData {
   dateOfBirth?: string;
   languages?: string[];
   bio?: string;
-  avatar?: string;
+  avatar?: string | null;
 }
 
 interface BasicInfoSectionProps {
@@ -36,7 +36,7 @@ interface BasicInfoSectionProps {
   setValue: UseFormSetValue<BasicInfoFormData>;
   watchLanguages: string[];
   watchDateOfBirth: string;
-  watchAvatar: string;
+  watchAvatar: string | null;
   onSave: () => void;
   loading?: boolean;
 }
@@ -70,7 +70,7 @@ export default function BasicInfoSection({
   setValue,
   watchLanguages = [],
   watchDateOfBirth = '',
-  watchAvatar = '',
+  watchAvatar = null,
   onSave,
   loading = false,
 }: BasicInfoSectionProps) {

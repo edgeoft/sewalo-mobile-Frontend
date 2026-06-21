@@ -43,7 +43,7 @@ export default function ProviderEditProfileScreen() {
       dateOfBirth: user?.dob || '',
       languages: user?.language || [],
       bio: user?.description || '',
-      avatar: getImageUrl(user?.avatar) || '',
+      avatar: getImageUrl(user?.avatar) || null,
     },
     mode: 'onBlur',
   });

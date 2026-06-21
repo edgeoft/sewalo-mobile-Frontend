@@ -1,7 +1,5 @@
 import { UserProfile } from '@/features/auth/api/types';
-import { FinanceAccountType } from '@/features/provider/types/finance';
-
-export { FinanceAccountType };
+import { FinanceAccountType } from '@/features/provider/api/types/finance';
 
 export type UserStatus = 'pending' | 'completed' | 'verified' | 'rejected' | 'suspended';
 export type Availability = 'always' | 'weekends' | 'weekdays';

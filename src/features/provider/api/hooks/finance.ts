@@ -5,7 +5,7 @@ import {
   deleteFinanceAccountAction,
   getFinanceAccountsAction,
   updateFinanceAccountAction,
-} from './actions';
+} from '../actions/finance';
 import {
   CreateFinanceAccountPayload,
   FinanceAccount,

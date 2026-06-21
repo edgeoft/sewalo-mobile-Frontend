@@ -25,3 +25,21 @@ export const convertTimeTo24h = (time12: string): string => {
   if (period === 'AM' && hours === 12) hours = 0;
   return `${String(hours).padStart(2, '0')}:${minutes}:00`;
 };
+
+/**
+ * Formats an ISO or raw date string to "MMM DD, YYYY" (e.g. Jun 02, 2026)
+ */
+export const formatDate = (dateStr: string | null | undefined): string => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[d.getMonth()];
+    const day = String(d.getDate()).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${month} ${day}, ${year}`;
+  } catch {
+    return dateStr;
+  }
+};

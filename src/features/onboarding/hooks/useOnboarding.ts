@@ -23,10 +23,10 @@ import {
   ExperienceItemPayload,
   LocationData,
 } from '@/api/user';
-import { useGetFinanceAccountsQuery, useCreateFinanceAccount } from '@/features/provider/api/hooks';
+import { useGetFinanceAccountsQuery, useCreateFinanceAccount } from '@/features/provider/api/hooks/finance';
 import { useUploadFile } from '@/api/files/hooks';
 
-import { FinanceAccountType } from '@/features/provider/types/finance';
+import { FinanceAccountType } from '@/features/provider/api/types/finance';
 
 import { parseTime12h, convertTimeTo24h } from '@/utils/time';
 

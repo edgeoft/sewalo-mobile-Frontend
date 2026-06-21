@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FinanceAccountType } from '../types/finance';
+import { FinanceAccountType } from '../api/types/finance';
 
 export const financeAccountSchema = z.object({
   type: z.nativeEnum(FinanceAccountType),

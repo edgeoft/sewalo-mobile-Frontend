@@ -38,14 +38,14 @@ export default function CustomerEditProfileScreen() {
       dateOfBirth: user?.dob || '',
       languages: user?.language || [],
       bio: user?.description || '',
-      avatar: getImageUrl(user?.avatar) || '',
+      avatar: getImageUrl(user?.avatar) || null,
     },
     mode: 'onBlur',
   });
 
   const watchLanguages = watch('languages') || [];
   const watchDateOfBirth = watch('dateOfBirth') || '';
-  const watchAvatar = watch('avatar') || '';
+  const watchAvatar = watch('avatar') || null;
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {
