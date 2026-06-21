@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
 export interface EducationItem {
+  id?: number;
   degree: string;
   institution: string;
   startYear: string;
@@ -13,6 +14,7 @@ export interface EducationItem {
 }
 
 export interface ExperienceItem {
+  id?: number;
   title: string;
   company: string;
   startYear: string;
@@ -61,6 +63,7 @@ export default function SkillsExperienceSection({
       return;
     }
     onAddEducation({
+      id: Date.now(),
       degree,
       institution,
       startYear: eduStartYear,
@@ -80,6 +83,7 @@ export default function SkillsExperienceSection({
       return;
     }
     onAddExperience({
+      id: Date.now(),
       title: jobTitle,
       company,
       startYear: expStartYear,

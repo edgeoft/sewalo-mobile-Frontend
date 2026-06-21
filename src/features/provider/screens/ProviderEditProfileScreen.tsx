@@ -90,6 +90,7 @@ export default function ProviderEditProfileScreen() {
   const [educationList, setEducationList] = useState<EducationItem[]>(
     user?.education && user.education.length > 0
       ? user.education.map((edu: any) => ({
+          id: edu.id,
           degree: edu.degree || '',
           institution: edu.institute || '',
           startYear: edu.start_date ? edu.start_date.split('-')[0] : '',
@@ -101,6 +102,7 @@ export default function ProviderEditProfileScreen() {
   const [experienceList, setExperienceList] = useState<ExperienceItem[]>(
     user?.experience && user.experience.length > 0
       ? user.experience.map((exp: any) => ({
+          id: exp.id,
           title: exp.title || '',
           company: exp.company_name || '',
           startYear: exp.start_date ? exp.start_date.split('-')[0] : '',
@@ -129,12 +131,14 @@ export default function ProviderEditProfileScreen() {
     updateProfile(
       {
         education: educationList.map((edu) => ({
+          id: edu.id,
           degree: edu.degree,
           institute: edu.institution,
           start_date: edu.startYear ? `${edu.startYear}-01-01` : '',
           end_date: edu.endYear && edu.endYear !== 'Present' ? `${edu.endYear}-12-31` : null,
         })),
         experience: experienceList.map((exp) => ({
+          id: exp.id,
           title: exp.title,
           company_name: exp.company,
           start_date: exp.startYear ? `${exp.startYear}-01-01` : '',

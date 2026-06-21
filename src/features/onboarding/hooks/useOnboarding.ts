@@ -84,12 +84,8 @@ export function useOnboarding() {
   const watchAvatar = watchPersonalInfo('avatar') || '';
 
   // --- Step 2: Skills & Experience Form State (Provider Only) ---
-  const [education, setEducation] = useState<EducationItem[]>([
-    { id: '1', degree: '', institute: '', startDate: '', endDate: '' },
-  ]);
-  const [experience, setExperience] = useState<ExperienceItem[]>([
-    { id: '1', title: '', companyName: '', startDate: '', endDate: '' },
-  ]);
+  const [education, setEducation] = useState<EducationItem[]>([]);
+  const [experience, setExperience] = useState<ExperienceItem[]>([]);
 
   // --- Step 3: Availability Form State (Provider Only) ---
   const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
@@ -175,7 +171,7 @@ export function useOnboarding() {
       if (profile.education && profile.education.length > 0) {
         setEducation(
           profile.education.map((e: EducationItemPayload) => ({
-            id: String(e.id || Math.random()),
+            id: String(e.id),
             degree: e.degree || '',
             institute: e.institute || '',
             startDate: e.start_date ? e.start_date.split('-')[0] : '',
@@ -186,7 +182,7 @@ export function useOnboarding() {
       if (profile.experience && profile.experience.length > 0) {
         setExperience(
           profile.experience.map((e: ExperienceItemPayload) => ({
-            id: String(e.id || Math.random()),
+            id: String(e.id),
             title: e.title || '',
             companyName: e.company_name || '',
             startDate: e.start_date ? e.start_date.split('-')[0] : '',
@@ -215,28 +211,28 @@ export function useOnboarding() {
       setDocumentImage(profile.document);
     }
 
-    // Auto-resume to first incomplete step
-    const getInitialStepIndex = () => {
-      const personalInfoValid = personalInfoSchema.safeParse({
-        email: profile.email || '',
-        location: fullLocation || '',
-        dateOfBirth: profile.dob || '',
-        languages: profile.language || [],
-      }).success;
-
-      if (!personalInfoValid) return 1;
-
-      if (role === 'provider') {
-        if (!profile.start_time || !profile.end_time) return 3; // Step 3: Availability
-      }
-      return 1;
-    };
-
     // If email exists, resume onboarding at the correct screen instead of welcome page
+    // Only run this auto-resume logic once on initial mount (when activeIndex === 0)
+    // to prevent any subsequent mutations/refetches from resetting the current step.
     if (profile.email && activeIndex === 0) {
+      const getInitialStepIndex = () => {
+        const personalInfoValid = personalInfoSchema.safeParse({
+          email: profile.email || '',
+          location: fullLocation || '',
+          dateOfBirth: profile.dob || '',
+          languages: profile.language || [],
+        }).success;
+
+        if (!personalInfoValid) return 1;
+
+        if (role === 'provider') {
+          if (!profile.start_time || !profile.end_time) return 3; // Step 3: Availability
+        }
+        return 1;
+      };
       setActiveIndex(getInitialStepIndex());
     }
-  }, [profileResponse, role, setPersonalInfoValue, activeIndex]);
+  }, [profileResponse, role]);
 
   // --- Prepopulate Finance Accounts when Query Returns ---
   // Handled entirely by PayoutAccountsManager using its own query hook
@@ -314,6 +310,7 @@ export function useOnboarding() {
         const educationPayload: EducationItemPayload[] = education
           .filter((e) => e.degree && e.institute && e.startDate)
           .map((e) => ({
+            id: Number(e.id),
             degree: e.degree,
             institute: e.institute,
             start_date: `${e.startDate}-01-01`,
@@ -323,6 +320,7 @@ export function useOnboarding() {
         const experiencePayload: ExperienceItemPayload[] = experience
           .filter((e) => e.title && e.companyName && e.startDate)
           .map((e) => ({
+            id: Number(e.id),
             title: e.title,
             company_name: e.companyName,
             start_date: e.startDate ? `${e.startDate}-01-01` : '',
@@ -451,6 +449,7 @@ export function useOnboarding() {
       if (role === 'provider') {
         payload.education =
           currentUser.education?.map((e: EducationItemPayload) => ({
+            id: e.id,
             degree: e.degree,
             institute: e.institute,
             start_date: e.start_date,
@@ -458,6 +457,7 @@ export function useOnboarding() {
           })) || [];
         payload.experience =
           currentUser.experience?.map((e: ExperienceItemPayload) => ({
+            id: e.id,
             title: e.title,
             company_name: e.company_name,
             start_date: e.start_date,
