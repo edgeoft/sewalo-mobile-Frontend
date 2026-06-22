@@ -34,7 +34,11 @@ export const Skeleton: React.FC<SkeletonProps> = ({ width, height, borderRadius 
   return (
     <Animated.View
       className={`bg-gray-200/80 ${className}`}
-      style={[{ width, height, borderRadius, backgroundColor: '#e2e8f0' }, animatedStyle, style]}
+      style={[
+        { width: width as any, height: height as any, borderRadius, backgroundColor: '#e2e8f0' },
+        animatedStyle,
+        style,
+      ]}
     />
   );
 };

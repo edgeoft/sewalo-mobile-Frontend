@@ -1,4 +1,4 @@
-import { internalClient } from '@/api';
+import { internalClient } from '@/api/clients/internal';
 import {
   SignupInput,
   SignupResponse,

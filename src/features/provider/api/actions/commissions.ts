@@ -1,4 +1,4 @@
-import { internalClient } from '@/api';
+import { internalClient } from '@/api/clients/internal';
 import { GetCommissionsParams, GetCommissionsResponse, GetCommissionSummaryResponse } from '../types/commissions';
 
 export const getCommissionSummaryAction = async (): Promise<GetCommissionSummaryResponse> => {

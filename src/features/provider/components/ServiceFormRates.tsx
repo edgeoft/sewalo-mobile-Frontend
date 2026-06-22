@@ -149,7 +149,7 @@ export default function ServiceFormRates({
   const categoriesList =
     categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
   const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
-  const activeCategorySlug = activeCategory && 'slug' in activeCategory ? activeCategory.slug : '';
+  const activeCategorySlug = (activeCategory && 'slug' in activeCategory ? activeCategory.slug : '') as string;
 
   const { data: subcategoriesData } = useGetSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
 

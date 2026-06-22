@@ -282,6 +282,9 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
                 experience={provider.experience}
                 languages={provider.languages}
                 skills={provider.skills}
+                education={provider.education}
+                experienceList={provider.experienceList}
+                certificates={provider.certificates}
               />
             )}
 

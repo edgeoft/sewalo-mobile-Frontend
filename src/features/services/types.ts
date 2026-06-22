@@ -52,6 +52,31 @@ export interface ProviderDetail {
   languages: string[];
   skills: string[];
   experience: string;
+  education?:
+    | {
+        id: number;
+        degree: string;
+        institute: string;
+        start_date: string;
+        end_date?: string | null;
+      }[]
+    | null;
+  experienceList?:
+    | {
+        id: number;
+        title: string;
+        company_name: string;
+        start_date: string;
+        end_date: string | null;
+      }[]
+    | null;
+  certificates?:
+    | {
+        id: number;
+        value: string;
+      }[]
+    | string[]
+    | null;
   specialPackage?: PackageDeal | null;
   individualServices: ServiceItem[];
   portfolio: PortfolioItem[];

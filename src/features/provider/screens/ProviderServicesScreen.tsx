@@ -193,9 +193,31 @@ export default function ProviderServicesScreen() {
                 <View className="flex-1 mr-2">
                   <View className="flex-row items-center flex-wrap gap-x-2 gap-y-1">
                     <Text className="text-xl font-sans-extrabold text-gray-900 leading-7">{service.name}</Text>
-                    <View className="rounded-full bg-amber-50 border border-amber-200/50 px-2 py-0.5 self-start">
-                      <Text className="text-[8px] font-sans-bold text-amber-700 uppercase">Under Review</Text>
-                    </View>
+                    {service.provider?.status === 'verified' && (
+                      <View className="rounded-full bg-emerald-50 border border-emerald-200/50 px-2 py-0.5 self-start">
+                        <Text className="text-[8px] font-sans-bold text-emerald-700 uppercase">Verified</Text>
+                      </View>
+                    )}
+                    {service.provider?.status === 'completed' && (
+                      <View className="rounded-full bg-amber-50 border border-amber-200/50 px-2 py-0.5 self-start">
+                        <Text className="text-[8px] font-sans-bold text-amber-700 uppercase">Under Review</Text>
+                      </View>
+                    )}
+                    {service.provider?.status === 'pending' && (
+                      <View className="rounded-full bg-gray-50 border border-gray-200/50 px-2 py-0.5 self-start">
+                        <Text className="text-[8px] font-sans-bold text-gray-500 uppercase">Pending</Text>
+                      </View>
+                    )}
+                    {service.provider?.status === 'rejected' && (
+                      <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
+                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Rejected</Text>
+                      </View>
+                    )}
+                    {service.provider?.status === 'suspended' && (
+                      <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
+                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Suspended</Text>
+                      </View>
+                    )}
                   </View>
                   <View className="rounded-full bg-indigo-50 border border-indigo-100/50 px-2.5 py-0.5 self-start mt-2">
                     <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider">

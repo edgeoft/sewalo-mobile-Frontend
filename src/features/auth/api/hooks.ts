@@ -4,7 +4,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { ApiError } from '@/api';
+import { ApiError } from '@/api/client/types';
 import { formatPhone } from '../utils/phone';
 import {
   forgotPasswordAction,

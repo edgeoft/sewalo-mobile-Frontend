@@ -1,4 +1,4 @@
-import { internalClient } from '@/api';
+import { internalClient } from '@/api/clients/internal';
 import { GetEarningSummaryResponse, GetMyTransactionsParams, GetMyTransactionsResponse } from '../types/earnings';
 
 export const getEarningSummaryAction = async (): Promise<GetEarningSummaryResponse> => {

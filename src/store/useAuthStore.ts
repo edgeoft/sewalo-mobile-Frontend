@@ -52,24 +52,27 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
-    try {
-      // Call backend logout endpoint (best-effort)
-      await logoutAction();
-    } catch (error) {
-      console.warn('[AuthStore] Backend logout failed:', error);
-    } finally {
-      // Clear tokens from secure store
-      if (internalClient.tokenManager) {
+    // Clear tokens from secure store immediately
+    if (internalClient.tokenManager) {
+      try {
         await internalClient.tokenManager.clearTokens();
+      } catch (err) {
+        console.warn('[AuthStore] Clear tokens failed:', err);
       }
-
-      set({
-        role: USER_ROLES.Guest,
-        isLoggedIn: false,
-        user: null,
-        isLoading: false,
-      });
     }
+
+    // Reset Zustand state immediately
+    set({
+      role: USER_ROLES.Guest,
+      isLoggedIn: false,
+      user: null,
+      isLoading: false,
+    });
+
+    // Fire backend logout in the background, best-effort and non-blocking
+    logoutAction().catch((error) => {
+      console.warn('[AuthStore] Backend logout background call failed:', error);
+    });
   },
 
   initialize: async () => {

@@ -66,6 +66,9 @@ export interface Service {
   has_service_packages: boolean;
   service_offerings: ServiceOffering[];
   service_packages: ServicePackage[];
+  provider?: {
+    status: string;
+  };
 }
 
 export interface GetMyServicesResponse {
