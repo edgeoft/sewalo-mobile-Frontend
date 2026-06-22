@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui';
+import { Skeleton, PayoutAccountSkeleton } from '@/components/ui';
 
 import FinancialAccountForm from './FinancialAccountForm';
 import { financeAccountSchema, FinanceAccountFormValues } from '../data/schemas';
@@ -26,19 +26,6 @@ const cardShadow = {
   shadowRadius: 8,
   elevation: 1,
 };
-
-const AccountSkeleton = () => (
-  <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
-    <View className="flex-row items-center">
-      <Skeleton className="h-11 w-11 rounded-lg mr-3" />
-      <View className="flex-1 gap-y-2">
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-1/2" />
-        <Skeleton className="h-3 w-2/3" />
-      </View>
-    </View>
-  </View>
-);
 
 interface PayoutAccountsManagerProps {
   header?: React.ReactNode;
@@ -200,7 +187,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Digital Wallets</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
-          <AccountSkeleton />
+          <PayoutAccountSkeleton />
         ) : wallets.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
             <Text className="text-xs font-sans-medium text-gray-400">No digital wallets linked yet.</Text>
@@ -270,8 +257,8 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <View className="gap-y-4 mb-6">
         {isLoading ? (
           <>
-            <AccountSkeleton />
-            <AccountSkeleton />
+            <PayoutAccountSkeleton />
+            <PayoutAccountSkeleton />
           </>
         ) : banks.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">

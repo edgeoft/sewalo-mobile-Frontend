@@ -3,13 +3,14 @@ import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Text, View } from 'react-native';
 
 import { ServiceFormData } from '../data/serviceSchemas';
+import { DELIVERY_TYPES, DeliveryType } from '@/types';
 import DeliveryOptionCard from './DeliveryOptionCard';
 
 interface ServiceFormDeliveryProps {
   control: Control<ServiceFormData>;
   errors: FieldErrors<ServiceFormData>;
   setValue: UseFormSetValue<ServiceFormData>;
-  watchDeliveryTypes: ('fixed' | 'remote' | 'at_customer')[];
+  watchDeliveryTypes: DeliveryType[];
 }
 
 export default function ServiceFormDelivery({
@@ -18,7 +19,7 @@ export default function ServiceFormDelivery({
   setValue,
   watchDeliveryTypes = [],
 }: ServiceFormDeliveryProps) {
-  const handleSelectDelivery = (type: 'fixed' | 'remote' | 'at_customer') => {
+  const handleSelectDelivery = (type: DeliveryType) => {
     const current = [...watchDeliveryTypes];
     const index = current.indexOf(type);
 
@@ -53,24 +54,24 @@ export default function ServiceFormDelivery({
         <DeliveryOptionCard
           label="Fixed Location"
           sublabel="Provider works from a set address"
-          selected={watchDeliveryTypes.includes('fixed')}
-          onPress={() => handleSelectDelivery('fixed')}
+          selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Fixed)}
+          onPress={() => handleSelectDelivery(DELIVERY_TYPES.Fixed)}
           iconName="home"
         />
 
         <DeliveryOptionCard
           label="Remote / Online"
           sublabel="Service delivered digitally"
-          selected={watchDeliveryTypes.includes('remote')}
-          onPress={() => handleSelectDelivery('remote')}
+          selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Remote)}
+          onPress={() => handleSelectDelivery(DELIVERY_TYPES.Remote)}
           iconName="globe"
         />
 
         <DeliveryOptionCard
           label="At Customer's Location"
           sublabel="Provider travels to the client"
-          selected={watchDeliveryTypes.includes('at_customer')}
-          onPress={() => handleSelectDelivery('at_customer')}
+          selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Customer)}
+          onPress={() => handleSelectDelivery(DELIVERY_TYPES.Customer)}
           iconName="map-pin"
         />
       </View>

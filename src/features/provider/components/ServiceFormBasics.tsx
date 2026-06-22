@@ -17,6 +17,7 @@ import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { SERVICE_CATEGORIES, getServiceTypesByCategory } from '../constants/serviceOptions';
 import { ServiceFormData } from '../data/serviceSchemas';
+import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';
 
 interface ServiceFormBasicsProps {
   control: Control<ServiceFormData>;
@@ -38,9 +39,22 @@ export default function ServiceFormBasics({
 
   const [typeModalVisible, setTypeModalVisible] = useState(false);
 
+  // Fetch categories and subcategories dynamically from the API
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const categoriesList =
+    categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
+
   // Get active category details
-  const activeCategory = SERVICE_CATEGORIES.find((cat) => cat.id === watchCategoryId);
-  const availableServiceTypes = watchCategoryId ? getServiceTypesByCategory(watchCategoryId) : [];
+  const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
+  const activeCategorySlug = activeCategory && 'slug' in activeCategory ? activeCategory.slug : '';
+
+  const { data: subcategoriesData } = useGetSubCategoriesQuery(activeCategorySlug || '', !!activeCategorySlug);
+
+  const availableServiceTypes = activeCategory
+    ? subcategoriesData?.data && subcategoriesData.data.length > 0
+      ? subcategoriesData.data.map((sub) => ({ id: sub.id, name: sub.name, categoryId: sub.category_id }))
+      : getServiceTypesByCategory(watchCategoryId)
+    : [];
 
   const handleCategorySelect = (categoryId: string) => {
     setValue('categoryId', categoryId, { shouldValidate: true });
@@ -233,7 +247,7 @@ export default function ServiceFormBasics({
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose a primary service category</Text>
 
             <View className="gap-y-2.5">
-              {SERVICE_CATEGORIES.map((cat) => {
+              {categoriesList.map((cat) => {
                 const isSelected = cat.id === watchCategoryId;
                 return (
                   <SelectionOption

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -12,19 +13,19 @@ interface SkeletonProps {
   height?: number | string;
   borderRadius?: number;
   className?: string;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({ width, height, borderRadius = 8, className = '', style }) => {
-  const opacity = useSharedValue(0.5);
+  const opacity = useSharedValue(0.3);
 
   useEffect(() => {
     opacity.value = withRepeat(
-      withSequence(withTiming(1, { duration: 800 }), withTiming(0.5, { duration: 800 })),
+      withSequence(withTiming(0.8, { duration: 600 }), withTiming(0.3, { duration: 600 })),
       -1,
       true,
     );
-  }, []);
+  }, [opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -32,8 +33,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({ width, height, borderRadius 
 
   return (
     <Animated.View
-      className={`bg-gray-200 ${className}`}
-      style={[{ width, height, borderRadius }, animatedStyle, style]}
+      className={`bg-gray-200/80 ${className}`}
+      style={[{ width, height, borderRadius, backgroundColor: '#e2e8f0' }, animatedStyle, style]}
     />
   );
 };

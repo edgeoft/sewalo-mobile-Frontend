@@ -48,6 +48,7 @@ export const ROUTES = {
     earnings: '/(provider)/(tabs)/earnings',
     account: '/(provider)/(tabs)/account',
     serviceEdit: '/provider/service-edit',
+    serviceCreated: '/provider/service-created',
     editProfile: '/provider/edit-profile',
     changePassword: '/provider/change-password',
     verificationDocuments: '/provider/verification-documents',

@@ -4,10 +4,11 @@ import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import Input from '@/components/ui/Input';
-import { SERVICE_TYPES } from '../constants/serviceOptions';
+import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
 import { ServiceFormData } from '../data/serviceSchemas';
 import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
 import BillingBasisGuideModal from './BillingBasisGuideModal';
+import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';
 
 interface ServiceFormRatesProps {
   control: Control<ServiceFormData>;
@@ -16,6 +17,7 @@ interface ServiceFormRatesProps {
   watchServiceTypeIds: string[];
   watchRates: ServiceFormData['rates'];
   watchPackages?: ServiceFormData['packages'];
+  watchCategoryId: string;
 }
 
 export default function ServiceFormRates({
@@ -25,6 +27,7 @@ export default function ServiceFormRates({
   watchServiceTypeIds,
   watchRates = {},
   watchPackages = [],
+  watchCategoryId,
 }: ServiceFormRatesProps) {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPkgForm, setShowPkgForm] = useState(false);
@@ -141,6 +144,21 @@ export default function ServiceFormRates({
     setShowPkgForm(false);
   };
 
+  // Fetch categories and subcategories dynamically from the API to display rate card names
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const categoriesList =
+    categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
+  const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
+  const activeCategorySlug = activeCategory && 'slug' in activeCategory ? activeCategory.slug : '';
+
+  const { data: subcategoriesData } = useGetSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
+
+  const availableServiceTypes = activeCategory
+    ? subcategoriesData?.data && subcategoriesData.data.length > 0
+      ? subcategoriesData.data.map((sub) => ({ id: sub.id, name: sub.name, categoryId: sub.category_id }))
+      : SERVICE_TYPES.filter((t) => t.categoryId === watchCategoryId)
+    : [];
+
   return (
     <View
       style={{
@@ -172,7 +190,7 @@ export default function ServiceFormRates({
       ) : (
         <View className="gap-y-4">
           {watchServiceTypeIds.map((id, index) => {
-            const typeInfo = SERVICE_TYPES.find((t) => t.id === id);
+            const typeInfo = availableServiceTypes.find((t) => t.id === id);
             if (!typeInfo) return null;
 
             const rate = watchRates[id] || {

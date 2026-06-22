@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DELIVERY_TYPES, DeliveryType } from '@/types';
 
 export interface ServiceFormData {
   // Section 1
@@ -19,7 +20,7 @@ export interface ServiceFormData {
   >;
 
   // Section 3
-  deliveryTypes: ('fixed' | 'remote' | 'at_customer')[];
+  deliveryTypes: DeliveryType[];
 
   // Section 4
   workSamples: { uri: string; uploaded: boolean }[];
@@ -68,7 +69,9 @@ export const serviceFormSchema = z
         durationUnit: z.enum(['minutes', 'hours', 'days', 'weeks']),
       }),
     ),
-    deliveryTypes: z.array(z.enum(['fixed', 'remote', 'at_customer'])).min(1, 'Select at least 1 delivery method'),
+    deliveryTypes: z
+      .array(z.enum([DELIVERY_TYPES.Fixed, DELIVERY_TYPES.Remote, DELIVERY_TYPES.Customer]))
+      .min(1, 'Select at least 1 delivery method'),
     workSamples: z.array(
       z.object({
         uri: z.string(),

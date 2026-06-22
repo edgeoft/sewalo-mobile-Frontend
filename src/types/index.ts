@@ -38,3 +38,19 @@ export interface NotificationItem {
   actionable?: boolean;
   relatedId?: string;
 }
+
+export const SERVICE_LOCATIONS = {
+  Fixed: 'fixed_location',
+  Remote: 'remote_location',
+  Customer: 'customer_location',
+} as const;
+
+export type ServiceLocation = (typeof SERVICE_LOCATIONS)[keyof typeof SERVICE_LOCATIONS];
+
+export const DELIVERY_TYPES = {
+  Fixed: 'fixed',
+  Remote: 'remote',
+  Customer: 'at_customer',
+} as const;
+
+export type DeliveryType = (typeof DELIVERY_TYPES)[keyof typeof DELIVERY_TYPES];

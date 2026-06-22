@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { Alert, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { useLocalSearchParams, useRouter, Href } from 'expo-router';
+import { useForm, Resolver } from 'react-hook-form';
+import { Alert, Text, View, ActivityIndicator } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,6 +9,11 @@ import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { serviceFormSchema, ServiceFormData } from '../data/serviceSchemas';
+import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation } from '../api/hooks/services';
+import { useUploadFile } from '@/api/files/hooks';
+import { ROUTES } from '@/constants/routes';
+import { ENV } from '@/constants/env';
+import { getImageUrl } from '@/utils/image';
 
 // Import subcomponents
 import ServiceFormBasics from '../components/ServiceFormBasics';
@@ -17,68 +22,19 @@ import ServiceFormDelivery from '../components/ServiceFormDelivery';
 import ServiceFormStandout from '../components/ServiceFormStandout';
 import ServiceStickyFooter from '../components/ServiceStickyFooter';
 
+import { DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
+
 const defaultValues: ServiceFormData = {
   title: '',
   categoryId: '',
   serviceTypeIds: [],
   description: '',
   rates: {},
-  deliveryTypes: ['at_customer'],
+  deliveryTypes: [DELIVERY_TYPES.Customer],
   workSamples: [],
   hashtags: [],
   portfolioUrl: '',
   packages: [],
-};
-
-// Map of mock service data for edit mode
-const mockEditData: ServiceFormData = {
-  title: 'Premium Home Sanitization & Deep Cleaning',
-  categoryId: 'cleaning',
-  serviceTypeIds: ['sub-1', 'sub-2', 'sub-3', 'sub-4'],
-  description:
-    'We provide professional deep cleaning services using eco-friendly materials. Our team of certified professionals ensures a 100% dust-free and sanitized environment for your homes and offices.',
-  rates: {
-    'sub-1': { price: '1200', billingBasis: 'per_hour', duration: '2', durationUnit: 'hours' },
-    'sub-2': { price: '1800', billingBasis: 'per_job', duration: '3', durationUnit: 'hours' },
-    'sub-3': { price: '1500', billingBasis: 'per_job', duration: '1.5', durationUnit: 'hours' },
-    'sub-4': { price: '2000', billingBasis: 'per_job', duration: '4', durationUnit: 'hours' },
-  },
-  deliveryTypes: ['at_customer'],
-  workSamples: [
-    {
-      uri: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop',
-      uploaded: true,
-    },
-    {
-      uri: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=400&auto=format&fit=crop',
-      uploaded: true,
-    },
-    {
-      uri: 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?q=80&w=400&auto=format&fit=crop',
-      uploaded: true,
-    },
-    {
-      uri: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?q=80&w=400&auto=format&fit=crop',
-      uploaded: true,
-    },
-  ],
-  hashtags: ['DeepCleaning', 'Sanitization', 'KathmanduServices', 'EcoFriendly', 'CleanHome'],
-  portfolioUrl: 'https://www.cleansewalo.com',
-  packages: [
-    {
-      id: 'pkg-1',
-      title: 'Standard Home Makeover',
-      description:
-        'Includes full kitchen sanitization, bathroom deep cleaning, and sofa shampooing with a 2-day warranty.',
-      price: '4500',
-    },
-    {
-      id: 'pkg-2',
-      title: 'Express Dusting & Sanitization',
-      description: 'Includes full living room and kitchen sanitization, vacuuming, and trash disposal.',
-      price: '2200',
-    },
-  ],
 };
 
 export default function ServiceEditScreen() {
@@ -87,20 +43,74 @@ export default function ServiceEditScreen() {
   const { mode } = useLocalSearchParams<{ mode?: 'add' | 'edit' }>();
 
   const isEditMode = mode === 'edit';
-  const [loading, setLoading] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const { mutate: createService, isPending, isSuccess } = useCreateServiceMutation();
+  const { mutate: updateService, isPending: isUpdating, isSuccess: isUpdateSuccess } = useUpdateServiceMutation();
+  const { mutateAsync: uploadFile } = useUploadFile();
+  const { data: myServiceData, isLoading: isServiceLoading } = useGetMyServicesQuery({ enabled: isEditMode });
+  const service = myServiceData?.data;
 
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ServiceFormData>({
-    resolver: zodResolver(serviceFormSchema) as any,
-    defaultValues: isEditMode ? mockEditData : defaultValues,
+    resolver: zodResolver(serviceFormSchema) as Resolver<ServiceFormData>,
+    defaultValues: defaultValues,
     mode: 'onBlur',
   });
+
+  useEffect(() => {
+    if (isEditMode && service) {
+      const unitMap: Record<string, 'minutes' | 'hours' | 'days' | 'weeks'> = {
+        hour: 'hours',
+        day: 'days',
+        week: 'weeks',
+        minute: 'minutes',
+      };
+
+      const parsedRates: Record<string, any> = {};
+      service.service_offerings?.forEach((offering) => {
+        parsedRates[offering.sub_category_id] = {
+          price: offering.price ? offering.price.toString() : '',
+          billingBasis: 'per_hour',
+          duration: offering.duration ? offering.duration.toString() : '1',
+          durationUnit: unitMap[offering.duration_unit] || 'hours',
+        };
+      });
+
+      const locationReverseMap: Record<string, DeliveryType> = {
+        [SERVICE_LOCATIONS.Fixed]: DELIVERY_TYPES.Fixed,
+        [SERVICE_LOCATIONS.Remote]: DELIVERY_TYPES.Remote,
+        [SERVICE_LOCATIONS.Customer]: DELIVERY_TYPES.Customer,
+      };
+      const deliveryTypes = service.service_location?.map((loc) => locationReverseMap[loc]).filter(Boolean) || [];
+
+      reset({
+        title: service.name || '',
+        categoryId: service.category_id || '',
+        serviceTypeIds: service.service_offerings?.map((offering) => offering.sub_category_id) || [],
+        description: service.description || '',
+        rates: parsedRates,
+        deliveryTypes: deliveryTypes.length > 0 ? deliveryTypes : [DELIVERY_TYPES.Customer],
+        workSamples: (service.portfolio || []).map((p) => ({
+          uri: getImageUrl(p) || '',
+          uploaded: true,
+        })),
+        hashtags: service.tags || [],
+        portfolioUrl: service.portfolio_url || '',
+        packages:
+          service.service_packages?.map((pkg) => ({
+            id: pkg.id,
+            title: pkg.name,
+            description: pkg.description || '',
+            price: pkg.price ? pkg.price.toString() : '',
+          })) || [],
+      });
+    }
+  }, [isEditMode, service, reset]);
 
   // Watch form fields for reactive UI updates
   const watchCategoryId = watch('categoryId');
@@ -111,27 +121,90 @@ export default function ServiceEditScreen() {
   const watchHashtags = watch('hashtags') || [];
   const watchPackages = watch('packages') || [];
 
-  const onSubmit = (data: ServiceFormData) => {
-    setLoading(true);
-    setSaveSuccess(false);
+  if (isEditMode && isServiceLoading) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center">
+        <ActivityIndicator size="large" color="#485aff" />
+      </View>
+    );
+  }
 
-    // Mock API saving call
-    setTimeout(() => {
-      setLoading(false);
-      setSaveSuccess(true);
+  const onSubmit = async (data: ServiceFormData) => {
+    // 1. Upload work samples
+    const portfolioPaths: string[] = [];
+    for (const sample of data.workSamples) {
+      const res = await uploadFile({ uri: sample.uri, folder: 'document' });
+      portfolioPaths.push(res.path);
+    }
 
-      Alert.alert('Success', isEditMode ? 'Service updated successfully!' : 'Service created successfully!', [
+    // 2. Prepare payload matching CreateServiceParams
+    const durationUnitMap: Record<string, string> = {
+      hours: 'hour',
+      days: 'day',
+      weeks: 'week',
+      minutes: 'hour', // fallback
+    };
+
+    const serviceOfferings = data.serviceTypeIds.map((typeId) => {
+      const rate = data.rates[typeId];
+      return {
+        sub_category_id: typeId,
+        price: Number(rate?.price) || 0,
+        duration: Number(rate?.duration) || 0,
+        duration_unit: durationUnitMap[rate?.durationUnit || ''] || 'hour',
+        services_offered: [typeId],
+      };
+    });
+
+    const servicePackages = (data.packages || []).map((pkg) => ({
+      name: pkg.title,
+      services_offered: data.serviceTypeIds,
+      price: Number(pkg.price) || 0,
+      duration: 1,
+      duration_unit: 'hour',
+    }));
+
+    const serviceLocationMap: Record<DeliveryType, string> = {
+      [DELIVERY_TYPES.Fixed]: SERVICE_LOCATIONS.Fixed,
+      [DELIVERY_TYPES.Remote]: SERVICE_LOCATIONS.Remote,
+      [DELIVERY_TYPES.Customer]: SERVICE_LOCATIONS.Customer,
+    };
+    const serviceLocation = data.deliveryTypes.map((t) => serviceLocationMap[t] || t);
+
+    const payload = {
+      name: data.title,
+      category_id: data.categoryId,
+      service_location: serviceLocation,
+      description: data.description,
+      tags: data.hashtags,
+      portfolio: portfolioPaths,
+      portfolio_url: data.portfolioUrl,
+      has_service_packages: servicePackages.length > 0,
+      service_offerings: serviceOfferings,
+      service_packages: servicePackages,
+    };
+
+    if (isEditMode && service?.id) {
+      updateService(
+        { ...payload, id: service.id },
         {
-          text: 'OK',
-          onPress: () => {
-            router.back();
+          onSuccess: () => {
+            router.replace(ROUTES.provider.services);
           },
         },
-      ]);
-    }, 1500);
+      );
+    } else {
+      createService(payload, {
+        onSuccess: () => {
+          router.replace(ROUTES.provider.serviceCreated as Href);
+        },
+      });
+    }
   };
 
   const hasFormErrors = Object.keys(errors).length > 0;
+  const loading = isPending || isUpdating;
+  const success = isSuccess || isUpdateSuccess;
 
   return (
     <View className="flex-1 bg-secondary">
@@ -172,6 +245,7 @@ export default function ServiceEditScreen() {
           watchServiceTypeIds={watchServiceTypeIds}
           watchRates={watchRates}
           watchPackages={watchPackages}
+          watchCategoryId={watchCategoryId}
         />
 
         <ServiceFormDelivery
@@ -195,7 +269,7 @@ export default function ServiceEditScreen() {
         onSave={handleSubmit(onSubmit)}
         disabled={loading}
         loading={loading}
-        infoMessage={saveSuccess ? 'All changes saved.' : undefined}
+        infoMessage={success ? 'All changes saved.' : undefined}
       />
     </View>
   );

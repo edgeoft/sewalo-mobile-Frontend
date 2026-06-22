@@ -82,7 +82,7 @@ export default function RateCard({
 
       <View className="gap-y-3.5">
         {/* Row 1: Price and Billing Basis */}
-        <View className="flex-row gap-3">
+        <View className="flex-row gap-3 items-start">
           {/* Price Input */}
           <View className="flex-1">
             <Input
@@ -124,7 +124,7 @@ export default function RateCard({
         </View>
 
         {/* Row 2: Duration and Unit */}
-        <View className="flex-row gap-3 items-end">
+        <View className="flex-row gap-3 items-start">
           {/* Duration Input */}
           <View className="flex-1">
             <Input
@@ -140,6 +140,8 @@ export default function RateCard({
 
           {/* Unit Selector */}
           <View className="flex-1">
+            {/* Transparent spacer label to match 'Estimated Duration' label spacing */}
+            <Text className="text-xs font-sans-semibold text-transparent mb-1.5 ml-0.5">Duration Unit Spacer</Text>
             <Pressable
               onPress={() => setUnitModalVisible(true)}
               className="form-input-container form-input-container-single justify-between"
