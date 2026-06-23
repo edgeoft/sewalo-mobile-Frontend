@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Pressable, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList, SectionHeader } from '@/components/common';
@@ -14,7 +14,32 @@ import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
-import { PROVIDER_BOOKINGS_MOCK } from '@/features/provider/constants/providerBookings';
+import { useGetBookingsQuery, useUpdateBooking } from '@/api/bookings';
+import { getImageUrl } from '@/utils/image';
+
+function formatDate(dateString: string) {
+  if (!dateString) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    return date.toISOString().split('T')[0];
+  } catch {
+    return dateString;
+  }
+}
+
+function formatTime(timeString: string) {
+  if (!timeString) return '';
+  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+  try {
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return timeString;
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  } catch {
+    return timeString;
+  }
+}
 
 export default function ProviderBookingsScreen() {
   const router = useRouter();
@@ -23,52 +48,61 @@ export default function ProviderBookingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
 
+  const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
+  const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, limit: 50 });
+  const updateBooking = useUpdateBooking();
+
+  const bookings = bookingsData?.data || [];
+
   const countsByStatus = useMemo(() => {
     const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(
       (acc, status) => ({ ...acc, [status]: 0 }),
       {} as Record<BookingStatus, number>,
     );
-
-    counts[BOOKING_STATUSES.All] = PROVIDER_BOOKINGS_MOCK.length;
-
-    PROVIDER_BOOKINGS_MOCK.forEach((booking) => {
-      counts[booking.status] += 1;
+    counts[BOOKING_STATUSES.All] = bookings.length;
+    bookings.forEach((booking) => {
+      if (counts[booking.status] !== undefined) counts[booking.status] += 1;
     });
-
     return counts;
-  }, []);
+  }, [bookings]);
 
-  const filteredBookings = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase();
-
-    return PROVIDER_BOOKINGS_MOCK.filter((booking) => {
-      const matchesStatus = selectedStatus === BOOKING_STATUSES.All ? true : booking.status === selectedStatus;
-
-      if (!matchesStatus) return false;
-
-      if (!normalizedQuery) return true;
-
-      return (
-        booking.customerName.toLowerCase().includes(normalizedQuery) ||
-        booking.serviceLabel.toLowerCase().includes(normalizedQuery) ||
-        booking.location.toLowerCase().includes(normalizedQuery)
-      );
-    });
-  }, [searchQuery, selectedStatus]);
+  const mapToProviderItem = (booking: (typeof bookings)[0]) => ({
+    id: booking.id,
+    customerName: booking.user?.name || 'Customer',
+    customerAvatar: getImageUrl(booking.user?.avatar) || 'https://i.pravatar.cc/300?img=33',
+    serviceLabel: booking.service?.name || 'Service',
+    location: booking.city ? `${booking.city}${booking.address ? `, ${booking.address}` : ''}` : 'Nepal',
+    bookingDate: [formatDate(booking.service_date), formatTime(booking.start_time)].filter(Boolean).join(', '),
+    bookedPrice: booking.invoice?.total ? `Rs. ${Number(booking.invoice.total).toLocaleString()}` : '',
+    status: booking.status,
+    cancelReason: booking.cancellation_reason || undefined,
+  });
 
   const handleAcceptOrder = (id: string) => {
-    Alert.alert('Accept Order', `Are you sure you want to accept booking request #${id}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Accept', onPress: () => Alert.alert('Success', 'Order accepted successfully.') },
-    ]);
+    updateBooking.mutate({ id, data: { status: 'confirmed' } });
   };
 
   const handleDeclineOrder = (id: string) => {
-    Alert.alert('Decline Order', `Are you sure you want to decline booking request #${id}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Decline', style: 'destructive', onPress: () => Alert.alert('Declined', 'Order request declined.') },
-    ]);
+    updateBooking.mutate({
+      id,
+      data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
+    });
   };
+
+  const filteredBookings = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    if (!normalizedQuery) return bookings;
+    return bookings.filter((b) => {
+      const customerName = b.user?.name?.toLowerCase() || '';
+      const serviceName = b.service?.name?.toLowerCase() || '';
+      const location = b.city?.toLowerCase() || '';
+      return (
+        customerName.includes(normalizedQuery) ||
+        serviceName.includes(normalizedQuery) ||
+        location.includes(normalizedQuery)
+      );
+    });
+  }, [searchQuery, bookings]);
 
   return (
     <View className="flex-1 bg-secondary">
@@ -137,31 +171,37 @@ export default function ProviderBookingsScreen() {
           </View>
         ) : null}
 
-        <LoadMoreList
-          key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
-          data={filteredBookings}
-          keyExtractor={(booking) => booking.id}
-          initialVisibleCount={4}
-          pageSize={4}
-          loadMoreLabel="Load More Bookings"
-          endReachedLabel="No more bookings"
-          emptyContent={
-            <EmptyBookingsState
-              title="No bookings match your filter"
-              description="Try changing your status filter or search query."
-            />
-          }
-          renderItem={(booking) => (
-            <ProviderOrderCard
-              order={booking}
-              onAccept={handleAcceptOrder}
-              onDecline={handleDeclineOrder}
-              onPress={() => {
-                router.push(ROUTES.provider.bookingDetail(booking.id));
-              }}
-            />
-          )}
-        />
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
+        ) : (
+          <LoadMoreList
+            key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
+            data={filteredBookings}
+            keyExtractor={(booking) => booking.id}
+            initialVisibleCount={4}
+            pageSize={4}
+            loadMoreLabel="Load More Bookings"
+            endReachedLabel="No more bookings"
+            emptyContent={
+              <EmptyBookingsState
+                title="No bookings match your filter"
+                description="Try changing your status filter or search query."
+              />
+            }
+            renderItem={(booking) => (
+              <ProviderOrderCard
+                order={mapToProviderItem(booking)}
+                onAccept={handleAcceptOrder}
+                onDecline={handleDeclineOrder}
+                onPress={() => {
+                  router.push(ROUTES.provider.bookingDetail(booking.id));
+                }}
+              />
+            )}
+          />
+        )}
 
         <View className="h-3" />
       </ContentLayout>

@@ -8,7 +8,7 @@ import { PaginationList, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
-import { Skeleton, EarningSkeleton, TransactionItemSkeleton } from '@/components/ui';
+
 import Button from '@/components/ui/Button';
 import { useCommissionSummaryQuery, useCommissionsQuery } from '../api/hooks/commissions';
 import { Commission, COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '../api/types/commissions';
@@ -119,7 +119,9 @@ export default function ProviderEarningsScreen() {
           <>
             {/* Dashboard Financial Summary Cards */}
             {isSummaryLoading ? (
-              <EarningSkeleton />
+              <View className="items-center justify-center py-12">
+                <ActivityIndicator size="large" color="#485aff" />
+              </View>
             ) : (
               <View className="gap-3.5 mb-4">
                 {/* Main Net Earnings */}
@@ -274,10 +276,8 @@ export default function ProviderEarningsScreen() {
             {/* Transactions List Section with independent loading */}
             <View className="flex-1">
               {isCommissionsLoading ? (
-                <View className="flex-1">
-                  <TransactionItemSkeleton />
-                  <TransactionItemSkeleton />
-                  <TransactionItemSkeleton />
+                <View className="flex-1 items-center justify-center py-12">
+                  <ActivityIndicator size="large" color="#485aff" />
                 </View>
               ) : activeTab === COMMISSION_TYPE.MY_EARNINGS ? (
                 <PaginationList

@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Alert,
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Linking,
-  Platform,
-  ToastAndroid,
-  ActivityIndicator,
-} from 'react-native';
+import { Alert, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -25,13 +15,15 @@ import { BOOKING_STATUSES, PAYMENT_METHODS, type PaymentMethod } from '@/types';
 import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api/bookings';
 import { getImageUrl } from '@/utils/image';
 
-function formatTime(isoString: string) {
-  if (!isoString) return '';
+function formatTime(timeString: string) {
+  if (!timeString) return '';
+  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
   try {
-    const date = new Date(isoString);
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return timeString;
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   } catch {
-    return isoString;
+    return timeString;
   }
 }
 
@@ -191,7 +183,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     if (!invoice?.id) return;
     downloadInvoice.mutate(invoice.id, {
       onSuccess: () => {
-        ToastAndroid.show('Invoice downloaded successfully', ToastAndroid.SHORT);
+        Alert.alert('Success', 'Invoice downloaded successfully.');
       },
       onError: (error) => {
         Alert.alert('Download Failed', error.message || 'Failed to download invoice.');

@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@/components/ui/Button';
-import { Skeleton, PayoutAccountSkeleton } from '@/components/ui';
 
 import FinancialAccountForm from './FinancialAccountForm';
 import { financeAccountSchema, FinanceAccountFormValues } from '../data/schemas';
@@ -187,7 +186,9 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Digital Wallets</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
-          <PayoutAccountSkeleton />
+          <View className="items-center justify-center py-8">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
         ) : wallets.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
             <Text className="text-xs font-sans-medium text-gray-400">No digital wallets linked yet.</Text>
@@ -256,10 +257,9 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Bank Accounts</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
-          <>
-            <PayoutAccountSkeleton />
-            <PayoutAccountSkeleton />
-          </>
+          <View className="items-center justify-center py-8">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
         ) : banks.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
             <Text className="text-xs font-sans-medium text-gray-400">No bank accounts linked yet.</Text>

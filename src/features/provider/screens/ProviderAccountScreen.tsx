@@ -143,7 +143,7 @@ export default function ProviderAccountScreen() {
               {/* Rating */}
               <View className="flex-row items-center gap-1.5 mt-1.5">
                 <View className="flex-row items-center gap-0.5">
-                  <Feather name="star" size={10} color="#f59e0b" fill="#f59e0b" />
+                  <Feather name="star" size={10} color="#f59e0b" />
                   <Text className="text-[10px] font-sans-bold text-gray-600">
                     {user?.avg_rating !== null && user?.avg_rating !== undefined ? user.avg_rating.toFixed(1) : '0.0'}
                   </Text>

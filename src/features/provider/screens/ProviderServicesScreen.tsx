@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { SectionHeader } from '@/components/common';
-import { Carousel, ProviderServicesSkeleton } from '@/components/ui';
+import { Carousel } from '@/components/ui';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
@@ -115,7 +115,9 @@ export default function ProviderServicesScreen() {
       <View className="flex-1 bg-secondary">
         <Header variant="menu" showNotifications={false} />
         <ContentLayout scrollable className="flex-1">
-          <ProviderServicesSkeleton />
+          <View className="flex-1 items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
         </ContentLayout>
       </View>
     );

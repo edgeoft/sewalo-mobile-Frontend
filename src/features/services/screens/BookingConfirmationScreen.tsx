@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,39 +8,79 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
+import { useGetBookingByIdQuery } from '@/api/bookings';
+import { getImageUrl } from '@/utils/image';
 import BookingAnimatedCheckmark from '../components/BookingAnimatedCheckmark';
 
-interface ParsedService {
-  id: string;
-  title: string;
-  price: string;
+function formatTime(timeString: string) {
+  if (!timeString) return '';
+  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+  try {
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return timeString;
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  } catch {
+    return timeString;
+  }
+}
+
+function formatDate(isoString: string) {
+  if (!isoString) return '';
+  try {
+    const date = new Date(isoString);
+    return date.toISOString().split('T')[0];
+  } catch {
+    return isoString;
+  }
 }
 
 export default function BookingConfirmationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
+  const bookingId = params.bookingId as string;
 
-  const providerName = (params.providerName as string) || 'Service Provider';
-  const providerAvatar = (params.providerAvatar as string) || '';
-  const providerCategory = (params.providerCategory as string) || 'Services';
-  const isVerified = params.providerVerified === 'true';
-  const serviceDate = (params.serviceDate as string) || 'Not Selected';
-  const startTime = (params.startTime as string) || 'Not Selected';
-  const location = (params.location as string) || 'Kathmandu Metropolitan City';
-  const totalPrice = Number(params.totalPrice) || 0;
+  const { data: booking, isLoading } = useGetBookingByIdQuery(bookingId || '');
 
-  let servicesList: ParsedService[] = [];
-  try {
-    if (params.services) {
-      servicesList = JSON.parse(params.services as string);
-    }
-  } catch (e) {
-    console.error('Error parsing services', e);
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center">
+        <ActivityIndicator size="large" color="#485aff" />
+      </View>
+    );
   }
 
-  const baseSubtotal = totalPrice / 1.13;
-  const vatAmount = totalPrice - baseSubtotal;
+  const providerName = booking?.provider?.name || 'Service Provider';
+  const providerAvatar = getImageUrl(booking?.provider?.avatar) || '';
+  const providerCategory = booking?.service?.category?.name || 'Services';
+  const serviceDate = formatDate(booking?.service_date || '');
+  const startTime = formatTime(booking?.start_time || '');
+  const location = booking?.address || '';
+  const invoice = booking?.invoice;
+  const status = booking?.status || 'pending';
+  const serviceName = booking?.service?.name || '';
+
+  const subTotal = invoice?.sub_total ? Number(invoice.sub_total) : 0;
+  const vatAmount = invoice?.vat ? Number(invoice.vat) : 0;
+  const totalPrice = invoice?.total ? Number(invoice.total) : 0;
+
+  const isConfirmed = status !== 'pending' && status !== 'rejected';
+  const isProviderNotFound = !bookingId;
+
+  if (!booking && !isProviderNotFound) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center px-6">
+        <Feather name="alert-triangle" size={40} color="#ef4444" />
+        <Text className="text-lg font-sans-bold text-gray-950 mt-4 mb-2">Booking Not Found</Text>
+        <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6">
+          Unable to load booking details. Please try again.
+        </Text>
+        <Button title="Go Back" variant="primary" onPress={() => router.back()} />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-secondary">
@@ -56,17 +96,21 @@ export default function BookingConfirmationScreen() {
         <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-6 items-center mb-5">
           <BookingAnimatedCheckmark />
 
-          <Text className="text-xl font-sans-extrabold text-gray-900 text-center tracking-tight mb-2 text-center mt-4">
-            Booking Confirmed!
+          <Text className="text-xl font-sans-extrabold text-gray-900 text-center tracking-tight mb-2 mt-4">
+            Booking {isConfirmed ? 'Confirmed!' : 'Submitted!'}
           </Text>
 
-          <Text className="text-sm font-sans-medium text-gray-500 text-center leading-5 mb-4 px-4 text-center">
-            Your booking has been sent to the provider. You&apos;ll be notified once they accept.
+          <Text className="text-sm font-sans-medium text-gray-500 text-center leading-5 mb-4 px-4">
+            {isConfirmed
+              ? 'Your booking has been successfully created.'
+              : "Your booking has been sent to the provider. You'll be notified once they accept."}
           </Text>
 
           <View className="flex-row items-center bg-emerald-50 border border-emerald-100 rounded-full px-3.5 py-1.5">
             <View className="h-2 w-2 rounded-full bg-emerald-500 mr-2" />
-            <Text className="text-xs font-sans-bold text-emerald-600">Status: Confirmed</Text>
+            <Text className="text-xs font-sans-bold text-emerald-600">
+              Status: {status.replace(/_/g, ' ') || 'Pending'}
+            </Text>
           </View>
         </View>
 
@@ -85,7 +129,6 @@ export default function BookingConfirmationScreen() {
               <View className="ml-3 flex-1">
                 <View className="flex-row items-center flex-wrap">
                   <Text className="text-sm font-sans-bold text-gray-900 mr-1">{providerName}</Text>
-                  {isVerified && <MaterialCircleCheckIcon />}
                 </View>
                 <View className="flex-row mt-1">
                   <View className="bg-blue-50/70 border border-blue-100/50 rounded px-2 py-0.5 flex-row items-center">
@@ -94,9 +137,6 @@ export default function BookingConfirmationScreen() {
                 </View>
               </View>
             </View>
-            <Pressable className="h-8 w-8 items-center justify-center rounded-full active:bg-gray-50">
-              <Feather name="more-horizontal" size={18} color="#94a3b8" />
-            </Pressable>
           </View>
 
           <View className="gap-y-3.5 mb-5">
@@ -105,7 +145,7 @@ export default function BookingConfirmationScreen() {
                 <Feather name="briefcase" size={15} color="#94a3b8" />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">Service</Text>
               </View>
-              <Text className="text-xs font-sans-bold text-gray-800">{providerCategory}</Text>
+              <Text className="text-xs font-sans-bold text-gray-800">{serviceName || providerCategory}</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
@@ -114,7 +154,8 @@ export default function BookingConfirmationScreen() {
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">Date & Time</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800">
-                {serviceDate} • {startTime}
+                {serviceDate}
+                {startTime ? ` • ${startTime}` : ''}
               </Text>
             </View>
 
@@ -123,39 +164,40 @@ export default function BookingConfirmationScreen() {
                 <Feather name="map-pin" size={15} color="#94a3b8" />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">Location</Text>
               </View>
-              <Text className="text-xs font-sans-bold text-gray-800 flex-1 text-right ml-4" numberOfLines={2}>
+              <Text className="text-xs font-sans-bold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>
                 {location}
               </Text>
             </View>
           </View>
 
-          <View className="border-t border-gray-100 pt-4 gap-y-2 mb-4">
-            {servicesList.map((service) => (
-              <View key={service.id} className="flex-row justify-between">
-                <Text className="text-xs font-sans-medium text-gray-500">{service.title}</Text>
-                <Text className="text-xs font-sans-semibold text-gray-800">
-                  {typeof service.price === 'string' && service.price.includes('Rs')
-                    ? service.price
-                    : `Rs. ${Number(service.price).toLocaleString()}`}
-                </Text>
+          {subTotal > 0 && (
+            <View className="border-t border-gray-100 pt-4 gap-y-2 mb-4">
+              <View className="flex-row justify-between">
+                <Text className="text-xs font-sans-medium text-gray-500">Sub Total</Text>
+                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subTotal.toLocaleString()}</Text>
               </View>
-            ))}
-            <View className="flex-row justify-between">
-              <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
-              <Text className="text-xs font-sans-semibold text-gray-800">
-                Rs. {Math.round(vatAmount).toLocaleString()}
-              </Text>
+              <View className="flex-row justify-between">
+                <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vatAmount.toLocaleString()}</Text>
+              </View>
             </View>
-          </View>
+          )}
 
-          <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
-            <Text className="text-sm font-sans-bold text-gray-900">Total :</Text>
-            <Text className="text-base font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
-          </View>
+          {totalPrice > 0 && (
+            <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
+              <Text className="text-sm font-sans-bold text-gray-900">Total :</Text>
+              <Text className="text-base font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
+            </View>
+          )}
         </View>
 
         <View className="gap-y-3 mt-2 px-1">
-          <Button title="View Booking Status" variant="primary" onPress={() => {}} className="rounded-lg" />
+          <Button
+            title="View Booking Status"
+            variant="primary"
+            onPress={() => router.push(ROUTES.customer.bookingDetail(bookingId))}
+            className="rounded-lg"
+          />
 
           <Button
             title="Back to Home"
@@ -168,14 +210,6 @@ export default function BookingConfirmationScreen() {
           />
         </View>
       </ContentLayout>
-    </View>
-  );
-}
-
-function MaterialCircleCheckIcon() {
-  return (
-    <View className="bg-primary rounded-full p-0.5 items-center justify-center" style={{ width: 14, height: 14 }}>
-      <Feather name="check" size={8} color="#ffffff" strokeWidth={4} />
     </View>
   );
 }
