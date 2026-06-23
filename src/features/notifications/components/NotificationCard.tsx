@@ -2,46 +2,64 @@ import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import type { NotificationItem } from '@/types';
+import type { Notification } from '@/api/notifications';
 
-const TYPE_ICONS: Record<NotificationItem['type'], keyof typeof Feather.glyphMap> = {
-  booking: 'calendar',
-  payment: 'credit-card',
-  review: 'star',
-  promo: 'tag',
-  system: 'bell',
-};
+function getTypeIcon(type: string): keyof typeof Feather.glyphMap {
+  if (type.includes('booking')) return 'calendar';
+  if (type.includes('payment') || type.includes('payout')) return 'credit-card';
+  if (type.includes('rating') || type.includes('review')) return 'star';
+  if (type.includes('coupon') || type.includes('promo')) return 'tag';
+  if (type.includes('welcome') || type.includes('account')) return 'user-check';
+  return 'bell';
+}
 
-const TYPE_COLORS: Record<NotificationItem['type'], string> = {
-  booking: '#485aff',
-  payment: '#10b981',
-  review: '#f59e0b',
-  promo: '#8b5cf6',
-  system: '#6b7280',
-};
+function getTypeColor(type: string): string {
+  if (type.includes('booking')) return '#485aff';
+  if (type.includes('payment') || type.includes('payout')) return '#10b981';
+  if (type.includes('rating') || type.includes('review')) return '#f59e0b';
+  if (type.includes('coupon') || type.includes('promo')) return '#8b5cf6';
+  if (type.includes('welcome') || type.includes('account')) return '#06b6d4';
+  return '#6b7280';
+}
 
-const TYPE_BG_COLORS: Record<NotificationItem['type'], string> = {
-  booking: '#eef0ff',
-  payment: '#d1fae5',
-  review: '#fef3c7',
-  promo: '#f3e8ff',
-  system: '#f3f4f6',
-};
+function getTypeBgColor(type: string): string {
+  if (type.includes('booking')) return '#eef0ff';
+  if (type.includes('payment') || type.includes('payout')) return '#d1fae5';
+  if (type.includes('rating') || type.includes('review')) return '#fef3c7';
+  if (type.includes('coupon') || type.includes('promo')) return '#f3e8ff';
+  if (type.includes('welcome') || type.includes('account')) return '#cffafe';
+  return '#f3f4f6';
+}
+
+function formatRelativeTime(dateString: string): string {
+  const now = Date.now();
+  const date = new Date(dateString).getTime();
+  const diffMs = now - date;
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 interface NotificationCardProps {
-  item: NotificationItem;
+  item: Notification;
   onMarkRead: (id: string) => void;
   onDelete: (id: string) => void;
-  onPress?: (item: NotificationItem) => void;
+  onPress?: (item: Notification) => void;
 }
 
 export default function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationCardProps) {
   const [showActions, setShowActions] = useState(false);
+  const isUnread = !item.read_at;
 
   return (
     <View
       className={`border rounded-lg p-4 mb-3 ${
-        item.read ? 'bg-white border-gray-200/80' : 'bg-primary/5 border-primary/10'
+        isUnread ? 'bg-primary/5 border-primary/10' : 'bg-white border-gray-200/80'
       }`}
       style={{
         shadowColor: '#0f172a',
@@ -53,36 +71,34 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
     >
       <Pressable
         onPress={() => {
-          if (!item.read) onMarkRead(item.id);
+          if (isUnread) onMarkRead(item.id);
           onPress?.(item);
         }}
         className="flex-row items-start"
       >
-        {/* Left icon badge */}
         <View
           className="h-10 w-10 rounded-lg items-center justify-center mr-3"
-          style={{ backgroundColor: TYPE_BG_COLORS[item.type] }}
+          style={{ backgroundColor: getTypeBgColor(item.notification_type) }}
         >
-          <Feather name={TYPE_ICONS[item.type]} size={18} color={TYPE_COLORS[item.type]} />
+          <Feather name={getTypeIcon(item.notification_type)} size={18} color={getTypeColor(item.notification_type)} />
         </View>
 
-        {/* Text Content */}
         <View className="flex-1">
           <View className="flex-row items-center justify-between mb-0.5">
             <Text
               className={`text-sm flex-1 mr-2 ${
-                item.read ? 'font-sans-semibold text-gray-900' : 'font-sans-bold text-gray-950'
+                isUnread ? 'font-sans-bold text-gray-950' : 'font-sans-semibold text-gray-900'
               }`}
               numberOfLines={1}
             >
               {item.title}
             </Text>
-            {!item.read && <View className="h-1.5 w-1.5 rounded-full bg-primary" />}
+            {isUnread && <View className="h-1.5 w-1.5 rounded-full bg-primary" />}
           </View>
 
           <Text
             className={`text-xs leading-relaxed mb-2 ${
-              item.read ? 'font-sans-medium text-gray-500' : 'font-sans-semibold text-gray-700'
+              isUnread ? 'font-sans-semibold text-gray-700' : 'font-sans-medium text-gray-500'
             }`}
             numberOfLines={2}
           >
@@ -90,8 +106,7 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
           </Text>
 
           <View className="flex-row items-center justify-between">
-            <Text className="text-[10px] font-sans-medium text-gray-400">{item.timestamp}</Text>
-
+            <Text className="text-[10px] font-sans-medium text-gray-400">{formatRelativeTime(item.created_at)}</Text>
             <Pressable
               onPress={() => setShowActions(!showActions)}
               accessibilityRole="button"
@@ -104,10 +119,9 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
         </View>
       </Pressable>
 
-      {/* Inline actions revealed below (no separator line, all buttons are rounded-lg) */}
       {showActions && (
         <View className="flex-row mt-3 gap-2 justify-end">
-          {!item.read && (
+          {isUnread && (
             <Pressable
               onPress={() => {
                 onMarkRead(item.id);

@@ -6,6 +6,7 @@ import LanguageSelector from '@/components/ui/LanguageSelector';
 import HeaderIconButton from '@/components/ui/HeaderIconButton';
 import TopBar from './TopBar';
 import { useAuth } from '@/providers/AuthProvider';
+import { useUnreadCountQuery } from '@/api/notifications';
 
 interface HeaderBaseProps {
   showBackButton?: boolean;
@@ -24,6 +25,7 @@ type MenuHeaderProps = HeaderBaseProps & {
   showNotifications?: boolean;
   onNotificationsPress?: () => void;
   onMenuPress?: () => void;
+  showNotificationBadge?: boolean;
 };
 
 type CustomHeaderProps = HeaderBaseProps & {
@@ -39,6 +41,10 @@ export default function Header(props: HeaderProps) {
   const { showBackButton = false, leadingContent, containerClassName, contentClassName, includeBottomBorder } = props;
 
   const isGuest = role === 'guest';
+  const { data: unreadData } = useUnreadCountQuery({
+    enabled: !isGuest && props.variant === 'menu' && !!props.showNotificationBadge,
+  });
+  const badgeCount = unreadData?.unread_count || 0;
 
   const renderRightContent = () => {
     if (props.variant === 'custom') {
@@ -52,7 +58,12 @@ export default function Header(props: HeaderProps) {
 
       return props.showNotifications ? (
         <View className="flex-row items-center">
-          <HeaderIconButton icon="bell" accessibilityLabel="Open notifications" onPress={props.onNotificationsPress} />
+          <HeaderIconButton
+            icon="bell"
+            accessibilityLabel="Open notifications"
+            onPress={props.onNotificationsPress}
+            badgeCount={badgeCount}
+          />
         </View>
       ) : null;
     }

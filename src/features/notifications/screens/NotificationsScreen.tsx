@@ -1,44 +1,54 @@
-import { Feather } from '@expo/vector-icons';
-import { useCallback, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
 
 import { LoadMoreList } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { SegmentedControl } from '@/components/ui';
 import type { SegmentedControlOption } from '@/components/ui/SegmentedControl';
-import { NOTIFICATION_FILTERS, type NotificationFilter, type NotificationItem } from '@/types';
+import { NOTIFICATION_FILTERS, type NotificationFilter } from '@/types';
+import {
+  useGetNotificationsQuery,
+  useUnreadCountQuery,
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+  useDeleteNotification,
+} from '@/api/notifications';
+import type { Notification } from '@/api/notifications';
 import NotificationCard from '../components/NotificationCard';
-import { MOCK_NOTIFICATIONS } from '../constants/notifications';
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>(NOTIFICATION_FILTERS.All);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(MOCK_NOTIFICATIONS);
 
-  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+  const { data: notificationsData, isLoading } = useGetNotificationsQuery({
+    limit: 50,
+    unread_only: activeFilter === NOTIFICATION_FILTERS.Unread || undefined,
+  });
+  const { data: unreadData } = useUnreadCountQuery();
 
-  const filteredNotifications = useMemo(() => {
-    if (activeFilter === NOTIFICATION_FILTERS.Unread) {
-      return notifications.filter((n) => !n.read);
-    }
-    return notifications;
-  }, [activeFilter, notifications]);
+  const markRead = useMarkNotificationRead();
+  const markAllRead = useMarkAllNotificationsRead();
+  const deleteNotif = useDeleteNotification();
 
-  const handleMarkRead = useCallback((id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-  }, []);
+  const notifications = notificationsData?.data || [];
+  const unreadCount = unreadData?.unread_count || 0;
 
-  const handleDelete = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  const handleMarkRead = (id: string) => {
+    markRead.mutate(id);
+  };
 
-  const handleMarkAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  }, []);
+  const handleDelete = (id: string) => {
+    deleteNotif.mutate(id);
+  };
 
-  const handlePress = useCallback((item: NotificationItem) => {}, []);
+  const handleMarkAllAsRead = () => {
+    markAllRead.mutate();
+  };
+
+  const handlePress = (item: Notification) => {};
 
   const filterOptions = useMemo<SegmentedControlOption<NotificationFilter>[]>(
     () => [
@@ -103,7 +113,6 @@ export default function NotificationsScreen() {
           )}
         </View>
 
-        {/* Premium Capsule Segmented Control Filter */}
         <SegmentedControl
           options={filterOptions}
           selectedValue={activeFilter}
@@ -111,20 +120,26 @@ export default function NotificationsScreen() {
           containerClassName="mb-6"
         />
 
-        <LoadMoreList
-          key={`${activeFilter}-${notifications.length}`}
-          data={filteredNotifications}
-          keyExtractor={(item) => item.id}
-          initialVisibleCount={6}
-          pageSize={4}
-          loadMoreLabel="Load More Notifications"
-          endReachedLabel="No more notifications"
-          emptyContent={emptyContent}
-          listClassName="gap-1"
-          renderItem={(item) => (
-            <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
-          )}
-        />
+        {isLoading ? (
+          <View className="items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
+        ) : (
+          <LoadMoreList
+            key={`${activeFilter}-${notifications.length}`}
+            data={notifications}
+            keyExtractor={(item) => item.id}
+            initialVisibleCount={6}
+            pageSize={4}
+            loadMoreLabel="Load More Notifications"
+            endReachedLabel="No more notifications"
+            emptyContent={emptyContent}
+            listClassName="gap-1"
+            renderItem={(item) => (
+              <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
+            )}
+          />
+        )}
       </ContentLayout>
     </View>
   );
