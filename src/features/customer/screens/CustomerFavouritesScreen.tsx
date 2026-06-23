@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -11,7 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useGetFavoritesQuery } from '@/api/user/hooks/favourites';
 import { FavoriteItem } from '@/api/user/types/favourites';
 import { getImageUrl } from '@/features/auth/utils/image';
-import { Skeleton, FavoriteSkeleton } from '@/components/ui';
+
 import Button from '@/components/ui/Button';
 import EmptyFavouritesState from '../components/EmptyFavouritesState';
 
@@ -62,10 +62,8 @@ export default function CustomerFavouritesScreen() {
             </View>
           </View>
         ) : isLoading ? (
-          <View className="flex-1">
-            <FavoriteSkeleton />
-            <FavoriteSkeleton />
-            <FavoriteSkeleton />
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="#485aff" />
           </View>
         ) : (
           <LoadMoreList

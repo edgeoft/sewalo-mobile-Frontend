@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
@@ -12,8 +12,9 @@ import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
-import { CUSTOMER_BOOKINGS_MOCK } from '../constants/customerBookings';
 import { ROUTES } from '@/constants/routes';
+import { useGetMyBookingsQuery } from '@/api/bookings';
+import { getImageUrl } from '@/utils/image';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -22,38 +23,53 @@ export default function CustomerBookingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
 
+  const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
+  const { data: bookingsData, isLoading } = useGetMyBookingsQuery({ status: statusParam, limit: 50 });
+
+  const bookings = bookingsData?.data || [];
+
   const countsByStatus = useMemo(() => {
     const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(
       (acc, status) => ({ ...acc, [status]: 0 }),
       {} as Record<BookingStatus, number>,
     );
 
-    counts[BOOKING_STATUSES.All] = CUSTOMER_BOOKINGS_MOCK.length;
-
-    CUSTOMER_BOOKINGS_MOCK.forEach((booking) => {
-      counts[booking.status] += 1;
+    counts[BOOKING_STATUSES.All] = bookings.length;
+    bookings.forEach((booking) => {
+      if (counts[booking.status] !== undefined) counts[booking.status] += 1;
     });
 
     return counts;
-  }, []);
+  }, [bookings]);
+
+  const getAvatarUri = (avatar: string | null | undefined) => {
+    return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+  };
+
+  const formatLocation = (b: (typeof bookings)[0]) => {
+    if (b.provider?.city && b.provider?.address) return `${b.provider.address}, ${b.provider.city}`;
+    return b.provider?.city || b.city || 'Nepal';
+  };
+
+  const formatPrice = (invoice: (typeof bookings)[0]['invoice']) => {
+    if (!invoice?.total) return '';
+    return `Rs. ${Number(invoice.total).toLocaleString()}`;
+  };
 
   const filteredBookings = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
-
-    return CUSTOMER_BOOKINGS_MOCK.filter((booking) => {
-      const matchesStatus = selectedStatus === BOOKING_STATUSES.All ? true : booking.status === selectedStatus;
-
-      if (!matchesStatus) return false;
-
-      if (!normalizedQuery) return true;
-
+    if (!normalizedQuery) return bookings;
+    return bookings.filter((b) => {
+      const providerName = b.provider?.name?.toLowerCase() || '';
+      const serviceName = b.service?.name?.toLowerCase() || '';
+      const location = b.provider?.city?.toLowerCase() || b.city?.toLowerCase() || '';
       return (
-        booking.name.toLowerCase().includes(normalizedQuery) ||
-        booking.serviceLabel.toLowerCase().includes(normalizedQuery) ||
-        booking.location.toLowerCase().includes(normalizedQuery)
+        providerName.includes(normalizedQuery) ||
+        serviceName.includes(normalizedQuery) ||
+        location.includes(normalizedQuery)
       );
     });
-  }, [searchQuery, selectedStatus]);
+  }, [searchQuery, bookings]);
 
   return (
     <View className="flex-1 bg-secondary">
@@ -122,37 +138,44 @@ export default function CustomerBookingsScreen() {
           </View>
         ) : null}
 
-        <LoadMoreList
-          key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
-          data={filteredBookings}
-          keyExtractor={(booking) => booking.id}
-          initialVisibleCount={4}
-          pageSize={4}
-          loadMoreLabel="Load More Bookings"
-          endReachedLabel="No more bookings"
-          emptyContent={
-            <EmptyBookingsState
-              title="No bookings match your filter"
-              description="Try changing your status filter or search query."
-            />
-          }
-          renderItem={(booking) => (
-            <ProviderCard
-              avatarUri={booking.avatarUri}
-              name={booking.name}
-              serviceLabel={booking.serviceLabel}
-              location={booking.location}
-              rating={booking.rating}
-              startingFromPrice={booking.bookedPrice}
-              bookingStatus={booking.status}
-              actionLabel="View Details"
-              variant="booking"
-              onPress={() => {
-                router.push(ROUTES.customer.bookingDetail(booking.id));
-              }}
-            />
-          )}
-        />
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center py-20">
+            <ActivityIndicator size="large" color="#485aff" />
+          </View>
+        ) : (
+          <LoadMoreList
+            key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
+            data={filteredBookings}
+            keyExtractor={(booking) => booking.id}
+            initialVisibleCount={4}
+            pageSize={4}
+            loadMoreLabel="Load More Bookings"
+            endReachedLabel="No more bookings"
+            emptyContent={
+              <EmptyBookingsState
+                title="No bookings match your filter"
+                description="Try changing your status filter or search query."
+              />
+            }
+            renderItem={(booking) => (
+              <ProviderCard
+                avatarUri={getAvatarUri(booking.provider?.avatar)}
+                name={booking.provider?.name || 'Service Provider'}
+                serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
+                location={formatLocation(booking)}
+                rating={Number(booking.provider?.avg_rating || 0).toFixed(1)}
+                ordersCompleted=""
+                startingFromPrice={formatPrice(booking.invoice)}
+                bookingStatus={booking.status}
+                actionLabel="View Details"
+                variant="booking"
+                onPress={() => {
+                  router.push(ROUTES.customer.bookingDetail(booking.id));
+                }}
+              />
+            )}
+          />
+        )}
 
         <View className="h-3" />
       </ContentLayout>

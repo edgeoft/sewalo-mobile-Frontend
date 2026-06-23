@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,7 +13,6 @@ import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
 import { useUpdateProfile } from '@/api/user';
 import { useUploadFile } from '@/api/files/hooks';
-import ProfileFormSkeleton from '@/components/ui/ProfileFormSkeleton';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
@@ -91,7 +90,9 @@ export default function CustomerEditProfileScreen() {
       <Header variant="menu" showBackButton={true} showNotifications={false} />
 
       {isLoading ? (
-        <ProfileFormSkeleton />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#485aff" />
+        </View>
       ) : (
         <ContentLayout
           scrollable
