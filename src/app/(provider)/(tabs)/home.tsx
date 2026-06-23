@@ -20,6 +20,7 @@ export default function ProviderHomeScreen() {
           isScrolled={isScrolled}
           scrollYAnimated={scrollYAnimated}
           showNotifications={true}
+          showNotificationBadge
           onNotificationsPress={() => router.push(ROUTES.notifications)}
         />
       </View>

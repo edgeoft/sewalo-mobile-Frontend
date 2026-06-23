@@ -15,7 +15,7 @@ export default function HeaderIconButton({ icon, accessibilityLabel, onPress, ba
   return (
     <Pressable
       onPress={onPress}
-      className="h-9 w-9 items-center justify-center rounded-full bg-white active:opacity-80"
+      className="h-9 w-9 items-center justify-center active:opacity-60"
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
     >

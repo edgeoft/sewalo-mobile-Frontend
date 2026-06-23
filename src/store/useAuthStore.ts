@@ -1,4 +1,5 @@
 import { internalClient } from '@/api/clients/internal';
+import { queryClient } from '@/api/query/queryClient';
 import { getProfileAction, logoutAction } from '@/features/auth/api/actions';
 import { UserProfile } from '@/features/auth/api/types';
 import { USER_ROLES, UserRole } from '@/types';
@@ -60,6 +61,9 @@ export const useAuthStore = create<AuthState>((set) => ({
         console.warn('[AuthStore] Clear tokens failed:', err);
       }
     }
+
+    // Reset all TanStack Query caches to prevent stale data from previous session
+    queryClient.clear();
 
     // Reset Zustand state immediately
     set({

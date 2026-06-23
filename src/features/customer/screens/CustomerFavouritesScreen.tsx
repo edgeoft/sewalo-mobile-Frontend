@@ -30,7 +30,12 @@ export default function CustomerFavouritesScreen() {
 
   return (
     <View className="flex-1 bg-secondary">
-      <Header variant="menu" showNotifications onNotificationsPress={() => router.push(ROUTES.notifications)} />
+      <Header
+        variant="menu"
+        showNotifications
+        showNotificationBadge
+        onNotificationsPress={() => router.push(ROUTES.notifications)}
+      />
 
       <ContentLayout
         scrollable

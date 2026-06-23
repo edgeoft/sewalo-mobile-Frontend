@@ -20,10 +20,11 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
+import { useCreateBooking } from '@/api/bookings';
 import { ProviderDetail } from '../types';
 
 // Import subcomponents
-import BookingConfirmationModal from '../components/BookingConfirmationModal';
+import BookingConfirmationModal, { type BookingDetails } from '../components/BookingConfirmationModal';
 import ProviderBookingStickyBar from '../components/ProviderBookingStickyBar';
 import ProviderContactDetails from '../components/ProviderContactDetails';
 import ProviderHeaderCard from '../components/ProviderHeaderCard';
@@ -92,8 +93,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
     let total = 0;
     provider.individualServices.forEach((srv) => {
       if (selectedServices[srv.id]) {
-        // Strip out 'Rs.' and commas to parse the number
-        const priceNum = parseInt(srv.price.replace(/[^0-9]/g, ''), 10);
+        const cleaned = srv.price.replace(/Rs\.\s*/i, '').replace(/,/g, '');
+        const priceNum = Math.round(parseFloat(cleaned));
         if (!isNaN(priceNum)) {
           total += priceNum;
         }
@@ -142,27 +143,53 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   };
 
   // Handle final confirmation from the modal
-  const handleConfirmBooking = (details: any) => {
-    setIsBookingModalVisible(false);
+  const createBooking = useCreateBooking();
 
-    router.push({
-      pathname: ROUTES.bookingConfirmation,
-      params: {
-        providerName: provider.name,
-        providerAvatar: provider.avatarUri,
-        providerCategory: provider.serviceLabel,
-        providerVerified: provider.isVerified ? 'true' : 'false',
-        serviceDate: details.serviceDate,
-        startTime: details.startTime,
-        location: details.location || 'Kathmandu Metropolitan City',
-        services: JSON.stringify(modalServices),
-        totalPrice: modalPrice,
+  const handleConfirmBooking = (details: BookingDetails) => {
+    const payload = {
+      service_id: provider.serviceId || '',
+      service_date: details.serviceDate,
+      start_time: details.startTime,
+      address: details.location || 'Kathmandu Metropolitan City',
+      city: details.city || 'Kathmandu',
+      state: 'Bagmati',
+      country: 'Nepal',
+      additional_note: details.notes || undefined,
+      ...(bookingModalType === 'services'
+        ? {
+            service_offerings: provider.individualServices
+              .filter((s) => selectedServices[s.id])
+              .map((s) => ({
+                service_offering_id: s.id,
+                unit_price: Math.round(parseFloat(s.price.replace(/Rs\.\s*/i, '').replace(/,/g, ''))) || 0,
+              })),
+          }
+        : provider.specialPackage
+          ? {
+              service_packages: [
+                {
+                  service_package_id: provider.specialPackage.title,
+                  unit_price:
+                    Math.round(parseFloat(provider.specialPackage.price.replace(/Rs\.\s*/i, '').replace(/,/g, ''))) ||
+                    0,
+                },
+              ],
+            }
+          : {}),
+    };
+
+    createBooking.mutate(payload as any, {
+      onSuccess: (result) => {
+        setIsBookingModalVisible(false);
+        if (bookingModalType === 'services') {
+          setSelectedServices({});
+        }
+        router.push({
+          pathname: ROUTES.bookingConfirmation,
+          params: { bookingId: result.id },
+        });
       },
     });
-
-    if (bookingModalType === 'services') {
-      setSelectedServices({});
-    }
   };
 
   // Determine services and pricing details to pass to the modal
@@ -183,7 +210,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   const modalPrice = (() => {
     if (bookingModalType === 'package' && provider.specialPackage) {
-      const priceNum = parseInt(provider.specialPackage.price.replace(/[^0-9]/g, ''), 10);
+      const priceNum = Math.round(parseFloat(provider.specialPackage.price.replace(/Rs\.\s*/i, '').replace(/,/g, '')));
       return isNaN(priceNum) ? 0 : priceNum;
     }
     return totalSelectedPrice;
@@ -196,6 +223,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
         variant="menu"
         showBackButton={true}
         showNotifications={!isGuest}
+        showNotificationBadge={!isGuest}
         onNotificationsPress={() => router.push(ROUTES.notifications)}
       />
 

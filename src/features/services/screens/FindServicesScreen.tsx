@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments } from 'expo-router';
 import { useState, useMemo, useEffect, ComponentProps } from 'react';
-import { Pressable, Text, View, ScrollView, Alert, Modal, TextInput, Image } from 'react-native';
+import { Pressable, Text, View, ScrollView, Alert, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -141,6 +141,7 @@ export default function FindServicesScreen() {
       <Header
         variant="menu"
         showNotifications={!isGuest}
+        showNotificationBadge={!isGuest}
         onNotificationsPress={() => router.push(ROUTES.notifications)}
       />
 
@@ -198,15 +199,9 @@ export default function FindServicesScreen() {
           <Text className="text-lg font-sans-bold text-gray-950 mb-3 tracking-tight">Browse by category</Text>
 
           {isLoadingCategories ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 4, gap: 10 }}
-            >
-              {[1, 2, 3, 4, 5].map((i) => (
-                <View key={i} className="px-8 py-5 w-28 bg-gray-200 rounded-full animate-pulse" />
-              ))}
-            </ScrollView>
+            <View className="items-center justify-center py-8">
+              <ActivityIndicator size="large" color="#485aff" />
+            </View>
           ) : (
             <ScrollView
               horizontal
@@ -265,24 +260,8 @@ export default function FindServicesScreen() {
           <Text className="text-lg font-sans-bold text-gray-950 mb-4 tracking-tight">Service Providers</Text>
 
           {isLoadingServices ? (
-            <View className="gap-4">
-              {[1, 2, 3].map((i) => (
-                <View key={i} className="rounded-xl border border-gray-200 bg-white p-3 gap-3">
-                  <View className="flex-row gap-3">
-                    <View className="h-24 w-24 rounded-xl bg-gray-200 animate-pulse" />
-                    <View className="flex-1 justify-between py-1">
-                      <View className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
-                      <View className="h-4 w-20 bg-gray-200 rounded mt-1 animate-pulse" />
-                      <View className="h-4 w-24 bg-gray-200 rounded mt-1 animate-pulse" />
-                    </View>
-                  </View>
-                  <View className="h-px bg-gray-100 my-2" />
-                  <View className="flex-row justify-between items-center">
-                    <View className="h-4 w-28 bg-gray-200 rounded animate-pulse" />
-                    <View className="h-8 w-24 bg-gray-200 rounded-md animate-pulse" />
-                  </View>
-                </View>
-              ))}
+            <View className="flex-1 items-center justify-center py-20">
+              <ActivityIndicator size="large" color="#485aff" />
             </View>
           ) : verifiedServices.length === 0 ? (
             <View className="py-12 items-center justify-center">

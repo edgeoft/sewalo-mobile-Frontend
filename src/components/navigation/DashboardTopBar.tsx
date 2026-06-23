@@ -7,6 +7,7 @@ interface DashboardTopBarProps {
   onMenuPress?: () => void;
   onNotificationsPress?: () => void;
   showNotifications?: boolean;
+  showNotificationBadge?: boolean;
   isScrolled?: boolean;
   scrollYAnimated?: Animated.Value;
 }
@@ -15,6 +16,7 @@ export default function DashboardTopBar({
   onMenuPress,
   onNotificationsPress,
   showNotifications = false,
+  showNotificationBadge = false,
   isScrolled = false,
   scrollYAnimated,
 }: DashboardTopBarProps) {
@@ -78,6 +80,7 @@ export default function DashboardTopBar({
         onMenuPress={onMenuPress}
         onNotificationsPress={onNotificationsPress}
         showNotifications={showNotifications}
+        showNotificationBadge={showNotificationBadge}
         containerClassName="bg-transparent"
         includeBottomBorder={false}
       />
