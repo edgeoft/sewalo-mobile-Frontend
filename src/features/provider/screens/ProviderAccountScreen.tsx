@@ -145,11 +145,9 @@ export default function ProviderAccountScreen() {
                 <View className="flex-row items-center gap-0.5">
                   <Feather name="star" size={10} color="#f59e0b" />
                   <Text className="text-[10px] font-sans-bold text-gray-600">
-                    {user?.avg_rating !== null && user?.avg_rating !== undefined ? user.avg_rating.toFixed(1) : '0.0'}
+                    {user?.avg_rating ? Number(user.avg_rating).toFixed(1) : '0.0'}
                   </Text>
-                  <Text className="text-[10px] font-sans-medium text-gray-400">
-                    ({user?.avg_rating !== null && user?.avg_rating !== undefined ? '1' : '0'})
-                  </Text>
+                  <Text className="text-[10px] font-sans-medium text-gray-400">({user?.avg_rating ? '1' : '0'})</Text>
                 </View>
               </View>
             </View>
