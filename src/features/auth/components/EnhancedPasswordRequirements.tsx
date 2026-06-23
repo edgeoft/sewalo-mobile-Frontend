@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 
 interface EnhancedPasswordRequirementsProps {
   password: string;

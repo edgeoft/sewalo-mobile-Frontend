@@ -6,13 +6,12 @@ import { Feather } from '@expo/vector-icons';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import type { Booking } from '@/api/bookings';
+import type { Booking, BOOKING_STATUSES, PAYMENT_METHODS, type PaymentMethod } from '@/types';
 import RadialStepper from '@/components/common/RadialStepper';
 import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyCard';
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
-import { BOOKING_STATUSES, PAYMENT_METHODS, type PaymentMethod } from '@/types';
-import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api/bookings';
+import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api';
 import { getImageUrl } from '@/utils/image';
 
 function formatTime(timeString: string) {

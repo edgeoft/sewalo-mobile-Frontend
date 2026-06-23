@@ -1,7 +1,15 @@
 import { Alert } from 'react-native';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
-import { USER_ROLES } from '@/types';
+import {
+  USER_ROLES,
+  ForgotPasswordInput,
+  LoginInput,
+  ResendOtpInput,
+  ResetPasswordInput,
+  SignupInput,
+  VerifyOtpInput,
+} from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { ApiError } from '@/api/client/types';
@@ -14,14 +22,6 @@ import {
   signupAction,
   verifyOtpAction,
 } from './actions';
-import {
-  ForgotPasswordInput,
-  LoginInput,
-  ResendOtpInput,
-  ResetPasswordInput,
-  SignupInput,
-  VerifyOtpInput,
-} from './types';
 
 export const useSignup = () => {
   const router = useRouter();

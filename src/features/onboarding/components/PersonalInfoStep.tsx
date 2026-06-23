@@ -22,7 +22,7 @@ import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import LocationSelector from '@/components/ui/LocationSelector';
 
-import { PersonalInfoData } from '../data/schemas';
+import { PersonalInfoData } from '@/types';
 
 interface PersonalInfoStepProps {
   control: Control<PersonalInfoData>;
@@ -99,7 +99,7 @@ export default function PersonalInfoStep({
         const pickedUri = result.assets[0].uri;
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong while picking the avatar.');
     }
   };

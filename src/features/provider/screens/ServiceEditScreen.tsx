@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocalSearchParams, useRouter, Href } from 'expo-router';
-import { useForm, Resolver } from 'react-hook-form';
-import { Alert, Text, View, ActivityIndicator } from 'react-native';
+import { useForm, Resolver, useWatch } from 'react-hook-form';
+import { View, ActivityIndicator } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { serviceFormSchema, ServiceFormData } from '../data/serviceSchemas';
+import { serviceFormSchema } from '@/schemas/service';
+import { ServiceFormData, DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
 import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation } from '../api/hooks/services';
-import { useUploadFile } from '@/api/files/hooks';
+import { useUploadFile } from '@/api';
 import { ROUTES } from '@/constants/routes';
-import { ENV } from '@/constants/env';
 import { getImageUrl } from '@/utils/image';
 
 // Import subcomponents
@@ -21,8 +21,6 @@ import ServiceFormRates from '../components/ServiceFormRates';
 import ServiceFormDelivery from '../components/ServiceFormDelivery';
 import ServiceFormStandout from '../components/ServiceFormStandout';
 import ServiceStickyFooter from '../components/ServiceStickyFooter';
-
-import { DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
 
 const defaultValues: ServiceFormData = {
   title: '',
@@ -53,7 +51,6 @@ export default function ServiceEditScreen() {
     control,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<ServiceFormData>({
@@ -113,13 +110,13 @@ export default function ServiceEditScreen() {
   }, [isEditMode, service, reset]);
 
   // Watch form fields for reactive UI updates
-  const watchCategoryId = watch('categoryId');
-  const watchServiceTypeIds = watch('serviceTypeIds') || [];
-  const watchRates = watch('rates') || {};
-  const watchDeliveryTypes = watch('deliveryTypes') || [];
-  const watchWorkSamples = watch('workSamples') || [];
-  const watchHashtags = watch('hashtags') || [];
-  const watchPackages = watch('packages') || [];
+  const watchCategoryId = useWatch({ control, name: 'categoryId' });
+  const watchServiceTypeIds = useWatch({ control, name: 'serviceTypeIds' }) || [];
+  const watchRates = useWatch({ control, name: 'rates' }) || {};
+  const watchDeliveryTypes = useWatch({ control, name: 'deliveryTypes' }) || [];
+  const watchWorkSamples = useWatch({ control, name: 'workSamples' }) || [];
+  const watchHashtags = useWatch({ control, name: 'hashtags' }) || [];
+  const watchPackages = useWatch({ control, name: 'packages' }) || [];
 
   if (isEditMode && isServiceLoading) {
     return (
@@ -202,7 +199,6 @@ export default function ServiceEditScreen() {
     }
   };
 
-  const hasFormErrors = Object.keys(errors).length > 0;
   const loading = isPending || isUpdating;
   const success = isSuccess || isUpdateSuccess;
 

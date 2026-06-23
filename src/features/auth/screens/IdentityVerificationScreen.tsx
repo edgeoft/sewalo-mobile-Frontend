@@ -12,8 +12,7 @@ import Button from '@/components/ui/Button';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
-import { useUploadFile } from '@/api/files/hooks';
-import { useUpdateProfile } from '@/api/user';
+import { useUploadFile, useUpdateProfile } from '@/api';
 import { getImageUrl } from '@/features/auth/utils/image';
 
 interface IdentityVerificationScreenProps {
@@ -61,7 +60,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setDocumentImage(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong while selecting the image.');
     }
   };

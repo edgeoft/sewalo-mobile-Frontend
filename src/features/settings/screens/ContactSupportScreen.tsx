@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Alert, Linking, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
 
 import Header from '@/components/navigation/Header';
@@ -31,7 +31,6 @@ export default function ContactSupportScreen() {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<SupportTicketFormData>({
     defaultValues: {
@@ -43,8 +42,8 @@ export default function ContactSupportScreen() {
     },
   });
 
-  const watchSubject = watch('subject') || '';
-  const watchMessage = watch('message') || '';
+  const watchSubject = useWatch({ control, name: 'subject' }) || '';
+  const watchMessage = useWatch({ control, name: 'message' }) || '';
 
   const handleCallSupport = () => {
     Alert.alert(

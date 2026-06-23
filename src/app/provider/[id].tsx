@@ -5,9 +5,9 @@ import { Feather } from '@expo/vector-icons';
 import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsScreen';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
-import { useGetProviderDetailsQuery } from '@/api/user';
+import { useGetProviderDetailsQuery } from '@/api';
 import { ProviderDetail } from '@/features/services/types';
-import { ProviderDetailsResponse } from '@/api/user/types/profile';
+import { ProviderDetailsResponse } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
 export default function DynamicProviderDetailRoute() {

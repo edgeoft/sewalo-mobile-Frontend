@@ -11,7 +11,7 @@ import {
   FinanceAccount,
   GetFinanceAccountsResponse,
   UpdateFinanceAccountPayload,
-} from '../types/finance';
+} from '@/types';
 
 // Query to retrieve user bank accounts
 export const useGetFinanceAccountsQuery = (enabled: boolean = true) => {

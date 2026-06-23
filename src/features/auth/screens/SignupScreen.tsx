@@ -14,7 +14,7 @@ import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
 import PhoneNumberField from '../components/PhoneNumberField';
-import { getSignupSchema, SignupFormData } from '../data/schemas';
+import { getSignupSchema, SignupFormData } from '@/schemas/auth';
 import { useSignup } from '../api/hooks';
 
 export default function SignupScreen() {

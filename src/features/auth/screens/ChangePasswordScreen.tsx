@@ -12,7 +12,7 @@ import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 import PasswordField from '../components/PasswordField';
 import EnhancedPasswordRequirements from '../components/EnhancedPasswordRequirements';
-import { getChangePasswordSchema, ChangePasswordFormData } from '../data/schemas';
+import { getChangePasswordSchema, ChangePasswordFormData } from '@/schemas/auth';
 
 import { useChangePassword } from '@/api';
 

@@ -9,8 +9,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/ui/Button';
 
 import FinancialAccountForm from './FinancialAccountForm';
-import { financeAccountSchema, FinanceAccountFormValues } from '../data/schemas';
-import { FinanceAccountType, FinanceAccount } from '../api/types/finance';
+import { financeAccountSchema, FinanceAccountFormValues } from '@/schemas/provider';
+import { FinanceAccountType, FinanceAccount } from '@/types';
 import {
   useCreateFinanceAccount,
   useDeleteFinanceAccount,

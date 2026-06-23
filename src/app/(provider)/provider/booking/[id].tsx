@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import ProviderBookingDetailsScreen from '@/features/provider/screens/ProviderBookingDetailsScreen';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
-import { useGetBookingByIdQuery } from '@/api/bookings';
+import { useGetBookingByIdQuery } from '@/api';
 
 export default function ProviderBookingDetailRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();

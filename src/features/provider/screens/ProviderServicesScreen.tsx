@@ -1,90 +1,18 @@
-import React, { useState } from 'react';
-import { Text, View, Alert, Image, Pressable, Linking, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ActivityIndicator, Alert, Image, Linking, Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { SectionHeader } from '@/components/common';
-import { Carousel } from '@/components/ui';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
+import { Carousel } from '@/components/ui';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
-import { useGetMyServicesQuery } from '../api/hooks/services';
-import { ENV } from '@/constants/env';
+import { SERVICE_LOCATIONS, USER_STATUSES } from '@/types';
 import { getImageUrl } from '@/utils/image';
-import { SERVICE_LOCATIONS } from '@/types';
-
-// Mock active service data
-const ACTIVE_SERVICE_MOCK = {
-  name: 'Premium Home Sanitization & Deep Cleaning',
-  category: 'Cleaning Services',
-  description:
-    'We provide professional deep cleaning services using eco-friendly materials. Our team of certified professionals ensures a 100% dust-free and sanitized environment for your homes and offices.',
-  locations: [
-    {
-      type: 'At Customer Location',
-      active: true,
-      icon: 'map-pin' as const,
-      bg: 'bg-[#eef1ff]',
-      text: 'text-primary',
-      iconColor: '#485aff',
-    },
-    {
-      type: 'Fixed Provider Studio',
-      active: false,
-      icon: 'home' as const,
-      bg: 'bg-gray-50',
-      text: 'text-gray-400',
-      iconColor: '#94a3b8',
-    },
-    {
-      type: 'Remote / Online Call',
-      active: true,
-      icon: 'globe' as const,
-      bg: 'bg-[#e8fbf3]',
-      text: 'text-emerald-700',
-      iconColor: '#10b981',
-    },
-  ],
-  hashtags: ['#DeepCleaning', '#Sanitization', '#KathmanduServices', '#EcoFriendly', '#CleanHome'],
-  portfolioPhotos: [
-    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1563453392212-326f5e854473?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=400&auto=format&fit=crop',
-  ],
-  portfolioUrl: 'https://www.cleansewalo.com',
-  subcategories: [
-    { id: 'sub-1', title: 'Bathroom Deep Cleaning', price: 'Rs. 1,200', duration: '2 hrs' },
-    { id: 'sub-2', title: 'Kitchen Sanitization', price: 'Rs. 1,800', duration: '3 hrs' },
-    { id: 'sub-3', title: 'Sofa & Carpet Shampooing', price: 'Rs. 1,500', duration: '1.5 hrs' },
-    { id: 'sub-4', title: 'Full House Dusting & Polish', price: 'Rs. 2,000', duration: '4 hrs' },
-  ],
-  packages: [
-    {
-      id: 'pkg-1',
-      title: 'Standard Home Makeover',
-      description:
-        'Includes full kitchen sanitization, bathroom deep cleaning, and sofa shampooing with a 2-day warranty.',
-      price: 'Rs. 4,500',
-    },
-    {
-      id: 'pkg-2',
-      title: 'Express Dusting & Sanitization',
-      description: 'Includes full living room and kitchen sanitization, vacuuming, and trash disposal.',
-      price: 'Rs. 2,200',
-    },
-    {
-      id: 'pkg-3',
-      title: 'Complete Sanitization Pro',
-      description: 'Full house sanitization with professional UV light treatment and eco-friendly products.',
-      price: 'Rs. 6,000',
-    },
-  ],
-};
+import { useGetMyServicesQuery } from '../api/hooks/services';
 
 export default function ProviderServicesScreen() {
   const router = useRouter();
@@ -200,27 +128,27 @@ export default function ProviderServicesScreen() {
                 <View className="flex-1 mr-2">
                   <View className="flex-row items-center flex-wrap gap-x-2 gap-y-1">
                     <Text className="text-xl font-sans-extrabold text-gray-900 leading-7">{service.name}</Text>
-                    {service.provider?.status === 'verified' && (
+                    {service.provider?.status === USER_STATUSES.Verified && (
                       <View className="rounded-full bg-emerald-50 border border-emerald-200/50 px-2 py-0.5 self-start">
                         <Text className="text-[8px] font-sans-bold text-emerald-700 uppercase">Verified</Text>
                       </View>
                     )}
-                    {service.provider?.status === 'completed' && (
+                    {service.provider?.status === USER_STATUSES.Completed && (
                       <View className="rounded-full bg-amber-50 border border-amber-200/50 px-2 py-0.5 self-start">
                         <Text className="text-[8px] font-sans-bold text-amber-700 uppercase">Under Review</Text>
                       </View>
                     )}
-                    {service.provider?.status === 'pending' && (
+                    {service.provider?.status === USER_STATUSES.Pending && (
                       <View className="rounded-full bg-gray-50 border border-gray-200/50 px-2 py-0.5 self-start">
                         <Text className="text-[8px] font-sans-bold text-gray-500 uppercase">Pending</Text>
                       </View>
                     )}
-                    {service.provider?.status === 'rejected' && (
+                    {service.provider?.status === USER_STATUSES.Rejected && (
                       <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
                         <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Rejected</Text>
                       </View>
                     )}
-                    {service.provider?.status === 'suspended' && (
+                    {service.provider?.status === USER_STATUSES.Suspended && (
                       <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
                         <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Suspended</Text>
                       </View>
@@ -234,9 +162,7 @@ export default function ProviderServicesScreen() {
                 </View>
                 {/* Edit Button */}
                 <Pressable
-                  onPress={() =>
-                    router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'edit' } })
-                  }
+                  onPress={() => router.push({ pathname: ROUTES.provider.serviceEdit, params: { mode: 'edit' } })}
                   className="h-8 w-8 rounded-full bg-gray-50 border border-gray-200 items-center justify-center active:bg-gray-150"
                 >
                   <Feather name="edit-2" size={13} color="#485aff" />

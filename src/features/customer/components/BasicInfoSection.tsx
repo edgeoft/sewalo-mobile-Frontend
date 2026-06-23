@@ -97,7 +97,7 @@ export default function BasicInfoSection({
         const pickedUri = result.assets[0].uri;
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong while picking the avatar.');
     }
   };

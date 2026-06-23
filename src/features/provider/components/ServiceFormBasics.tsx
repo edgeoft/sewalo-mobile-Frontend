@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import {
-  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -16,7 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { SERVICE_CATEGORIES, getServiceTypesByCategory } from '../constants/serviceOptions';
-import { ServiceFormData } from '../data/serviceSchemas';
+import { ServiceFormData } from '@/types';
 import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';
 
 interface ServiceFormBasicsProps {

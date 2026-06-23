@@ -14,7 +14,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useCategoriesQuery } from '@/api/categories';
+import { useCategoriesQuery } from '@/api';
 
 export default function GuestHomeScreen() {
   const router = useRouter();

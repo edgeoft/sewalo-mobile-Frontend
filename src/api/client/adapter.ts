@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { isCancel } from 'axios';
 import { Adapter, ResponseCtx, createApiError } from './types';
 
 export const axiosAdapter: Adapter = async (reqCtx): Promise<ResponseCtx> => {
@@ -26,7 +26,7 @@ export const axiosAdapter: Adapter = async (reqCtx): Promise<ResponseCtx> => {
   } catch (error: any) {
     const durationMs = Date.now() - startTime;
 
-    if (axios.isCancel(error)) {
+    if (isCancel(error)) {
       throw createApiError('Request cancelled', {
         code: 'CANCELLED',
         request: reqCtx,

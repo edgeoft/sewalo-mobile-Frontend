@@ -21,15 +21,20 @@ export {
 } from './client/types';
 
 // Storage Adapter
-export { StorageAdapter, secureStorageAdapter, createMemoryStorageAdapter } from './auth/storage';
+export { StorageAdapter, secureStorageAdapter, createMemoryStorageAdapter } from './client/auth/storage';
 
 // Query Integration
-export { queryClient } from './query/queryClient';
-export { defaultQueryOptions } from './query/queryConfig';
-export { globalErrorHandler } from './query/errorHandler';
+export { queryClient } from './client/query/queryClient';
+export { defaultQueryOptions } from './client/query/queryConfig';
+export { globalErrorHandler } from './client/query/errorHandler';
 
 // Configured client singletons
-export { internalClient } from './clients/internal';
+export { internalClient } from './client/instances/internal';
 
-// User API
-export * from './user';
+// Services API re-exports
+export * from './services/user';
+export * from './services/bookings';
+export * from './services/categories';
+export * from './services/files';
+export * from './services/notifications';
+export * from './services/referral';

@@ -8,8 +8,8 @@ import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
-import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api/user';
-import type { FavoriteItem } from '@/api/user/types/favourites';
+import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
+import type { FavoriteItem } from '@/types';
 import { getImageUrl } from '@/features/auth/utils/image';
 
 import Button from '@/components/ui/Button';

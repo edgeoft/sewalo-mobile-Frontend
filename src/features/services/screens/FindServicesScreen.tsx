@@ -9,7 +9,7 @@ import Header from '@/components/navigation/Header';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
-import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api/user';
+import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 

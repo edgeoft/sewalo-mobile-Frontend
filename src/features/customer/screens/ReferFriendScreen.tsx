@@ -8,7 +8,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
-import { useReferralCodeQuery, useReferralStatsQuery } from '@/api/referral';
+import { useReferralCodeQuery, useReferralStatsQuery } from '@/api';
 import { useAuth } from '@/providers/AuthProvider';
 
 const APP_LINK = 'https://sipalu.com';

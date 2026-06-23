@@ -1,6 +1,5 @@
-import { UserProfile } from '@/features/auth/api/types';
+import { UserProfile, UserRole } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
-import { UserRole } from '@/types';
 import React, { createContext, useContext, useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 

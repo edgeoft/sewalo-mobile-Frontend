@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { Alert, View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -10,8 +10,8 @@ import RadialStepper from '@/components/common/RadialStepper';
 import ProviderInvoiceEditorCard from '../components/ProviderInvoiceEditorCard';
 import Button from '@/components/ui/Button';
 
-import type { Booking } from '@/api/bookings';
-import { useUpdateBooking, useUpdateInvoiceItems, useConfirmPayment } from '@/api/bookings';
+import type { Booking } from '@/types';
+import { useUpdateBooking, useConfirmPayment } from '@/api';
 import { BOOKING_STATUSES } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
@@ -50,7 +50,6 @@ function SectionDivider() {
 export default function ProviderBookingDetailsScreen({ booking: initialBooking }: ProviderBookingDetailsScreenProps) {
   const insets = useSafeAreaInsets();
   const updateBooking = useUpdateBooking();
-  const updateInvoiceItems = useUpdateInvoiceItems();
   const confirmPayment = useConfirmPayment();
 
   const [currentStatus, setCurrentStatus] = useState(initialBooking.status);
@@ -65,7 +64,6 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const serviceDate = formatDate(initialBooking.service_date || '');
   const startTime = formatTime(initialBooking.start_time || '');
   const location = initialBooking.address || 'Kathmandu Metropolitan City';
-  const coordinates = initialBooking.coordinates;
   const additionalNote = initialBooking.additional_note;
   const descriptionText = initialBooking.service?.description;
   const invoiceData = initialBooking.invoice;

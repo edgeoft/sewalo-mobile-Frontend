@@ -8,15 +8,14 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { SegmentedControl } from '@/components/ui';
 import type { SegmentedControlOption } from '@/components/ui/SegmentedControl';
-import { NOTIFICATION_FILTERS, type NotificationFilter } from '@/types';
+import { NOTIFICATION_FILTERS, type NotificationFilter, Notification } from '@/types';
 import {
   useGetNotificationsQuery,
   useUnreadCountQuery,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
   useDeleteNotification,
-} from '@/api/notifications';
-import type { Notification } from '@/api/notifications';
+} from '@/api';
 import NotificationCard from '../components/NotificationCard';
 
 export default function NotificationsScreen() {

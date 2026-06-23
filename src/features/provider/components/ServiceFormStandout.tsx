@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 import Input from '@/components/ui/Input';
-import { ServiceFormData } from '../data/serviceSchemas';
+import { ServiceFormData } from '@/types';
 
 interface ServiceFormStandoutProps {
   control: Control<ServiceFormData>;
@@ -76,7 +76,7 @@ export default function ServiceFormStandout({
           }
         }, 300);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong while picking the image.');
     }
   };

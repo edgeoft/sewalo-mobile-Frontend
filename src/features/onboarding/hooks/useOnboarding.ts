@@ -1,34 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import { Alert } from 'react-native';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Feather } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { Alert } from 'react-native';
 
+import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAuthStore } from '@/store/useAuthStore';
-import { UserRole } from '@/types';
-import { ROUTES } from '@/constants/routes';
-
-import { personalInfoSchema, PersonalInfoData } from '../data/schemas';
-
 import {
-  useGetProfileQuery,
-  useUpdateProfile,
-  useCompleteProfile,
-  UpdateProfilePayload,
-  CompleteProfilePayload,
   Availability,
+  CompleteProfilePayload,
   EducationItemPayload,
   ExperienceItemPayload,
-  LocationData,
-} from '@/api/user';
-import { useGetFinanceAccountsQuery, useCreateFinanceAccount } from '@/features/provider/api/hooks/finance';
-import { useUploadFile } from '@/api/files/hooks';
+  PersonalInfoData,
+  UpdateProfilePayload,
+  UserRole,
+} from '@/types';
 
-import { FinanceAccountType } from '@/features/provider/api/types/finance';
+import { personalInfoSchema } from '@/schemas/onboarding';
 
-import { parseTime12h, convertTimeTo24h } from '@/utils/time';
+import { useCompleteProfile, useGetProfileQuery, useUpdateProfile, useUploadFile } from '@/api';
+
+import { convertTimeTo24h, parseTime12h } from '@/utils/time';
 
 import { EducationItem, ExperienceItem } from '../components/SkillsExperienceStep';
 
@@ -52,10 +46,8 @@ export function useOnboarding() {
 
   // React Query API hooks
   const { data: profileResponse, refetch: refetchProfile } = useGetProfileQuery();
-  const { data: financeAccountsResponse } = useGetFinanceAccountsQuery(role === 'provider');
   const { mutateAsync: updateProfile } = useUpdateProfile();
   const { mutateAsync: completeProfile } = useCompleteProfile();
-  const { mutateAsync: createFinanceAccount } = useCreateFinanceAccount();
   const { mutateAsync: uploadFile } = useUploadFile();
 
   // --- Step 1: Personal Info Form State ---
@@ -63,7 +55,6 @@ export function useOnboarding() {
     control: personalInfoControl,
     handleSubmit: handlePersonalInfoSubmit,
     setValue: setPersonalInfoValue,
-    watch: watchPersonalInfo,
     formState: { errors: personalInfoErrors },
   } = useForm<PersonalInfoData>({
     resolver: zodResolver(personalInfoSchema),
@@ -79,9 +70,9 @@ export function useOnboarding() {
     mode: 'onBlur',
   });
 
-  const watchLanguages = watchPersonalInfo('languages') || [];
-  const watchDateOfBirth = watchPersonalInfo('dateOfBirth') || '';
-  const watchAvatar = watchPersonalInfo('avatar') || '';
+  const watchLanguages = useWatch({ control: personalInfoControl, name: 'languages' }) || [];
+  const watchDateOfBirth = useWatch({ control: personalInfoControl, name: 'dateOfBirth' }) || '';
+  const watchAvatar = useWatch({ control: personalInfoControl, name: 'avatar' }) || '';
 
   // --- Step 2: Skills & Experience Form State (Provider Only) ---
   const [education, setEducation] = useState<EducationItem[]>([]);
@@ -145,7 +136,7 @@ export function useOnboarding() {
 
   const totalFormSteps = steps.length - 2;
 
-  // --- Prepopulate Onboarding Profile Data when Query Returns ---
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!profileResponse?.user) return;
     const profile = profileResponse.user;
@@ -240,7 +231,9 @@ export function useOnboarding() {
       };
       setActiveIndex(getInitialStepIndex());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileResponse, role]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // --- Prepopulate Finance Accounts when Query Returns ---
   // Handled entirely by PayoutAccountsManager using its own query hook

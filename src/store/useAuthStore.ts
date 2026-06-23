@@ -1,8 +1,7 @@
-import { internalClient } from '@/api/clients/internal';
-import { queryClient } from '@/api/query/queryClient';
+import { internalClient } from '@/api/client/instances/internal';
+import { queryClient } from '@/api/client/query/queryClient';
 import { getProfileAction, logoutAction } from '@/features/auth/api/actions';
-import { UserProfile } from '@/features/auth/api/types';
-import { USER_ROLES, UserRole } from '@/types';
+import { UserProfile, USER_ROLES, UserRole } from '@/types';
 import { create } from 'zustand';
 
 interface AuthState {

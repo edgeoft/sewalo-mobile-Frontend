@@ -11,7 +11,7 @@ import AuthFooterLink from '../components/AuthFooterLink';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PhoneNumberField from '../components/PhoneNumberField';
-import { getSigninSchema, SigninFormData } from '../data/schemas';
+import { getSigninSchema, SigninFormData } from '@/schemas/auth';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';

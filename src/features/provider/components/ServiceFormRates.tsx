@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 
 import Input from '@/components/ui/Input';
 import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
-import { ServiceFormData } from '../data/serviceSchemas';
+import { ServiceFormData } from '@/types';
 import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
 import BillingBasisGuideModal from './BillingBasisGuideModal';
 import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';

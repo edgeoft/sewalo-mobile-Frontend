@@ -20,8 +20,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
-import { useCreateBooking } from '@/api/bookings';
-import { useAddRemoveFavorite } from '@/api/user';
+import { useCreateBooking, useAddRemoveFavorite } from '@/api';
 import { ProviderDetail } from '../types';
 
 // Import subcomponents

@@ -15,8 +15,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useCreateRating, useUpdateRating } from '@/api/bookings';
-import type { Rating } from '@/api/bookings';
+import { useCreateRating, useUpdateRating } from '@/api';
+import type { Rating } from '@/types';
 
 interface RatingModalProps {
   visible: boolean;

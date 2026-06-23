@@ -1,4 +1,4 @@
-import { internalClient } from '@/api/clients/internal';
+import { internalClient } from '@/api/client/instances/internal';
 import {
   SignupInput,
   SignupResponse,
@@ -14,7 +14,7 @@ import {
   ResetPasswordResponse,
   GetProfileResponse,
   LogoutResponse,
-} from './types';
+} from '@/types';
 
 // API client endpoints
 export const signupAction = async (data: SignupInput): Promise<SignupResponse> => {

@@ -6,7 +6,7 @@ import LanguageSelector from '@/components/ui/LanguageSelector';
 import HeaderIconButton from '@/components/ui/HeaderIconButton';
 import TopBar from './TopBar';
 import { useAuth } from '@/providers/AuthProvider';
-import { useUnreadCountQuery } from '@/api/notifications';
+import { useUnreadCountQuery } from '@/api';
 
 interface HeaderBaseProps {
   showBackButton?: boolean;

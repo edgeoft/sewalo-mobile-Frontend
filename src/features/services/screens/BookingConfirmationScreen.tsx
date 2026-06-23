@@ -8,7 +8,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
-import { useGetBookingByIdQuery } from '@/api/bookings';
+import { useGetBookingByIdQuery } from '@/api';
 import { getImageUrl } from '@/utils/image';
 import BookingAnimatedCheckmark from '../components/BookingAnimatedCheckmark';
 

@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import Button from '@/components/ui/Button';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PhoneNumberField from '../components/PhoneNumberField';
-import { ForgotPasswordFormData, getForgotPasswordSchema } from '../data/schemas';
+import { ForgotPasswordFormData, getForgotPasswordSchema } from '@/schemas/auth';
 
 import { useForgotPassword } from '../api/hooks';
 

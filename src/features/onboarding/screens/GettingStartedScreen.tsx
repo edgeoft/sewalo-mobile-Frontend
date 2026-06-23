@@ -20,8 +20,6 @@ import FinishOnboardingStep from '../components/FinishOnboardingStep';
 
 // Hook
 import { useOnboarding } from '../hooks/useOnboarding';
-import { Control, FieldErrors } from 'react-hook-form';
-import { FinancialData } from '../data/schemas';
 
 export default function GettingStartedScreen() {
   const {

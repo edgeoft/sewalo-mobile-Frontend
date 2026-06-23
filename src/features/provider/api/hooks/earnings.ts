@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getEarningSummaryAction, getMyTransactionsAction } from '../actions/earnings';
-import { GetEarningSummaryResponse, GetMyTransactionsResponse } from '../types/earnings';
+import { GetEarningSummaryResponse, GetMyTransactionsResponse } from '@/types';
 
 export const useEarningSummaryQuery = (
   options?: Omit<UseQueryOptions<GetEarningSummaryResponse, Error>, 'queryKey' | 'queryFn'>,

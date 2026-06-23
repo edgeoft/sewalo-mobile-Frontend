@@ -1,4 +1,17 @@
-import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { type BookingStatus } from '@/types';
+
+export const BOOKING_STATUSES = {
+  All: 'all',
+  Pending: 'pending',
+  Confirmed: 'confirmed',
+  InProgress: 'in_progress',
+  Completed: 'completed',
+  Cancelled: 'cancelled',
+  Rejected: 'rejected',
+  ReadyToPay: 'ready_to_pay',
+  PaymentInitiated: 'payment_initiated',
+  Paid: 'paid',
+} as const;
 
 export interface BookingStatusPresentation {
   label: string;

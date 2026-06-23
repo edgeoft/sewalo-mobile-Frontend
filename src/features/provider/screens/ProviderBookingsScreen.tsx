@@ -14,7 +14,7 @@ import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
-import { useGetBookingsQuery, useUpdateBooking } from '@/api/bookings';
+import { useGetBookingsQuery, useUpdateBooking } from '@/api';
 import { getImageUrl } from '@/utils/image';
 
 function formatDate(dateString: string) {
@@ -52,7 +52,7 @@ export default function ProviderBookingsScreen() {
   const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, limit: 50 });
   const updateBooking = useUpdateBooking();
 
-  const bookings = bookingsData?.data || [];
+  const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
   const countsByStatus = useMemo(() => {
     const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(

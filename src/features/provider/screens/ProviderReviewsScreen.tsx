@@ -6,8 +6,8 @@ import { Feather } from '@expo/vector-icons';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader, LoadMoreList } from '@/components/common';
-import { useGetMyRatingsQuery } from '@/api/bookings';
-import type { Rating } from '@/api/bookings';
+import { useGetMyRatingsQuery } from '@/api';
+import type { Rating } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
 function formatDate(isoString: string) {

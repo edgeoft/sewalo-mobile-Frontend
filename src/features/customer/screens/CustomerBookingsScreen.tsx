@@ -13,7 +13,7 @@ import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
-import { useGetMyBookingsQuery } from '@/api/bookings';
+import { useGetMyBookingsQuery } from '@/api';
 import { getImageUrl } from '@/utils/image';
 
 export default function CustomerBookingsScreen() {
@@ -26,7 +26,7 @@ export default function CustomerBookingsScreen() {
   const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
   const { data: bookingsData, isLoading } = useGetMyBookingsQuery({ status: statusParam, limit: 50 });
 
-  const bookings = bookingsData?.data || [];
+  const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
   const countsByStatus = useMemo(() => {
     const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(

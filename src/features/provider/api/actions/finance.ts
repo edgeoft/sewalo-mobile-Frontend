@@ -1,10 +1,10 @@
-import { internalClient } from '@/api/clients/internal';
+import { internalClient } from '@/api/client/instances/internal';
 import {
   CreateFinanceAccountPayload,
   FinanceAccount,
   GetFinanceAccountsResponse,
   UpdateFinanceAccountPayload,
-} from '../types/finance';
+} from '@/types';
 
 export const getFinanceAccountsAction = async (): Promise<GetFinanceAccountsResponse> => {
   return internalClient.get<GetFinanceAccountsResponse>('/finance-accounts');

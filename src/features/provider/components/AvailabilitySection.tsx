@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 
 import Button from '@/components/ui/Button';
 
-import { Availability } from '@/api/user';
+import { Availability } from '@/types';
 
 interface AvailabilitySectionProps {
   workingDays: Availability;

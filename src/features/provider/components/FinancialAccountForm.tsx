@@ -5,9 +5,9 @@ import { View } from 'react-native';
 import { Input } from '@/components/ui';
 import SelectSheet, { SelectOptionItem } from '@/components/ui/SelectSheet';
 
-import { FinanceAccountType } from '../api/types/finance';
+import { FinanceAccountType } from '@/types';
 import { NEPAL_BANKS, DIGITAL_WALLETS } from '../constants/finance';
-import { FinanceAccountFormValues } from '../data/schemas';
+import { FinanceAccountFormValues } from '@/schemas/provider';
 
 interface FinancialAccountFormProps {
   control: Control<FinanceAccountFormValues>;

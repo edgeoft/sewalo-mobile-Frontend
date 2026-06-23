@@ -267,6 +267,7 @@ export default function LocationMapPicker({
     if (!initialAddress) {
       marker.fire('dragend');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapLibraryLoaded, provider]);
 
   // Google Maps initialization logic
@@ -318,6 +319,7 @@ export default function LocationMapPicker({
     if (!initialAddress) {
       handleGoogleMarkerPosition(marker.getPosition());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapLibraryLoaded, provider]);
 
   // Search input typing debounce

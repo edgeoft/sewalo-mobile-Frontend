@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import type { Notification } from '@/api/notifications';
+import type { Notification } from '@/types';
 
 function getTypeIcon(type: string): keyof typeof Feather.glyphMap {
   if (type.includes('booking')) return 'calendar';

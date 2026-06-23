@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
-import type { Category } from '@/api/categories';
+import type { Category } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 import HomeTopSectionServiceChip from './HomeTopSectionServiceChip';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Header from '@/components/navigation/Header';
@@ -11,8 +11,7 @@ import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSect
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
-import { useUpdateProfile } from '@/api/user';
-import { useUploadFile } from '@/api/files/hooks';
+import { useUpdateProfile, useUploadFile } from '@/api';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
@@ -27,7 +26,6 @@ export default function CustomerEditProfileScreen() {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<BasicInfoFormData>({
     defaultValues: {
@@ -42,9 +40,9 @@ export default function CustomerEditProfileScreen() {
     mode: 'onBlur',
   });
 
-  const watchLanguages = watch('languages') || [];
-  const watchDateOfBirth = watch('dateOfBirth') || '';
-  const watchAvatar = watch('avatar') || null;
+  const watchLanguages = useWatch({ control, name: 'languages' }) || [];
+  const watchDateOfBirth = useWatch({ control, name: 'dateOfBirth' }) || '';
+  const watchAvatar = useWatch({ control, name: 'avatar' }) || null;
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {

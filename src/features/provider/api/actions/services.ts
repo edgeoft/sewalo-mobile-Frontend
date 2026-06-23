@@ -1,5 +1,5 @@
-import { internalClient } from '@/api/clients/internal';
-import { Category, SubCategory } from '@/api/user/types/category';
+import { internalClient } from '@/api/client/instances/internal';
+import { Category, SubCategory } from '@/types';
 
 export interface CreateServiceOffering {
   sub_category_id: string;

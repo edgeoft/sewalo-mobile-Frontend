@@ -9,7 +9,7 @@ import { useResetPassword } from '../api/hooks';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
-import { getResetPasswordSchema, ResetPasswordFormData } from '../data/schemas';
+import { getResetPasswordSchema, ResetPasswordFormData } from '@/schemas/auth';
 
 export default function ResetPasswordScreen() {
   const { t } = useTranslation();

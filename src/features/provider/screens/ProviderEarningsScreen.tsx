@@ -11,7 +11,7 @@ import { ROUTES } from '@/constants/routes';
 
 import Button from '@/components/ui/Button';
 import { useCommissionSummaryQuery, useCommissionsQuery } from '../api/hooks/commissions';
-import { Commission, COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '../api/types/commissions';
+import { Commission, COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '@/types';
 import { formatDate } from '@/utils/time';
 
 type EarningsTab = COMMISSION_TYPE;
@@ -44,7 +44,6 @@ export default function ProviderEarningsScreen() {
     limit: 100,
   });
 
-  const isLoading = isSummaryLoading || isCommissionsLoading;
   const isError = isSummaryError || isCommissionsError;
 
   const handleRetry = () => {

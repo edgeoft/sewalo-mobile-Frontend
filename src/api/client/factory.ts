@@ -1,19 +1,19 @@
 import { ApiClient, ApiClientConfig, RequestCtx, TokenManager } from './types';
 import { axiosAdapter } from './adapter';
 import { compose } from './pipeline';
-import { correlationIdInterceptor } from '../interceptors/correlationId.interceptor';
-import { loggingInterceptor } from '../interceptors/logging.interceptor';
-import { telemetryInterceptor } from '../interceptors/telemetry.interceptor';
-import { authInterceptor } from '../interceptors/auth.interceptor';
-import { cleanS3Interceptor } from '../interceptors/cleanS3.interceptor';
-import { createSingleTokenManager } from '../auth/singleTokenManager';
-import { createSlotTokenManager } from '../auth/slotManager';
-import { secureStorageAdapter } from '../auth/storage';
-import { createCacheStore } from '../cache/cacheStore';
-import { cacheInterceptor } from '../cache/invalidation';
-import { createDeduplicator, deduplicationInterceptor } from '../resilience/deduplication';
-import { retryInterceptor } from '../resilience/retry';
-import { createOfflineQueue } from '../resilience/offlineQueue';
+import { correlationIdInterceptor } from './interceptors/correlationId.interceptor';
+import { loggingInterceptor } from './interceptors/logging.interceptor';
+import { telemetryInterceptor } from './interceptors/telemetry.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { cleanS3Interceptor } from './interceptors/cleanS3.interceptor';
+import { createSingleTokenManager } from './auth/singleTokenManager';
+import { createSlotTokenManager } from './auth/slotManager';
+import { secureStorageAdapter } from './auth/storage';
+import { createCacheStore } from './cache/cacheStore';
+import { cacheInterceptor } from './cache/invalidation';
+import { createDeduplicator, deduplicationInterceptor } from './resilience/deduplication';
+import { retryInterceptor } from './resilience/retry';
+import { createOfflineQueue } from './resilience/offlineQueue';
 
 export const createApiClient = (
   config: ApiClientConfig,
