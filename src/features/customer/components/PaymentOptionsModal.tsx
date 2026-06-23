@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
-
-export type PaymentOption = 'cash' | 'esewa';
+import { PAYMENT_METHODS, type PaymentMethod } from '@/types';
 
 interface PaymentOptionsModalProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: (option: PaymentOption) => void;
+  onConfirm: (option: PaymentMethod) => void;
   totalAmount: number;
 }
 
 export default function PaymentOptionsModal({ visible, onClose, onConfirm, totalAmount }: PaymentOptionsModalProps) {
-  const [selectedOption, setSelectedOption] = useState<PaymentOption | null>(null);
+  const [selectedOption, setSelectedOption] = useState<PaymentMethod | null>(null);
 
   const handleConfirm = () => {
     if (selectedOption) {
@@ -44,55 +43,53 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
           </View>
 
           <View className="px-6 py-6 gap-y-4">
-            {/* Cash Option */}
             <Pressable
-              onPress={() => setSelectedOption('cash')}
+              onPress={() => setSelectedOption(PAYMENT_METHODS.Cash)}
               className={`flex-row items-center p-4 border rounded-xl ${
-                selectedOption === 'cash' ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
+                selectedOption === PAYMENT_METHODS.Cash ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
               }`}
             >
               <View
                 className={`h-5 w-5 rounded-full border items-center justify-center mr-3 ${
-                  selectedOption === 'cash' ? 'border-primary' : 'border-gray-300'
+                  selectedOption === PAYMENT_METHODS.Cash ? 'border-primary' : 'border-gray-300'
                 }`}
               >
-                {selectedOption === 'cash' && <View className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                {selectedOption === PAYMENT_METHODS.Cash && <View className="h-2.5 w-2.5 rounded-full bg-primary" />}
               </View>
               <Feather
                 name="dollar-sign"
                 size={20}
-                color={selectedOption === 'cash' ? '#0f172a' : '#64748b'}
+                color={selectedOption === PAYMENT_METHODS.Cash ? '#0f172a' : '#64748b'}
                 className="mr-3"
               />
               <Text
-                className={`text-base font-sans-semibold ${selectedOption === 'cash' ? 'text-gray-950' : 'text-gray-600'}`}
+                className={`text-base font-sans-semibold ${selectedOption === PAYMENT_METHODS.Cash ? 'text-gray-950' : 'text-gray-600'}`}
               >
                 Pay By Cash
               </Text>
             </Pressable>
 
-            {/* eSewa Option */}
             <Pressable
-              onPress={() => setSelectedOption('esewa')}
+              onPress={() => setSelectedOption(PAYMENT_METHODS.Esewa)}
               className={`flex-row items-center p-4 border rounded-xl ${
-                selectedOption === 'esewa' ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
+                selectedOption === PAYMENT_METHODS.Esewa ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
               }`}
             >
               <View
                 className={`h-5 w-5 rounded-full border items-center justify-center mr-3 ${
-                  selectedOption === 'esewa' ? 'border-primary' : 'border-gray-300'
+                  selectedOption === PAYMENT_METHODS.Esewa ? 'border-primary' : 'border-gray-300'
                 }`}
               >
-                {selectedOption === 'esewa' && <View className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                {selectedOption === PAYMENT_METHODS.Esewa && <View className="h-2.5 w-2.5 rounded-full bg-primary" />}
               </View>
               <Feather
                 name="smartphone"
                 size={20}
-                color={selectedOption === 'esewa' ? '#0f172a' : '#64748b'}
+                color={selectedOption === PAYMENT_METHODS.Esewa ? '#0f172a' : '#64748b'}
                 className="mr-3"
               />
               <Text
-                className={`text-base font-sans-semibold ${selectedOption === 'esewa' ? 'text-gray-950' : 'text-gray-600'}`}
+                className={`text-base font-sans-semibold ${selectedOption === PAYMENT_METHODS.Esewa ? 'text-gray-950' : 'text-gray-600'}`}
               >
                 Pay By Esewa
               </Text>

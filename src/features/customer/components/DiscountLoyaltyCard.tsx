@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  Modal,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 
 export interface Coupon {
+  id: string;
   code: string;
+  name: string;
   description: string;
   discountType: 'fixed' | 'percent';
   value: number;
+  remaining_uses: number;
 }
 
 interface DiscountLoyaltyCardProps {
@@ -30,100 +42,129 @@ export default function DiscountLoyaltyCard({
   availableCoupons,
 }: DiscountLoyaltyCardProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2,
-  };
+  const { height } = useWindowDimensions();
 
   const pointsValue = (parseInt(loyaltyPoints) || 0) * pointsRate;
 
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Discount & Loyalty Points</Text>
-
-      {/* Coupon Selection Button */}
-      <View className="mb-4">
-        <Text className="text-xs font-sans-medium text-gray-500 mb-1.5">Apply Coupon</Text>
+    <View className="gap-y-4">
+      {/* Coupon Selection */}
+      <View>
+        <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">Apply Coupon</Text>
         <Pressable
           onPress={() => setDropdownOpen(true)}
-          className="flex-row items-center justify-between border border-gray-200 rounded-lg h-12 px-3 bg-white active:bg-gray-50"
+          className="form-input-container form-input-container-single"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.015,
+            shadowRadius: 2,
+            elevation: 0,
+          }}
         >
-          <Text className={`text-sm font-sans-medium ${selectedCoupon ? 'text-gray-900' : 'text-gray-400'}`}>
-            {selectedCoupon ? `${selectedCoupon.code} - ${selectedCoupon.description}` : 'Select a coupon'}
-          </Text>
-          <Feather name="chevron-down" size={18} color="#64748b" />
+          {selectedCoupon ? (
+            <View className="flex-1 mr-2">
+              <Text className="text-sm font-sans-semibold text-gray-900">{selectedCoupon.name}</Text>
+              <Text className="text-xs font-sans-medium text-gray-500">
+                {selectedCoupon.code} -{' '}
+                {selectedCoupon.discountType === 'percent' ? `${selectedCoupon.value}%` : `Rs. ${selectedCoupon.value}`}{' '}
+                off
+              </Text>
+            </View>
+          ) : (
+            <Text className="form-input-text flex-1 text-[#898f8f]">Select a coupon</Text>
+          )}
+          <View className="ml-3">
+            <Feather name="chevron-down" size={16} color="#9ca3af" />
+          </View>
         </Pressable>
+        {selectedCoupon && (
+          <Pressable onPress={() => onSelectCoupon(null)} className="flex-row items-center mt-2">
+            <Feather name="x" size={12} color="#ef4444" />
+            <Text className="text-xs font-sans-medium text-red-500 ml-1">Remove coupon</Text>
+          </Pressable>
+        )}
 
-        {/* Coupon Selection Modal */}
+        {/* Coupon Selection Bottom Sheet */}
         <Modal
-          animationType="fade"
+          animationType="slide"
           transparent={true}
           visible={dropdownOpen}
           onRequestClose={() => setDropdownOpen(false)}
         >
-          <Pressable
-            className="flex-1 justify-center items-center bg-black/40 p-5"
-            onPress={() => setDropdownOpen(false)}
-          >
-            <View className="w-full max-w-[340px] bg-white rounded-2xl border border-gray-200 p-4 shadow-xl">
-              <View className="flex-row items-center justify-between pb-3 border-b border-gray-100 mb-3">
-                <Text className="text-base font-sans-bold text-gray-900">Available Coupons</Text>
-                <Pressable onPress={() => setDropdownOpen(false)}>
-                  <Feather name="x" size={20} color="#64748b" />
-                </Pressable>
-              </View>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={() => setDropdownOpen(false)}>
+              <View style={styles.backdrop} />
+            </TouchableWithoutFeedback>
 
-              <View className="gap-2">
-                {availableCoupons.map((coupon) => (
-                  <Pressable
-                    key={coupon.code}
-                    onPress={() => {
-                      onSelectCoupon(selectedCoupon?.code === coupon.code ? null : coupon);
-                      setDropdownOpen(false);
-                    }}
-                    className={`flex-row items-center justify-between px-3 py-3 border border-gray-200 rounded-xl active:bg-gray-50 ${
-                      selectedCoupon?.code === coupon.code ? 'border-primary bg-primary/5' : ''
-                    }`}
-                  >
-                    <View className="flex-1 mr-2">
-                      <Text className="text-sm font-sans-bold text-gray-900">{coupon.code}</Text>
-                      <Text className="text-xs font-sans-medium text-gray-500">{coupon.description}</Text>
-                    </View>
-                    {selectedCoupon?.code === coupon.code && <Feather name="check" size={16} color="#485aff" />}
-                  </Pressable>
-                ))}
-              </View>
+            <View style={[styles.drawerContainer, { maxHeight: height * 0.7 }]} className="bg-white px-5 pb-7 pt-4">
+              <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
-              {selectedCoupon && (
+              <View className="flex-row items-center justify-between mb-1">
+                <Text className="text-gray-900 text-xl font-sans-extrabold">Available Coupons</Text>
                 <Pressable
-                  onPress={() => {
-                    onSelectCoupon(null);
-                    setDropdownOpen(false);
-                  }}
-                  className="mt-4 py-2.5 items-center bg-red-50 border border-red-100 rounded-xl active:bg-red-100"
+                  onPress={() => setDropdownOpen(false)}
+                  className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
                 >
-                  <Text className="text-xs font-sans-semibold text-red-600">Remove Applied Coupon</Text>
+                  <Feather name="x" size={16} color="#64748b" />
                 </Pressable>
-              )}
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+                <View className="gap-y-2.5 mt-2">
+                  {availableCoupons.map((coupon) => (
+                    <Pressable
+                      key={coupon.id}
+                      onPress={() => {
+                        onSelectCoupon(selectedCoupon?.code === coupon.code ? null : coupon);
+                        setDropdownOpen(false);
+                      }}
+                      className={`px-4 py-3.5 border rounded-xl ${
+                        selectedCoupon?.code === coupon.code
+                          ? 'border-primary bg-[#eef0ff]'
+                          : 'border-gray-200 bg-white'
+                      }`}
+                    >
+                      <View className="flex-row items-start justify-between">
+                        <View className="flex-1 mr-3">
+                          <View className="flex-row items-center gap-1.5">
+                            <Text className="text-sm font-sans-bold text-gray-900">{coupon.name}</Text>
+                            <View className="bg-primary/10 rounded px-1.5 py-0.5">
+                              <Text className="text-[10px] font-sans-bold text-primary">{coupon.code}</Text>
+                            </View>
+                          </View>
+                          <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">
+                            {coupon.discountType === 'percent' ? `${coupon.value}% off` : `Rs. ${coupon.value} off`}
+                            {coupon.remaining_uses > 0 && ` (${coupon.remaining_uses} uses left)`}
+                          </Text>
+                        </View>
+                        {selectedCoupon?.code === coupon.code && (
+                          <View className="h-6 w-6 rounded-full bg-primary items-center justify-center mt-0.5">
+                            <Feather name="check" size={12} color="#fff" />
+                          </View>
+                        )}
+                      </View>
+                    </Pressable>
+                  ))}
+                </View>
+              </ScrollView>
             </View>
-          </Pressable>
+          </View>
         </Modal>
       </View>
 
-      {/* Loyalty Points input field */}
+      {/* Loyalty Points */}
       <View>
         <View className="flex-row items-center justify-between mb-1.5">
-          <Text className="text-xs font-sans-medium text-gray-500">Redeem Loyalty Points</Text>
+          <Text className="text-xs font-sans-bold text-gray-950 uppercase tracking-wide ml-0.5">
+            Redeem Loyalty Points
+          </Text>
           <Text className="text-xs font-sans-bold text-primary">Balance: {loyaltyBalance} pts</Text>
         </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
             <Input
-              placeholder="Enter points to redeem"
+              placeholder="Enter points"
               keyboardType="numeric"
               value={loyaltyPoints}
               onChangeText={onChangeLoyaltyPoints}
@@ -140,3 +181,23 @@ export default function DiscountLoyaltyCard({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(7, 17, 31, 0.4)',
+  },
+  drawerContainer: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 24,
+  },
+});
