@@ -25,7 +25,7 @@ interface Props {
 const styles = {
   container: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-    height: '100dvh',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column' as const,
     backgroundColor: '#f8fafc',
@@ -157,6 +157,10 @@ export default function LocationMapPicker({
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isReverseGeocoding, setIsReverseGeocoding] = useState(false);
+
+  const handleCancel = () => {
+    onCancel();
+  };
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const leafletMapRef = useRef<any>(null);
@@ -452,6 +456,8 @@ export default function LocationMapPicker({
       <style
         dangerouslySetInnerHTML={{
           __html: `
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #root { height: 100%; }
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
@@ -486,7 +492,21 @@ export default function LocationMapPicker({
               }}
             />
           ) : (
-            <span style={styles.searchIcon}>🔍</span>
+            <span style={styles.searchIcon}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#94a3b8"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
           )}
         </div>
 
@@ -510,7 +530,19 @@ export default function LocationMapPicker({
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f1f5f9')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                <span>📍</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
                 <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {result.display_name}
                 </span>
@@ -532,7 +564,7 @@ export default function LocationMapPicker({
 
       {/* Bottom Action Footer */}
       <div style={styles.footer}>
-        <button onClick={onCancel} style={{ ...styles.button, ...styles.secondaryButton }}>
+        <button onClick={handleCancel} style={{ ...styles.button, ...styles.secondaryButton }}>
           Cancel
         </button>
         <button

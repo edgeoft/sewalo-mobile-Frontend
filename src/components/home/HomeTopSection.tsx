@@ -19,9 +19,13 @@ interface HomeTopSectionProps {
     avgRating: number;
     completionRate: string;
   };
+  categories?: { name: string }[];
 }
 
-const serviceChips = ['Plumbing', 'Cleaning', 'Design'];
+function pickRandom(arr: string[], n: number): string[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
 
 const heroCopyByVariant = {
   guest: {
@@ -49,7 +53,7 @@ const heroCopyByVariant = {
   },
 };
 
-export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) {
+export default function HomeTopSection({ variant, stats, categories }: HomeTopSectionProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -152,11 +156,16 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
           <>
             <HomeTopSectionSearchBar placeholder={heroCopy.searchPlaceholder} onPress={handleSearchPress} />
 
-            <View className="flex-row flex-wrap gap-2 pt-1">
-              {serviceChips.map((chip) => (
-                <HomeTopSectionServiceChip key={chip} label={chip} />
-              ))}
-            </View>
+            {categories && categories.length >= 2 && (
+              <View className="flex-row flex-wrap gap-2 pt-1">
+                {pickRandom(
+                  categories.map((c) => c.name),
+                  2,
+                ).map((chip) => (
+                  <HomeTopSectionServiceChip key={chip} label={chip} />
+                ))}
+              </View>
+            )}
           </>
         )}
       </View>

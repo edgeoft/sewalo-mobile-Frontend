@@ -187,18 +187,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               </View>
             )}
             <View className="ml-3 flex-1">
-              <View className="flex-row items-center flex-wrap">
-                <Text className="text-sm font-sans-bold text-gray-900 mr-1">{customerName}</Text>
-                <View className="bg-blue-50/70 border border-blue-100/50 rounded px-1.5 py-0.5">
-                  <Text className="text-[9px] font-sans-bold text-primary lowercase">{categoryName}</Text>
-                </View>
-              </View>
-              <View className="flex-row items-center mt-0.5">
-                <Feather name="star" size={11} color="#f59e0b" />
-                <Text className="text-xs font-sans-medium text-gray-500 ml-1">
-                  {initialBooking.user?.avg_rating ? Number(initialBooking.user.avg_rating).toFixed(1) : '0.0'}
-                </Text>
-              </View>
+              <Text className="text-sm font-sans-bold text-gray-900">{customerName}</Text>
             </View>
           </View>
 
@@ -219,25 +208,6 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   <Feather name="mail" size={13} color="#94a3b8" />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{email || '-'}</Text>
                 </View>
-                <Pressable
-                  onPress={() => {
-                    const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-                    if (coordinates) {
-                      Linking.openURL(
-                        `${scheme}${coordinates.lat},${coordinates.lng}?q=${encodeURIComponent(location)}`,
-                      );
-                    } else {
-                      Linking.openURL(`${scheme}0,0?q=${encodeURIComponent(location)}`);
-                    }
-                  }}
-                  className="flex-row items-center active:opacity-70"
-                >
-                  <Feather name="map-pin" size={13} color="#94a3b8" />
-                  <Text className="text-xs font-sans-medium text-gray-500 ml-2 flex-1" numberOfLines={1}>
-                    {location}
-                  </Text>
-                  <Feather name="external-link" size={10} color="#94a3b8" style={{ marginLeft: 4 }} />
-                </Pressable>
               </View>
 
               <SectionDivider />

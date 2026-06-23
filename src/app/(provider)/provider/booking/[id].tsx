@@ -1,17 +1,25 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import ProviderBookingDetailsScreen from '@/features/provider/screens/ProviderBookingDetailsScreen';
-import { PROVIDER_BOOKINGS_MOCK } from '@/features/provider/constants/providerBookings';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
+import { useGetBookingByIdQuery } from '@/api/bookings';
 
 export default function ProviderBookingDetailRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  const booking = PROVIDER_BOOKINGS_MOCK.find((b) => b.id === id) || PROVIDER_BOOKINGS_MOCK[0];
+  const { data: booking, isLoading } = useGetBookingByIdQuery(id || '');
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center">
+        <ActivityIndicator size="large" color="#485aff" />
+      </View>
+    );
+  }
 
   if (!booking) {
     return (

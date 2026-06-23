@@ -32,6 +32,7 @@ export interface ReviewItem {
 
 export interface ProviderDetail {
   id: string;
+  serviceId?: string;
   name: string;
   avatarUri: string;
   isVerified: boolean;

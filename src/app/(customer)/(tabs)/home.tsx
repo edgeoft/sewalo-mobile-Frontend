@@ -12,14 +12,27 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
+import { useCategoriesQuery } from '@/api/categories';
+import { useMemo } from 'react';
 
 export default function CustomerHomeScreen() {
   const router = useRouter();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
+  const { data: categoriesData } = useCategoriesQuery('homepage');
+
+  const categories = useMemo(() => {
+    if (!categoriesData?.data) return null;
+    return categoriesData.data.map((cat) => ({
+      imageUrl: cat.img,
+      label: cat.name,
+    }));
+  }, [categoriesData]);
+
+  const showCategories = categories && categories.length > 0;
+
   return (
     <View className="flex-1 bg-secondary">
-      {/* Sticky Header absolutely positioned */}
       <View className="absolute top-0 left-0 right-0 z-50 px-6">
         <DashboardTopBar
           isScrolled={isScrolled}
@@ -36,16 +49,18 @@ export default function CustomerHomeScreen() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <HomeTopSection variant="customer" />
+        <HomeTopSection variant="customer" categories={categoriesData?.data} />
 
         <ContentLayout>
-          <HomeServiceCategoriesSection
-            title="Service Categories"
-            actionLabel="View All"
-            categories={DEFAULT_HOME_SERVICE_CATEGORIES}
-            onActionPress={() => router.push(ROUTES.customer.findServices)}
-            onCategoryPress={() => router.push(ROUTES.customer.findServices)}
-          />
+          {showCategories && (
+            <HomeServiceCategoriesSection
+              title="Service Categories"
+              actionLabel="View All"
+              categories={categories!}
+              onActionPress={() => router.push(ROUTES.customer.findServices)}
+              onCategoryPress={() => router.push(ROUTES.customer.findServices)}
+            />
+          )}
 
           <RecentBookingsSection
             title="Recent Bookings"

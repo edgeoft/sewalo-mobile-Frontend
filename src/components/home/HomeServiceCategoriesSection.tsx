@@ -7,51 +7,22 @@ import HomeServiceCategoryCard from './HomeServiceCategoryCard';
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
 export interface HomeServiceCategory {
-  icon: FeatherIconName;
+  icon?: FeatherIconName;
+  imageUrl?: string | null;
   label: string;
 }
 
 export const DEFAULT_HOME_SERVICE_CATEGORIES: HomeServiceCategory[] = [
-  {
-    icon: 'code',
-    label: 'Computers & IT',
-  },
-  {
-    icon: 'pen-tool',
-    label: 'Design',
-  },
-  {
-    icon: 'home',
-    label: 'Cleaning',
-  },
-  {
-    icon: 'droplet',
-    label: 'Plumbing',
-  },
-  {
-    icon: 'tool',
-    label: 'Maintenance',
-  },
-  {
-    icon: 'zap',
-    label: 'Electrical',
-  },
-  {
-    icon: 'scissors',
-    label: 'Beauty',
-  },
-  {
-    icon: 'truck',
-    label: 'Moving',
-  },
-  {
-    icon: 'feather',
-    label: 'Painting',
-  },
-  {
-    icon: 'sun',
-    label: 'Gardening',
-  },
+  { icon: 'code', label: 'Computers & IT' },
+  { icon: 'pen-tool', label: 'Design' },
+  { icon: 'home', label: 'Cleaning' },
+  { icon: 'droplet', label: 'Plumbing' },
+  { icon: 'tool', label: 'Maintenance' },
+  { icon: 'zap', label: 'Electrical' },
+  { icon: 'scissors', label: 'Beauty' },
+  { icon: 'truck', label: 'Moving' },
+  { icon: 'feather', label: 'Painting' },
+  { icon: 'sun', label: 'Gardening' },
 ];
 
 export interface HomeServiceCategoriesSectionProps {
@@ -82,11 +53,12 @@ export default function HomeServiceCategoriesSection({
         </Pressable>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 5, paddingRight: 4 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 4, paddingRight: 4 }}>
         {categories.map((category) => (
           <HomeServiceCategoryCard
             key={category.label}
             icon={category.icon}
+            imageUrl={category.imageUrl}
             label={category.label}
             onPress={() => onCategoryPress?.(category)}
           />

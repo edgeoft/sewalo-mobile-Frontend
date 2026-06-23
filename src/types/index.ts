@@ -54,3 +54,10 @@ export const DELIVERY_TYPES = {
 } as const;
 
 export type DeliveryType = (typeof DELIVERY_TYPES)[keyof typeof DELIVERY_TYPES];
+
+export const PAYMENT_METHODS = {
+  Cash: 'cash',
+  Esewa: 'esewa',
+} as const;
+
+export type PaymentMethod = (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];

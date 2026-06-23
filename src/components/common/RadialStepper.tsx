@@ -227,7 +227,7 @@ export default function RadialStepper({
 
   return (
     <View
-      className="flex-row items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 mb-6"
+      className="flex-row items-center gap-4 bg-white p-4 rounded-lg border border-gray-200 mb-6"
       style={{
         shadowColor: '#0f172a',
         shadowOffset: { width: 0, height: 4 },
