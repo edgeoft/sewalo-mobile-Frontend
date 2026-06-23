@@ -61,6 +61,7 @@ export const ROUTES = {
     termsOfService: '/provider/terms-of-service',
     privacyPolicy: '/provider/privacy-policy',
     rateApp: '/provider/rate-app',
+    myReviews: '/provider/my-reviews',
   },
   bookingConfirmation: '/booking-confirmation',
   providerDetail: (id: string) => `/provider/${id}` as const,

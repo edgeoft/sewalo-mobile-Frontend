@@ -36,6 +36,12 @@ export const PROVIDER_ACCOUNT_MENU: AccountMenuSection[] = [
         title: 'Verification Documents',
         subtitle: 'Upload ID and business certificates for verified partner status',
       },
+      {
+        id: 'my-reviews',
+        icon: 'star',
+        title: 'My Reviews',
+        subtitle: 'See what your customers are saying',
+      },
     ],
   },
   {

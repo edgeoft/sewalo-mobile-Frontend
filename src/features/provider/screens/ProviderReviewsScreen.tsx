@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, Image, Alert, Pressable, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader, LoadMoreList } from '@/components/common';
-import { useGetMyRatingsQuery, useDeleteRating } from '@/api/bookings';
+import { useGetMyRatingsQuery } from '@/api/bookings';
 import type { Rating } from '@/api/bookings';
 import { getImageUrl } from '@/utils/image';
-import RatingModal from '../components/RatingModal';
 
 function formatDate(isoString: string) {
   if (!isoString) return '';
@@ -39,26 +38,18 @@ const cardShadow = {
   elevation: 1,
 };
 
-function ReviewCard({
-  rating,
-  onEdit,
-  onDelete,
-}: {
-  rating: Rating;
-  onEdit: (r: Rating) => void;
-  onDelete: (r: Rating) => void;
-}) {
+function ReviewCard({ rating }: { rating: Rating }) {
   return (
     <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-row items-center flex-1">
           <Image
-            source={{ uri: getImageUrl(rating.provider?.avatar) || 'https://i.pravatar.cc/100' }}
+            source={{ uri: getImageUrl(rating.user?.avatar) || 'https://i.pravatar.cc/100' }}
             className="h-10 w-10 rounded-full border border-gray-100 bg-gray-50 mr-3"
             resizeMode="cover"
           />
           <View className="flex-1">
-            <Text className="text-sm font-sans-bold text-gray-900">{rating.provider?.name || 'Provider'}</Text>
+            <Text className="text-sm font-sans-bold text-gray-900">{rating.user?.name || 'Customer'}</Text>
             <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
               {rating.booking?.service?.name || 'Service'}
             </Text>
@@ -70,50 +61,16 @@ function ReviewCard({
       <StarDisplay rate={rating.rate} />
 
       <Text className="text-xs font-sans-regular text-gray-600 leading-5 mt-1">&ldquo;{rating.review}&rdquo;</Text>
-
-      <View className="flex-row justify-end border-t border-gray-50 mt-3 pt-3 gap-2">
-        <Pressable
-          onPress={() => onEdit(rating)}
-          className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-indigo-50"
-        >
-          <Feather name="edit-2" size={13} color="#485aff" />
-          <Text className="text-xs font-sans-semibold text-primary ml-1.5">Edit</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => onDelete(rating)}
-          className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-red-50"
-        >
-          <Feather name="trash-2" size={13} color="#ef4444" />
-          <Text className="text-xs font-sans-semibold text-red-500 ml-1.5">Delete</Text>
-        </Pressable>
-      </View>
     </View>
   );
 }
 
-export default function MyReviewsScreen() {
+export default function ProviderReviewsScreen() {
   const insets = useSafeAreaInsets();
-  const [editingRating, setEditingRating] = useState<Rating | null>(null);
 
   const { data: ratingsData, isLoading } = useGetMyRatingsQuery({ limit: 50 });
-  const deleteRating = useDeleteRating();
 
   const ratings = ratingsData?.data || [];
-
-  const handleDeleteReview = (rating: Rating) => {
-    Alert.alert('Delete Review', 'Are you sure you want to delete this review? This action cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          deleteRating.mutate(rating.id, {
-            onError: (error) => Alert.alert('Error', error.message || 'Failed to delete review.'),
-          });
-        },
-      },
-    ]);
-  };
 
   return (
     <View className="flex-1 bg-secondary">
@@ -129,7 +86,7 @@ export default function MyReviewsScreen() {
       >
         <SectionHeader
           title="My Reviews"
-          description="Manage and view the reviews you have submitted for your service bookings."
+          description="See what your customers are saying about your services."
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -153,26 +110,14 @@ export default function MyReviewsScreen() {
                 </View>
                 <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">No reviews yet</Text>
                 <Text className="text-xs font-sans-medium text-gray-400 text-center leading-5">
-                  Once you complete a booking, you can share your feedback and see it here.
+                  Reviews from your customers will appear here once they complete bookings.
                 </Text>
               </View>
             }
-            renderItem={(item) => <ReviewCard rating={item} onEdit={setEditingRating} onDelete={handleDeleteReview} />}
+            renderItem={(item) => <ReviewCard rating={item} />}
           />
         )}
       </ContentLayout>
-
-      {editingRating && (
-        <RatingModal
-          visible={!!editingRating}
-          onClose={() => setEditingRating(null)}
-          bookingId={editingRating.booking_id}
-          providerId={editingRating.provider_id}
-          providerName={editingRating.provider?.name || 'Provider'}
-          serviceName={editingRating.booking?.service?.name || 'Service'}
-          existingRating={editingRating}
-        />
-      )}
     </View>
   );
 }

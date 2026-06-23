@@ -69,6 +69,9 @@ export default function ProviderAccountScreen() {
       case 'privacy-policy':
         router.push(ROUTES.provider.privacyPolicy);
         break;
+      case 'my-reviews':
+        router.push(ROUTES.provider.myReviews);
+        break;
       case 'rate-app':
         router.push(ROUTES.provider.rateApp);
         break;
