@@ -8,8 +8,8 @@ import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
-import { useGetFavoritesQuery } from '@/api/user/hooks/favourites';
-import { FavoriteItem } from '@/api/user/types/favourites';
+import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api/user';
+import type { FavoriteItem } from '@/api/user/types/favourites';
 import { getImageUrl } from '@/features/auth/utils/image';
 
 import Button from '@/components/ui/Button';
@@ -18,9 +18,11 @@ import EmptyFavouritesState from '../components/EmptyFavouritesState';
 export default function CustomerFavouritesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   const { data: favoritesData, isLoading, isError, refetch } = useGetFavoritesQuery({ page, limit: 20 });
+
+  const addRemoveFav = useAddRemoveFavorite();
 
   const handleRetry = () => {
     refetch();
@@ -94,13 +96,19 @@ export default function CustomerFavouritesScreen() {
                   serviceLabel={service?.category?.name || 'Service'}
                   location={provider?.address || provider?.city || 'Kathmandu, Nepal'}
                   ordersCompleted={`${provider?.profile_views || 0} Views`}
-                  rating={service?.average_rating ? parseFloat(service.average_rating).toFixed(1) : '0.0'}
+                  rating={Number(service?.average_rating || 0).toFixed(1)}
                   startingFromPrice={startingPrice}
+                  isFavourite={true}
+                  onFavouritePress={() => {
+                    const serviceId = service?.id || item.service_id;
+                    addRemoveFav.mutate({ service_id: serviceId });
+                    refetch();
+                  }}
                   actionLabel="View Details"
                   variant="details"
                   onPress={() => {
-                    const serviceId = service?.id || item.service_id;
-                    router.push(ROUTES.providerDetail(serviceId));
+                    const slug = provider?.slug || service?.id || item.service_id;
+                    router.push(ROUTES.providerDetail(slug));
                   }}
                 />
               );

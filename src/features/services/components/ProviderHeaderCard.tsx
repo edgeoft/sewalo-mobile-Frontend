@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 
 interface ProviderHeaderCardProps {
   avatarUri: string;
@@ -72,12 +72,7 @@ export default function ProviderHeaderCard({
               onPress={onFavoritePress}
               className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
             >
-              <Feather
-                name="heart"
-                size={14}
-                color={isSaved ? '#ef4444' : '#64748b'}
-                fill={isSaved ? '#ef4444' : 'none'}
-              />
+              <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} />
             </Pressable>
           </View>
         </View>

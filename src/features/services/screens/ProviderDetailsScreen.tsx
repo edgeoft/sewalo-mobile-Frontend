@@ -21,6 +21,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking } from '@/api/bookings';
+import { useAddRemoveFavorite } from '@/api/user';
 import { ProviderDetail } from '../types';
 
 // Import subcomponents
@@ -47,8 +48,10 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'portfolio' | 'reviews'>('services');
   const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(provider.isFavourite || false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
+  const addRemoveFav = useAddRemoveFavorite();
 
   // Booking confirmation modal states
   const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
@@ -58,10 +61,14 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   // Toggle saving to favorites
   const handleToggleSave = () => {
-    setIsSaved((prev) => !prev);
-    Alert.alert(
-      isSaved ? 'Removed' : 'Saved',
-      isSaved ? `${provider.name} removed from your favorites.` : `${provider.name} saved to your favorites!`,
+    if (!provider.serviceId) return;
+    const newIsSaved = !isSaved;
+    setIsSaved(newIsSaved);
+    addRemoveFav.mutate(
+      { service_id: provider.serviceId },
+      {
+        onError: () => setIsSaved(!newIsSaved),
+      },
     );
   };
 

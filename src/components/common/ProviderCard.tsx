@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
@@ -19,6 +19,8 @@ export interface ProviderCardProps {
   actionLabel?: string;
   width?: number;
   onPress?: () => void;
+  onFavouritePress?: () => void;
+  isFavourite?: boolean;
   variant?: 'details' | 'booking';
 }
 
@@ -34,6 +36,8 @@ export default function ProviderCard({
   actionLabel = 'View Details',
   width,
   onPress,
+  onFavouritePress,
+  isFavourite = false,
   variant = 'details',
 }: ProviderCardProps) {
   const isBookingVariant = variant === 'booking';
@@ -69,11 +73,12 @@ export default function ProviderCard({
             </Text>
             {!isBookingVariant && (
               <Pressable
+                onPress={onFavouritePress}
                 accessibilityRole="button"
                 accessibilityLabel={`Save ${name}`}
                 className="ml-2 h-7 w-7 items-center justify-center rounded-xl bg-gray-50"
               >
-                {renderIcon('heart', '#94a3b8', 14)}
+                <MaterialIcons name="favorite" size={14} color={isFavourite ? '#ef4444' : '#94a3b8'} />
               </Pressable>
             )}
           </View>

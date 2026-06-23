@@ -168,7 +168,7 @@ export default function CustomerBookingsScreen() {
                 name={booking.provider?.name || 'Service Provider'}
                 serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
                 location={formatLocation(booking)}
-                rating={Number(booking.provider?.avg_rating || 0).toFixed(1)}
+                rating={Number(booking.service?.average_rating || booking.provider?.avg_rating || 0).toFixed(1)}
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}

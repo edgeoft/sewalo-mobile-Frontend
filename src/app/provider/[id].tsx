@@ -89,6 +89,7 @@ export default function DynamicProviderDetailRoute() {
     return {
       id: provider.id,
       serviceId: firstService?.id,
+      isFavourite: firstService?.is_favourite || false,
       name: provider.name,
       avatarUri: getAvatarUri(provider.avatar),
       isVerified: provider.status === 'verified',

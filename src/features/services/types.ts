@@ -33,6 +33,7 @@ export interface ReviewItem {
 export interface ProviderDetail {
   id: string;
   serviceId?: string;
+  isFavourite?: boolean;
   name: string;
   avatarUri: string;
   isVerified: boolean;

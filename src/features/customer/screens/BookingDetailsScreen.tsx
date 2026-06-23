@@ -199,7 +199,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || '';
   const categoryName = booking.service?.category?.name || '';
-  const providerRating = Number(booking.provider?.avg_rating || 0).toFixed(1);
+  const providerRating = Number(booking.service?.average_rating || booking.provider?.avg_rating || 0).toFixed(1);
   const serviceDate = formatDate(booking.service_date || '');
   const startTime = formatTime(booking.start_time || '');
   const location = booking.address || 'Kathmandu Metropolitan City';

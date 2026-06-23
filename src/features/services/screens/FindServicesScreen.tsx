@@ -9,7 +9,7 @@ import Header from '@/components/navigation/Header';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
-import { useGetCategoriesQuery, useGetServicesQuery } from '@/api/user';
+import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api/user';
 import { getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 
@@ -132,6 +132,17 @@ export default function FindServicesScreen() {
       serviceLocation: '',
     });
     setIsFilterModalOpen(false);
+  };
+
+  const addRemoveFav = useAddRemoveFavorite();
+
+  const favouriteIds = useMemo(
+    () => new Set(servicesData?.data.filter((s) => s.is_favourite).map((s) => s.id) || []),
+    [servicesData],
+  );
+
+  const handleFavouritePress = (serviceId: string) => {
+    addRemoveFav.mutate({ service_id: serviceId });
   };
 
   const activeFiltersCount = Object.values(appliedFilters).filter(Boolean).length;
@@ -287,6 +298,8 @@ export default function FindServicesScreen() {
                   rating={Number(service.average_rating || 0).toFixed(1)}
                   ordersCompleted={`${service.total_ratings || 0} orders`}
                   startingFromPrice={getStartingPrice(service.service_offerings)}
+                  isFavourite={favouriteIds.has(service.id)}
+                  onFavouritePress={() => handleFavouritePress(service.id)}
                   onPress={() => handleProviderPress(service.provider?.slug || service.provider?.id || '')}
                 />
               ))}
