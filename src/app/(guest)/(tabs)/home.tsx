@@ -3,7 +3,6 @@ import { ScrollView, View } from 'react-native';
 import { useMemo } from 'react';
 
 import {
-  DEFAULT_HOME_SERVICE_CATEGORIES,
   DEFAULT_POPULAR_PROVIDERS,
   HomeServiceCategoriesSection,
   PopularProvidersSection,
@@ -28,6 +27,7 @@ export default function GuestHomeScreen() {
     return categoriesData.data.map((cat) => ({
       imageUrl: cat.img,
       label: cat.name,
+      slug: cat.slug,
     }));
   }, [categoriesData]);
 
@@ -54,7 +54,7 @@ export default function GuestHomeScreen() {
               actionLabel="View All"
               categories={categories!}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
-              onCategoryPress={() => router.push(ROUTES.guest.findServices)}
+              onCategoryPress={(cat) => router.push(`${ROUTES.guest.findServices}?category=${cat.slug}`)}
             />
           )}
 

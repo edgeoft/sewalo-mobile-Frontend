@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
+import type { Category } from '@/api/categories';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 import HomeTopSectionServiceChip from './HomeTopSectionServiceChip';
@@ -19,10 +20,10 @@ interface HomeTopSectionProps {
     avgRating: number;
     completionRate: string;
   };
-  categories?: { name: string }[];
+  categories?: Category[];
 }
 
-function pickRandom(arr: string[], n: number): string[] {
+function pickRandom<T>(arr: T[], n: number): T[] {
   const shuffled = [...arr].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, n);
 }
@@ -81,7 +82,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
     <ContentLayout className="overflow-hidden bg-[#f7f9ff]">
       <HomeTopSectionBackground height={heroCopy.backgroundHeight} />
 
-      <View className="gap-y-4 pb-4">
+      <View className="gap-y-4 pb-2">
         {/* Spacer to reserve room for absolute/sticky DashboardTopBar */}
         <View style={{ height: 56 + Math.max(insets.top, 6) }} />
 
@@ -158,11 +159,16 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
 
             {categories && categories.length >= 2 && (
               <View className="flex-row flex-wrap gap-2 pt-1">
-                {pickRandom(
-                  categories.map((c) => c.name),
-                  2,
-                ).map((chip) => (
-                  <HomeTopSectionServiceChip key={chip} label={chip} />
+                {pickRandom(categories, 2).map((cat) => (
+                  <HomeTopSectionServiceChip
+                    key={cat.slug}
+                    label={cat.name}
+                    onPress={() =>
+                      router.push(
+                        `${variant === 'customer' ? ROUTES.customer.findServices : ROUTES.guest.findServices}?category=${cat.slug}`,
+                      )
+                    }
+                  />
                 ))}
               </View>
             )}

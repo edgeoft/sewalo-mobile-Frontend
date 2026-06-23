@@ -14,7 +14,7 @@ export default function HomePromotionBanner({
   onPress,
 }: HomePromotionBannerProps) {
   return (
-    <View className="pt-8">
+    <View className="pt-5">
       {/* Promotion Card Container */}
       <View className="rounded-2xl bg-primary p-6 shadow-sm">
         {/* Title */}

@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
-import { useRouter, useSegments } from 'expo-router';
-import { useState, useMemo, useEffect, ComponentProps } from 'react';
+import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
+import { useState, useMemo, useEffect } from 'react';
 import { Pressable, Text, View, ScrollView, Alert, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -18,10 +18,11 @@ export default function FindServicesScreen() {
   const insets = useSafeAreaInsets();
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
+  const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | undefined>(undefined);
+  const selectedCategorySlug = categoryParam || undefined;
 
   // Filters Modal State
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -38,7 +39,6 @@ export default function FindServicesScreen() {
     serviceLocation: '',
   });
 
-  // Debounce search query
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchQuery);
@@ -209,7 +209,7 @@ export default function FindServicesScreen() {
               contentContainerStyle={{ paddingHorizontal: 4, gap: 10 }}
             >
               <Pressable
-                onPress={() => setSelectedCategorySlug(undefined)}
+                onPress={() => router.replace(isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices)}
                 className={`px-4 py-2.5 rounded-full flex-row items-center border ${
                   selectedCategorySlug === undefined ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                 }`}
@@ -230,7 +230,11 @@ export default function FindServicesScreen() {
                 return (
                   <Pressable
                     key={category.id}
-                    onPress={() => setSelectedCategorySlug(isSelected ? undefined : category.slug)}
+                    onPress={() =>
+                      router.replace(
+                        `${isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices}?category=${isSelected ? '' : category.slug}`,
+                      )
+                    }
                     className={`px-4 py-2.5 rounded-full flex-row items-center border ${
                       isSelected ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                     }`}

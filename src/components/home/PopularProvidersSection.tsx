@@ -84,7 +84,7 @@ export default function PopularProvidersSection({
   onProviderPress,
 }: PopularProvidersSectionProps) {
   return (
-    <View className="pt-8">
+    <View className="pt-5">
       <View className="mb-5 flex-row items-center justify-between">
         <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
 

@@ -2,11 +2,13 @@ import { Pressable, Text } from 'react-native';
 
 interface HomeTopSectionServiceChipProps {
   label: string;
+  onPress?: () => void;
 }
 
-export default function HomeTopSectionServiceChip({ label }: HomeTopSectionServiceChipProps) {
+export default function HomeTopSectionServiceChip({ label, onPress }: HomeTopSectionServiceChipProps) {
   return (
     <Pressable
+      onPress={onPress}
       className="rounded-full bg-white px-3 py-1 active:opacity-80"
       style={{
         shadowColor: '#0f172a',

@@ -10,6 +10,7 @@ export interface HomeServiceCategory {
   icon?: FeatherIconName;
   imageUrl?: string | null;
   label: string;
+  slug?: string;
 }
 
 export const DEFAULT_HOME_SERVICE_CATEGORIES: HomeServiceCategory[] = [
@@ -41,7 +42,7 @@ export default function HomeServiceCategoriesSection({
   onCategoryPress,
 }: HomeServiceCategoriesSectionProps) {
   return (
-    <View className="pt-8">
+    <View className="pt-5">
       <View className="mb-5 flex-row items-center justify-between">
         <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
 

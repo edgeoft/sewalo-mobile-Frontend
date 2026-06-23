@@ -25,7 +25,7 @@ export default function RecentOrdersSection({
   onDeclineOrder,
 }: RecentOrdersSectionProps) {
   return (
-    <View className="pt-8">
+    <View className="pt-5">
       <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
 
       <View className="gap-4">

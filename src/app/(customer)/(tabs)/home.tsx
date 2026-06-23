@@ -1,11 +1,7 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
-import {
-  DEFAULT_HOME_SERVICE_CATEGORIES,
-  HomeServiceCategoriesSection,
-  RecentBookingsSection,
-} from '@/components/home';
+import { HomeServiceCategoriesSection, RecentBookingsSection } from '@/components/home';
 import { CUSTOMER_BOOKINGS_MOCK } from '@/features/customer/constants/customerBookings';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -26,6 +22,7 @@ export default function CustomerHomeScreen() {
     return categoriesData.data.map((cat) => ({
       imageUrl: cat.img,
       label: cat.name,
+      slug: cat.slug,
     }));
   }, [categoriesData]);
 
@@ -58,7 +55,7 @@ export default function CustomerHomeScreen() {
               actionLabel="View All"
               categories={categories!}
               onActionPress={() => router.push(ROUTES.customer.findServices)}
-              onCategoryPress={() => router.push(ROUTES.customer.findServices)}
+              onCategoryPress={(cat) => router.push(`${ROUTES.customer.findServices}?category=${cat.slug}`)}
             />
           )}
 
