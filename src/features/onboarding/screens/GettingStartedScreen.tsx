@@ -2,6 +2,7 @@ import React from 'react';
 import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import TopBar from '@/components/navigation/TopBar';
 import LanguageSelector from '@/components/ui/LanguageSelector';
@@ -22,6 +23,7 @@ import FinishOnboardingStep from '../components/FinishOnboardingStep';
 import { useOnboarding } from '../hooks/useOnboarding';
 
 export default function GettingStartedScreen() {
+  const insets = useSafeAreaInsets();
   const {
     activeIndex,
     loading,
@@ -70,47 +72,61 @@ export default function GettingStartedScreen() {
     switch (currentStep.key) {
       case 'welcome':
         return (
-          <ContentLayout scrollable={false} className="flex-1 justify-between pt-5 pb-6">
-            <View className="flex-1 justify-between px-2">
-              {/* Header and Welcome */}
-              <View className="flex-row justify-between items-start mb-4">
-                <View className="flex-1 mr-4">
-                  <Text className="text-2xl font-sans-extrabold text-gray-950 leading-tight">
-                    Hi {user?.name || 'User'},
-                  </Text>
-                  <Text className="text-sm font-sans-semibold text-gray-500 mt-1">
-                    {role === 'provider'
-                      ? 'Ready to showcase your skills and connect with customers in your area?'
-                      : 'Ready to search for verified home service providers in your local area?'}
-                  </Text>
+          <View className="flex-1 justify-between bg-transparent">
+            <ContentLayout scrollable={false} className="flex-1">
+              <View className="flex-1 justify-between pt-5 px-2">
+                {/* Header and Welcome */}
+                <View className="flex-row justify-between items-start mb-4">
+                  <View className="flex-1 mr-4">
+                    <Text className="text-2xl font-sans-extrabold text-gray-950 leading-tight">
+                      Hi {user?.name || 'User'},
+                    </Text>
+                    <Text className="text-sm font-sans-semibold text-gray-500 mt-1">
+                      {role === 'provider'
+                        ? 'Ready to showcase your skills and connect with customers in your area?'
+                        : 'Ready to search for verified home service providers in your local area?'}
+                    </Text>
+                  </View>
+
+                  {/* Estimate time pill */}
+                  <View className="bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-full flex-row items-center flex-shrink-0">
+                    <Feather name="clock" size={12} color="#485aff" />
+                    <Text className="text-[10px] font-sans-bold text-primary ml-1">
+                      {role === 'provider' ? 'Takes 4-5 mins' : 'Takes 2-3 mins'}
+                    </Text>
+                  </View>
                 </View>
 
-                {/* Estimate time pill */}
-                <View className="bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-full flex-row items-center flex-shrink-0">
-                  <Feather name="clock" size={12} color="#485aff" />
-                  <Text className="text-[10px] font-sans-bold text-primary ml-1">
-                    {role === 'provider' ? 'Takes 4-5 mins' : 'Takes 2-3 mins'}
+                {/* Pure SVG banner Illustration */}
+                <View className="flex-1 justify-center items-center my-4">
+                  <OnboardingIllustration role={role} />
+                </View>
+
+                {/* Title & Description instructions */}
+                <View className="items-center px-2 mb-4">
+                  <Text className="text-base font-sans-extrabold text-gray-900 text-center leading-snug">
+                    Start creating your profile by following easy steps
+                  </Text>
+                  <Text className="text-xs font-sans-medium text-gray-400 text-center mt-1.5 leading-relaxed">
+                    We&apos;ll guide you through each step to make sure your profile stands out and helps you get the
+                    most out of Sewalo.
                   </Text>
                 </View>
               </View>
+            </ContentLayout>
 
-              {/* Pure SVG banner Illustration */}
-              <View className="flex-1 justify-center items-center my-4">
-                <OnboardingIllustration role={role} />
-              </View>
-
-              {/* Title & Description instructions */}
-              <View className="items-center px-2 mb-4">
-                <Text className="text-base font-sans-extrabold text-gray-900 text-center leading-snug">
-                  Start creating your profile by following easy steps
-                </Text>
-                <Text className="text-xs font-sans-medium text-gray-400 text-center mt-1.5 leading-relaxed">
-                  We&apos;ll guide you through each step to make sure your profile stands out and helps you get the most
-                  out of Sewalo.
-                </Text>
-              </View>
-
-              {/* Bottom Button */}
+            {/* Sticky Bottom Button */}
+            <View
+              className="bg-white border-t border-gray-100 px-5 pt-2.5"
+              style={{
+                paddingBottom: insets.bottom > 0 ? insets.bottom + 6 : 14,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: -3 },
+                shadowOpacity: 0.04,
+                shadowRadius: 6,
+                elevation: 10,
+              }}
+            >
               <Button
                 title="Get Started Now"
                 rightIcon={<Feather name="arrow-right" size={16} color="white" />}
@@ -120,7 +136,7 @@ export default function GettingStartedScreen() {
                 className="w-full bg-primary"
               />
             </View>
-          </ContentLayout>
+          </View>
         );
 
       case 'personal_info':
