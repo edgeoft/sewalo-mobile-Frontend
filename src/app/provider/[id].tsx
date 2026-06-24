@@ -90,7 +90,7 @@ export default function DynamicProviderDetailRoute() {
     const portfolio =
       firstService?.portfolio?.map((uri: string, idx: number) => ({
         id: `port-${idx}`,
-        uri: getAvatarUri(uri),
+        uri: getImageUrl(uri) || FALLBACKS.image,
         title: `Project ${idx + 1}`,
       })) || [];
 

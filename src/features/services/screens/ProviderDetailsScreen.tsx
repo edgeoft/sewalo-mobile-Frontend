@@ -73,6 +73,9 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
     addRemoveFav.mutate(
       { service_id: provider.serviceId },
       {
+        onSuccess: () => {
+          showSnackbar({ message: newIsSaved ? 'Added to favourites' : 'Removed from favourites', type: 'success' });
+        },
         onError: () => setIsSaved(!newIsSaved),
       },
     );
@@ -197,6 +200,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
         if (bookingModalType === 'services') {
           setSelectedServices({});
         }
+        showSnackbar({ message: 'Booking created successfully!', type: 'success' });
         router.push({
           pathname: ROUTES.bookingConfirmation,
           params: { bookingId: result.id },

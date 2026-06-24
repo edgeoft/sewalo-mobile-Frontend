@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 
@@ -137,6 +138,7 @@ export default function FindServicesScreen() {
   };
 
   const addRemoveFav = useAddRemoveFavorite();
+  const { showSnackbar } = useSnackbar();
 
   const favouriteIds = useMemo(
     () => new Set(servicesData?.data.filter((s) => s.is_favourite).map((s) => s.id) || []),
@@ -157,7 +159,10 @@ export default function FindServicesScreen() {
         ],
       });
     } else {
-      addRemoveFav.mutate({ service_id: serviceId });
+      addRemoveFav.mutate(
+        { service_id: serviceId },
+        { onSuccess: () => showSnackbar({ message: 'Added to favourites', type: 'success' }) },
+      );
     }
   };
 

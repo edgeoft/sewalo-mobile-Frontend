@@ -11,6 +11,7 @@ import Header from '@/components/navigation/Header';
 import { serviceFormSchema } from '@/schemas/service';
 import { ServiceFormData, DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
 import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation, useUploadFile } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
 import { getImageUrl } from '@/utils/image';
 
@@ -42,6 +43,7 @@ export default function ServiceEditScreen() {
   const isEditMode = mode === 'edit';
   const { mutate: createService, isPending, isSuccess } = useCreateServiceMutation();
   const { mutate: updateService, isPending: isUpdating, isSuccess: isUpdateSuccess } = useUpdateServiceMutation();
+  const { showSnackbar } = useSnackbar();
   const { mutateAsync: uploadFile } = useUploadFile();
   const { data: myServiceData, isLoading: isServiceLoading } = useGetMyServicesQuery({ enabled: isEditMode });
   const service = myServiceData?.data;
@@ -185,6 +187,7 @@ export default function ServiceEditScreen() {
         { ...payload, id: service.id },
         {
           onSuccess: () => {
+            showSnackbar({ message: 'Service updated successfully!', type: 'success' });
             router.replace(ROUTES.provider.services);
           },
         },
@@ -192,6 +195,7 @@ export default function ServiceEditScreen() {
     } else {
       createService(payload, {
         onSuccess: () => {
+          showSnackbar({ message: 'Service created successfully!', type: 'success' });
           router.replace(ROUTES.provider.serviceCreated as Href);
         },
       });

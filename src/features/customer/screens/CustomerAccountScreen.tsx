@@ -14,34 +14,19 @@ import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
 import { CUSTOMER_ACCOUNT_MENU } from '../constants/accountMenu';
 import { getImageUrl } from '../../auth/utils/image';
-import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
-  const { showError } = useErrorDialog();
 
   const handleEditProfile = () => {
     router.push(ROUTES.customer.editProfile);
   };
 
   const handleLogout = () => {
-    showError({
-      title: 'Log Out',
-      message: 'Are you sure you want to log out of your account?',
-      actions: [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: () => {
-            logout();
-            router.replace(ROUTES.auth.signin);
-          },
-        },
-      ],
-    });
+    logout();
+    router.replace(ROUTES.auth.signin);
   };
 
   const handleItemPress = (itemId: string) => {

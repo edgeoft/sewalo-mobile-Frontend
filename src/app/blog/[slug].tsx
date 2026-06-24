@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useGetBlogBySlugQuery } from '@/api';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 export default function BlogDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -70,7 +70,7 @@ export default function BlogDetailScreen() {
     );
   }
 
-  const imgUri = getImageUrl(blog.img_url) || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643';
+  const imgUri = getImageUrl(blog.img_url) || FALLBACKS.image;
 
   return (
     <View className="flex-1 bg-secondary">

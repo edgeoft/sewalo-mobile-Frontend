@@ -8,6 +8,7 @@ import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { useProviderDashboardQuery, useUpdateBooking, useGetFeaturedBlogQuery } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function ProviderHomeScreen() {
   const router = useRouter();
@@ -17,12 +18,14 @@ export default function ProviderHomeScreen() {
   const { data: dashboardData, isLoading, refetch, isRefetching } = useProviderDashboardQuery();
   const { data: featuredBlogData } = useGetFeaturedBlogQuery();
   const updateBooking = useUpdateBooking();
+  const { showSnackbar } = useSnackbar();
 
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
       { id, data: { status: 'confirmed' } },
       {
         onSuccess: () => {
+          showSnackbar({ message: 'Booking accepted successfully', type: 'success' });
           queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
         },
       },
@@ -37,6 +40,7 @@ export default function ProviderHomeScreen() {
       },
       {
         onSuccess: () => {
+          showSnackbar({ message: 'Booking declined', type: 'success' });
           queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
         },
       },

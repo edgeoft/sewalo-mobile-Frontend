@@ -1,8 +1,9 @@
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
+import { FALLBACKS } from '@/utils/image';
 import type { BookingStatus } from '@/types';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
@@ -42,6 +43,7 @@ export default function ProviderCard({
   variant = 'details',
   isGuest = false,
 }: ProviderCardProps) {
+  const [imgError, setImgError] = useState(false);
   const isBookingVariant = variant === 'booking';
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
     <Feather name={icon} size={size} color={color} />
@@ -66,7 +68,12 @@ export default function ProviderCard({
       accessibilityLabel={name}
     >
       <View className="flex-row gap-3">
-        <Image source={{ uri: avatarUri }} resizeMode="cover" className="h-24 w-24 rounded-xl bg-gray-50" />
+        <Image
+          source={{ uri: imgError ? FALLBACKS.image : avatarUri || FALLBACKS.image }}
+          onError={() => setImgError(true)}
+          resizeMode="cover"
+          className="h-24 w-24 rounded-xl bg-gray-50"
+        />
 
         <View className="flex-1 justify-between py-0.5">
           <View className="flex-row items-center justify-between">

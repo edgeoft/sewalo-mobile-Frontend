@@ -6,7 +6,6 @@ import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import LanguageSelector from '@/components/ui/LanguageSelector';
-import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -19,28 +18,14 @@ export default function ProviderAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
-  const { showError } = useErrorDialog();
 
   const handleEditProfile = () => {
     router.push(ROUTES.provider.editProfile);
   };
 
   const handleLogout = () => {
-    showError({
-      title: 'Log Out',
-      message: 'Are you sure you want to log out of your provider partner account?',
-      actions: [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: () => {
-            logout();
-            router.replace(ROUTES.auth.signin);
-          },
-        },
-      ],
-    });
+    logout();
+    router.replace(ROUTES.auth.signin);
   };
 
   const handleItemPress = (itemId: string) => {

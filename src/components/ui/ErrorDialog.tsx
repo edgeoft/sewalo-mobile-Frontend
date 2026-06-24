@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 interface ErrorDialogAction {
@@ -29,21 +29,54 @@ export function useErrorDialog(): ErrorDialogContextValue {
 
 export function ErrorDialogProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<ErrorDialogConfig | null>(null);
+  const [visible, setVisible] = useState(false);
+  const opacity = useMemo(() => new Animated.Value(0), []);
+  const scale = useMemo(() => new Animated.Value(0.9), []);
 
-  const hideError = useCallback(() => setConfig(null), []);
+  const animateIn = useCallback(() => {
+    Animated.parallel([
+      Animated.timing(opacity, { toValue: 1, duration: 150, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 8, tension: 100, useNativeDriver: true }),
+    ]).start();
+  }, [opacity, scale]);
 
-  const showError = useCallback((c: ErrorDialogConfig) => {
-    setConfig(c);
-  }, []);
+  const animateOut = useCallback(
+    (onDone?: () => void) => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 0, duration: 120, useNativeDriver: true }),
+        Animated.timing(scale, { toValue: 0.9, duration: 120, useNativeDriver: true }),
+      ]).start(onDone);
+    },
+    [opacity, scale],
+  );
+
+  const hideError = useCallback(() => {
+    animateOut(() => {
+      setConfig(null);
+      setVisible(false);
+    });
+  }, [animateOut]);
+
+  const showError = useCallback(
+    (c: ErrorDialogConfig) => {
+      setConfig(c);
+      setVisible(true);
+      requestAnimationFrame(animateIn);
+    },
+    [animateIn],
+  );
 
   return (
     <ErrorDialogContext.Provider value={{ showError, hideError }}>
       {children}
-      <Modal visible={!!config} transparent animationType="fade" onRequestClose={hideError}>
-        <View className="flex-1 bg-black/50 justify-center items-center px-6">
-          <View className="w-full max-w-sm bg-white rounded-2xl p-6">
+      <Modal visible={visible} transparent animationType="none" onRequestClose={hideError}>
+        <Animated.View className="flex-1 bg-black/50 justify-center items-center px-6" style={{ opacity }}>
+          <Animated.View
+            className="w-full max-w-sm bg-white rounded-lg p-6"
+            style={{ opacity, transform: [{ scale }] }}
+          >
             <View className="items-center mb-4">
-              <View className="h-14 w-14 rounded-full bg-red-50 items-center justify-center mb-3">
+              <View className="h-14 w-14 rounded-full bg-destructive/10 items-center justify-center mb-3">
                 <Feather name="alert-triangle" size={28} color="#dc2626" />
               </View>
               <Text className="text-lg font-sans-bold text-gray-900 text-center">{config?.title ?? ''}</Text>
@@ -60,11 +93,11 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                     <Pressable
                       key={idx}
                       onPress={() => {
-                        hideError();
                         action.onPress?.();
+                        hideError();
                       }}
-                      className={`py-3 rounded-xl items-center ${
-                        isCancel ? 'bg-gray-100' : isDestructive ? 'bg-red-600' : 'bg-primary'
+                      className={`py-3 rounded-lg items-center ${
+                        isCancel ? 'bg-muted' : isDestructive ? 'bg-destructive' : 'bg-primary'
                       }`}
                     >
                       <Text className={`font-sans-bold text-sm ${isCancel ? 'text-gray-700' : 'text-white'}`}>
@@ -74,13 +107,13 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                   );
                 })
               ) : (
-                <Pressable onPress={hideError} className="py-3 rounded-xl bg-primary items-center">
+                <Pressable onPress={hideError} className="py-3 rounded-lg bg-primary items-center">
                   <Text className="font-sans-bold text-sm text-white">OK</Text>
                 </Pressable>
               )}
             </View>
-          </View>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </ErrorDialogContext.Provider>
   );

@@ -115,7 +115,7 @@ export default function MyReviewsScreen() {
           style: 'destructive',
           onPress: () => {
             deleteRating.mutate(rating.id, {
-              onError: (error) => showSnackbar({ message: error.message || 'Failed to delete review.', type: 'error' }),
+              onSuccess: () => showSnackbar({ message: 'Review deleted successfully.', type: 'success' }),
             });
           },
         },

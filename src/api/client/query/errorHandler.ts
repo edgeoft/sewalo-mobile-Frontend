@@ -1,4 +1,4 @@
-const extractErrorMessage = (error: any): string => {
+export const extractErrorMessage = (error: any): string => {
   if (!error) return 'Something went wrong. Please try again.';
 
   if (typeof error === 'string') return error;

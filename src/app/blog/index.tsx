@@ -8,14 +8,12 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import LoadMoreList from '@/components/common/LoadMoreList';
 import { useGetBlogsQuery } from '@/api';
 import { ROUTES } from '@/constants/routes';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { Blog } from '@/types';
 
 export default function BlogListScreen() {
   const router = useRouter();
   const { data: blogsData, isLoading: blogsLoading } = useGetBlogsQuery({ show: 'all' });
-
-  const blogs = blogsData?.data || [];
 
   const handleArticlePress = (blog: Blog) => {
     router.push(ROUTES.blog.detail(blog.slug) as any);
@@ -27,10 +25,10 @@ export default function BlogListScreen() {
     return `${time} min read`;
   };
 
-  const sorted = useMemo(
-    () => [...blogs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
-    [blogs],
-  );
+  const sorted = useMemo(() => {
+    const blogs = blogsData?.data || [];
+    return [...blogs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [blogsData]);
 
   return (
     <View className="flex-1 bg-secondary">
@@ -74,7 +72,7 @@ export default function BlogListScreen() {
                 >
                   <View className="flex-row gap-3">
                     <Image
-                      source={{ uri: getImageUrl(item.img_url) || 'https://placehold.co/200x200?text=Blog' }}
+                      source={{ uri: getImageUrl(item.img_url) || FALLBACKS.image }}
                       resizeMode="cover"
                       className="h-24 w-24 rounded-xl bg-gray-50"
                     />

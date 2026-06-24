@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
+import { FALLBACKS } from '@/utils/image';
 
 import { PortfolioItem } from '@/types';
 
@@ -10,6 +12,11 @@ interface ProviderPortfolioTabProps {
 }
 
 export default function ProviderPortfolioTab({ portfolio, onImagePress }: ProviderPortfolioTabProps) {
+  const [erroredIds, setErroredIds] = useState<Set<string>>(new Set());
+
+  const handleImageError = (id: string) => {
+    setErroredIds((prev) => new Set(prev).add(id));
+  };
   if (portfolio.length === 0) {
     return (
       <View className="bg-white border border-gray-200 rounded-lg px-5 py-8 items-center" style={styles.shadowMin}>
@@ -33,7 +40,12 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
           className="w-[48%] bg-white border border-gray-200 rounded-lg overflow-hidden active:opacity-90"
           style={styles.shadowMin}
         >
-          <Image source={{ uri: item.uri }} style={{ height: 110, width: '100%' }} resizeMode="cover" />
+          <Image
+            source={{ uri: erroredIds.has(item.id) ? FALLBACKS.image : item.uri }}
+            onError={() => handleImageError(item.id)}
+            style={{ height: 110, width: '100%' }}
+            resizeMode="cover"
+          />
           {item.title && (
             <View className="p-2">
               <Text className="text-[10px] font-sans-bold text-gray-800" numberOfLines={1}>

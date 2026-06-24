@@ -12,7 +12,7 @@ import { Carousel } from '@/components/ui';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { SERVICE_LOCATIONS, USER_STATUSES } from '@/types';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useGetMyServicesQuery } from '@/api';
 
 export default function ProviderServicesScreen() {
@@ -59,12 +59,8 @@ export default function ProviderServicesScreen() {
   // Prepare portfolio photos list
   const portfolioPhotos =
     service?.portfolio && service.portfolio.length > 0
-      ? service.portfolio.map(
-          (p) =>
-            getImageUrl(p) ||
-            'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop',
-        )
-      : ['https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop'];
+      ? service.portfolio.map((p) => getImageUrl(p) || FALLBACKS.image)
+      : [FALLBACKS.image];
 
   // Prepare offerings mapping
   const offerings =

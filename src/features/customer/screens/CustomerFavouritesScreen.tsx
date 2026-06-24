@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
 import type { FavoriteItem } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/features/auth/utils/image';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 import Button from '@/components/ui/Button';
 import EmptyFavouritesState from '../components/EmptyFavouritesState';
@@ -23,6 +24,7 @@ export default function CustomerFavouritesScreen() {
   const { data: favoritesData, isLoading, isError, refetch } = useGetFavoritesQuery({ page, limit: 20 });
 
   const addRemoveFav = useAddRemoveFavorite();
+  const { showSnackbar } = useSnackbar();
 
   const handleRetry = () => {
     refetch();
@@ -101,7 +103,10 @@ export default function CustomerFavouritesScreen() {
                   isFavourite={true}
                   onFavouritePress={() => {
                     const serviceId = service?.id || item.service_id;
-                    addRemoveFav.mutate({ service_id: serviceId });
+                    addRemoveFav.mutate(
+                      { service_id: serviceId },
+                      { onSuccess: () => showSnackbar({ message: 'Removed from favourites', type: 'success' }) },
+                    );
                     refetch();
                   }}
                   actionLabel="View Details"

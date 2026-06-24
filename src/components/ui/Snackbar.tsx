@@ -78,7 +78,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
         >
           <Pressable
             onPress={hideSnackbar}
-            className={`flex-row items-center px-4 py-3 rounded-xl ${BG_MAP[type]} shadow-lg`}
+            className={`flex-row items-center px-4 py-3 rounded-lg ${BG_MAP[type]} shadow-lg`}
           >
             <Feather name={ICON_MAP[type]} size={18} color="#fff" />
             <Text className="flex-1 text-white font-sans-medium text-sm ml-2.5">{config.message}</Text>

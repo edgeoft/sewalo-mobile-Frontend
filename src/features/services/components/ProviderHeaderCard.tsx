@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { FALLBACKS } from '@/utils/image';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 
 interface ProviderHeaderCardProps {
@@ -31,9 +33,16 @@ export default function ProviderHeaderCard({
   onSharePress,
   onFavoritePress,
 }: ProviderHeaderCardProps) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-start" style={styles.shadowMd}>
-      <Image source={{ uri: avatarUri }} className="h-20 w-20 rounded-xl bg-gray-50 mr-4" resizeMode="cover" />
+      <Image
+        source={{ uri: imgError ? FALLBACKS.avatar : avatarUri }}
+        onError={() => setImgError(true)}
+        className="h-20 w-20 rounded-xl bg-gray-50 mr-4"
+        resizeMode="cover"
+      />
 
       <View className="flex-1 justify-between py-0.5">
         <View className="flex-row items-start justify-between">

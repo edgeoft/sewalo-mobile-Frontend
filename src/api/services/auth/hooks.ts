@@ -1,4 +1,5 @@
 import { ROUTES } from '@/constants/routes';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useAuth } from '@/providers/AuthProvider';
 import {
@@ -13,6 +14,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { ApiError } from '@/api/client/types';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { formatPhone } from '@/features/auth/utils/phone';
 import {
   forgotPasswordAction,
@@ -25,6 +27,8 @@ import {
 
 export const useSignup = () => {
   const router = useRouter();
+  const { showError } = useErrorDialog();
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: SignupInput) =>
       signupAction({
@@ -32,14 +36,23 @@ export const useSignup = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
-      router.push({
-        pathname: ROUTES.auth.otpVerification,
-        params: {
-          phone: formatPhone(variables.phone),
-          flow: 'signup',
-          role: variables.role,
-          otp: res.otp,
-        },
+      showSnackbar({ message: 'Account created successfully!', type: 'success' });
+      setTimeout(() => {
+        router.push({
+          pathname: ROUTES.auth.otpVerification,
+          params: {
+            phone: formatPhone(variables.phone),
+            flow: 'signup',
+            role: variables.role,
+            otp: res.otp,
+          },
+        });
+      }, 0);
+    },
+    onError: (err) => {
+      showError({
+        title: 'Signup Failed',
+        message: extractErrorMessage(err),
       });
     },
   });
@@ -48,6 +61,8 @@ export const useSignup = () => {
 export const useLogin = () => {
   const { login } = useAuth();
   const router = useRouter();
+  const { showError } = useErrorDialog();
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: LoginInput) =>
       loginAction({
@@ -55,20 +70,23 @@ export const useLogin = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: async (res) => {
+      showSnackbar({ message: 'Welcome back!', type: 'success' });
       await login(res.user, res.access_token);
       const role = res.user.current_role || res.user.role;
-      if (res.user.status === 'pending') {
-        router.replace({
-          pathname: ROUTES.auth.gettingStarted as any,
-          params: { role, phone: formatPhone(res.user.phone) },
-        });
-      } else {
-        if (role === USER_ROLES.Provider) {
-          router.replace(ROUTES.provider.home);
+      setTimeout(() => {
+        if (res.user.status === 'pending') {
+          router.replace({
+            pathname: ROUTES.auth.gettingStarted as any,
+            params: { role, phone: formatPhone(res.user.phone) },
+          });
         } else {
-          router.replace(ROUTES.customer.home);
+          if (role === USER_ROLES.Provider) {
+            router.replace(ROUTES.provider.home);
+          } else {
+            router.replace(ROUTES.customer.home);
+          }
         }
-      }
+      }, 0);
     },
     onError: (err: unknown, variables) => {
       const apiError = err as ApiError;
@@ -82,7 +100,12 @@ export const useLogin = () => {
             otp: apiError.details?.otp,
           },
         });
+        return;
       }
+      showError({
+        title: 'Login Failed',
+        message: extractErrorMessage(err),
+      });
     },
   });
 };
@@ -148,6 +171,7 @@ export const useResendOtp = (onSuccess?: () => void) => {
 
 export const useForgotPassword = () => {
   const router = useRouter();
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: ForgotPasswordInput) =>
       forgotPasswordAction({
@@ -155,6 +179,7 @@ export const useForgotPassword = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
+      showSnackbar({ message: 'OTP sent to your phone!', type: 'success' });
       router.push({
         pathname: ROUTES.auth.otpVerification,
         params: {

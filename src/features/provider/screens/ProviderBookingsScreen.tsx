@@ -15,6 +15,7 @@ import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
 import { useGetBookingsQuery, useUpdateBooking } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 function formatDate(dateString: string) {
@@ -51,6 +52,7 @@ export default function ProviderBookingsScreen() {
   const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
   const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, limit: 50 });
   const updateBooking = useUpdateBooking();
+  const { showSnackbar } = useSnackbar();
 
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
@@ -79,14 +81,20 @@ export default function ProviderBookingsScreen() {
   });
 
   const handleAcceptOrder = (id: string) => {
-    updateBooking.mutate({ id, data: { status: 'confirmed' } });
+    updateBooking.mutate(
+      { id, data: { status: 'confirmed' } },
+      { onSuccess: () => showSnackbar({ message: 'Booking accepted successfully', type: 'success' }) },
+    );
   };
 
   const handleDeclineOrder = (id: string) => {
-    updateBooking.mutate({
-      id,
-      data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
-    });
+    updateBooking.mutate(
+      {
+        id,
+        data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
+      },
+      { onSuccess: () => showSnackbar({ message: 'Booking declined', type: 'success' }) },
+    );
   };
 
   const filteredBookings = useMemo(() => {

@@ -40,7 +40,7 @@ export default function TopBar({
             <Feather name="arrow-left" size={20} color="#0f172a" />
           </Pressable>
         )}
-        <Image source={LOGO.secondary} className="w-28 h-11" resizeMode="contain" />
+        {!showBackButton && <Image source={LOGO.secondary} className="w-28 h-11" resizeMode="contain" />}
       </View>
 
       {rightContent}

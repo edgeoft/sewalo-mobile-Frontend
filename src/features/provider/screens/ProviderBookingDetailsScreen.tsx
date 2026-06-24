@@ -84,12 +84,22 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     currentStatus === BOOKING_STATUSES.PaymentInitiated ||
     currentStatus === BOOKING_STATUSES.Paid;
 
+  const statusMessages: Record<string, string> = {
+    confirmed: 'Booking accepted successfully',
+    rejected: 'Booking rejected',
+    in_progress: 'Job marked as in progress',
+    completed: 'Job marked as completed',
+    ready_to_pay: 'Invoice sent to customer',
+  };
+
   const handleStatusUpdate = (status: string, options?: { cancellation_reason?: string }) => {
     updateBooking.mutate(
       { id: initialBooking.id, data: { status: status as any, ...options } },
       {
         onSuccess: (result) => {
           setCurrentStatus(result.status);
+          const msg = statusMessages[status];
+          if (msg) showSnackbar({ message: msg, type: 'success' });
         },
       },
     );
