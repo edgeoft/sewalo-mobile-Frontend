@@ -118,6 +118,7 @@ export default function ProviderHomeScreen() {
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
               onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
+              onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}
         </ContentLayout>

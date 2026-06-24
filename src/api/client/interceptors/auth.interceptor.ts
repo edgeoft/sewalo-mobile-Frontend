@@ -41,12 +41,11 @@ export const authInterceptor = (tokenManager: TokenManager): Interceptor => {
     try {
       return await next(updatedCtx);
     } catch (error: any) {
-      // 3. Catch 401 Unauthorized errors and trigger a refresh if configured
+      // 3. On 401, attempt token refresh
       if (error.status === 401 && tokenManager.canRefresh(slot)) {
         try {
           const newToken = await tokenManager.refreshToken(slot);
           if (newToken) {
-            // Retry request with the new access token
             return await next({
               ...ctx,
               headers: {
@@ -55,8 +54,9 @@ export const authInterceptor = (tokenManager: TokenManager): Interceptor => {
               },
             });
           }
-        } catch (refreshError) {
-          throw refreshError;
+        } catch {
+          tokenManager.handleAuthFailure(slot);
+          throw error;
         }
       }
       throw error;

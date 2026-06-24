@@ -14,8 +14,6 @@ import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { useCategoriesQuery, useGetServicesQuery, useGetFeaturedBlogQuery } from '@/api';
-import { getImageUrl } from '@/utils/image';
-import type { UserProfile, ServiceOffering } from '@/types';
 
 export default function GuestHomeScreen() {
   const router = useRouter();
@@ -101,6 +99,7 @@ export default function GuestHomeScreen() {
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
               onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug) as any)}
+              onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}
 

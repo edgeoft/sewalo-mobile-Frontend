@@ -133,6 +133,7 @@ export default function CustomerHomeScreen() {
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
               onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug) as any)}
+              onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}
         </ContentLayout>
