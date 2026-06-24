@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -9,10 +9,14 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 export default function RateAppScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const [rating, setRating] = useState<number>(0);
   const [feedbackText, setFeedbackText] = useState('');
@@ -20,17 +24,17 @@ export default function RateAppScreen() {
 
   const handleSubmitRating = () => {
     if (rating === 0) {
-      Alert.alert('Selection Required', 'Please choose a star rating (1 to 5 stars) before submitting.');
+      showSnackbar({ message: 'Please choose a star rating (1 to 5 stars) before submitting.', type: 'error' });
       return;
     }
 
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      Alert.alert(
-        'Feedback Submitted',
-        'Thank you for your rating! Your review helps us refine the Sewalo booking experience.',
-        [
+      showError({
+        title: 'Feedback Submitted',
+        message: 'Thank you for your rating! Your review helps us refine the Sewalo booking experience.',
+        actions: [
           {
             text: 'Return',
             onPress: () => {
@@ -40,7 +44,7 @@ export default function RateAppScreen() {
             },
           },
         ],
-      );
+      });
     }, 1200);
   };
 

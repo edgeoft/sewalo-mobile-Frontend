@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Alert, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,11 +12,13 @@ import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSect
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
 import { useUpdateProfile, useUploadFile } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user, isLoading } = useAuth();
+  const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
@@ -59,12 +61,8 @@ export default function CustomerEditProfileScreen() {
       }
       updateProfile(payload, {
         onSuccess: () => {
-          Alert.alert('Success', 'Profile updated successfully!', [
-            {
-              text: 'OK',
-              onPress: () => router.back(),
-            },
-          ]);
+          showSnackbar({ message: 'Profile updated successfully!', type: 'success' });
+          router.back();
         },
       });
     };

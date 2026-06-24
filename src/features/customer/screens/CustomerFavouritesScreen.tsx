@@ -10,7 +10,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
 import type { FavoriteItem } from '@/types';
-import { getImageUrl } from '@/features/auth/utils/image';
+import { FALLBACKS, getImageUrl } from '@/features/auth/utils/image';
 
 import Button from '@/components/ui/Button';
 import EmptyFavouritesState from '../components/EmptyFavouritesState';
@@ -84,7 +84,7 @@ export default function CustomerFavouritesScreen() {
             renderItem={(item: FavoriteItem) => {
               const service = item.service;
               const provider = service?.provider;
-              const imageUri = getImageUrl(provider?.avatar) || 'https://via.placeholder.com/150';
+              const imageUri = getImageUrl(provider?.avatar) || FALLBACKS.image;
               const startingPrice = service?.service_offerings?.[0]?.price
                 ? `Rs. ${parseInt(service.service_offerings[0].price, 10)}`
                 : 'N/A';

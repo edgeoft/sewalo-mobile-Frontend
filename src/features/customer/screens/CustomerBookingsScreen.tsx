@@ -14,7 +14,7 @@ import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
 import { useGetMyBookingsQuery } from '@/api';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function CustomerBookingsScreen() {
   }, [bookings]);
 
   const getAvatarUri = (avatar: string | null | undefined) => {
-    return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+    return getImageUrl(avatar) || FALLBACKS.avatar;
   };
 
   const formatLocation = (b: (typeof bookings)[0]) => {

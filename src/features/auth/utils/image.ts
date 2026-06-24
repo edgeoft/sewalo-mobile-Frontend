@@ -1,1 +1,1 @@
-export { getImageUrl } from '@/utils/image';
+export { getImageUrl, getAvatarUrl, getImageSource, FALLBACKS } from '@/utils/image';

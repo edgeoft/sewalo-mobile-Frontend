@@ -8,7 +8,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader, LoadMoreList } from '@/components/common';
 import { useGetMyRatingsQuery } from '@/api';
 import type { Rating } from '@/types';
-import { getImageUrl } from '@/utils/image';
+import { getSource } from '@/utils/image';
 
 function formatDate(isoString: string) {
   if (!isoString) return '';
@@ -44,7 +44,7 @@ function ReviewCard({ rating }: { rating: Rating }) {
       <View className="flex-row items-start justify-between">
         <View className="flex-row items-center flex-1">
           <Image
-            source={{ uri: getImageUrl(rating.user?.avatar) || 'https://i.pravatar.cc/100' }}
+            source={getSource(rating.user?.avatar, 'avatar')}
             className="h-10 w-10 rounded-full border border-gray-100 bg-gray-50 mr-3"
             resizeMode="cover"
           />

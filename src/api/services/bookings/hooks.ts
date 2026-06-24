@@ -53,7 +53,7 @@ export const useGetBookingsQuery = (params: GetBookingsParams = {}) => {
     retry: false,
     refetchOnWindowFocus: true,
     staleTime: 0,
-    refetchInterval: 2000,
+    refetchInterval: 1800000,
   });
 };
 
@@ -64,7 +64,7 @@ export const useGetMyBookingsQuery = (params: GetBookingsParams = {}) => {
     retry: false,
     refetchOnWindowFocus: true,
     staleTime: 0,
-    refetchInterval: 2000,
+    refetchInterval: 1800000,
   });
 };
 
@@ -75,7 +75,7 @@ export const useGetBookingByIdQuery = (id: string) => {
     retry: false,
     refetchOnWindowFocus: true,
     staleTime: 0,
-    refetchInterval: 2000,
+    refetchInterval: 1800000,
     enabled: !!id,
   });
 };

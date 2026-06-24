@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import {
-  Alert,
   Image,
   Modal,
   Pressable,
@@ -20,6 +19,7 @@ import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import LocationSelector from '@/components/ui/LocationSelector';
 
 import { PersonalInfoData } from '@/types';
@@ -70,6 +70,7 @@ export default function PersonalInfoStep({
   loading = false,
   stepper,
 }: PersonalInfoStepProps) {
+  const { showSnackbar } = useSnackbar();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [langModalVisible, setLangModalVisible] = useState(false);
@@ -84,7 +85,7 @@ export default function PersonalInfoStep({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'We need access to your photo library to select a profile picture.');
+        showSnackbar({ message: 'We need access to your photo library to select a profile picture.', type: 'error' });
         return;
       }
 
@@ -100,7 +101,7 @@ export default function PersonalInfoStep({
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong while picking the avatar.');
+      showSnackbar({ message: 'Something went wrong while picking the avatar.', type: 'error' });
     }
   };
 

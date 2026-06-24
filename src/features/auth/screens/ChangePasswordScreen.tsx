@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,11 +15,13 @@ import EnhancedPasswordRequirements from '../components/EnhancedPasswordRequirem
 import { getChangePasswordSchema, ChangePasswordFormData } from '@/schemas/auth';
 
 import { useChangePassword } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { showSnackbar } = useSnackbar();
   const { mutate: changePassword, isPending } = useChangePassword();
 
   const {
@@ -47,18 +49,14 @@ export default function ChangePasswordScreen() {
       },
       {
         onSuccess: () => {
-          Alert.alert(t('success') || 'Success', t('auth.passwordChangedSuccess'), [
-            {
-              text: t('ok') || 'OK',
-              onPress: () => router.back(),
-            },
-          ]);
+          showSnackbar({ message: t('auth.passwordChangedSuccess'), type: 'success' });
+          router.back();
         },
         onError: (error) => {
-          Alert.alert(
-            t('error') || 'Error',
-            error.message || t('auth.passwordChangeFailed') || 'Failed to change password',
-          );
+          showSnackbar({
+            message: error.message || t('auth.passwordChangeFailed') || 'Failed to change password',
+            type: 'error',
+          });
         },
       },
     );

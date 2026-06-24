@@ -7,7 +7,7 @@ import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { useGetProviderDetailsQuery } from '@/api';
 import { ProviderDetail, ProviderDetailsResponse } from '@/types';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
 
@@ -41,7 +41,7 @@ export default function DynamicProviderDetailRoute() {
     const firstService = services?.[0];
 
     const getAvatarUri = (avatar: string | null | undefined) => {
-      return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+      return getImageUrl(avatar) || FALLBACKS.avatar;
     };
 
     const formatPriceInNepali = (price: number) => {

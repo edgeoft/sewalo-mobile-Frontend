@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Alert, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
@@ -20,6 +21,7 @@ export default function ProviderEditProfileScreen() {
   const insets = useSafeAreaInsets();
   const { user, isLoading } = useAuth();
 
+  const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
@@ -63,7 +65,7 @@ export default function ProviderEditProfileScreen() {
       }
       updateProfile(payload, {
         onSuccess: () => {
-          Alert.alert('Success', 'Basic information saved successfully!');
+          showSnackbar({ message: 'Basic information saved successfully!', type: 'success' });
         },
       });
     };
@@ -142,7 +144,7 @@ export default function ProviderEditProfileScreen() {
         })),
       },
       {
-        onSuccess: () => Alert.alert('Success', 'Skills and experience saved successfully!'),
+        onSuccess: () => showSnackbar({ message: 'Skills and experience saved successfully!', type: 'success' }),
       },
     );
   };
@@ -160,7 +162,7 @@ export default function ProviderEditProfileScreen() {
         end_time: workingHoursEnd,
       },
       {
-        onSuccess: () => Alert.alert('Success', 'Availability schedule saved successfully!'),
+        onSuccess: () => showSnackbar({ message: 'Availability schedule saved successfully!', type: 'success' }),
       },
     );
   };

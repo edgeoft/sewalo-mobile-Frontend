@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, Pressable, Alert } from 'react-native';
+import { View, Text, Switch, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -9,11 +9,15 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 export default function PrivacySettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout } = useAuth();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const [profileVisible, setProfileVisible] = useState(true);
   const [shareData, setShareData] = useState(true);
@@ -29,30 +33,36 @@ export default function PrivacySettingsScreen() {
   };
 
   const handleDownloadData = () => {
-    Alert.alert(
-      'Download Data',
-      'We will compile your personal profile, services, and transactions history into a zip archive and send it to your email within 24 hours.',
-      [
+    showError({
+      title: 'Download Data',
+      message:
+        'We will compile your personal profile, services, and transactions history into a zip archive and send it to your email within 24 hours.',
+      actions: [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', onPress: () => Alert.alert('Requested', 'Data export request submitted!') },
+        {
+          text: 'Confirm',
+          onPress: () => showSnackbar({ message: 'Data export request submitted!', type: 'success' }),
+        },
       ],
-    );
+    });
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'WARNING: Deleting your account will permanently wipe all your profile details, booking histories, and earnings. This action is irreversible.\n\nAre you sure you want to proceed?',
-      [
+    showError({
+      title: 'Delete Account',
+      message:
+        'WARNING: Deleting your account will permanently wipe all your profile details, booking histories, and earnings. This action is irreversible.\n\nAre you sure you want to proceed?',
+      actions: [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Confirm Delete',
           style: 'destructive',
           onPress: () => {
-            Alert.alert(
-              'Final Confirmation Required',
-              'Please confirm once more that you want to DELETE your account. All data will be destroyed immediately.',
-              [
+            showError({
+              title: 'Final Confirmation Required',
+              message:
+                'Please confirm once more that you want to DELETE your account. All data will be destroyed immediately.',
+              actions: [
                 { text: 'Cancel', style: 'cancel' },
                 {
                   text: 'Permanently Delete',
@@ -63,11 +73,11 @@ export default function PrivacySettingsScreen() {
                   },
                 },
               ],
-            );
+            });
           },
         },
       ],
-    );
+    });
   };
 
   const renderToggleItem = (

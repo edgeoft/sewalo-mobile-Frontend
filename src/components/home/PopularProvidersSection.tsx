@@ -3,11 +3,11 @@ import { Pressable, Text, View } from 'react-native';
 
 import { ProviderCard } from '@/components/common';
 import { Carousel } from '@/components/ui';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { Service, ServiceOffering, UserProfile } from '@/types';
 
 const getAvatarUri = (avatar: string | null | undefined) => {
-  return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+  return getImageUrl(avatar) || FALLBACKS.avatar;
 };
 
 const formatPriceInNepali = (price: number) => {

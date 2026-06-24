@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Alert, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 interface StatusReasonCardProps {
   booking: {
@@ -13,6 +14,7 @@ interface StatusReasonCardProps {
 }
 
 export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
+  const { showSnackbar } = useSnackbar();
   const { status, cancelReason, rejectReason, dateTime, bookingDate } = booking;
   const isCancelled = status === BOOKING_STATUSES.Cancelled;
   const isRejected = status === BOOKING_STATUSES.Rejected;
@@ -35,7 +37,7 @@ export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
     (isCancelled ? 'No cancellation reason provided.' : 'No rejection reason provided.');
 
   const handleContactSupport = () => {
-    Alert.alert('Contact Support', 'Connecting to Sewalo support agent...');
+    showSnackbar({ message: 'Connecting to Sewalo support agent...', type: 'info' });
   };
 
   const renderInfoRow = (label: string, value: string) => (

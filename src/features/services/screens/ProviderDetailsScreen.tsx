@@ -1,19 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import {
-  Alert,
-  Dimensions,
-  Image,
-  Linking,
-  Modal,
-  Pressable,
-  ScrollView,
-  Share,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, Image, Linking, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -22,6 +10,8 @@ import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
 import { ProviderDetail } from '@/types';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 // Import subcomponents
 import BookingConfirmationModal, { type BookingDetails } from '../components/BookingConfirmationModal';
@@ -44,6 +34,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { role } = useAuth();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'portfolio' | 'reviews'>('services');
   const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
@@ -61,17 +53,17 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   // Toggle saving to favorites
   const handleToggleSave = () => {
     if (isGuest) {
-      Alert.alert(
-        'Authentication Required',
-        'Please sign in or create an account to save providers to your favourites.',
-        [
+      showError({
+        title: 'Authentication Required',
+        message: 'Please sign in or create an account to save providers to your favourites.',
+        actions: [
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Sign In',
             onPress: () => router.push(ROUTES.auth.signin),
           },
         ],
-      );
+      });
       return;
     }
 
@@ -127,13 +119,13 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   // Actions for Phone / Email / Directions
   const handleCall = () => {
     Linking.openURL(`tel:${provider.phone}`).catch(() => {
-      Alert.alert('Error', 'Unable to initiate call on this device.');
+      showSnackbar({ message: 'Unable to initiate call on this device.', type: 'error' });
     });
   };
 
   const handleEmail = () => {
     Linking.openURL(`mailto:${provider.email}`).catch(() => {
-      Alert.alert('Error', 'Unable to open email client.');
+      showSnackbar({ message: 'Unable to open email client.', type: 'error' });
     });
   };
 
@@ -141,7 +133,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
     const query = encodeURIComponent(provider.fullLocation);
     Linking.openURL(`maps://maps.apple.com/?q=${query}`).catch(() => {
       Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`).catch(() => {
-        Alert.alert('Error', 'Unable to open maps.');
+        showSnackbar({ message: 'Unable to open maps.', type: 'error' });
       });
     });
   };
@@ -149,7 +141,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   // Open booking confirmation modal for selected individual services
   const handleBookSelected = () => {
     if (selectedServicesCount === 0) {
-      Alert.alert('No Services Selected', 'Please check at least one service to book.');
+      showSnackbar({ message: 'Please check at least one service to book.', type: 'error' });
       return;
     }
     setBookingModalType('services');

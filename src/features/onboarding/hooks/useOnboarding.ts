@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { Alert } from 'react-native';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
@@ -37,6 +37,7 @@ export function useOnboarding() {
   const router = useRouter();
   const { setRole, user } = useAuth();
   const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
+  const { showSnackbar } = useSnackbar();
 
   // Determine user role
   const role: 'customer' | 'provider' = rawRole === 'provider' ? 'provider' : 'customer';
@@ -297,7 +298,7 @@ export function useOnboarding() {
           setActiveIndex(activeIndex + 1);
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : 'Failed to save personal details.';
-          Alert.alert('Error', errMsg);
+          showSnackbar({ message: errMsg, type: 'error' });
         } finally {
           setLoading(false);
         }
@@ -339,7 +340,7 @@ export function useOnboarding() {
         setActiveIndex(activeIndex + 1);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : 'Failed to save skills and experience.';
-        Alert.alert('Error', errMsg);
+        showSnackbar({ message: errMsg, type: 'error' });
       } finally {
         setLoading(false);
       }
@@ -364,7 +365,7 @@ export function useOnboarding() {
         setActiveIndex(activeIndex + 1);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : 'Failed to save availability settings.';
-        Alert.alert('Error', errMsg);
+        showSnackbar({ message: errMsg, type: 'error' });
       } finally {
         setLoading(false);
       }
@@ -399,7 +400,7 @@ export function useOnboarding() {
         setActiveIndex(activeIndex + 1);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : 'Failed to save identity documents.';
-        Alert.alert('Error', errMsg);
+        showSnackbar({ message: errMsg, type: 'error' });
       } finally {
         setLoading(false);
       }
@@ -479,7 +480,7 @@ export function useOnboarding() {
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to finish profile registration.';
-      Alert.alert('Error', errMsg);
+      showSnackbar({ message: errMsg, type: 'error' });
     } finally {
       setLoading(false);
     }

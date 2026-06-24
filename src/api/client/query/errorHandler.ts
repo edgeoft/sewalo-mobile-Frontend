@@ -1,5 +1,3 @@
-import { Alert } from 'react-native';
-
 const extractErrorMessage = (error: any): string => {
   if (!error) return 'Something went wrong. Please try again.';
 
@@ -59,6 +57,6 @@ export const globalErrorHandler = (error: any, type: 'query' | 'mutation', detai
     return;
   }
 
-  // Display user-friendly alert dialog
-  Alert.alert('Error', formattedMessage);
+  // Log error globally — individual screens handle their own UI
+  console.warn('[GLOBAL-QUERY-ERROR]', formattedMessage);
 };

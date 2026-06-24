@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
-import { Pressable, Text, View, ScrollView, Alert, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
+import { Pressable, Text, View, ScrollView, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -10,7 +10,8 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
-import { getImageUrl } from '@/utils/image';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 
 export default function FindServicesScreen() {
@@ -18,6 +19,7 @@ export default function FindServicesScreen() {
   const insets = useSafeAreaInsets();
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
+  const { showError } = useErrorDialog();
   const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,7 +68,7 @@ export default function FindServicesScreen() {
   }, [servicesData]);
 
   const getAvatarUri = (avatar: string | null | undefined) => {
-    return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+    return getImageUrl(avatar) || FALLBACKS.avatar;
   };
 
   const formatPriceInNepali = (price: number) => {
@@ -94,17 +96,17 @@ export default function FindServicesScreen() {
 
   const handleProviderPress = (providerSlugOrId: string) => {
     if (isGuest) {
-      Alert.alert(
-        'Authentication Required',
-        'Please sign in or create an account to view service provider details and book their services.',
-        [
+      showError({
+        title: 'Authentication Required',
+        message: 'Please sign in or create an account to view service provider details and book their services.',
+        actions: [
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Sign In',
             onPress: () => router.push(ROUTES.auth.signin),
           },
         ],
-      );
+      });
     } else {
       router.push(ROUTES.providerDetail(providerSlugOrId));
     }
@@ -143,17 +145,17 @@ export default function FindServicesScreen() {
 
   const handleFavouritePress = (serviceId: string) => {
     if (isGuest) {
-      Alert.alert(
-        'Authentication Required',
-        'Please sign in or create an account to save services to your favourites.',
-        [
+      showError({
+        title: 'Authentication Required',
+        message: 'Please sign in or create an account to save services to your favourites.',
+        actions: [
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Sign In',
             onPress: () => router.push(ROUTES.auth.signin),
           },
         ],
-      );
+      });
     } else {
       addRemoveFav.mutate({ service_id: serviceId });
     }

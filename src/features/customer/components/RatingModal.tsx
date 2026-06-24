@@ -6,7 +6,6 @@ import {
   Modal,
   TouchableWithoutFeedback,
   TextInput,
-  Alert,
   StyleSheet,
   ScrollView,
   useWindowDimensions,
@@ -17,6 +16,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { useCreateRating, useUpdateRating } from '@/api';
 import type { Rating } from '@/types';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 interface RatingModalProps {
   visible: boolean;
@@ -41,6 +41,7 @@ export default function RatingModal({
   const [review, setReview] = useState(existingRating?.review || '');
   const [hoveredRating, setHoveredRating] = useState(0);
   const { height } = useWindowDimensions();
+  const { showSnackbar } = useSnackbar();
   const createRating = useCreateRating();
   const updateRating = useUpdateRating();
 
@@ -50,11 +51,11 @@ export default function RatingModal({
 
   const handleSubmit = () => {
     if (rating === 0) {
-      Alert.alert('Rating Required', 'Please select a star rating.');
+      showSnackbar({ message: 'Please select a star rating.', type: 'info' });
       return;
     }
     if (review.trim().length < 10) {
-      Alert.alert('Review Too Short', 'Please write at least 10 characters.');
+      showSnackbar({ message: 'Please write at least 10 characters.', type: 'info' });
       return;
     }
 
@@ -63,10 +64,10 @@ export default function RatingModal({
         { id: existingRating!.id, rate: rating, review: review.trim(), provider_id: providerId, booking_id: bookingId },
         {
           onSuccess: () => {
-            Alert.alert('Updated!', 'Your review has been updated successfully.');
+            showSnackbar({ message: 'Your review has been updated successfully.', type: 'success' });
             onClose();
           },
-          onError: (error) => Alert.alert('Error', error.message || 'Failed to update review.'),
+          onError: (error) => showSnackbar({ message: error.message || 'Failed to update review.', type: 'error' }),
         },
       );
     } else {
@@ -74,10 +75,10 @@ export default function RatingModal({
         { rate: rating, review: review.trim(), provider_id: providerId, booking_id: bookingId },
         {
           onSuccess: () => {
-            Alert.alert('Thank You!', 'Your review has been submitted successfully.');
+            showSnackbar({ message: 'Your review has been submitted successfully.', type: 'success' });
             onClose();
           },
-          onError: (error) => Alert.alert('Error', error.message || 'Failed to submit review.'),
+          onError: (error) => showSnackbar({ message: error.message || 'Failed to submit review.', type: 'error' }),
         },
       );
     }

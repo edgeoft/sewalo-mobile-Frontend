@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Alert, Linking, Pressable } from 'react-native';
+import { View, Text, Linking, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller, useWatch } from 'react-hook-form';
@@ -13,6 +13,8 @@ import Input from '@/components/ui/Input';
 import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 
 import { useSubmitContact } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 interface SupportTicketFormData {
   fullName: string;
@@ -26,6 +28,8 @@ export default function ContactSupportScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { mutate: submitContact, isPending } = useSubmitContact();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const {
     control,
@@ -46,15 +50,15 @@ export default function ContactSupportScreen() {
   const watchMessage = useWatch({ control, name: 'message' }) || '';
 
   const handleCallSupport = () => {
-    Alert.alert(
-      'Call Support',
-      'Select a support number to call:',
-      [
+    showError({
+      title: 'Call Support',
+      message: 'Select a support number to call:',
+      actions: [
         {
           text: 'NTC (9744985161)',
           onPress: () => {
             Linking.openURL('tel:+9779744985161').catch(() => {
-              Alert.alert('Error', 'Call function is not supported on this device.');
+              showSnackbar({ message: 'Call function is not supported on this device.', type: 'error' });
             });
           },
         },
@@ -62,24 +66,17 @@ export default function ContactSupportScreen() {
           text: 'Ncell (9713969243)',
           onPress: () => {
             Linking.openURL('tel:+9779713969243').catch(() => {
-              Alert.alert('Error', 'Call function is not supported on this device.');
+              showSnackbar({ message: 'Call function is not supported on this device.', type: 'error' });
             });
           },
         },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
+        { text: 'Cancel', style: 'cancel' },
       ],
-      { cancelable: true },
-    );
+    });
   };
 
   const handleLiveChat = () => {
-    Alert.alert('Live Chat', 'Connecting you to a Sewalo support agent...', [
-      { text: 'Wait', style: 'default' },
-      { text: 'Cancel', style: 'cancel' },
-    ]);
+    showSnackbar({ message: 'Connecting you to a Sewalo support agent...', type: 'info' });
   };
 
   const handleTicketSubmit = (data: SupportTicketFormData) => {
@@ -93,28 +90,26 @@ export default function ContactSupportScreen() {
       },
       {
         onSuccess: (res) => {
-          Alert.alert(
-            'Message Sent',
-            'Thank you, ' +
+          showSnackbar({
+            message:
+              'Thank you, ' +
               data.fullName +
               '! Your message has been received. Ticket ID: #SWL-' +
               (res.data?.id || Math.floor(100000 + Math.random() * 900000)) +
               '.\n\nOur support team will respond to you via email at ' +
               data.email +
               ' within 2-4 hours.',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  reset();
-                  router.back();
-                },
-              },
-            ],
-          );
+            type: 'success',
+            duration: 5000,
+          });
+          reset();
+          router.back();
         },
         onError: (error) => {
-          Alert.alert('Error', error.message || 'Failed to submit contact request. Please try again.');
+          showSnackbar({
+            message: error.message || 'Failed to submit contact request. Please try again.',
+            type: 'error',
+          });
         },
       },
     );

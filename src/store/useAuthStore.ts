@@ -1,6 +1,6 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { queryClient } from '@/api/client/query/queryClient';
-import { getProfileAction, logoutAction } from '@/api';
+import { getProfileAction } from '@/api';
 import { UserProfile, USER_ROLES, UserRole } from '@/types';
 import { create } from 'zustand';
 
@@ -70,11 +70,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       isLoggedIn: false,
       user: null,
       isLoading: false,
-    });
-
-    // Fire backend logout in the background, best-effort and non-blocking
-    logoutAction().catch((error) => {
-      console.warn('[AuthStore] Backend logout background call failed:', error);
     });
   },
 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Alert, View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
@@ -54,6 +56,8 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
   const [currentStatus, setCurrentStatus] = useState(initialBooking.status);
   const [invoiceTotal, setInvoiceTotal] = useState(0);
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const customerName = initialBooking.user?.name || 'Customer';
   const customerAvatar = getImageUrl(initialBooking.user?.avatar) || '';
@@ -92,24 +96,32 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   };
 
   const handleAccept = () => {
-    Alert.alert('Accept Booking', 'Are you sure you want to accept this booking?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Accept', onPress: () => handleStatusUpdate('confirmed') },
-    ]);
+    showError({
+      title: 'Accept Booking',
+      message: 'Are you sure you want to accept this booking?',
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Accept', onPress: () => handleStatusUpdate('confirmed') },
+      ],
+    });
   };
 
   const handleReject = () => {
-    Alert.alert('Reject Booking', 'Are you sure you want to reject this booking?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Reject',
-        style: 'destructive',
-        onPress: () =>
-          handleStatusUpdate('rejected', {
-            cancellation_reason: 'Provider is not available for this booking.',
-          }),
-      },
-    ]);
+    showError({
+      title: 'Reject Booking',
+      message: 'Are you sure you want to reject this booking?',
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reject',
+          style: 'destructive',
+          onPress: () =>
+            handleStatusUpdate('rejected', {
+              cancellation_reason: 'Provider is not available for this booking.',
+            }),
+        },
+      ],
+    });
   };
 
   const handleJobStarted = () => {
@@ -122,33 +134,41 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
   const handleSendInvoice = () => {
     if (invoiceTotal <= 0) {
-      Alert.alert('Invalid Invoice', 'Please set a valid invoice amount.');
+      showSnackbar({ message: 'Please set a valid invoice amount.', type: 'error' });
       return;
     }
-    Alert.alert('Send Invoice', `Send invoice for Rs. ${invoiceTotal.toFixed(2)} to the customer?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Send', onPress: () => handleStatusUpdate('ready_to_pay') },
-    ]);
+    showError({
+      title: 'Send Invoice',
+      message: `Send invoice for Rs. ${invoiceTotal.toFixed(2)} to the customer?`,
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Send', onPress: () => handleStatusUpdate('ready_to_pay') },
+      ],
+    });
   };
 
   const handleReceivedPayment = () => {
-    Alert.alert('Confirm Payment', 'Have you received the payment from the customer?', [
-      { text: 'No', style: 'cancel' },
-      {
-        text: 'Yes, Confirm',
-        onPress: () => {
-          confirmPayment.mutate(
-            { bookingId: initialBooking.id, payload: { has_received_payment: true } },
-            {
-              onSuccess: (result) => {
-                setCurrentStatus(result.status);
-                Alert.alert('Success', 'Payment confirmed successfully.');
+    showError({
+      title: 'Confirm Payment',
+      message: 'Have you received the payment from the customer?',
+      actions: [
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Yes, Confirm',
+          onPress: () => {
+            confirmPayment.mutate(
+              { bookingId: initialBooking.id, payload: { has_received_payment: true } },
+              {
+                onSuccess: (result) => {
+                  setCurrentStatus(result.status);
+                  showSnackbar({ message: 'Payment confirmed successfully.', type: 'success' });
+                },
               },
-            },
-          );
+            );
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   return (

@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { useCategoriesQuery, useGetMyBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
 import { useMemo } from 'react';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { UserProfile } from '@/types';
 
 export default function CustomerHomeScreen() {
@@ -36,7 +36,7 @@ export default function CustomerHomeScreen() {
       const service = b.service;
 
       const getAvatarUri = (avatar: string | null | undefined) => {
-        return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+        return getImageUrl(avatar) || FALLBACKS.avatar;
       };
 
       const formatLocation = (prov: UserProfile | null | undefined) => {

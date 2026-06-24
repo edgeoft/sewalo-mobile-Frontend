@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Alert, Share, ActivityIndicator } from 'react-native';
+import { View, Text, Share, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
@@ -10,6 +10,7 @@ import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 import { useReferralCodeQuery, useReferralStatsQuery } from '@/api';
 import { useAuth } from '@/providers/AuthProvider';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 const APP_LINK = 'https://sipalu.com';
 
@@ -26,6 +27,7 @@ export default function ReferFriendScreen() {
   const totalReferred = statsData?.data?.total_referred || 0;
   const loyaltyPoints = user?.loyalty_points || 0;
 
+  const { showSnackbar } = useSnackbar();
   const isLoading = codeLoading || statsLoading;
 
   const handleCopyLink = async () => {
@@ -33,11 +35,10 @@ export default function ReferFriendScreen() {
     try {
       await Clipboard.setStringAsync(referralLink);
       setCopied(true);
-      Alert.alert('Copied!', 'Referral link copied to clipboard.', [
-        { text: 'OK', onPress: () => setTimeout(() => setCopied(false), 2000) },
-      ]);
+      showSnackbar({ message: 'Referral link copied to clipboard.', type: 'success' });
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      Alert.alert('Error', 'Failed to copy to clipboard.');
+      showSnackbar({ message: 'Failed to copy to clipboard.', type: 'error' });
     }
   };
 
@@ -48,7 +49,7 @@ export default function ReferFriendScreen() {
         message: `Use my referral link to sign up on Sewalo and we both earn loyalty points! ${referralLink}`,
       });
     } catch (error: any) {
-      Alert.alert('Error', 'Failed to share: ' + error.message);
+      showSnackbar({ message: 'Failed to share: ' + error.message, type: 'error' });
     }
   };
 

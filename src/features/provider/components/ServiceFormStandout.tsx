@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
-import { Alert, Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
 import Input from '@/components/ui/Input';
 import { ServiceFormData } from '@/types';
 
@@ -27,18 +28,19 @@ export default function ServiceFormStandout({
   const [isTagFocused, setIsTagFocused] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const { showSnackbar } = useSnackbar();
 
   // 1. Photo Grid Handlers
   const handlePickImage = async () => {
     if (watchWorkSamples.length >= 5) {
-      Alert.alert('Limit Reached', 'You can upload up to 5 work samples.');
+      showSnackbar({ message: 'You can upload up to 5 work samples.', type: 'error' });
       return;
     }
 
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'We need access to your photo library to select work samples.');
+        showSnackbar({ message: 'We need access to your photo library to select work samples.', type: 'error' });
         return;
       }
 
@@ -77,7 +79,7 @@ export default function ServiceFormStandout({
         }, 300);
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong while picking the image.');
+      showSnackbar({ message: 'Something went wrong while picking the image.', type: 'error' });
     }
   };
 

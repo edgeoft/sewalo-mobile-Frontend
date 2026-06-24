@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, Linking, Pressable } from 'react-native';
+import { View, Text, Linking, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -7,22 +7,27 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function AboutAppScreen() {
   const insets = useSafeAreaInsets();
+  const { showSnackbar } = useSnackbar();
   const [checking, setChecking] = useState(false);
 
   const handleCheckUpdates = () => {
     setChecking(true);
     setTimeout(() => {
       setChecking(false);
-      Alert.alert('Sewalo Update', 'Your app is up to date! Version 1.0.0 is the latest version available.');
+      showSnackbar({
+        message: 'Your app is up to date! Version 1.0.0 is the latest version available.',
+        type: 'success',
+      });
     }, 1500);
   };
 
   const handleOpenLink = (url: string) => {
     Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open link on this device: ' + url);
+      showSnackbar({ message: 'Unable to open link on this device: ' + url, type: 'error' });
     });
   };
 

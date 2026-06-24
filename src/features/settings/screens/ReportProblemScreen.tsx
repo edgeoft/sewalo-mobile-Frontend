@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
@@ -10,6 +10,8 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 interface ReportProblemFormData {
   category: string;
@@ -29,6 +31,8 @@ const ISSUE_CATEGORIES = [
 export default function ReportProblemScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
   const [loading, setLoading] = useState(false);
   const [screenshotUploaded, setScreenshotUploaded] = useState(false);
 
@@ -48,18 +52,19 @@ export default function ReportProblemScreen() {
 
   const handleUploadScreenshot = () => {
     setScreenshotUploaded(true);
-    Alert.alert('Screenshot Upload', 'Mock Screenshot uploaded successfully!');
+    showSnackbar({ message: 'Screenshot uploaded successfully!', type: 'success' });
   };
 
   const handleReportSubmit = (data: ReportProblemFormData) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      Alert.alert(
-        'Problem Reported',
-        'Thank you for reporting this issue. Our QA team will investigate the details. Ticket ID: #BUG-' +
+      showError({
+        title: 'Problem Reported',
+        message:
+          'Thank you for reporting this issue. Our QA team will investigate the details. Ticket ID: #BUG-' +
           Math.floor(1000 + Math.random() * 9000),
-        [
+        actions: [
           {
             text: 'Return',
             onPress: () => {
@@ -68,7 +73,7 @@ export default function ReportProblemScreen() {
             },
           },
         ],
-      );
+      });
     }, 1500);
   };
 

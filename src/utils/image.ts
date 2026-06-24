@@ -1,20 +1,33 @@
+import { Image } from 'react-native';
+
 import { ENV } from '@/constants/env';
 
-/**
- * Resolves the absolute URL of an image path returned from the backend.
- * Handles:
- * 1. Absolute URLs / Signed URLs (starts with http/https) -> returns as is.
- * 2. Relative S3 paths -> prepends the S3 base URL.
- */
+const FALLBACK_IMAGE_URI = Image.resolveAssetSource(require('@/assets/images/fall_back.jpg')).uri;
+const FALLBACK_AVATAR_URI = Image.resolveAssetSource(require('@/assets/images/avatar-default.png')).uri;
+
 export function getImageUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
-
-  // 1. If it's already an absolute URL (like a signed S3 URL or external avatar), return it as is
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
-
-  // 2. Otherwise, resolve against the S3 base URL
   const cleanPath = url.startsWith('/') ? url.slice(1) : url;
   return `${ENV.S3_BASE_URL}${cleanPath}`;
+}
+
+export function getAvatarUrl(url: string | null | undefined): string {
+  return getImageUrl(url) || FALLBACK_AVATAR_URI;
+}
+
+export function getImageSource(url: string | null | undefined): string {
+  return getImageUrl(url) || FALLBACK_IMAGE_URI;
+}
+
+export const FALLBACKS = {
+  image: FALLBACK_IMAGE_URI as string,
+  avatar: FALLBACK_AVATAR_URI as string,
+} as const;
+
+export function getSource(url: string | null | undefined, type: 'image' | 'avatar' = 'image'): { uri: string } {
+  const resolved = type === 'avatar' ? getAvatarUrl(url) : getImageSource(url);
+  return { uri: resolved };
 }

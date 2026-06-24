@@ -1,14 +1,16 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import { useResendOtp, useVerifyOtp } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
+  const { showSnackbar } = useSnackbar();
   const {
     phone,
     flow,
@@ -30,11 +32,11 @@ export default function OtpVerificationScreen() {
   useEffect(() => {
     if (routeOtp) {
       const timerId = setTimeout(() => {
-        Alert.alert('OTP Sent', `OTP Code: ${routeOtp}`);
+        showSnackbar({ message: `OTP Code: ${routeOtp}`, type: 'info' });
       }, 300);
       return () => clearTimeout(timerId);
     }
-  }, [routeOtp]);
+  }, [routeOtp, showSnackbar]);
 
   const verifyOtpMutation = useVerifyOtp();
   const resendOtpMutation = useResendOtp(() => {

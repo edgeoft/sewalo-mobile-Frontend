@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -13,6 +13,8 @@ import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyC
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
 import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { getImageUrl } from '@/utils/image';
 
 function formatTime(timeString: string) {
@@ -52,6 +54,9 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const [loyaltyPoints, setLoyaltyPoints] = useState<string>('');
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
+
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const { data: couponsData } = useGetApplicableCoupons();
   const processPayment = useProcessPayment();
@@ -96,7 +101,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     const points = parseInt(numericText) || 0;
 
     if (points > loyaltyBalance) {
-      Alert.alert('Limit Exceeded', `You only have ${loyaltyBalance} loyalty points.`);
+      showSnackbar({ message: `You only have ${loyaltyBalance} loyalty points.`, type: 'info' });
       setLoyaltyPoints(loyaltyBalance.toString());
       return;
     }
@@ -105,7 +110,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     const maxAllowedDiscount = basePriceValue + platformFeeValue - couponDiscountValue;
     if (pointsVal > maxAllowedDiscount) {
       const maxPoints = Math.floor(maxAllowedDiscount / pointsRate);
-      Alert.alert('Limit Exceeded', `You can only redeem up to ${maxPoints} points for this invoice.`);
+      showSnackbar({ message: `You can only redeem up to ${maxPoints} points for this invoice.`, type: 'info' });
       setLoyaltyPoints(maxPoints.toString());
       return;
     }
@@ -114,16 +119,20 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   };
 
   const handleCancel = () => {
-    Alert.alert('Cancel Booking', 'Are you sure you want to cancel this booking? This action cannot be undone.', [
-      { text: 'No', style: 'cancel' },
-      { text: 'Yes, Cancel', style: 'destructive', onPress: () => submitCancel() },
-    ]);
+    showError({
+      title: 'Cancel Booking',
+      message: 'Are you sure you want to cancel this booking? This action cannot be undone.',
+      actions: [
+        { text: 'No', style: 'cancel' },
+        { text: 'Yes, Cancel', style: 'destructive', onPress: () => submitCancel() },
+      ],
+    });
   };
 
   const submitCancel = (reason?: string) => {
     cancelBooking.mutate(
       { id: booking.id, reason },
-      { onSuccess: () => Alert.alert('Cancelled', 'Your booking has been cancelled.') },
+      { onSuccess: () => showSnackbar({ message: 'Your booking has been cancelled.', type: 'success' }) },
     );
   };
 
@@ -145,7 +154,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
       {
         onSuccess: (response) => {
           if (response.type === PAYMENT_METHODS.Cash) {
-            Alert.alert('Success', 'Payment completed successfully!');
+            showSnackbar({ message: 'Payment completed successfully!', type: 'success' });
           } else {
             const { payment } = response;
             const form = document.createElement('form');
@@ -183,10 +192,10 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     if (!invoice?.id) return;
     downloadInvoice.mutate(invoice.id, {
       onSuccess: () => {
-        Alert.alert('Success', 'Invoice downloaded successfully.');
+        showSnackbar({ message: 'Invoice downloaded successfully.', type: 'success' });
       },
       onError: (error) => {
-        Alert.alert('Download Failed', error.message || 'Failed to download invoice.');
+        showSnackbar({ message: error.message || 'Failed to download invoice.', type: 'error' });
       },
     });
   };

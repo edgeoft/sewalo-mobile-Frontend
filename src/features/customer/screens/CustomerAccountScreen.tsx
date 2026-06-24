@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Alert } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,28 +14,34 @@ import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
 import { CUSTOMER_ACCOUNT_MENU } from '../constants/accountMenu';
 import { getImageUrl } from '../../auth/utils/image';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
+  const { showError } = useErrorDialog();
 
   const handleEditProfile = () => {
     router.push(ROUTES.customer.editProfile);
   };
 
   const handleLogout = () => {
-    Alert.alert('Log Out', 'Are you sure you want to log out of your account?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Log Out',
-        style: 'destructive',
-        onPress: () => {
-          logout();
-          router.replace(ROUTES.auth.signin);
+    showError({
+      title: 'Log Out',
+      message: 'Are you sure you want to log out of your account?',
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: () => {
+            logout();
+            router.replace(ROUTES.auth.signin);
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   const handleItemPress = (itemId: string) => {

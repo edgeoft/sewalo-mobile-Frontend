@@ -15,7 +15,7 @@ import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
 import { useGetBookingsQuery, useUpdateBooking } from '@/api';
-import { getImageUrl } from '@/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 function formatDate(dateString: string) {
   if (!dateString) return '';
@@ -69,7 +69,7 @@ export default function ProviderBookingsScreen() {
   const mapToProviderItem = (booking: (typeof bookings)[0]) => ({
     id: booking.id,
     customerName: booking.user?.name || 'Customer',
-    customerAvatar: getImageUrl(booking.user?.avatar) || 'https://i.pravatar.cc/300?img=33',
+    customerAvatar: getImageUrl(booking.user?.avatar) || FALLBACKS.avatar,
     serviceLabel: booking.service?.name || 'Service',
     location: booking.city ? `${booking.city}${booking.address ? `, ${booking.address}` : ''}` : 'Nepal',
     bookingDate: [formatDate(booking.service_date), formatTime(booking.start_time)].filter(Boolean).join(', '),

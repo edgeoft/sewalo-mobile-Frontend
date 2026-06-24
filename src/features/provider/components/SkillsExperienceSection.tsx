@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
@@ -42,6 +43,7 @@ export default function SkillsExperienceSection({
   onSave,
   loading = false,
 }: SkillsExperienceSectionProps) {
+  const { showSnackbar } = useSnackbar();
   const [eduModalVisible, setEduModalVisible] = useState(false);
   const [expModalVisible, setExpModalVisible] = useState(false);
 
@@ -59,7 +61,7 @@ export default function SkillsExperienceSection({
 
   const handleAddEduSubmit = () => {
     if (!degree || !institution) {
-      alert('Degree and Institution are required.');
+      showSnackbar({ message: 'Degree and Institution are required.', type: 'error' });
       return;
     }
     onAddEducation({
@@ -79,7 +81,7 @@ export default function SkillsExperienceSection({
 
   const handleAddExpSubmit = () => {
     if (!jobTitle || !company) {
-      alert('Job Title and Company are required.');
+      showSnackbar({ message: 'Job Title and Company are required.', type: 'error' });
       return;
     }
     onAddExperience({

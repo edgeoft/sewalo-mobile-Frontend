@@ -1,5 +1,5 @@
-import { Alert } from 'react-native';
 import { ROUTES } from '@/constants/routes';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { useAuth } from '@/providers/AuthProvider';
 import {
   USER_ROLES,
@@ -90,6 +90,7 @@ export const useLogin = () => {
 export const useVerifyOtp = () => {
   const { login } = useAuth();
   const router = useRouter();
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: VerifyOtpInput) =>
       verifyOtpAction({
@@ -123,19 +124,14 @@ export const useVerifyOtp = () => {
         }
       };
 
-      Alert.alert('Success', 'OTP verified successfully!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            void handleNavigation();
-          },
-        },
-      ]);
+      showSnackbar({ message: 'OTP verified successfully!', type: 'success' });
+      void handleNavigation();
     },
   });
 };
 
 export const useResendOtp = (onSuccess?: () => void) => {
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: ResendOtpInput) =>
       resendOtpAction({
@@ -143,10 +139,9 @@ export const useResendOtp = (onSuccess?: () => void) => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res) => {
-      const msg = res.otp
-        ? `A new OTP has been sent successfully!\n\nOTP Code: ${res.otp}`
-        : 'A new OTP has been sent successfully!';
-      Alert.alert('Success', msg, [{ text: 'OK', onPress: () => onSuccess?.() }]);
+      const msg = res.otp ? `A new OTP has been sent successfully!` : 'A new OTP has been sent successfully!';
+      showSnackbar({ message: msg, type: 'success' });
+      onSuccess?.();
     },
   });
 };
@@ -174,6 +169,7 @@ export const useForgotPassword = () => {
 
 export const useResetPassword = () => {
   const router = useRouter();
+  const { showSnackbar } = useSnackbar();
   return useMutation({
     mutationFn: (variables: ResetPasswordInput) =>
       resetPasswordAction({
@@ -181,9 +177,8 @@ export const useResetPassword = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: () => {
-      Alert.alert('Success', 'Password reset successfully!', [
-        { text: 'OK', onPress: () => router.replace(ROUTES.auth.signin) },
-      ]);
+      showSnackbar({ message: 'Password reset successfully!', type: 'success' });
+      router.replace(ROUTES.auth.signin);
     },
   });
 };

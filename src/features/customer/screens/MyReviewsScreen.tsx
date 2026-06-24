@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Alert, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Image, Pressable, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
@@ -8,8 +8,10 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader, LoadMoreList } from '@/components/common';
 import { useGetMyRatingsQuery, useDeleteRating } from '@/api';
 import type { Rating } from '@/types';
-import { getImageUrl } from '@/utils/image';
+import { getSource } from '@/utils/image';
 import RatingModal from '../components/RatingModal';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 function formatDate(isoString: string) {
   if (!isoString) return '';
@@ -53,7 +55,7 @@ function ReviewCard({
       <View className="flex-row items-start justify-between">
         <View className="flex-row items-center flex-1">
           <Image
-            source={{ uri: getImageUrl(rating.provider?.avatar) || 'https://i.pravatar.cc/100' }}
+            source={getSource(rating.provider?.avatar, 'avatar')}
             className="h-10 w-10 rounded-full border border-gray-100 bg-gray-50 mr-3"
             resizeMode="cover"
           />
@@ -97,22 +99,28 @@ export default function MyReviewsScreen() {
 
   const { data: ratingsData, isLoading } = useGetMyRatingsQuery({ limit: 50 });
   const deleteRating = useDeleteRating();
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const ratings = ratingsData?.data || [];
 
   const handleDeleteReview = (rating: Rating) => {
-    Alert.alert('Delete Review', 'Are you sure you want to delete this review? This action cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          deleteRating.mutate(rating.id, {
-            onError: (error) => Alert.alert('Error', error.message || 'Failed to delete review.'),
-          });
+    showError({
+      title: 'Delete Review',
+      message: 'Are you sure you want to delete this review? This action cannot be undone.',
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteRating.mutate(rating.id, {
+              onError: (error) => showSnackbar({ message: error.message || 'Failed to delete review.', type: 'error' }),
+            });
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   return (

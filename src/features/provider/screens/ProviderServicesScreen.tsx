@@ -1,9 +1,10 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Alert, Image, Linking, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Linking, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -18,6 +19,7 @@ export default function ProviderServicesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data, isLoading } = useGetMyServicesQuery();
+  const { showSnackbar } = useSnackbar();
 
   const handleCreateService = () => {
     router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } });
@@ -26,7 +28,7 @@ export default function ProviderServicesScreen() {
   const handleOpenPortfolio = (url: string) => {
     if (!url) return;
     Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open portfolio website.');
+      showSnackbar({ message: 'Unable to open portfolio website.', type: 'error' });
     });
   };
 

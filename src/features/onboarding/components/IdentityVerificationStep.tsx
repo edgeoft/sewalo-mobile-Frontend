@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Alert, Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 interface IdentityVerificationStepProps {
   documentImage: string | null;
@@ -24,6 +25,7 @@ export default function IdentityVerificationStep({
   role,
   stepper,
 }: IdentityVerificationStepProps) {
+  const { showSnackbar } = useSnackbar();
   const [previewVisible, setPreviewVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const isProvider = role === 'provider';
@@ -32,7 +34,10 @@ export default function IdentityVerificationStep({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'We need access to your photo library to select a verification document.');
+        showSnackbar({
+          message: 'We need access to your photo library to select a verification document.',
+          type: 'error',
+        });
         return;
       }
 
@@ -46,7 +51,7 @@ export default function IdentityVerificationStep({
         setDocumentImage(result.assets[0].uri);
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong while selecting the image.');
+      showSnackbar({ message: 'Something went wrong while selecting the image.', type: 'error' });
     }
   };
 

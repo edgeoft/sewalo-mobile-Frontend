@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import {
-  Alert,
   Image,
   Modal,
   Pressable,
@@ -19,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 export interface BasicInfoFormData {
   fullName: string;
@@ -75,6 +75,7 @@ export default function BasicInfoSection({
   loading = false,
 }: BasicInfoSectionProps) {
   const { height } = useWindowDimensions();
+  const { showSnackbar } = useSnackbar();
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
@@ -82,7 +83,7 @@ export default function BasicInfoSection({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'We need access to your photo library to select a profile picture.');
+        showSnackbar({ message: 'We need access to your photo library to select a profile picture.', type: 'info' });
         return;
       }
 
@@ -98,7 +99,7 @@ export default function BasicInfoSection({
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong while picking the avatar.');
+      showSnackbar({ message: 'Something went wrong while picking the avatar.', type: 'error' });
     }
   };
 

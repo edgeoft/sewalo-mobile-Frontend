@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, Pressable, Modal, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
@@ -8,6 +8,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@/components/ui/Button';
 
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import FinancialAccountForm from './FinancialAccountForm';
 import { financeAccountSchema, FinanceAccountFormValues } from '@/schemas/provider';
 import { FinanceAccountType, FinanceAccount } from '@/types';
@@ -41,6 +43,8 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
   const { mutate: deleteAccount, isPending: isDeleting } = useDeleteFinanceAccount();
 
   const isMutating = isUpdating || isDeleting;
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const accounts: FinanceAccount[] = accountsResponse?.data || [];
   const banks = accounts.filter((a: FinanceAccount) => a.type === FinanceAccountType.BANK);
@@ -67,7 +71,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       {
         onSuccess: () => {
           return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
-            Alert.alert('Success', 'Account set as your primary payout method.');
+            showSnackbar({ message: 'Account set as your primary payout method.', type: 'success' });
           });
         },
       },
@@ -75,20 +79,24 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
   };
 
   const handleRemove = (id: number) => {
-    Alert.alert('Remove Account', 'Are you sure you want to remove this account?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: () => {
-          deleteAccount(id, {
-            onSuccess: () => {
-              return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] });
-            },
-          });
+    showError({
+      title: 'Remove Account',
+      message: 'Are you sure you want to remove this account?',
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            deleteAccount(id, {
+              onSuccess: () => {
+                return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] });
+              },
+            });
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   const handleAddSubmit = (formData: FinanceAccountFormValues) => {
@@ -105,7 +113,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
             setShowAddForm(false);
             reset();
-            Alert.alert('Success', 'Account added successfully!');
+            showSnackbar({ message: 'Account added successfully!', type: 'success' });
           });
         },
       },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, Modal, Pressable, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, Modal, Pressable, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,6 +14,8 @@ import { useAuth } from '@/providers/AuthProvider';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { useUploadFile, useUpdateProfile } from '@/api';
 import { getImageUrl } from '@/features/auth/utils/image';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
 interface IdentityVerificationScreenProps {
   role: 'customer' | 'provider';
@@ -29,6 +31,9 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
   const pageDescription = isProvider
     ? 'Upload government ID to get verified partner status and build trust with clients.'
     : 'Verify your identity to increase trust, secure bookings, and unlock account features.';
+
+  const { showSnackbar } = useSnackbar();
+  const { showError } = useErrorDialog();
 
   const { status, isRejected, isVerified, isCompleted, hasMissingId, getMessage } = useVerificationStatus();
 
@@ -47,7 +52,10 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     try {
       const { status: cameraStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (cameraStatus !== 'granted') {
-        Alert.alert('Permission Required', 'We need access to your photo library to select a verification document.');
+        showSnackbar({
+          message: 'We need access to your photo library to select a verification document.',
+          type: 'error',
+        });
         return;
       }
 
@@ -61,7 +69,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         setDocumentImage(result.assets[0].uri);
       }
     } catch {
-      Alert.alert('Error', 'Something went wrong while selecting the image.');
+      showSnackbar({ message: 'Something went wrong while selecting the image.', type: 'error' });
     }
   };
 
@@ -71,7 +79,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
   const handleSubmit = async () => {
     if (!documentImage) {
-      Alert.alert('Incomplete Upload', 'Please upload your ID document image.');
+      showSnackbar({ message: 'Please upload your ID document image.', type: 'error' });
       return;
     }
 
@@ -79,11 +87,10 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
       const uploadRes = await uploadFile({ uri: documentImage, folder: 'documents' });
       await updateProfile({ document: uploadRes.url });
 
-      Alert.alert('Submitted', 'Your document has been submitted for verification review.', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      showSnackbar({ message: 'Your document has been submitted for verification review.', type: 'success' });
+      router.back();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to submit document');
+      showSnackbar({ message: error.message || 'Failed to submit document', type: 'error' });
     }
   };
 
@@ -93,16 +100,20 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         ? 'Changing your verification document will temporarily revoke your Verified Badge until the new document is reviewed and approved. Do you want to proceed?'
         : 'Are you sure you want to cancel this verification request and upload a new document?';
 
-    Alert.alert('Request Document Change', confirmMessage, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Proceed',
-        style: 'destructive',
-        onPress: () => {
-          setDocumentImage(null);
+    showError({
+      title: 'Request Document Change',
+      message: confirmMessage,
+      actions: [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Proceed',
+          style: 'destructive',
+          onPress: () => {
+            setDocumentImage(null);
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   const cardShadow = {
