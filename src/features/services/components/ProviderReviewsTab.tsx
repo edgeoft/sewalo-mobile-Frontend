@@ -64,8 +64,10 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
       {/* Rating Breakdown Header */}
       <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-center" style={styles.shadowMin}>
         <View className="items-center justify-center pr-5 border-r border-gray-100 mr-5">
-          <Text className="text-3xl font-sans-extrabold text-gray-950">{rating}</Text>
-          <View className="my-1">{renderStars(parseFloat(rating), 12)}</View>
+          <Text className="text-3xl font-sans-extrabold text-gray-950">
+            {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
+          </Text>
+          <View className="my-1">{renderStars(isNaN(Number(rating)) ? 0 : parseFloat(rating), 12)}</View>
           <Text className="text-[10px] font-sans-semibold text-gray-400">{reviewCount} Reviews</Text>
         </View>
 

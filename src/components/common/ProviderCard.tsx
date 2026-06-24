@@ -22,6 +22,7 @@ export interface ProviderCardProps {
   onFavouritePress?: () => void;
   isFavourite?: boolean;
   variant?: 'details' | 'booking';
+  isGuest?: boolean;
 }
 
 export default function ProviderCard({
@@ -39,6 +40,7 @@ export default function ProviderCard({
   onFavouritePress,
   isFavourite = false,
   variant = 'details',
+  isGuest = false,
 }: ProviderCardProps) {
   const isBookingVariant = variant === 'booking';
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
@@ -71,7 +73,7 @@ export default function ProviderCard({
             <Text className="flex-1 text-base font-sans-bold text-gray-900" numberOfLines={1}>
               {name}
             </Text>
-            {!isBookingVariant && (
+            {!isBookingVariant && !isGuest && (
               <Pressable
                 onPress={onFavouritePress}
                 accessibilityRole="button"
@@ -90,7 +92,9 @@ export default function ProviderCard({
 
             <View className="flex-row items-center gap-1 rounded-xl bg-[#fff6e6] px-2 py-0.5">
               {renderIcon('star', '#fbbf24', 11)}
-              <Text className="text-[10px] font-sans-bold text-gray-900">{rating}</Text>
+              <Text className="text-[10px] font-sans-bold text-gray-900">
+                {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
+              </Text>
             </View>
           </View>
 

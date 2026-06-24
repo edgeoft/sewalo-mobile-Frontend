@@ -3,83 +3,50 @@ import { Pressable, Text, View } from 'react-native';
 
 import { ProviderCard } from '@/components/common';
 import { Carousel } from '@/components/ui';
+import { getImageUrl } from '@/utils/image';
+import type { Service, ServiceOffering, UserProfile } from '@/types';
 
-export interface PopularProvider {
-  id: string;
-  avatarUri: string;
-  name: string;
-  serviceLabel: string;
-  location: string;
-  ordersCompleted: string;
-  rating: string;
-  startingFromPrice: string;
-}
+const getAvatarUri = (avatar: string | null | undefined) => {
+  return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+};
 
-export const DEFAULT_POPULAR_PROVIDERS: PopularProvider[] = [
-  {
-    id: 'pepper-potts',
-    avatarUri: 'https://i.pravatar.cc/300?img=47',
-    name: 'Pepper Potts',
-    serviceLabel: 'Design',
-    location: 'Sukedhara, Kathmandu',
-    ordersCompleted: '2 Orders Completed',
-    rating: '4.2',
-    startingFromPrice: 'Rs. 2300',
-  },
-  {
-    id: 'amina-shrestha',
-    avatarUri: 'https://i.pravatar.cc/300?img=32',
-    name: 'Amina Shrestha',
-    serviceLabel: 'Cleaning',
-    location: 'Boudha, Kathmandu',
-    ordersCompleted: '18 Orders Completed',
-    rating: '4.8',
-    startingFromPrice: 'Rs. 1800',
-  },
-  {
-    id: 'raj-khatri',
-    avatarUri: 'https://i.pravatar.cc/300?img=12',
-    name: 'Raj Khatri',
-    serviceLabel: 'Plumbing',
-    location: 'Baneshwor, Kathmandu',
-    ordersCompleted: '31 Orders Completed',
-    rating: '4.7',
-    startingFromPrice: 'Rs. 1500',
-  },
-  {
-    id: 'sita-rana',
-    avatarUri: 'https://i.pravatar.cc/300?img=20',
-    name: 'Sita Rana',
-    serviceLabel: 'Beauty',
-    location: 'Lalitpur, Nepal',
-    ordersCompleted: '24 Orders Completed',
-    rating: '4.6',
-    startingFromPrice: 'Rs. 1200',
-  },
-  {
-    id: 'nabin-gurung',
-    avatarUri: 'https://i.pravatar.cc/300?img=8',
-    name: 'Nabin Gurung',
-    serviceLabel: 'Electrical',
-    location: 'Chabahil, Kathmandu',
-    ordersCompleted: '14 Orders Completed',
-    rating: '4.9',
-    startingFromPrice: 'Rs. 2100',
-  },
-];
+const formatPriceInNepali = (price: number) => {
+  return `Rs. ${Number(price).toLocaleString('en-NP', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })}`;
+};
+
+const getStartingPrice = (serviceOfferings: ServiceOffering[]) => {
+  if (!serviceOfferings || serviceOfferings.length === 0) return 'N/A';
+  const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
+  if (prices.length === 0) return 'N/A';
+  const minPrice = Math.min(...prices);
+  return formatPriceInNepali(minPrice);
+};
+
+const formatLocation = (provider: UserProfile | null | undefined) => {
+  if (!provider) return 'Nepal';
+  const city = provider.city;
+  const address = provider.address;
+  if (city && address) return `${address}, ${city}`;
+  return city || address || 'Nepal';
+};
 
 export interface PopularProvidersSectionProps {
   title: string;
   actionLabel: string;
-  providers: PopularProvider[];
+  services: Service[];
+  isGuest?: boolean;
   onActionPress?: () => void;
-  onProviderPress?: (provider: PopularProvider) => void;
+  onProviderPress?: (service: Service) => void;
 }
 
 export default function PopularProvidersSection({
   title,
   actionLabel,
-  providers,
+  services,
+  isGuest = false,
   onActionPress,
   onProviderPress,
 }: PopularProvidersSectionProps) {
@@ -97,22 +64,23 @@ export default function PopularProvidersSection({
       </View>
 
       <Carousel
-        data={providers}
-        keyExtractor={(provider) => provider.name}
+        data={services}
+        keyExtractor={(service) => service.id}
         gap={16}
         autoplay={true}
         autoplayInterval={10000}
-        renderItem={({ item: provider, cardWidth }) => (
+        renderItem={({ item: service, cardWidth }) => (
           <ProviderCard
-            avatarUri={provider.avatarUri}
-            name={provider.name}
-            serviceLabel={provider.serviceLabel}
-            location={provider.location}
-            ordersCompleted={provider.ordersCompleted}
-            rating={provider.rating}
-            startingFromPrice={provider.startingFromPrice}
+            avatarUri={getAvatarUri(service.provider?.avatar)}
+            name={service.provider?.name || 'Service Provider'}
+            serviceLabel={service.category?.name || 'Service'}
+            location={formatLocation(service.provider)}
+            rating={Number(service.average_rating || 0).toFixed(1)}
+            ordersCompleted={`${service.total_ratings || 0} orders`}
+            startingFromPrice={getStartingPrice(service.service_offerings)}
             width={cardWidth}
-            onPress={() => onProviderPress?.(provider)}
+            isGuest={isGuest}
+            onPress={() => onProviderPress?.(service)}
           />
         )}
       />

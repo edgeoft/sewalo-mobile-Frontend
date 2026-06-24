@@ -142,7 +142,21 @@ export default function FindServicesScreen() {
   );
 
   const handleFavouritePress = (serviceId: string) => {
-    addRemoveFav.mutate({ service_id: serviceId });
+    if (isGuest) {
+      Alert.alert(
+        'Authentication Required',
+        'Please sign in or create an account to save services to your favourites.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Sign In',
+            onPress: () => router.push(ROUTES.auth.signin),
+          },
+        ],
+      );
+    } else {
+      addRemoveFav.mutate({ service_id: serviceId });
+    }
   };
 
   const activeFiltersCount = Object.values(appliedFilters).filter(Boolean).length;
@@ -299,6 +313,7 @@ export default function FindServicesScreen() {
                   ordersCompleted={`${service.total_ratings || 0} orders`}
                   startingFromPrice={getStartingPrice(service.service_offerings)}
                   isFavourite={favouriteIds.has(service.id)}
+                  isGuest={isGuest}
                   onFavouritePress={() => handleFavouritePress(service.id)}
                   onPress={() => handleProviderPress(service.provider?.slug || service.provider?.id || '')}
                 />

@@ -60,6 +60,21 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   // Toggle saving to favorites
   const handleToggleSave = () => {
+    if (isGuest) {
+      Alert.alert(
+        'Authentication Required',
+        'Please sign in or create an account to save providers to your favourites.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Sign In',
+            onPress: () => router.push(ROUTES.auth.signin),
+          },
+        ],
+      );
+      return;
+    }
+
     if (!provider.serviceId) return;
     const newIsSaved = !isSaved;
     setIsSaved(newIsSaved);
@@ -251,6 +266,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
             rating={provider.rating}
             reviewCount={provider.reviewCount}
             isSaved={isSaved}
+            isGuest={isGuest}
             onReviewPress={() => setActiveTab('reviews')}
             onSharePress={handleShare}
             onFavoritePress={handleToggleSave}

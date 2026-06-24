@@ -11,6 +11,7 @@ interface ProviderHeaderCardProps {
   rating: string;
   reviewCount: number;
   isSaved: boolean;
+  isGuest?: boolean;
   onReviewPress?: () => void;
   onSharePress?: () => void;
   onFavoritePress?: () => void;
@@ -25,6 +26,7 @@ export default function ProviderHeaderCard({
   rating,
   reviewCount,
   isSaved,
+  isGuest = false,
   onReviewPress,
   onSharePress,
   onFavoritePress,
@@ -52,7 +54,9 @@ export default function ProviderHeaderCard({
 
               <Pressable className="flex-row items-center gap-1.5 active:opacity-60" onPress={onReviewPress}>
                 <Feather name="star" size={12} color="#fbbf24" fill="#fbbf24" />
-                <Text className="text-[11px] font-sans-bold text-gray-900">{rating}</Text>
+                <Text className="text-[11px] font-sans-bold text-gray-900">
+                  {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
+                </Text>
                 <Text className="text-[11px] font-sans-medium text-gray-400">
                   ({reviewCount > 0 ? `${reviewCount} Reviews` : 'No Reviews'})
                 </Text>
@@ -68,12 +72,14 @@ export default function ProviderHeaderCard({
             >
               <Feather name="share-2" size={14} color="#64748b" />
             </Pressable>
-            <Pressable
-              onPress={onFavoritePress}
-              className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
-            >
-              <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} />
-            </Pressable>
+            {!isGuest && (
+              <Pressable
+                onPress={onFavoritePress}
+                className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
+              >
+                <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} />
+              </Pressable>
+            )}
           </View>
         </View>
 

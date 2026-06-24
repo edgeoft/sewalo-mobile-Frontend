@@ -34,44 +34,6 @@ export default function GuestHomeScreen() {
     }));
   }, [categoriesData]);
 
-  const providers = useMemo(() => {
-    if (!servicesData?.data) return [];
-    return servicesData.data.map((s) => {
-      const provider = s.provider;
-
-      const getAvatarUri = (avatar: string | null | undefined) => {
-        return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
-      };
-
-      const formatLocation = (prov: UserProfile | null | undefined) => {
-        if (!prov) return 'Nepal';
-        const city = prov.city;
-        const address = prov.address;
-        if (city && address) return `${address}, ${city}`;
-        return city || address || 'Nepal';
-      };
-
-      const getStartingPrice = (offerings: ServiceOffering[]) => {
-        if (!offerings || offerings.length === 0) return 'N/A';
-        const prices = offerings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-        if (prices.length === 0) return 'N/A';
-        const minPrice = Math.min(...prices);
-        return `Rs. ${minPrice}`;
-      };
-
-      return {
-        id: provider?.slug || s.id,
-        avatarUri: getAvatarUri(provider?.avatar),
-        name: provider?.name || 'Provider',
-        serviceLabel: s.category?.name || 'Service',
-        location: formatLocation(provider),
-        ordersCompleted: `${s.total_ratings || 0} Orders Completed`,
-        rating: s.average_rating || '0',
-        startingFromPrice: getStartingPrice(s.service_offerings),
-      };
-    });
-  }, [servicesData]);
-
   const featuredBlog = featuredBlogData?.data;
 
   const getReadTime = (description: string) => {
@@ -118,13 +80,16 @@ export default function GuestHomeScreen() {
             />
           )}
 
-          {providers.length > 0 && (
+          {servicesData?.data && servicesData.data.length > 0 && (
             <PopularProvidersSection
               title="Available Services"
               actionLabel="View All"
-              providers={providers}
+              services={servicesData.data}
+              isGuest={true}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
-              onProviderPress={(provider) => router.push(ROUTES.providerDetail(provider.id))}
+              onProviderPress={(service) =>
+                router.push(ROUTES.providerDetail(service.provider?.slug || service.provider?.id || service.id))
+              }
             />
           )}
 

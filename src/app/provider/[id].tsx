@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -8,15 +8,24 @@ import Button from '@/components/ui/Button';
 import { useGetProviderDetailsQuery } from '@/api';
 import { ProviderDetail, ProviderDetailsResponse } from '@/types';
 import { getImageUrl } from '@/utils/image';
+import { useAuthStore } from '@/store/useAuthStore';
+import { ROUTES } from '@/constants/routes';
 
 export default function DynamicProviderDetailRoute() {
   const { id: slug } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const providerSlug = slug || '';
 
   // Fetch real provider details from API using slug
-  const { data: apiData, isLoading } = useGetProviderDetailsQuery(providerSlug);
+  const { data: apiData, isLoading } = useGetProviderDetailsQuery(providerSlug, {
+    enabled: isLoggedIn,
+  });
+
+  if (!isLoggedIn) {
+    return <Redirect href={ROUTES.auth.signin} />;
+  }
 
   if (isLoading) {
     return (
@@ -95,7 +104,7 @@ export default function DynamicProviderDetailRoute() {
       serviceLabel: firstService?.category?.name || 'Services',
       location: formatLocation(provider),
       fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || 'Nepal',
-      rating: firstService?.average_rating || provider.avg_rating?.toString() || '0',
+      rating: Number(firstService?.average_rating || provider.avg_rating || 0).toFixed(1),
       reviewCount: firstService?.total_ratings || provider.profile_views || 0,
       startingPrice: getStartingPrice(firstService?.service_offerings),
       ordersCompleted: `${firstService?.total_ratings || 0} orders`,
