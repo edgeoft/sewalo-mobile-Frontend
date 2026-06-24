@@ -41,3 +41,4 @@ export * from './services/referral';
 export * from './services/auth';
 export * from './services/provider';
 export * from './services/settings';
+export * from './services/blog';

@@ -7,7 +7,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useProviderDashboardQuery, useUpdateBooking } from '@/api';
+import { useProviderDashboardQuery, useUpdateBooking, useGetFeaturedBlogQuery } from '@/api';
 
 export default function ProviderHomeScreen() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function ProviderHomeScreen() {
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: dashboardData, isLoading, refetch, isRefetching } = useProviderDashboardQuery();
+  const { data: featuredBlogData } = useGetFeaturedBlogQuery();
   const updateBooking = useUpdateBooking();
 
   const handleAcceptOrder = (id: string) => {
@@ -49,6 +50,25 @@ export default function ProviderHomeScreen() {
       </View>
     );
   }
+
+  const featuredBlog = featuredBlogData?.data;
+
+  const getReadTime = (description: string) => {
+    const words = description.split(/\s+/).length;
+    const time = Math.max(1, Math.ceil(words / 200));
+    return `${time} min read`;
+  };
+
+  const cleanDescriptionText = (html: string) => {
+    if (!html) return '';
+    return html
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"');
+  };
 
   return (
     <View className="flex-1 bg-secondary">
@@ -90,14 +110,16 @@ export default function ProviderHomeScreen() {
             onActionPress={() => router.push(ROUTES.provider.earnings)}
           />
 
-          <HomeArticleSection
-            title="Insights & Tips"
-            category="Growth"
-            readTime="4 min read"
-            articleTitle="How to Get More Bookings on Sewalo: Tips for New Service Providers"
-            articleDescription="If you're new to Sewalo, your first goal should be to stand out. Here are practical ways to optimize your profile and attract customers."
-            onPress={() => router.push(ROUTES.provider.account)}
-          />
+          {featuredBlog && (
+            <HomeArticleSection
+              title="Insights & Tips"
+              category={featuredBlog.category?.name || 'Growth'}
+              readTime={getReadTime(featuredBlog.description)}
+              articleTitle={featuredBlog.title}
+              articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
+              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
+            />
+          )}
         </ContentLayout>
       </ScrollView>
     </View>

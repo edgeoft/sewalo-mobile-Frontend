@@ -1,21 +1,24 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
-import { HomeServiceCategoriesSection, RecentBookingsSection } from '@/components/home';
-import { CUSTOMER_BOOKINGS_MOCK } from '@/features/customer/constants/customerBookings';
+import { HomeServiceCategoriesSection, RecentBookingsSection, HomeArticleSection } from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useCategoriesQuery } from '@/api';
+import { useCategoriesQuery, useGetMyBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
 import { useMemo } from 'react';
+import { getImageUrl } from '@/utils/image';
+import type { UserProfile } from '@/types';
 
 export default function CustomerHomeScreen() {
   const router = useRouter();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: categoriesData } = useCategoriesQuery('homepage');
+  const { data: bookingsData } = useGetMyBookingsQuery({ limit: 5 });
+  const { data: featuredBlogData } = useGetFeaturedBlogQuery();
 
   const categories = useMemo(() => {
     if (!categoriesData?.data) return null;
@@ -25,6 +28,59 @@ export default function CustomerHomeScreen() {
       slug: cat.slug,
     }));
   }, [categoriesData]);
+
+  const bookings = useMemo(() => {
+    if (!bookingsData?.data) return [];
+    return bookingsData.data.map((b) => {
+      const provider = b.provider;
+      const service = b.service;
+
+      const getAvatarUri = (avatar: string | null | undefined) => {
+        return getImageUrl(avatar) || 'https://i.pravatar.cc/300?img=12';
+      };
+
+      const formatLocation = (prov: UserProfile | null | undefined) => {
+        if (!prov) return 'Nepal';
+        const city = prov.city;
+        const address = prov.address;
+        if (city && address) return `${address}, ${city}`;
+        return city || address || 'Nepal';
+      };
+
+      const bookedPrice = b.invoice?.total ? `Rs. ${parseFloat(b.invoice.total).toFixed(0)}` : 'N/A';
+
+      return {
+        id: b.id,
+        avatarUri: getAvatarUri(provider?.avatar),
+        name: provider?.name || 'Provider',
+        serviceLabel: service?.category?.name || 'Service',
+        location: formatLocation(provider),
+        ordersCompleted: service ? `${service.total_ratings || 0} Orders Completed` : '',
+        rating: provider?.avg_rating?.toString() || '0',
+        bookedPrice,
+        status: b.status,
+      };
+    });
+  }, [bookingsData]);
+
+  const featuredBlog = featuredBlogData?.data;
+
+  const getReadTime = (description: string) => {
+    const words = description.split(/\s+/).length;
+    const time = Math.max(1, Math.ceil(words / 200));
+    return `${time} min read`;
+  };
+
+  const cleanDescriptionText = (html: string) => {
+    if (!html) return '';
+    return html
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"');
+  };
 
   const showCategories = categories && categories.length > 0;
 
@@ -59,13 +115,26 @@ export default function CustomerHomeScreen() {
             />
           )}
 
-          <RecentBookingsSection
-            title="Recent Bookings"
-            actionLabel="View All"
-            bookings={CUSTOMER_BOOKINGS_MOCK}
-            onActionPress={() => router.push(ROUTES.customer.bookings)}
-            onBookingPress={() => router.push(ROUTES.customer.bookings)}
-          />
+          {bookings.length > 0 && (
+            <RecentBookingsSection
+              title="Recent Bookings"
+              actionLabel="View All"
+              bookings={bookings}
+              onActionPress={() => router.push(ROUTES.customer.bookings)}
+              onBookingPress={() => router.push(ROUTES.customer.bookings)}
+            />
+          )}
+
+          {featuredBlog && (
+            <HomeArticleSection
+              title="Insights & Tips"
+              category={featuredBlog.category?.name || 'Growth'}
+              readTime={getReadTime(featuredBlog.description)}
+              articleTitle={featuredBlog.title}
+              articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
+              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug) as any)}
+            />
+          )}
         </ContentLayout>
       </ScrollView>
     </View>
