@@ -1,2 +1,2 @@
-export * from './actions/referral';
-export * from './hooks/referral';
+export * from './actions';
+export * from './hooks';

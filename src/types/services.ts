@@ -2,6 +2,7 @@ import { Category, SubCategory } from './categories';
 import { UserProfile } from './user';
 import { PaginatedResponse } from './common';
 
+// Service API Types
 export interface ServiceOffering {
   id: string;
   service_id: string;
@@ -105,3 +106,137 @@ export interface AddRemoveFavoritePayload {
 }
 
 export type GetFavoritesResponse = PaginatedResponse<FavoriteItem>;
+
+// Provider Creation Params Types (Moved from features/provider)
+export interface CreateServiceOffering {
+  sub_category_id: string;
+  price: number;
+  duration: number;
+  duration_unit: string;
+  services_offered: string[];
+}
+
+export interface CreateServicePackage {
+  name: string;
+  services_offered: string[];
+  price: number;
+  duration: number;
+  duration_unit: string;
+}
+
+export interface CreateServiceParams {
+  name: string;
+  category_id: string;
+  service_location: string[];
+  description: string;
+  tags: string[];
+  portfolio: string[];
+  portfolio_url: string;
+  has_service_packages: boolean;
+  service_offerings: CreateServiceOffering[];
+  service_packages: CreateServicePackage[];
+}
+
+export interface GetMyServicesResponse {
+  data: Service;
+}
+
+export interface CategoryListResponse {
+  data: Category[];
+}
+
+export interface SubCategoryListResponse {
+  data: SubCategory[];
+}
+
+export interface UpdateServiceParams extends CreateServiceParams {
+  id: string;
+}
+
+// UI Detail Types (Moved from features/services/types.ts)
+export interface PackageDeal {
+  title: string;
+  description: string;
+  inclusions: string[];
+  price: string;
+  durationLabel: string;
+}
+
+export interface ServiceItem {
+  id: string;
+  title: string;
+  category: string;
+  price: string;
+  durationLabel: string;
+}
+
+export interface PortfolioItem {
+  id: string;
+  uri: string;
+  title?: string;
+}
+
+export interface ReviewItem {
+  id: string;
+  customerName: string;
+  customerAvatar: string;
+  rating: number;
+  date: string;
+  comment: string;
+  reply?: string;
+}
+
+export interface ProviderDetail {
+  id: string;
+  serviceId?: string;
+  isFavourite?: boolean;
+  name: string;
+  avatarUri: string;
+  isVerified: boolean;
+  serviceLabel: string;
+  location: string;
+  fullLocation: string;
+  rating: string;
+  reviewCount: number;
+  startingPrice: string;
+  ordersCompleted: string;
+  specialPackagesCount: number;
+  availability: string;
+  availabilityLabel: string;
+  workingHours: string;
+  phone: string;
+  email: string;
+  bio: string;
+  languages: string[];
+  skills: string[];
+  experience: string;
+  education?:
+    | {
+        id: number;
+        degree: string;
+        institute: string;
+        start_date: string;
+        end_date?: string | null;
+      }[]
+    | null;
+  experienceList?:
+    | {
+        id: number;
+        title: string;
+        company_name: string;
+        start_date: string;
+        end_date: string | null;
+      }[]
+    | null;
+  certificates?:
+    | {
+        id: number;
+        value: string;
+      }[]
+    | string[]
+    | null;
+  specialPackage?: PackageDeal | null;
+  individualServices: ServiceItem[];
+  portfolio: PortfolioItem[];
+  reviews: ReviewItem[];
+}

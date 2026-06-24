@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-import { ReviewItem } from '../types';
+import { ReviewItem } from '@/types';
 
 interface ProviderReviewsTabProps {
   rating: string;

@@ -1,4 +1,4 @@
-import { ProviderDetail } from '../types';
+import { ProviderDetail } from '@/types';
 
 export const MOCK_PROVIDERS: Record<string, ProviderDetail> = {
   'pepper-potts': {

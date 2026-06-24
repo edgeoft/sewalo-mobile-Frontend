@@ -12,7 +12,7 @@ import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { SERVICE_LOCATIONS, USER_STATUSES } from '@/types';
 import { getImageUrl } from '@/utils/image';
-import { useGetMyServicesQuery } from '../api/hooks/services';
+import { useGetMyServicesQuery } from '@/api';
 
 export default function ProviderServicesScreen() {
   const router = useRouter();

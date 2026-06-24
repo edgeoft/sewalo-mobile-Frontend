@@ -6,7 +6,7 @@ import {
   markAllNotificationsReadAction,
   deleteNotificationAction,
   registerDeviceTokenAction,
-} from '../actions/notification';
+} from './actions';
 import type { GetNotificationsParams, GetNotificationsResponse, UnreadCountResponse } from '@/types';
 
 export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) => {

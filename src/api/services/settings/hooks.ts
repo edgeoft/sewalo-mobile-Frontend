@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { submitContactAction } from '../actions/contact';
+import { submitContactAction } from './actions';
 import { ContactPayload, ContactResponse } from '@/types';
 
 export const useSubmitContact = () => {

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
-import { useResendOtp, useVerifyOtp } from '../api/hooks';
+import { useResendOtp, useVerifyOtp } from '@/api';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 
 export default function OtpVerificationScreen() {

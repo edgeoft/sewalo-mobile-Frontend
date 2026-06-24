@@ -15,8 +15,8 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { SERVICE_CATEGORIES, getServiceTypesByCategory } from '../constants/serviceOptions';
+import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
 import { ServiceFormData } from '@/types';
-import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';
 
 interface ServiceFormBasicsProps {
   control: Control<ServiceFormData>;
@@ -39,7 +39,7 @@ export default function ServiceFormBasics({
   const [typeModalVisible, setTypeModalVisible] = useState(false);
 
   // Fetch categories and subcategories dynamically from the API
-  const { data: categoriesData } = useGetCategoriesQuery();
+  const { data: categoriesData } = useGetProviderCategoriesQuery();
   const categoriesList =
     categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
 
@@ -47,7 +47,7 @@ export default function ServiceFormBasics({
   const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
   const activeCategorySlug = (activeCategory && 'slug' in activeCategory ? activeCategory.slug : '') as string;
 
-  const { data: subcategoriesData } = useGetSubCategoriesQuery(activeCategorySlug || '', !!activeCategorySlug);
+  const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug || '', !!activeCategorySlug);
 
   const availableServiceTypes = activeCategory
     ? subcategoriesData?.data && subcategoriesData.data.length > 0

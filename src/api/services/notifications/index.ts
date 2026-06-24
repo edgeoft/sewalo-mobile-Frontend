@@ -1,2 +1,2 @@
-export * from './actions/notification';
-export * from './hooks/notification';
+export * from './actions';
+export * from './hooks';

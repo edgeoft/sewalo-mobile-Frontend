@@ -21,7 +21,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
-import { ProviderDetail } from '../types';
+import { ProviderDetail } from '@/types';
 
 // Import subcomponents
 import BookingConfirmationModal, { type BookingDetails } from '../components/BookingConfirmationModal';

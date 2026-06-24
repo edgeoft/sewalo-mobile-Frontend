@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
-import { PackageDeal, ServiceItem } from '../types';
+import { PackageDeal, ServiceItem } from '@/types';
 
 interface ProviderServicesTabProps {
   specialPackage?: PackageDeal | null;

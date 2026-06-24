@@ -6,9 +6,9 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
 import { ServiceFormData } from '@/types';
+import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
 import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
 import BillingBasisGuideModal from './BillingBasisGuideModal';
-import { useGetCategoriesQuery, useGetSubCategoriesQuery } from '../api/hooks/services';
 
 interface ServiceFormRatesProps {
   control: Control<ServiceFormData>;
@@ -145,13 +145,13 @@ export default function ServiceFormRates({
   };
 
   // Fetch categories and subcategories dynamically from the API to display rate card names
-  const { data: categoriesData } = useGetCategoriesQuery();
+  const { data: categoriesData } = useGetProviderCategoriesQuery();
   const categoriesList =
     categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
   const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
   const activeCategorySlug = (activeCategory && 'slug' in activeCategory ? activeCategory.slug : '') as string;
 
-  const { data: subcategoriesData } = useGetSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
+  const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
 
   const availableServiceTypes = activeCategory
     ? subcategoriesData?.data && subcategoriesData.data.length > 0

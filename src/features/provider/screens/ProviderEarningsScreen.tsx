@@ -10,7 +10,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 
 import Button from '@/components/ui/Button';
-import { useCommissionSummaryQuery, useCommissionsQuery } from '../api/hooks/commissions';
+import { useCommissionSummaryQuery, useCommissionsQuery } from '@/api';
 import { Commission, COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '@/types';
 import { formatDate } from '@/utils/time';
 

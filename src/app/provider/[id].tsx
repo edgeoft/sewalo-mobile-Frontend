@@ -6,8 +6,7 @@ import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsSc
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { useGetProviderDetailsQuery } from '@/api';
-import { ProviderDetail } from '@/features/services/types';
-import { ProviderDetailsResponse } from '@/types';
+import { ProviderDetail, ProviderDetailsResponse } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
 export default function DynamicProviderDetailRoute() {

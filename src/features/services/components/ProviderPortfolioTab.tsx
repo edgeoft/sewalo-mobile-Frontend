@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-import { PortfolioItem } from '../types';
+import { PortfolioItem } from '@/types';
 
 interface ProviderPortfolioTabProps {
   portfolio: PortfolioItem[];

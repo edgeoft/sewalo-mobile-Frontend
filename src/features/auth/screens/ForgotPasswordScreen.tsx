@@ -8,7 +8,7 @@ import AuthScreenLayout from '../components/AuthScreenLayout';
 import PhoneNumberField from '../components/PhoneNumberField';
 import { ForgotPasswordFormData, getForgotPasswordSchema } from '@/schemas/auth';
 
-import { useForgotPassword } from '../api/hooks';
+import { useForgotPassword } from '@/api';
 
 export default function ForgotPasswordScreen() {
   const { t } = useTranslation();

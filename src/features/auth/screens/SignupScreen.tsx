@@ -15,7 +15,7 @@ import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';
 import PhoneNumberField from '../components/PhoneNumberField';
 import { getSignupSchema, SignupFormData } from '@/schemas/auth';
-import { useSignup } from '../api/hooks';
+import { useSignup } from '@/api';
 
 export default function SignupScreen() {
   const { t } = useTranslation();

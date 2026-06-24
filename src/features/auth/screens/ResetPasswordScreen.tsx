@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import Button from '@/components/ui/Button';
-import { useResetPassword } from '../api/hooks';
+import { useResetPassword } from '@/api';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PasswordRequirements from '../components/PasswordRequirements';

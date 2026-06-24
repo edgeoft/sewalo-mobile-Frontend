@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getReferralCodeAction, getReferralStatsAction } from '../actions/referral';
+import { getReferralCodeAction, getReferralStatsAction } from './actions';
 import type { ReferralCodeResponse, ReferralStatsResponse } from '@/types';
 
 export const useReferralCodeQuery = () => {

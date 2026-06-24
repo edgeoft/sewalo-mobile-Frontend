@@ -10,8 +10,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { serviceFormSchema } from '@/schemas/service';
 import { ServiceFormData, DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
-import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation } from '../api/hooks/services';
-import { useUploadFile } from '@/api';
+import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation, useUploadFile } from '@/api';
 import { ROUTES } from '@/constants/routes';
 import { getImageUrl } from '@/utils/image';
 

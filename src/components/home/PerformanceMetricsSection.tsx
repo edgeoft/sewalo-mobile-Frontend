@@ -10,9 +10,7 @@ export interface PerformanceMetricsSectionProps {
   onActionPress?: () => void;
   metrics?: {
     totalEarnings: string;
-    earningsGrowth: string;
     profileViews: string;
-    viewsGrowth: string;
     acceptanceRate: string;
     acceptanceRating: string;
   };
@@ -26,9 +24,7 @@ export default function PerformanceMetricsSection({
 }: PerformanceMetricsSectionProps) {
   const displayMetrics = metrics || {
     totalEarnings: 'Rs. 45,200',
-    earningsGrowth: '+12.5%',
     profileViews: '1,280',
-    viewsGrowth: '+8.2%',
     acceptanceRate: '98.5%',
     acceptanceRating: 'Excellent',
   };
@@ -62,11 +58,6 @@ export default function PerformanceMetricsSection({
               <Text className="text-xl font-sans-extrabold text-gray-900 mt-0.5">{displayMetrics.totalEarnings}</Text>
             </View>
           </View>
-
-          <View className="rounded-full bg-emerald-50 px-2.5 py-1 flex-row items-center gap-1">
-            <Feather name="trending-up" size={12} color="#059669" />
-            <Text className="text-xs font-sans-bold text-emerald-600">{displayMetrics.earningsGrowth}</Text>
-          </View>
         </View>
 
         {/* Info row (Profile Views & Acceptance Rate in 2 columns) */}
@@ -76,10 +67,6 @@ export default function PerformanceMetricsSection({
             <View className="flex-row items-center justify-between mb-3">
               <View className="h-9 w-9 rounded-xl bg-blue-50 items-center justify-center">
                 <Feather name="eye" size={16} color="#2563eb" />
-              </View>
-              <View className="rounded-full bg-blue-50 px-1.5 py-0.5 flex-row items-center gap-0.5">
-                <Feather name="trending-up" size={10} color="#2563eb" />
-                <Text className="text-[10px] font-sans-bold text-blue-600">{displayMetrics.viewsGrowth}</Text>
               </View>
             </View>
             <View>

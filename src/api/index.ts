@@ -38,3 +38,6 @@ export * from './services/categories';
 export * from './services/files';
 export * from './services/notifications';
 export * from './services/referral';
+export * from './services/auth';
+export * from './services/provider';
+export * from './services/settings';

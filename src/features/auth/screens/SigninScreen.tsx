@@ -18,7 +18,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
 
-import { useLogin } from '../api/hooks';
+import { useLogin } from '@/api';
 
 export default function SigninScreen() {
   const { t } = useTranslation();

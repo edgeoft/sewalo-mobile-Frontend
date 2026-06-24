@@ -1,16 +1,54 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, ActivityIndicator, RefreshControl } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { HomeArticleSection, HomeTopSection, RecentOrdersSection, PerformanceMetricsSection } from '@/components/home';
-import { PROVIDER_BOOKINGS_MOCK } from '@/features/provider/constants/providerBookings';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
+import { useProviderDashboardQuery, useUpdateBooking } from '@/api';
 
 export default function ProviderHomeScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
+
+  const { data: dashboardData, isLoading, refetch, isRefetching } = useProviderDashboardQuery();
+  const updateBooking = useUpdateBooking();
+
+  const handleAcceptOrder = (id: string) => {
+    updateBooking.mutate(
+      { id, data: { status: 'confirmed' } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
+        },
+      },
+    );
+  };
+
+  const handleDeclineOrder = (id: string) => {
+    updateBooking.mutate(
+      {
+        id,
+        data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
+        },
+      },
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-secondary justify-center items-center">
+        <ActivityIndicator size="large" color="#485aff" />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-secondary">
@@ -30,21 +68,25 @@ export default function ProviderHomeScreen() {
         contentContainerClassName="pb-6"
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor="#485aff" />}
       >
-        <HomeTopSection variant="provider" />
+        <HomeTopSection variant="provider" stats={dashboardData?.stats} />
 
         <ContentLayout>
           <RecentOrdersSection
             title="Recent Orders"
             actionLabel="View All"
-            orders={PROVIDER_BOOKINGS_MOCK}
+            orders={dashboardData?.recentBookings || []}
             onActionPress={() => router.push(ROUTES.provider.bookings)}
-            onOrderPress={() => router.push(ROUTES.provider.bookings)}
+            onOrderPress={(order) => router.push(ROUTES.provider.bookingDetail(order.id))}
+            onAcceptOrder={handleAcceptOrder}
+            onDeclineOrder={handleDeclineOrder}
           />
 
           <PerformanceMetricsSection
             title="Performance Insights"
             actionLabel="View Analytics"
+            metrics={dashboardData?.metrics}
             onActionPress={() => router.push(ROUTES.provider.earnings)}
           />
 

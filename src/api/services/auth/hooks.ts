@@ -13,7 +13,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { ApiError } from '@/api/client/types';
-import { formatPhone } from '../utils/phone';
+import { formatPhone } from '@/features/auth/utils/phone';
 import {
   forgotPasswordAction,
   loginAction,

@@ -16,7 +16,7 @@ import {
   useDeleteFinanceAccount,
   useGetFinanceAccountsQuery,
   useUpdateFinanceAccount,
-} from '../api/hooks/finance';
+} from '@/api';
 
 const cardShadow = {
   shadowColor: '#0f172a',

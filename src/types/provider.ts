@@ -1,5 +1,6 @@
 import { UserProfile, DeliveryType } from '@/types';
 import { PaginatedResponse } from './common';
+import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
 
 // Earnings Types
 export type TransactionType = 'credit' | 'debit';
@@ -188,3 +189,19 @@ export type FinanceAccountFormValues = {
 };
 
 export type FinancialData = FinanceAccountFormValues;
+
+export interface ProviderDashboardResponse {
+  stats: {
+    pendingOrders: number;
+    completedOrders: number;
+    avgRating: number;
+    completionRate: string;
+  };
+  metrics: {
+    totalEarnings: string;
+    profileViews: string;
+    acceptanceRate: string;
+    acceptanceRating: string;
+  };
+  recentBookings: ProviderBookingItem[];
+}

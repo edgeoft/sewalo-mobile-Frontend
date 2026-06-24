@@ -12,7 +12,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 
-import { useSubmitContact } from '../api/hooks/contact';
+import { useSubmitContact } from '@/api';
 
 interface SupportTicketFormData {
   fullName: string;

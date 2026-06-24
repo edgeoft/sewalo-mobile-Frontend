@@ -1,2 +1,2 @@
-export * from './actions/category';
-export * from './hooks/category';
+export * from './actions';
+export * from './hooks';

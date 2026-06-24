@@ -15,7 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
-import { ServiceItem } from '../types';
+import { ServiceItem } from '@/types';
 
 interface LocationData {
   address: string;
