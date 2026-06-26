@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -8,6 +9,7 @@ import Button from '@/components/ui/Button';
 import { useGetBookingByIdQuery } from '@/api';
 
 export default function ProviderBookingDetailRoute() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
@@ -29,8 +31,13 @@ export default function ProviderBookingDetailRoute() {
           <View className="h-16 w-16 bg-red-50 rounded-full items-center justify-center mb-4">
             <Feather name="alert-triangle" size={30} color="#ef4444" />
           </View>
-          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">Booking Not Found</Text>
-          <Button title="Go Back" variant="primary" onPress={() => router.back()} className="w-full max-w-[200px]" />
+          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">{t('errors.screenNotFound')}</Text>
+          <Button
+            title={t('common.goBack')}
+            variant="primary"
+            onPress={() => router.back()}
+            className="w-full max-w-[200px]"
+          />
         </View>
       </View>
     );

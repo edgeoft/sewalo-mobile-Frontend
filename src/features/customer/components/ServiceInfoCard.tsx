@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { type CustomerBookingItem } from '../constants/customerBookings';
+import { useTranslation } from 'react-i18next';
 
 interface ServiceInfoCardProps {
   booking: CustomerBookingItem;
 }
 
 export default function ServiceInfoCard({ booking }: ServiceInfoCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -26,11 +28,11 @@ export default function ServiceInfoCard({ booking }: ServiceInfoCardProps) {
 
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Service Details</Text>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.serviceDetails')}</Text>
       <View className="gap-1">
-        {renderInfoRow('Service', booking.serviceName ?? booking.serviceLabel)}
-        {renderInfoRow('Category', booking.categoryName ?? booking.serviceLabel)}
-        {renderInfoRow('Description', booking.descriptionText ?? 'Service Work')}
+        {renderInfoRow(t('home.service'), booking.serviceName ?? booking.serviceLabel)}
+        {renderInfoRow(t('customer.category'), booking.categoryName ?? booking.serviceLabel)}
+        {renderInfoRow(t('customer.description'), booking.descriptionText ?? t('customer.serviceWork'))}
       </View>
     </View>
   );

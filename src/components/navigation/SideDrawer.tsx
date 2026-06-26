@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export type SideDrawerActionItem = {
   type: 'action';
@@ -55,6 +56,7 @@ interface SideDrawerProps {
 }
 
 export default function SideDrawer({ visible, onClose, title, sections, footerAction }: SideDrawerProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const drawerWidth = Math.min(width * 0.86, 370);
@@ -151,9 +153,7 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
           <View className="mx-4 mb-4 rounded-xl bg-white px-5 pb-4 pt-4 flex-row items-start justify-between border border-gray-100/80">
             <View className="flex-1 pr-3">
               <Text className="text-[22px] font-sans-extrabold text-gray-900">{title}</Text>
-              <Text className="text-xs font-sans-medium text-gray-500 mt-1">
-                Manage account, preferences, support and more.
-              </Text>
+              <Text className="text-xs font-sans-medium text-gray-500 mt-1">{t('navigation.drawerSubtitle')}</Text>
             </View>
 
             <Pressable

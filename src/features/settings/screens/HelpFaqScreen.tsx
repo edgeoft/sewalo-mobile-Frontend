@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, Pressable, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -15,68 +16,68 @@ interface FaqItem {
   answer: string;
 }
 
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    id: 'faq-1',
-    category: 'bookings',
-    question: 'How do I book a service on Sewalo?',
-    answer:
-      'To book a service, navigate to the Find Services tab, search or select a service category (like cleaning or plumbing), select a date and time, choose your preferred service provider based on reviews/pricing, and confirm your request.',
-  },
-  {
-    id: 'faq-2',
-    category: 'payments',
-    question: 'What payment methods are supported?',
-    answer:
-      'We currently support digital wallet payments via eSewa and Khalti, direct bank transfers, and Cash on Delivery (COD) once the service is successfully completed.',
-  },
-  {
-    id: 'faq-3',
-    category: 'bookings',
-    question: 'Can I cancel or reschedule a booking?',
-    answer:
-      'Yes. You can cancel or reschedule for free up to 2 hours before the scheduled time. Go to My Bookings, click on the booking details, and select Cancel or Reschedule. Cancellations within 2 hours may incur a small fee.',
-  },
-  {
-    id: 'faq-4',
-    category: 'safety',
-    question: 'How does Sewalo verify service providers?',
-    answer:
-      'All providers undergo a strict verification process. They must submit government-issued photo IDs (Citizenship/Passport), professional certificates, and pass a background check before they are approved to accept bookings.',
-  },
-  {
-    id: 'faq-5',
-    category: 'payments',
-    question: 'How do payouts work for provider partners?',
-    answer:
-      'Payouts are cleared weekly. Every Friday, the earnings from your completed services are compiled and transferred directly to your linked primary payout account (bank or eSewa/Khalti wallet).',
-  },
-  {
-    id: 'faq-6',
-    category: 'general',
-    question: 'What are loyalty points and how do I use them?',
-    answer:
-      'Loyalty points are earned for every booking and referral you make. You can redeem these points for discounts on future services during booking checkouts. 10 points = Rs. 1.',
-  },
-  {
-    id: 'faq-7',
-    category: 'safety',
-    question: 'What if a provider causes damage during a service?',
-    answer:
-      'Sewalo covers verified services under our partner protection guidelines. If any damage occurs, please contact our Support team immediately through the Contact Support tab with booking info and photos.',
-  },
-];
-
-const CATEGORIES = [
-  { key: 'all', label: 'All FAQs' },
-  { key: 'general', label: 'General' },
-  { key: 'bookings', label: 'Bookings' },
-  { key: 'payments', label: 'Payments' },
-  { key: 'safety', label: 'Safety' },
-];
-
 export default function HelpFaqScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
+  const FAQ_ITEMS: FaqItem[] = useMemo(
+    () => [
+      {
+        id: 'faq-1',
+        category: 'bookings',
+        question: t('settings.howToBook'),
+        answer: t('settings.howToBookAns'),
+      },
+      {
+        id: 'faq-2',
+        category: 'payments',
+        question: t('settings.whatPaymentMethods'),
+        answer: t('settings.whatPaymentMethodsAns'),
+      },
+      {
+        id: 'faq-3',
+        category: 'bookings',
+        question: t('settings.howToCancel'),
+        answer: t('settings.howToCancelAns'),
+      },
+      {
+        id: 'faq-4',
+        category: 'safety',
+        question: t('settings.howVerifyProviders'),
+        answer: t('settings.howVerifyProvidersAns'),
+      },
+      {
+        id: 'faq-5',
+        category: 'payments',
+        question: t('settings.howPaymentsWork'),
+        answer: t('settings.howPaymentsWorkAns'),
+      },
+      {
+        id: 'faq-6',
+        category: 'general',
+        question: t('settings.whatIsSewalo'),
+        answer: t('settings.whatIsSewaloAns'),
+      },
+      {
+        id: 'faq-7',
+        category: 'safety',
+        question: t('settings.whatIfDamage'),
+        answer: t('settings.whatIfDamageAns'),
+      },
+    ],
+    [t],
+  );
+
+  const CATEGORIES = useMemo(
+    () => [
+      { key: 'all', label: t('settings.allFaqs') },
+      { key: 'general', label: t('settings.general') },
+      { key: 'bookings', label: t('settings.bookings') },
+      { key: 'payments', label: t('settings.payments') },
+      { key: 'safety', label: t('settings.safety') },
+    ],
+    [t],
+  );
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -117,8 +118,8 @@ export default function HelpFaqScreen() {
 
       <ContentLayout scrollable={false} className="flex-1" style={{ paddingTop: 20 }}>
         <SectionHeader
-          title="Help & FAQ"
-          description="Find answers to common questions or browse categories below."
+          title={t('settings.helpFaqTitle')}
+          description={t('settings.helpFaqDesc')}
           className="mb-4"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -126,7 +127,7 @@ export default function HelpFaqScreen() {
         {/* Search Input */}
         <View className="mb-4">
           <Input
-            placeholder="Search questions or keywords..."
+            placeholder={t('settings.searchQuestions')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             leftIcon={<Feather name="search" size={16} color="#94a3b8" />}
@@ -182,9 +183,11 @@ export default function HelpFaqScreen() {
                 <View className="h-12 w-12 bg-gray-100 rounded-full items-center justify-center mb-3">
                   <Feather name="help-circle" size={20} color="#94a3b8" />
                 </View>
-                <Text className="text-sm font-sans-bold text-gray-900 mb-1 text-center">No results found</Text>
+                <Text className="text-sm font-sans-bold text-gray-900 mb-1 text-center">
+                  {t('settings.noResultsFound')}
+                </Text>
                 <Text className="text-xs font-sans-medium text-gray-400 text-center">
-                  Try searching for a different keyword or category.
+                  {t('settings.tryDifferentKeyword')}
                 </Text>
               </View>
             }

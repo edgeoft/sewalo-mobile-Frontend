@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { type CustomerBookingItem } from '../constants/customerBookings';
+import { useTranslation } from 'react-i18next';
 
 interface PriceInfoCardProps {
   booking: CustomerBookingItem;
 }
 
 export default function PriceInfoCard({ booking }: PriceInfoCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -26,13 +28,13 @@ export default function PriceInfoCard({ booking }: PriceInfoCardProps) {
 
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Price Details</Text>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.priceDetails')}</Text>
       <View className="gap-1">
         {renderInfoRow(booking.serviceName ?? booking.serviceLabel, booking.basePrice ?? booking.bookedPrice)}
-        {renderInfoRow('VAT (13%)', booking.vatAmount ?? 'Rs. 0')}
+        {renderInfoRow(t('customer.vat'), booking.vatAmount ?? 'Rs. 0')}
         <View className="border-t border-gray-100 my-2" />
         <View className="flex-row items-center justify-between py-1">
-          <Text className="text-base font-sans-bold text-gray-950">Total :</Text>
+          <Text className="text-base font-sans-bold text-gray-950">{t('customer.total')}</Text>
           <Text className="text-lg font-sans-bold text-gray-950">{booking.totalPrice ?? booking.bookedPrice}</Text>
         </View>
       </View>

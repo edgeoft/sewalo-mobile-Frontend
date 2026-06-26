@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 
@@ -29,6 +30,7 @@ export default function AvailabilitySection({
   onSave,
   loading = false,
 }: AvailabilitySectionProps) {
+  const { t } = useTranslation();
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<'start' | 'end'>('start');
 
@@ -71,21 +73,21 @@ export default function AvailabilitySection({
       className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
     >
       <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Availability</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          Set your regular schedule for bookings.
-        </Text>
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('provider.availability')}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">{t('provider.availabilityDesc')}</Text>
       </View>
 
       <View className="gap-y-5">
         {/* Working Days */}
         <View>
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Select your working days</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">
+            {t('provider.selectWorkingDays')}
+          </Text>
           <View className="gap-y-2">
             {[
-              { id: 'always', label: 'Everyday', description: 'Available seven days a week' },
-              { id: 'weekdays', label: 'Sunday - Friday', description: 'Standard weekdays availability' },
-              { id: 'weekends', label: 'Weekend (Sat)', description: 'Available only on Saturdays' },
+              { id: 'always', label: t('provider.everyday'), description: t('provider.everydayDesc') },
+              { id: 'weekdays', label: t('provider.sundayToFriday'), description: t('provider.sundayToFridayDesc') },
+              { id: 'weekends', label: t('provider.weekend'), description: t('provider.weekendDesc') },
             ].map((day) => {
               const isSelected = workingDays === day.id;
               return (
@@ -132,7 +134,9 @@ export default function AvailabilitySection({
 
         {/* Working Hours */}
         <View>
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Select Your Working Hours</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">
+            {t('provider.selectWorkingHours')}
+          </Text>
           <View className="flex-row items-center justify-between gap-x-3">
             {/* Start Time button */}
             <Pressable
@@ -174,7 +178,7 @@ export default function AvailabilitySection({
 
         {/* Save Availability Button */}
         <Button
-          title="Save Availability"
+          title={t('provider.saveAvailability')}
           onPress={onSave}
           loading={loading}
           variant="primary"
@@ -199,7 +203,7 @@ export default function AvailabilitySection({
 
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-gray-900 text-xl font-sans-extrabold">
-                Select {pickerTarget === 'start' ? 'Start' : 'End'} Time
+                {pickerTarget === 'start' ? t('provider.selectStartTime') : t('provider.selectEndTime')}
               </Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
@@ -212,7 +216,7 @@ export default function AvailabilitySection({
             <View className="flex-row justify-center gap-x-4 mb-6">
               {/* Hours */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Hour</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('provider.hour')}</Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -236,7 +240,9 @@ export default function AvailabilitySection({
 
               {/* Minutes */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Minute</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('provider.minute')}
+                </Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -260,7 +266,9 @@ export default function AvailabilitySection({
 
               {/* AM/PM */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Period</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('provider.period')}
+                </Text>
                 <View className="border border-gray-100 rounded-lg">
                   {PERIODS.map((p) => (
                     <Pressable
@@ -279,7 +287,12 @@ export default function AvailabilitySection({
               </View>
             </View>
 
-            <Button title="Confirm Time" onPress={handleConfirmTime} variant="primary" className="w-full" />
+            <Button
+              title={t('provider.confirmTime')}
+              onPress={handleConfirmTime}
+              variant="primary"
+              className="w-full"
+            />
           </View>
         </View>
       </Modal>

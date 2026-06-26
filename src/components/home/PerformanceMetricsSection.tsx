@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { SectionHeader } from '@/components/common';
 
@@ -17,16 +18,19 @@ export interface PerformanceMetricsSectionProps {
 }
 
 export default function PerformanceMetricsSection({
-  title = 'Performance Insights',
-  actionLabel = 'View Analytics',
+  title,
+  actionLabel,
   onActionPress,
   metrics,
 }: PerformanceMetricsSectionProps) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t('home.performanceInsights');
+  const resolvedActionLabel = actionLabel ?? t('home.viewAnalytics');
   const displayMetrics = metrics || {
     totalEarnings: 'Rs. 45,200',
     profileViews: '1,280',
     acceptanceRate: '98.5%',
-    acceptanceRating: 'Excellent',
+    acceptanceRating: t('home.excellent'),
   };
 
   const cardShadow = {
@@ -39,7 +43,12 @@ export default function PerformanceMetricsSection({
 
   return (
     <View className="pt-5">
-      <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
+      <SectionHeader
+        title={resolvedTitle}
+        actionLabel={resolvedActionLabel}
+        onActionPress={onActionPress}
+        className="mb-5"
+      />
 
       <View className="gap-y-4">
         {/* Earnings Card */}
@@ -53,7 +62,7 @@ export default function PerformanceMetricsSection({
             </View>
             <View>
               <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
-                Total Earnings
+                {t('home.totalEarnings')}
               </Text>
               <Text className="text-xl font-sans-extrabold text-gray-900 mt-0.5">{displayMetrics.totalEarnings}</Text>
             </View>
@@ -70,7 +79,9 @@ export default function PerformanceMetricsSection({
               </View>
             </View>
             <View>
-              <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">Profile Views</Text>
+              <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
+                {t('home.profileViews')}
+              </Text>
               <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.profileViews}</Text>
             </View>
           </View>
@@ -87,7 +98,7 @@ export default function PerformanceMetricsSection({
             </View>
             <View>
               <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
-                Acceptance Rate
+                {t('home.acceptanceRate')}
               </Text>
               <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.acceptanceRate}</Text>
             </View>

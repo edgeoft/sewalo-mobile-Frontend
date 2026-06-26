@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
@@ -13,6 +14,7 @@ import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { UserProfile } from '@/types';
 
 export default function CustomerHomeScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
@@ -40,22 +42,22 @@ export default function CustomerHomeScreen() {
       };
 
       const formatLocation = (prov: UserProfile | null | undefined) => {
-        if (!prov) return 'Nepal';
+        if (!prov) return t('home.nepal');
         const city = prov.city;
         const address = prov.address;
         if (city && address) return `${address}, ${city}`;
-        return city || address || 'Nepal';
+        return city || address || t('home.nepal');
       };
 
-      const bookedPrice = b.invoice?.total ? `Rs. ${parseFloat(b.invoice.total).toFixed(0)}` : 'N/A';
+      const bookedPrice = b.invoice?.total ? `Rs. ${parseFloat(b.invoice.total).toFixed(0)}` : t('home.na');
 
       return {
         id: b.id,
         avatarUri: getAvatarUri(provider?.avatar),
-        name: provider?.name || 'Provider',
-        serviceLabel: service?.category?.name || 'Service',
+        name: provider?.name || t('home.provider'),
+        serviceLabel: service?.category?.name || t('home.service'),
         location: formatLocation(provider),
-        ordersCompleted: service ? `${service.total_ratings || 0} Orders Completed` : '',
+        ordersCompleted: service ? `${service.total_ratings || 0} ${t('home.ordersCompleted')}` : '',
         rating: provider?.avg_rating?.toString() || '0',
         bookedPrice,
         status: b.status,
@@ -107,8 +109,8 @@ export default function CustomerHomeScreen() {
         <ContentLayout>
           {showCategories && (
             <HomeServiceCategoriesSection
-              title="Service Categories"
-              actionLabel="View All"
+              title={t('home.serviceCategories')}
+              actionLabel={t('common.viewAll')}
               categories={categories!}
               onActionPress={() => router.push(ROUTES.customer.findServices)}
               onCategoryPress={(cat) => router.push(`${ROUTES.customer.findServices}?category=${cat.slug}`)}
@@ -117,8 +119,8 @@ export default function CustomerHomeScreen() {
 
           {bookings.length > 0 && (
             <RecentBookingsSection
-              title="Recent Bookings"
-              actionLabel="View All"
+              title={t('home.recentBookings')}
+              actionLabel={t('common.viewAll')}
               bookings={bookings}
               onActionPress={() => router.push(ROUTES.customer.bookings)}
               onBookingPress={() => router.push(ROUTES.customer.bookings)}
@@ -127,8 +129,8 @@ export default function CustomerHomeScreen() {
 
           {featuredBlog && (
             <HomeArticleSection
-              title="Insights & Tips"
-              category={featuredBlog.category?.name || 'Growth'}
+              title={t('home.insightsAndTips')}
+              category={featuredBlog.category?.name || t('home.growth')}
               readTime={getReadTime(featuredBlog.description)}
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}

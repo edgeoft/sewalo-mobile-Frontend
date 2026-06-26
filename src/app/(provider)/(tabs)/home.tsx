@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ScrollView, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import { useProviderDashboardQuery, useUpdateBooking, useGetFeaturedBlogQuery } 
 import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function ProviderHomeScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
@@ -25,7 +27,7 @@ export default function ProviderHomeScreen() {
       { id, data: { status: 'confirmed' } },
       {
         onSuccess: () => {
-          showSnackbar({ message: 'Booking accepted successfully', type: 'success' });
+          showSnackbar({ message: t('home.bookingAccepted'), type: 'success' });
           queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
         },
       },
@@ -40,7 +42,7 @@ export default function ProviderHomeScreen() {
       },
       {
         onSuccess: () => {
-          showSnackbar({ message: 'Booking declined', type: 'success' });
+          showSnackbar({ message: t('home.bookingDeclined'), type: 'success' });
           queryClient.invalidateQueries({ queryKey: ['provider-dashboard-stats'] });
         },
       },
@@ -98,8 +100,8 @@ export default function ProviderHomeScreen() {
 
         <ContentLayout>
           <RecentOrdersSection
-            title="Recent Orders"
-            actionLabel="View All"
+            title={t('home.recentOrders')}
+            actionLabel={t('common.viewAll')}
             orders={dashboardData?.recentBookings || []}
             onActionPress={() => router.push(ROUTES.provider.bookings)}
             onOrderPress={(order) => router.push(ROUTES.provider.bookingDetail(order.id))}
@@ -108,16 +110,16 @@ export default function ProviderHomeScreen() {
           />
 
           <PerformanceMetricsSection
-            title="Performance Insights"
-            actionLabel="View Analytics"
+            title={t('home.performanceInsights')}
+            actionLabel={t('home.viewAnalytics')}
             metrics={dashboardData?.metrics}
             onActionPress={() => router.push(ROUTES.provider.earnings)}
           />
 
           {featuredBlog && (
             <HomeArticleSection
-              title="Insights & Tips"
-              category={featuredBlog.category?.name || 'Growth'}
+              title={t('home.insightsAndTips')}
+              category={featuredBlog.category?.name || t('home.growth')}
               readTime={getReadTime(featuredBlog.description)}
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +13,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
 
 export default function DynamicProviderDetailRoute() {
+  const { t } = useTranslation();
   const { id: slug } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
@@ -52,19 +54,19 @@ export default function DynamicProviderDetailRoute() {
     };
 
     const getStartingPrice = (serviceOfferings: any[]) => {
-      if (!serviceOfferings || serviceOfferings.length === 0) return 'N/A';
+      if (!serviceOfferings || serviceOfferings.length === 0) return t('home.na');
       const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-      if (prices.length === 0) return 'N/A';
+      if (prices.length === 0) return t('home.na');
       const minPrice = Math.min(...prices);
       return formatPriceInNepali(minPrice);
     };
 
     const formatLocation = (prov: any) => {
-      if (!prov) return 'Nepal';
+      if (!prov) return t('home.nepal');
       const city = prov.city;
       const address = prov.address;
       if (city && address) return `${address}, ${city}`;
-      return city || address || 'Nepal';
+      return city || address || t('home.nepal');
     };
 
     const pkg = firstService?.service_packages?.[0];
@@ -74,24 +76,24 @@ export default function DynamicProviderDetailRoute() {
           description: pkg.description || '',
           inclusions: pkg.services_offered || [],
           price: `Rs. ${pkg.price}`,
-          durationLabel: `${pkg.duration} ${pkg.duration_unit || 'Days'}`,
+          durationLabel: `${pkg.duration} ${pkg.duration_unit || t('services.days')}`,
         }
       : null;
 
     const individualServices =
       firstService?.service_offerings?.map((o: any) => ({
         id: o.id,
-        title: o.sub_category?.name || 'Service Offering',
-        category: firstService?.category?.name || 'Services',
+        title: o.sub_category?.name || t('services.serviceOffering'),
+        category: firstService?.category?.name || t('services.services'),
         price: `Rs. ${o.price}`,
-        durationLabel: `${o.duration} ${o.duration_unit || 'hrs'}`,
+        durationLabel: `${o.duration} ${o.duration_unit || t('services.hrs')}`,
       })) || [];
 
     const portfolio =
       firstService?.portfolio?.map((uri: string, idx: number) => ({
         id: `port-${idx}`,
         uri: getImageUrl(uri) || FALLBACKS.image,
-        title: `Project ${idx + 1}`,
+        title: t('services.project', { number: idx + 1 }),
       })) || [];
 
     return {
@@ -101,23 +103,23 @@ export default function DynamicProviderDetailRoute() {
       name: provider.name,
       avatarUri: getAvatarUri(provider.avatar),
       isVerified: provider.status === 'verified',
-      serviceLabel: firstService?.category?.name || 'Services',
+      serviceLabel: firstService?.category?.name || t('services.services'),
       location: formatLocation(provider),
-      fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || 'Nepal',
+      fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || t('home.nepal'),
       rating: Number(firstService?.average_rating || provider.avg_rating || 0).toFixed(1),
       reviewCount: firstService?.total_ratings || provider.profile_views || 0,
       startingPrice: getStartingPrice(firstService?.service_offerings),
-      ordersCompleted: `${firstService?.total_ratings || 0} orders`,
+      ordersCompleted: `${firstService?.total_ratings || 0} ${t('home.orders')}`,
       specialPackagesCount: firstService?.service_packages?.length || 0,
-      availability: provider.availability || 'Always',
-      availabilityLabel: provider.availability || 'Always',
+      availability: provider.availability || t('services.always'),
+      availabilityLabel: provider.availability || t('services.always'),
       workingHours:
         provider.start_time && provider.end_time
           ? `${provider.start_time} - ${provider.end_time}`
-          : '09:00 AM - 05:00 PM',
+          : t('services.defaultWorkingHours'),
       phone: provider.phone || '',
       email: provider.email || '',
-      bio: provider.description || firstService?.description || 'No bio or description provided by the provider.',
+      bio: provider.description || firstService?.description || t('services.noBio'),
       languages: Array.isArray(provider.language)
         ? provider.language
         : typeof provider.language === 'string'
@@ -147,7 +149,7 @@ export default function DynamicProviderDetailRoute() {
         if (typeof provider.experience === 'string' && provider.experience) {
           return provider.experience;
         }
-        return 'Experienced Professional';
+        return t('services.experiencedProfessional');
       })(),
       education: provider.education || [],
       experienceList: provider.experience || [],
@@ -169,11 +171,18 @@ export default function DynamicProviderDetailRoute() {
           <View className="h-16 w-16 bg-red-50 rounded-full items-center justify-center mb-4">
             <Feather name="alert-triangle" size={30} color="#ef4444" />
           </View>
-          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">Provider Not Found</Text>
-          <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6">
-            The provider you are looking for does not exist or has been deactivated.
+          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">
+            {t('services.providerNotFound')}
           </Text>
-          <Button title="Go Back" variant="primary" onPress={() => router.back()} className="w-full max-w-[200px]" />
+          <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6">
+            {t('services.providerNotFoundDesc')}
+          </Text>
+          <Button
+            title={t('common.goBack')}
+            variant="primary"
+            onPress={() => router.back()}
+            className="w-full max-w-[200px]"
+          />
         </View>
       </View>
     );

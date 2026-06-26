@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import type { Notification } from '@/types';
 
@@ -31,17 +32,17 @@ function getTypeBgColor(type: string): string {
   return '#f3f4f6';
 }
 
-function formatRelativeTime(dateString: string): string {
+function formatRelativeTime(dateString: string, t: (key: string) => string): string {
   const now = Date.now();
   const date = new Date(dateString).getTime();
   const diffMs = now - date;
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'Just now';
-  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffMin < 1) return t('notifications.new');
+  if (diffMin < 60) return `${diffMin}${t('notifications.minAgo')}`;
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
+  if (diffHr < 24) return `${diffHr}${t('notifications.hAgo')}`;
   const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return `${diffDay}d ago`;
+  if (diffDay < 7) return `${diffDay}${t('notifications.dAgo')}`;
   return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
@@ -53,6 +54,7 @@ interface NotificationCardProps {
 }
 
 export default function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationCardProps) {
+  const { t } = useTranslation();
   const [showActions, setShowActions] = useState(false);
   const isUnread = !item.read_at;
 
@@ -106,7 +108,7 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
           </Text>
 
           <View className="flex-row items-center justify-between">
-            <Text className="text-[10px] font-sans-medium text-gray-400">{formatRelativeTime(item.created_at)}</Text>
+            <Text className="text-[10px] font-sans-medium text-gray-400">{formatRelativeTime(item.created_at, t)}</Text>
             <Pressable
               onPress={() => setShowActions(!showActions)}
               accessibilityRole="button"
@@ -132,7 +134,7 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
               className="flex-row items-center rounded-lg bg-blue-50 border border-blue-100 px-3 py-1.5 active:opacity-80"
             >
               <Feather name="check" size={13} color="#485aff" />
-              <Text className="text-[11px] font-sans-semibold text-primary ml-1.5">Mark Read</Text>
+              <Text className="text-[11px] font-sans-semibold text-primary ml-1.5">{t('notifications.markRead')}</Text>
             </Pressable>
           )}
           <Pressable
@@ -145,7 +147,7 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
             className="flex-row items-center rounded-lg bg-red-50 border border-red-100 px-3 py-1.5 active:opacity-80"
           >
             <Feather name="trash-2" size={13} color="#ef4444" />
-            <Text className="text-[11px] font-sans-semibold text-red-500 ml-1.5">Delete</Text>
+            <Text className="text-[11px] font-sans-semibold text-red-500 ml-1.5">{t('notifications.delete')}</Text>
           </Pressable>
         </View>
       )}

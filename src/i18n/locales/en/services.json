@@ -1,0 +1,21 @@
+{
+  "searchPlaceholder": "Search for services or providers...",
+  "bookingConfirmed": "Booking Confirmed!",
+  "bookingConfirmedDesc": "Thank you for booking with Sewalo. Your service provider will be in touch shortly.",
+  "providerNotFound": "Provider Not Found",
+  "providerNotFoundDesc": "The provider you are looking for does not exist or has been deactivated.",
+  "noBio": "No bio or description provided by the provider.",
+  "experiencedProfessional": "Experienced Professional",
+  "always": "Always",
+  "defaultWorkingHours": "09:00 AM - 05:00 PM",
+  "days": "Days",
+  "hrs": "hrs",
+  "services": "Services",
+  "serviceOffering": "Service Offering",
+  "project": "Project {{number}}",
+  "bookNow": "Book Now",
+  "sendRequest": "Send Request",
+  "filterTitle": "Filter",
+  "sortBy": "Sort By",
+  "allCategories": "All Categories"
+}

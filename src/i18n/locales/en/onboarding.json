@@ -1,0 +1,22 @@
+{
+  "skip": "Skip",
+  "next": "Next",
+  "getStarted": "Get Started",
+  "screen1": {
+    "title": "Verified Local Pros",
+    "description": "Every service provider undergoes thorough verification. We check credentials, reviews, and experience to ensure quality."
+  },
+  "screen2": {
+    "title": "Instant Booking",
+    "description": "Browse services, compare providers, and book in minutes. Get help exactly when you need it."
+  },
+  "screen3": {
+    "title": "Quality Guaranteed",
+    "description": "Skilled professionals rated by real customers. From home repairs to personal services, excellence delivered."
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "login": "Login",
+  "allSet": "You are all set!",
+  "almostThere": "Almost there! Please click finish to complete your setup.",
+  "finishSetup": "Finish Setup"
+}

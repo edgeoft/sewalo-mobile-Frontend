@@ -1,0 +1,14 @@
+{
+  "screenNotFound": "Page Not Found",
+  "screenNotFoundDesc": "The page you are looking for does not exist.",
+  "genericError": "Something went wrong. Please try again later.",
+  "networkError": "Please check your internet connection and try again.",
+  "sessionExpired": "Your session has expired. Please log in again.",
+  "unauthorized": "You are not authorized to perform this action.",
+  "defaultEmptyTitle": "Nothing here yet",
+  "defaultEmptyDescription": "Content will appear here once available.",
+  "itemsNotFound": "No items found",
+  "itemsNotFoundDesc": "Try changing your filters and search query.",
+  "recordsNotFound": "No records found",
+  "recordsNotFoundDesc": "Try changing your filters or searching."
+}

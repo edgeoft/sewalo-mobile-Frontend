@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Input from '@/components/ui/Input';
@@ -43,6 +44,7 @@ export default function SkillsExperienceSection({
   onSave,
   loading = false,
 }: SkillsExperienceSectionProps) {
+  const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
   const [eduModalVisible, setEduModalVisible] = useState(false);
   const [expModalVisible, setExpModalVisible] = useState(false);
@@ -111,16 +113,16 @@ export default function SkillsExperienceSection({
       className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
     >
       <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Skills And Experience</Text>
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('provider.skillsAndExperience')}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          Add your education details and work history to build trust with customers.
+          {t('provider.skillsAndExperienceDesc')}
         </Text>
       </View>
 
       <View className="gap-y-5">
         {/* Education Section */}
         <View>
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Education (Optional)</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">{t('provider.education')}</Text>
 
           {/* Education List */}
           {educationList.length > 0 ? (
@@ -146,7 +148,7 @@ export default function SkillsExperienceSection({
           ) : null}
 
           <Button
-            title="+ Add Education"
+            title={t('provider.addEducation')}
             onPress={() => setEduModalVisible(true)}
             variant="outline"
             size="sm"
@@ -157,7 +159,7 @@ export default function SkillsExperienceSection({
 
         {/* Experience Section */}
         <View>
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Experience (Optional)</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">{t('provider.experience')}</Text>
 
           {/* Experience List */}
           {experienceList.length > 0 ? (
@@ -183,7 +185,7 @@ export default function SkillsExperienceSection({
           ) : null}
 
           <Button
-            title="+ Add Experience"
+            title={t('provider.addExperience')}
             onPress={() => setExpModalVisible(true)}
             variant="outline"
             size="sm"
@@ -194,7 +196,7 @@ export default function SkillsExperienceSection({
 
         {/* Save Education & Experience Button */}
         <Button
-          title="Save Education & Experience"
+          title={t('provider.saveEducationExperience')}
           onPress={onSave}
           loading={loading}
           variant="primary"
@@ -218,7 +220,7 @@ export default function SkillsExperienceSection({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Add Education</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('provider.addEducation')}</Text>
               <Pressable
                 onPress={() => setEduModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -291,7 +293,7 @@ export default function SkillsExperienceSection({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Add Experience</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('provider.addExperience')}</Text>
               <Pressable
                 onPress={() => setExpModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"

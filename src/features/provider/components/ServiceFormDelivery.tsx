@@ -1,6 +1,7 @@
 import React from 'react';
 import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ServiceFormData, DELIVERY_TYPES, DeliveryType } from '@/types';
 import DeliveryOptionCard from './DeliveryOptionCard';
@@ -18,6 +19,7 @@ export default function ServiceFormDelivery({
   setValue,
   watchDeliveryTypes = [],
 }: ServiceFormDeliveryProps) {
+  const { t } = useTranslation();
   const handleSelectDelivery = (type: DeliveryType) => {
     const current = [...watchDeliveryTypes];
     const index = current.indexOf(type);
@@ -43,32 +45,32 @@ export default function ServiceFormDelivery({
       className="rounded-xl border border-gray-200 bg-white p-3.5 mb-6"
     >
       <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Service Delivery</Text>
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('provider.serviceDelivery')}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          Specify how and where you deliver these services to your customers.
+          {t('provider.serviceDeliveryDesc')}
         </Text>
       </View>
 
       <View className="gap-y-1">
         <DeliveryOptionCard
-          label="Fixed Location"
-          sublabel="Provider works from a set address"
+          label={t('provider.fixedLocation')}
+          sublabel={t('provider.fixedLocationSub')}
           selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Fixed)}
           onPress={() => handleSelectDelivery(DELIVERY_TYPES.Fixed)}
           iconName="home"
         />
 
         <DeliveryOptionCard
-          label="Remote / Online"
-          sublabel="Service delivered digitally"
+          label={t('provider.remoteOnline')}
+          sublabel={t('provider.remoteOnlineSub')}
           selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Remote)}
           onPress={() => handleSelectDelivery(DELIVERY_TYPES.Remote)}
           iconName="globe"
         />
 
         <DeliveryOptionCard
-          label="At Customer's Location"
-          sublabel="Provider travels to the client"
+          label={t('provider.customerLocation')}
+          sublabel={t('provider.customerLocationSub')}
           selected={watchDeliveryTypes.includes(DELIVERY_TYPES.Customer)}
           onPress={() => handleSelectDelivery(DELIVERY_TYPES.Customer)}
           iconName="map-pin"

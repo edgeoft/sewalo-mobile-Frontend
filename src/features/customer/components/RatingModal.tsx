@@ -17,6 +17,7 @@ import { Feather } from '@expo/vector-icons';
 import { useCreateRating, useUpdateRating } from '@/api';
 import type { Rating } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { useTranslation } from 'react-i18next';
 
 interface RatingModalProps {
   visible: boolean;
@@ -42,6 +43,7 @@ export default function RatingModal({
   const [hoveredRating, setHoveredRating] = useState(0);
   const { height } = useWindowDimensions();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const createRating = useCreateRating();
   const updateRating = useUpdateRating();
 
@@ -51,11 +53,11 @@ export default function RatingModal({
 
   const handleSubmit = () => {
     if (rating === 0) {
-      showSnackbar({ message: 'Please select a star rating.', type: 'info' });
+      showSnackbar({ message: t('customer.ratingRequired'), type: 'info' });
       return;
     }
     if (review.trim().length < 10) {
-      showSnackbar({ message: 'Please write at least 10 characters.', type: 'info' });
+      showSnackbar({ message: t('customer.reviewRequired'), type: 'info' });
       return;
     }
 
@@ -101,7 +103,7 @@ export default function RatingModal({
 
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-gray-900 text-xl font-sans-extrabold">
-                {isEditing ? 'Edit Review' : 'Write a Review'}
+                {isEditing ? t('customer.editReview') : t('customer.writeReview')}
               </Text>
               <Pressable
                 onPress={handleClose}

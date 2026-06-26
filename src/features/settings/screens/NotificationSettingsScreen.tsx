@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Switch } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -9,6 +10,7 @@ import { SectionHeader } from '@/components/common';
 
 export default function NotificationSettingsScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const [pushBookings, setPushBookings] = useState(true);
   const [pushOffers, setPushOffers] = useState(false);
@@ -69,83 +71,83 @@ export default function NotificationSettingsScreen() {
         }}
       >
         <SectionHeader
-          title="Notification Settings"
-          description="Configure how and when you want to receive booking alerts and promotional updates."
+          title={t('settings.notificationSettingsTitle')}
+          description={t('settings.notificationSettingsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
         {/* Push Notifications Section */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Push Notifications</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.pushNotifications')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5 mb-6">
           {renderToggleItem(
             'bell',
-            'Service Bookings',
-            'Get notified about new bookings, schedules, and status shifts.',
+            t('settings.serviceBookings'),
+            t('settings.serviceBookingsDesc'),
             pushBookings,
             setPushBookings,
           )}
           {renderToggleItem(
             'message-square',
-            'In-App Chat Messages',
-            'Receive alerts for new messages from customers or partners.',
+            t('settings.inAppChatMessages'),
+            t('settings.inAppChatMessagesDesc'),
             pushChat,
             setPushChat,
           )}
           {renderToggleItem(
             'gift',
-            'Promotions & Discounts',
-            'Keep up with coupon codes, credits, and special deals.',
+            t('settings.promotionsDiscounts'),
+            t('settings.promotionsDiscountsDesc'),
             pushOffers,
             setPushOffers,
           )}
         </View>
 
         {/* Email Updates Section */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Email Preferences</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.emailNotifications')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5 mb-6">
           {renderToggleItem(
             'mail',
-            'Transaction Receipts',
-            'Receive copy of bills, payouts, and billing records in email.',
+            t('settings.transactionReceipts'),
+            t('settings.transactionReceiptsDesc'),
             emailReceipts,
             setEmailReceipts,
           )}
           {renderToggleItem(
             'file-text',
-            'Weekly Performance Digest',
-            'Get summary reviews, earnings analysis, and newsletter updates.',
+            t('settings.weeklyPerformanceDigest'),
+            t('settings.weeklyPerformanceDigestDesc'),
             emailWeekly,
             setEmailWeekly,
           )}
         </View>
 
         {/* Sound & System Settings Section */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">App Sounds & Vibration</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.appSoundsVibration')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5 mb-6">
           {renderToggleItem(
             'volume-2',
-            'Sound Effects',
-            'Play alert tone on receiving messages or requests.',
+            t('settings.soundEffects'),
+            t('settings.soundEffectsDesc'),
             soundEnabled,
             setSoundEnabled,
           )}
           {renderToggleItem(
             'activity',
-            'Vibration Alerts',
-            'Vibrate device on receiving important request notifications.',
+            t('settings.vibrationAlerts'),
+            t('settings.vibrationAlertsDesc'),
             vibrateEnabled,
             setVibrateEnabled,
           )}
         </View>
 
         {/* SMS settings Section */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Text Messages (SMS)</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.smsNotifications')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5">
           {renderToggleItem(
             'message-circle',
-            'SMS Booking Updates',
-            'Receive text alerts directly on registered mobile number.',
+            t('settings.smsBookingUpdates'),
+            t('settings.smsBookingUpdatesDesc'),
             smsStatus,
             setSmsStatus,
           )}

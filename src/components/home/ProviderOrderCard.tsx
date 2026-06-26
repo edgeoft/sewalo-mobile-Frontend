@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -14,6 +15,7 @@ interface ProviderOrderCardProps {
 }
 
 export default function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrderCardProps) {
+  const { t } = useTranslation();
   const statusPresentation = BOOKING_STATUS_PRESENTATION[order.status];
   const isPending = order.status === BOOKING_STATUSES.Pending;
 
@@ -85,7 +87,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
       {/* Bottom Bar: Price & Action Buttons */}
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[10px] font-sans-medium text-gray-400">Total Price</Text>
+          <Text className="text-[10px] font-sans-medium text-gray-400">{t('home.totalPrice')}</Text>
           <Text className="text-base font-sans-bold text-gray-900">{order.bookedPrice}</Text>
         </View>
 
@@ -95,19 +97,19 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
               onPress={() => onDecline?.(order.id)}
               className="rounded-xl border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
             >
-              <Text className="text-xs font-sans-bold text-red-600">Decline</Text>
+              <Text className="text-xs font-sans-bold text-red-600">{t('home.decline')}</Text>
             </Pressable>
 
             <Pressable
               onPress={() => onAccept?.(order.id)}
               className="rounded-xl bg-primary px-4 py-2 active:opacity-90"
             >
-              <Text className="text-xs font-sans-bold text-white">Accept</Text>
+              <Text className="text-xs font-sans-bold text-white">{t('home.accept')}</Text>
             </Pressable>
           </View>
         ) : (
           <Pressable onPress={onPress} className="rounded-xl bg-[#eef1ff] px-4 py-2 active:opacity-90">
-            <Text className="text-xs font-sans-bold text-primary">View Details</Text>
+            <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
           </Pressable>
         )}
       </View>

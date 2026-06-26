@@ -1,16 +1,17 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyFavouritesStateProps {
   title?: string;
   description?: string;
 }
 
-export default function EmptyFavouritesState({
-  title = 'No saved favourites yet',
-  description = 'Tap the heart icon on any service provider card to add them to your saved list.',
-}: EmptyFavouritesStateProps) {
+export default function EmptyFavouritesState({ title, description }: EmptyFavouritesStateProps) {
+  const { t } = useTranslation();
+  const displayTitle = title || t('customer.emptyFavouritesTitle');
+  const displayDescription = description || t('customer.emptyFavouritesDesc');
   return (
     <View className="rounded-2xl border border-gray-200 bg-white px-5 py-10 items-center">
       <Svg width={126} height={96} viewBox="0 0 126 96">
@@ -31,8 +32,10 @@ export default function EmptyFavouritesState({
         <Circle cx="18" cy="68" r="8" fill="#f1f5f9" />
       </Svg>
 
-      <Text className="text-sm font-sans-bold text-gray-900 mt-4 mb-1">{title}</Text>
-      <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 max-w-[280px]">{description}</Text>
+      <Text className="text-sm font-sans-bold text-gray-900 mt-4 mb-1">{displayTitle}</Text>
+      <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 max-w-[280px]">
+        {displayDescription}
+      </Text>
     </View>
   );
 }

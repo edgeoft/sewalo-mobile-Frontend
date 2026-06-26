@@ -1,7 +1,7 @@
 export { default as HomeArticleSection } from './HomeArticleSection';
 export { default as HomePromotionBanner } from './HomePromotionBanner';
 export {
-  DEFAULT_HOME_SERVICE_CATEGORIES,
+  getDefaultHomeServiceCategories,
   default as HomeServiceCategoriesSection,
 } from './HomeServiceCategoriesSection';
 export { default as HomeServiceCategoryCard } from './HomeServiceCategoryCard';

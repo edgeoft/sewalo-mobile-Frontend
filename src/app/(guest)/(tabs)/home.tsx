@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 import { useMemo } from 'react';
@@ -16,6 +17,7 @@ import { useScroll } from '@/hooks/useScroll';
 import { useCategoriesQuery, useGetServicesQuery, useGetFeaturedBlogQuery } from '@/api';
 
 export default function GuestHomeScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
@@ -70,8 +72,8 @@ export default function GuestHomeScreen() {
         <ContentLayout>
           {showCategories && (
             <HomeServiceCategoriesSection
-              title="Service Categories"
-              actionLabel="View All"
+              title={t('home.serviceCategories')}
+              actionLabel={t('common.viewAll')}
               categories={categories!}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
               onCategoryPress={(cat) => router.push(`${ROUTES.guest.findServices}?category=${cat.slug}`)}
@@ -80,8 +82,8 @@ export default function GuestHomeScreen() {
 
           {servicesData?.data && servicesData.data.length > 0 && (
             <PopularProvidersSection
-              title="Available Services"
-              actionLabel="View All"
+              title={t('home.availableServices')}
+              actionLabel={t('common.viewAll')}
               services={servicesData.data}
               isGuest={true}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
@@ -93,8 +95,8 @@ export default function GuestHomeScreen() {
 
           {featuredBlog && (
             <HomeArticleSection
-              title="Insights & Tips"
-              category={featuredBlog.category?.name || 'Growth'}
+              title={t('home.insightsAndTips')}
+              category={featuredBlog.category?.name || t('home.growth')}
               readTime={getReadTime(featuredBlog.description)}
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}

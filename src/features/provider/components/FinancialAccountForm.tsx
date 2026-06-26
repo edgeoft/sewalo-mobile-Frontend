@@ -1,6 +1,7 @@
 import React from 'react';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Input } from '@/components/ui';
 import SelectSheet, { SelectOptionItem } from '@/components/ui/SelectSheet';
@@ -14,11 +15,6 @@ interface FinancialAccountFormProps {
   errors: FieldErrors<FinanceAccountFormValues>;
 }
 
-const TYPE_OPTIONS: SelectOptionItem[] = [
-  { value: FinanceAccountType.BANK, label: 'Bank Account' },
-  { value: FinanceAccountType.DIGITAL_WALLET, label: 'Digital Wallet' },
-];
-
 const BANK_OPTIONS: SelectOptionItem[] = NEPAL_BANKS.map((bank) => ({
   value: bank,
   label: bank,
@@ -30,6 +26,11 @@ const WALLET_OPTIONS: SelectOptionItem[] = DIGITAL_WALLETS.map((wallet) => ({
 }));
 
 export default function FinancialAccountForm({ control, errors }: FinancialAccountFormProps) {
+  const { t } = useTranslation();
+  const TYPE_OPTIONS: SelectOptionItem[] = [
+    { value: FinanceAccountType.BANK, label: t('provider.bankAccount') },
+    { value: FinanceAccountType.DIGITAL_WALLET, label: t('provider.digitalWallet') },
+  ];
   return (
     <View className="gap-y-4">
       {/* Type */}
@@ -38,13 +39,13 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
         name="type"
         render={({ field: { onChange, value } }) => (
           <SelectSheet
-            label="Account Type *"
+            label={t('provider.accountType')}
             options={TYPE_OPTIONS}
             value={value}
             onSelect={(val) => onChange(val as FinanceAccountType)}
-            placeholder="Select Account Type"
-            title="Account Type"
-            description="Choose how you want to receive payouts"
+            placeholder={t('provider.selectAccountType')}
+            title={t('provider.accountType')}
+            description={t('provider.accountTypeDesc')}
             error={errors.type?.message as string}
           />
         )}

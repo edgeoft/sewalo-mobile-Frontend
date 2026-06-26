@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { type CustomerBookingItem } from '../constants/customerBookings';
+import { useTranslation } from 'react-i18next';
 
 interface InvoiceSummaryCardProps {
   booking: CustomerBookingItem;
 }
 
 export default function InvoiceSummaryCard({ booking }: InvoiceSummaryCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -24,12 +26,12 @@ export default function InvoiceSummaryCard({ booking }: InvoiceSummaryCardProps)
 
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Invoice Summary</Text>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.invoiceSummary')}</Text>
       <View className="gap-1">
         {renderInfoRow(booking.serviceName ?? booking.serviceLabel, booking.basePrice ?? booking.bookedPrice)}
-        {renderInfoRow('Hours Worked', '2 Hours @ Rs. 2,500/hr')}
-        {renderInfoRow('Platform Fee', 'Rs. 150')}
-        {renderInfoRow('VAT (13%)', booking.vatAmount ?? 'Rs. 650')}
+        {renderInfoRow(t('customer.hoursWorked'), '2 Hours @ Rs. 2,500/hr')}
+        {renderInfoRow(t('customer.platformFee'), 'Rs. 150')}
+        {renderInfoRow(t('customer.vat'), booking.vatAmount ?? 'Rs. 650')}
       </View>
     </View>
   );

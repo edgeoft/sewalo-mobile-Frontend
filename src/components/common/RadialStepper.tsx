@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -36,125 +37,127 @@ interface StepConfig {
   bgColor: string;
 }
 
-const STEP_CONFIGS: Record<string, StepConfig> = {
-  [BOOKING_STATUSES.Pending]: {
-    stepNumber: 1,
-    label: 'Request Sent',
-    subtitles: {
-      customer: 'Sending request to provider!\nHang tight for confirmation.',
-      provider: 'New booking request received!\nReview and accept it now.',
+function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> {
+  return {
+    [BOOKING_STATUSES.Pending]: {
+      stepNumber: 1,
+      label: t('components.requestSent'),
+      subtitles: {
+        customer: t('components.requestSentCustomer'),
+        provider: t('components.requestSentProvider'),
+      },
+      nextLabel: t('components.acceptStep'),
+      iconName: 'send',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Accept',
-    iconName: 'send',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.Confirmed]: {
-    stepNumber: 2,
-    label: 'Booking Confirmed',
-    subtitles: {
-      customer: 'Yay! Provider accepted the booking.\nThey will start work soon.',
-      provider: 'Nice job! You confirmed the booking.\nGet ready to start work.',
+    [BOOKING_STATUSES.Confirmed]: {
+      stepNumber: 2,
+      label: t('components.bookingConfirmed'),
+      subtitles: {
+        customer: t('components.bookingConfirmedCustomer'),
+        provider: t('components.bookingConfirmedProvider'),
+      },
+      nextLabel: t('components.jobStartedStep'),
+      iconName: 'calendar',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Job Started',
-    iconName: 'calendar',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.InProgress]: {
-    stepNumber: 3,
-    label: 'Job Started',
-    subtitles: {
-      customer: 'Awesome, service is starting!\nProvider is performing the job.',
-      provider: "Let's do this! Work is in progress.\nPerform the service.",
+    [BOOKING_STATUSES.InProgress]: {
+      stepNumber: 3,
+      label: t('components.jobStarted'),
+      subtitles: {
+        customer: t('components.jobStartedCustomer'),
+        provider: t('components.jobStartedProvider'),
+      },
+      nextLabel: t('components.completedStep'),
+      iconName: 'tool',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Completed',
-    iconName: 'tool',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.Completed]: {
-    stepNumber: 4,
-    label: 'Job Completed',
-    subtitles: {
-      customer: 'Job completed successfully!\nWaiting for provider to send invoice.',
-      provider: 'Great work! Job is completed.\nCreate and send the final invoice.',
+    [BOOKING_STATUSES.Completed]: {
+      stepNumber: 4,
+      label: t('components.jobCompleted'),
+      subtitles: {
+        customer: t('components.jobCompletedCustomer'),
+        provider: t('components.jobCompletedProvider'),
+      },
+      nextLabel: t('components.readyToPayStep'),
+      iconName: 'award',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Ready to Pay',
-    iconName: 'award',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.ReadyToPay]: {
-    stepNumber: 5,
-    label: 'Ready to Pay',
-    subtitles: {
-      customer: 'Your invoice is ready for review!\nCheckout now to complete booking.',
-      provider: 'Invoice sent to customer!\nAwaiting customer payment.',
+    [BOOKING_STATUSES.ReadyToPay]: {
+      stepNumber: 5,
+      label: t('components.readyToPay'),
+      subtitles: {
+        customer: t('components.readyToPayCustomer'),
+        provider: t('components.readyToPayProvider'),
+      },
+      nextLabel: t('components.paymentInitiatedStep'),
+      iconName: 'file-text',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Payment Initiated',
-    iconName: 'file-text',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.PaymentInitiated]: {
-    stepNumber: 6,
-    label: 'Payment Initiated',
-    subtitles: {
-      customer: 'Processing your payment...\nWe are finalizing the booking.',
-      provider: 'Payment has been initiated!\nPlease confirm receipt.',
+    [BOOKING_STATUSES.PaymentInitiated]: {
+      stepNumber: 6,
+      label: t('components.paymentInitiated'),
+      subtitles: {
+        customer: t('components.paymentInitiatedCustomer'),
+        provider: t('components.paymentInitiatedProvider'),
+      },
+      nextLabel: t('components.jobsCompletedStep'),
+      iconName: 'refresh-cw',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Jobs Completed',
-    iconName: 'refresh-cw',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.Paid]: {
-    stepNumber: 7,
-    label: 'Jobs Completed',
-    subtitles: {
-      customer: 'All paid! Thanks for choosing us.\nEnjoy your completed service!',
-      provider: 'Sweet! Payment confirmed.\nThis booking is fully completed!',
+    [BOOKING_STATUSES.Paid]: {
+      stepNumber: 7,
+      label: t('components.jobsCompleted'),
+      subtitles: {
+        customer: t('components.jobsCompletedCustomer'),
+        provider: t('components.jobsCompletedProvider'),
+      },
+      nextLabel: t('components.enjoyService'),
+      iconName: 'check',
+      iconColor: '#485aff',
+      progressColor: '#485aff',
+      bgColor: '#f4f6ff',
     },
-    nextLabel: 'Enjoy your service!',
-    iconName: 'check',
-    iconColor: '#485aff',
-    progressColor: '#485aff',
-    bgColor: '#f4f6ff',
-  },
-  [BOOKING_STATUSES.Cancelled]: {
-    stepNumber: 0,
-    label: 'Cancelled',
-    subtitles: {
-      customer: 'This booking has been cancelled.\nContact support for help.',
-      provider: 'This booking has been cancelled.\nNo further action is needed.',
+    [BOOKING_STATUSES.Cancelled]: {
+      stepNumber: 0,
+      label: t('components.cancelled'),
+      subtitles: {
+        customer: t('components.cancelledCustomer'),
+        provider: t('components.cancelledProvider'),
+      },
+      nextLabel: t('components.bookingCancelled'),
+      iconName: 'x-circle',
+      iconColor: '#ef4444',
+      progressColor: '#ef4444',
+      bgColor: '#fef2f2',
     },
-    nextLabel: 'Booking has been cancelled',
-    iconName: 'x-circle',
-    iconColor: '#ef4444',
-    progressColor: '#ef4444',
-    bgColor: '#fef2f2',
-  },
-  [BOOKING_STATUSES.Rejected]: {
-    stepNumber: 0,
-    label: 'Rejected',
-    subtitles: {
-      customer: 'This booking request was rejected.\nTry booking another provider.',
-      provider: 'You rejected this request.\nThis booking is closed.',
+    [BOOKING_STATUSES.Rejected]: {
+      stepNumber: 0,
+      label: t('components.rejected'),
+      subtitles: {
+        customer: t('components.rejectedCustomer'),
+        provider: t('components.rejectedProvider'),
+      },
+      nextLabel: t('components.bookingRejected'),
+      iconName: 'alert-triangle',
+      iconColor: '#f97316',
+      progressColor: '#f97316',
+      bgColor: '#fff7ed',
     },
-    nextLabel: 'Booking has been rejected',
-    iconName: 'alert-triangle',
-    iconColor: '#f97316',
-    progressColor: '#f97316',
-    bgColor: '#fff7ed',
-  },
-};
+  };
+}
 
 export default function RadialStepper({
   status,
@@ -170,6 +173,7 @@ export default function RadialStepper({
   progressColor,
   bgColor,
 }: RadialStepperProps) {
+  const { t } = useTranslation();
   const isCustom = !status;
 
   const resolvedConfig = isCustom
@@ -183,7 +187,8 @@ export default function RadialStepper({
         bgColor: bgColor || '#f4f6ff',
       }
     : (() => {
-        const config = STEP_CONFIGS[status] || STEP_CONFIGS[BOOKING_STATUSES.Pending];
+        const stepConfigs = getStepConfigs(t);
+        const config = stepConfigs[status] || stepConfigs[BOOKING_STATUSES.Pending];
         return {
           stepNumber: config.stepNumber,
           label: config.label,

@@ -3,6 +3,7 @@ import { View, Text, Switch, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -18,6 +19,7 @@ export default function PrivacySettingsScreen() {
   const { logout } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
+  const { t } = useTranslation();
 
   const [profileVisible, setProfileVisible] = useState(true);
   const [shareData, setShareData] = useState(true);
@@ -34,14 +36,13 @@ export default function PrivacySettingsScreen() {
 
   const handleDownloadData = () => {
     showError({
-      title: 'Download Data',
-      message:
-        'We will compile your personal profile, services, and transactions history into a zip archive and send it to your email within 24 hours.',
+      title: t('settings.downloadData'),
+      message: t('settings.downloadDataMessage'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Confirm',
-          onPress: () => showSnackbar({ message: 'Data export request submitted!', type: 'success' }),
+          text: t('common.confirm'),
+          onPress: () => showSnackbar({ message: t('settings.dataExportSubmitted'), type: 'success' }),
         },
       ],
     });
@@ -49,9 +50,8 @@ export default function PrivacySettingsScreen() {
 
   const handleDeleteAccount = () => {
     showError({
-      title: 'Delete Account',
-      message:
-        'WARNING: Deleting your account will permanently wipe all your profile details, booking histories, and earnings. This action is irreversible.\n\nAre you sure you want to proceed?',
+      title: t('settings.deleteAccount'),
+      message: t('settings.deleteAccountConfirm'),
       actions: [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -120,52 +120,52 @@ export default function PrivacySettingsScreen() {
         }}
       >
         <SectionHeader
-          title="Privacy Settings"
-          description="Control your account visibility, data preferences, and account security details."
+          title={t('settings.privacySettingsTitle')}
+          description={t('settings.privacySettingsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
         {/* Profile and Visibility */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Visibility & Activity</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.visibilityAndActivity')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5 mb-6">
           {renderToggleItem(
             'eye',
-            'Public Profile Search',
-            'Allow other users to locate your profile in direct search outcomes.',
+            t('settings.publicProfileSearch'),
+            t('settings.publicProfileSearchDesc'),
             profileVisible,
             setProfileVisible,
           )}
           {renderToggleItem(
             'circle',
-            'Online Status',
-            'Show when you are active to clients or service providers in chat.',
+            t('settings.onlineStatus'),
+            t('settings.onlineStatusDesc'),
             activityStatus,
             setActivityStatus,
           )}
         </View>
 
         {/* Data Preferences */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Security & Verification</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.securityAndVerification')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-1.5 mb-6">
           {renderToggleItem(
             'lock',
-            'Two-Factor Authentication (2FA)',
-            'Require verification code in SMS for login attempts.',
+            t('settings.twoFactorAuth'),
+            t('settings.twoFactorAuthDesc'),
             twoFactorAuth,
             setTwoFactorAuth,
           )}
           {renderToggleItem(
             'shield',
-            'Share Analytics Data',
-            'Permit tracking diagnostics statistics to improve Sewalo services.',
+            t('settings.shareAnalyticsData'),
+            t('settings.shareAnalyticsDataDesc'),
             shareData,
             setShareData,
           )}
         </View>
 
         {/* Account Actions Section */}
-        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Account Management</Text>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('settings.accountManagement')}</Text>
         <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 px-4 py-2">
           {/* Download Data */}
           <Pressable
@@ -177,9 +177,9 @@ export default function PrivacySettingsScreen() {
                 <Feather name="download" size={15} color="#1d4ed8" />
               </View>
               <View>
-                <Text className="text-sm font-sans-bold text-gray-900">Download My Account Data</Text>
+                <Text className="text-sm font-sans-bold text-gray-900">{t('settings.downloadData')}</Text>
                 <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                  Request copy of your stored details.
+                  {t('settings.downloadDataDesc')}
                 </Text>
               </View>
             </View>
@@ -196,9 +196,9 @@ export default function PrivacySettingsScreen() {
                 <Feather name="trash-2" size={15} color="#ef4444" />
               </View>
               <View>
-                <Text className="text-sm font-sans-bold text-red-500">Permanently Delete Account</Text>
+                <Text className="text-sm font-sans-bold text-red-500">{t('settings.deleteAccount')}</Text>
                 <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                  Wipe profile info, records and login.
+                  {t('settings.deleteAccountDesc')}
                 </Text>
               </View>
             </View>

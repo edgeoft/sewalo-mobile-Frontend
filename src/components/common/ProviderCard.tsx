@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useState, type ComponentProps } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
@@ -35,7 +36,7 @@ export default function ProviderCard({
   rating,
   startingFromPrice,
   bookingStatus,
-  actionLabel = 'View Details',
+  actionLabel,
   width,
   onPress,
   onFavouritePress,
@@ -43,6 +44,8 @@ export default function ProviderCard({
   variant = 'details',
   isGuest = false,
 }: ProviderCardProps) {
+  const { t } = useTranslation();
+  const resolvedActionLabel = actionLabel ?? t('home.viewDetails');
   const [imgError, setImgError] = useState(false);
   const isBookingVariant = variant === 'booking';
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
@@ -150,13 +153,13 @@ export default function ProviderCard({
           </View>
         ) : !isBookingVariant ? (
           <View className="flex-row items-center">
-            <Text className="text-xs font-sans-medium text-gray-400">Starting from </Text>
+            <Text className="text-xs font-sans-medium text-gray-400">{t('home.startingFrom')}</Text>
             <Text className="text-sm font-sans-bold text-primary">{startingFromPrice}</Text>
           </View>
         ) : null}
 
         <View className="rounded-md bg-primary px-4 py-2">
-          <Text className="text-xs font-sans-semibold text-white">{actionLabel}</Text>
+          <Text className="text-xs font-sans-semibold text-white">{resolvedActionLabel}</Text>
         </View>
       </View>
     </Pressable>

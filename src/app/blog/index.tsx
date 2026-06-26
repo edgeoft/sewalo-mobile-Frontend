@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useMemo } from 'react';
 import { Image, ScrollView, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +13,7 @@ import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { Blog } from '@/types';
 
 export default function BlogListScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: blogsData, isLoading: blogsLoading } = useGetBlogsQuery({ show: 'all' });
 
@@ -38,10 +40,8 @@ export default function BlogListScreen() {
         <ContentLayout>
           {/* Page Title */}
           <View className="py-5">
-            <Text className="text-2xl font-sans-bold text-gray-900 tracking-tight">Insights & Tips</Text>
-            <Text className="text-sm font-sans-medium text-gray-500 mt-1">
-              Discover tips, guides, and trends to grow your skills and find the best services.
-            </Text>
+            <Text className="text-2xl font-sans-bold text-gray-900 tracking-tight">{t('blog.title')}</Text>
+            <Text className="text-sm font-sans-medium text-gray-500 mt-1">{t('blog.subtitle')}</Text>
           </View>
 
           {/* Blogs List */}
@@ -79,7 +79,7 @@ export default function BlogListScreen() {
                     <View className="flex-1 justify-between py-0.5">
                       <View className="self-start rounded-xl bg-[#eef1ff] px-2 py-0.5">
                         <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">
-                          {item.category?.name || 'Growth'}
+                          {item.category?.name || t('home.growth')}
                         </Text>
                       </View>
                       <Text className="text-base font-sans-bold text-gray-900" numberOfLines={2}>
@@ -105,13 +105,13 @@ export default function BlogListScreen() {
                       </View>
                     </View>
                     <View className="rounded-md bg-primary px-4 py-2">
-                      <Text className="text-xs font-sans-semibold text-white">Read More</Text>
+                      <Text className="text-xs font-sans-semibold text-white">{t('common.readMore')}</Text>
                     </View>
                   </View>
                 </Pressable>
               )}
-              emptyTitle="No articles found"
-              emptyDescription="We couldn't find any articles matching your request."
+              emptyTitle={t('blog.noArticles')}
+              emptyDescription={t('blog.noArticlesDesc')}
             />
           )}
         </ContentLayout>

@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { t } from 'i18next';
 
 export interface AccountMenuItemOption {
   id: string;
@@ -16,106 +17,106 @@ export interface AccountMenuSection {
 
 export const PROVIDER_ACCOUNT_MENU: AccountMenuSection[] = [
   {
-    title: 'Account',
+    title: t('navigation.account'),
     items: [
       {
         id: 'edit-profile',
         icon: 'user',
-        title: 'Edit Profile',
-        subtitle: 'Update personal info and profile picture',
+        title: t('navigation.editProfile'),
+        subtitle: t('navigation.editProfileSubtitle'),
       },
       {
         id: 'payout-accounts',
         icon: 'dollar-sign',
-        title: 'Payout Accounts',
-        subtitle: 'Manage bank accounts and digital wallets for payout',
+        title: t('provider.payoutAccounts'),
+        subtitle: t('provider.payoutAccounts'),
       },
       {
         id: 'verification-documents',
         icon: 'file-text',
-        title: 'Verification Documents',
-        subtitle: 'Upload ID and business certificates for verified partner status',
+        title: t('provider.verificationDocuments'),
+        subtitle: t('provider.verificationDocuments'),
       },
       {
         id: 'my-reviews',
         icon: 'star',
-        title: 'My Reviews',
-        subtitle: 'See what your customers are saying',
+        title: t('customer.myReviews'),
+        subtitle: t('customer.myReviews'),
       },
     ],
   },
   {
-    title: 'Preferences',
+    title: t('navigation.preferences'),
     items: [
       {
         id: 'language',
         icon: 'globe',
-        title: 'Language',
-        subtitle: 'Select app locale',
+        title: t('navigation.language'),
+        subtitle: t('navigation.language'),
       },
       {
         id: 'notification-settings',
         icon: 'bell',
-        title: 'Notification Settings',
-        subtitle: 'Configure service booking notifications and sounds',
+        title: t('settings.notificationSettingsTitle'),
+        subtitle: t('navigation.notificationSettingsSubtitle'),
       },
       {
         id: 'privacy-settings',
         icon: 'shield',
-        title: 'Privacy Settings',
-        subtitle: 'Control account visibility and data sharing preferences',
+        title: t('settings.privacySettingsTitle'),
+        subtitle: t('navigation.privacySettingsSubtitle'),
       },
       {
         id: 'change-password',
         icon: 'lock',
-        title: 'Change Password',
-        subtitle: 'Secure partner portal credentials',
+        title: t('navigation.changePassword'),
+        subtitle: t('navigation.changePasswordSubtitle'),
       },
     ],
   },
   {
-    title: 'Support & Info',
+    title: t('navigation.supportAndInfo'),
     items: [
       {
         id: 'help-faq',
         icon: 'help-circle',
-        title: 'Help & FAQ',
-        subtitle: 'Browse how-to tutorials and quick answers',
+        title: t('settings.helpFaqTitle'),
+        subtitle: t('navigation.helpAndFaqSubtitle'),
       },
       {
         id: 'contact-support',
         icon: 'message-circle',
-        title: 'Contact Support',
-        subtitle: 'Connect to live chat or submit requests',
+        title: t('settings.contactSupportTitle'),
+        subtitle: t('navigation.contactSupportSubtitle'),
       },
       {
         id: 'terms-of-service',
         icon: 'file-text',
-        title: 'Terms of Service',
-        subtitle: 'Read our user agreement and guidelines',
+        title: t('navigation.termsAndConditions'),
+        subtitle: t('navigation.termsAndConditionsSubtitle'),
       },
       {
         id: 'privacy-policy',
         icon: 'shield',
-        title: 'Privacy Policy',
-        subtitle: 'View how we safeguard your personal details',
+        title: t('navigation.privacyPolicy'),
+        subtitle: t('navigation.privacyPolicySubtitle'),
       },
       {
         id: 'rate-app',
         icon: 'star',
-        title: 'Rate the App',
-        subtitle: 'Share your feedback on the App Store',
+        title: t('settings.rateAppTitle'),
+        subtitle: t('navigation.rateAppSubtitle'),
       },
     ],
   },
   {
-    title: 'Actions',
+    title: t('navigation.actions'),
     items: [
       {
         id: 'logout',
         icon: 'log-out',
-        title: 'Log Out',
-        subtitle: 'Safely sign out of your partner portal session',
+        title: t('navigation.logout'),
+        subtitle: t('navigation.logout'),
         destructive: true,
       },
     ],

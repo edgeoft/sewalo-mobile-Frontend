@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 
@@ -19,6 +20,7 @@ export default function ServiceStickyFooter({
   infoMessage,
   errorMessage,
 }: ServiceStickyFooterProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   // Safe spacing matching bottom tab bar
@@ -44,7 +46,7 @@ export default function ServiceStickyFooter({
       ) : null}
 
       <Button
-        title="Save Details"
+        title={t('provider.saveDetails')}
         variant="primary"
         loading={loading}
         disabled={disabled}

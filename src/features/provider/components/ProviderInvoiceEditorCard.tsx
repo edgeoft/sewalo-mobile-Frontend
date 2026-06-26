@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { type ProviderBookingItem } from '../constants/providerBookings';
+import { useTranslation } from 'react-i18next';
 
 interface ProviderInvoiceEditorCardProps {
   booking: ProviderBookingItem;
@@ -15,6 +16,7 @@ export default function ProviderInvoiceEditorCard({
   platformFee,
   onTotalCalculated,
 }: ProviderInvoiceEditorCardProps) {
+  const { t } = useTranslation();
   const [basePrice, setBasePrice] = useState(initialBasePrice.toString());
 
   const cardShadow = {
@@ -43,7 +45,7 @@ export default function ProviderInvoiceEditorCard({
 
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4 mb-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Edit Invoice Details</Text>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('provider.editInvoiceDetails')}</Text>
 
       <View className="gap-1">
         {/* Editable Base Price */}

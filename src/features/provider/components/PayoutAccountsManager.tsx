@@ -3,6 +3,7 @@ import { View, Text, Pressable, Modal, ScrollView, ActivityIndicator } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -34,6 +35,7 @@ interface PayoutAccountsManagerProps {
 
 export default function PayoutAccountsManager({ header }: PayoutAccountsManagerProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
 
   const queryClient = useQueryClient();
@@ -129,7 +131,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           className="flex-row items-center active:opacity-60 bg-primary/10 px-3 py-2 rounded-xl mt-1"
         >
           <Feather name="plus" size={16} color="#485aff" />
-          <Text className="text-sm font-sans-bold text-primary ml-1.5">Add</Text>
+          <Text className="text-sm font-sans-bold text-primary ml-1.5">{t('provider.addAccount')}</Text>
         </Pressable>
       </View>
 

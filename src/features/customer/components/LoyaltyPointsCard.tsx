@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface LoyaltyPointsCardProps {
   points: number;
 }
 
 export default function LoyaltyPointsCard({ points }: LoyaltyPointsCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -26,10 +28,8 @@ export default function LoyaltyPointsCard({ points }: LoyaltyPointsCardProps) {
         </View>
 
         <View className="ml-3.5 flex-1">
-          <Text className="text-sm font-sans-bold text-gray-900">Loyalty Points</Text>
-          <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-            Use accumulated points for service discounts
-          </Text>
+          <Text className="text-sm font-sans-bold text-gray-900">{t('customer.loyaltyPoints')}</Text>
+          <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">{t('customer.loyaltyPointsDesc')}</Text>
         </View>
       </View>
 

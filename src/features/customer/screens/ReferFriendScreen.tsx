@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Share, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import * as Clipboard from 'expo-clipboard';
 
 import Header from '@/components/navigation/Header';
@@ -17,6 +18,7 @@ const APP_LINK = 'https://sipalu.com';
 export default function ReferFriendScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const { data: codeData, isLoading: codeLoading } = useReferralCodeQuery();
@@ -35,7 +37,7 @@ export default function ReferFriendScreen() {
     try {
       await Clipboard.setStringAsync(referralLink);
       setCopied(true);
-      showSnackbar({ message: 'Referral link copied to clipboard.', type: 'success' });
+      showSnackbar({ message: t('customer.referLinkCopied'), type: 'success' });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       showSnackbar({ message: 'Failed to copy to clipboard.', type: 'error' });
@@ -75,8 +77,8 @@ export default function ReferFriendScreen() {
         }}
       >
         <SectionHeader
-          title="Refer a Friend"
-          description="Invite your friends to Sewalo & get rewarded with loyalty points."
+          title={t('customer.referTitle')}
+          description={t('customer.referSubtitle')}
           className="mb-5"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -92,23 +94,21 @@ export default function ReferFriendScreen() {
               <View className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10" />
               <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/10" />
 
-              <Text className="text-white text-lg font-sans-extrabold leading-6">
-                Invite friends. Earn points together.
-              </Text>
+              <Text className="text-white text-lg font-sans-extrabold leading-6">{t('customer.referHeroTitle')}</Text>
               <Text className="text-white/80 text-xs font-sans-medium leading-5 mt-2">
-                Share your unique referral link. When your friend signs up, you both earn 100 loyalty points instantly.
+                {t('customer.referHeroDesc')}
               </Text>
             </View>
 
             {/* 2. Referral Link Section */}
             <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-5 mb-5">
               <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
-                Your Referral Link
+                {t('customer.yourReferralLink')}
               </Text>
 
               <View className="flex-row items-center border border-gray-200 rounded-xl px-3 py-3 mb-4 bg-gray-50">
                 <Text className="flex-1 text-xs font-sans-medium text-gray-600" numberOfLines={1}>
-                  {referralLink || 'No referral code available'}
+                  {referralLink || t('customer.noReferralCode')}
                 </Text>
               </View>
 

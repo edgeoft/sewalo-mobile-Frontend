@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
@@ -12,6 +13,7 @@ import { ROUTES } from '@/constants/routes';
 export default function ServiceCreatedScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const handleGoToServices = () => {
     router.replace(ROUTES.provider.services);
@@ -28,24 +30,24 @@ export default function ServiceCreatedScreen() {
   const steps = [
     {
       step: '1',
-      title: 'Search',
-      description: 'Customers search for services in your category or local area.',
+      title: t('provider.searchStep'),
+      description: t('provider.searchStepDesc'),
       icon: 'search' as const,
       color: '#485aff',
       bg: 'bg-primary/10',
     },
     {
       step: '2',
-      title: 'Discover',
-      description: 'Your verified service profile appears in their search results.',
+      title: t('provider.discoverStep'),
+      description: t('provider.discoverStepDesc'),
       icon: 'award' as const,
       color: '#d97706',
       bg: 'bg-amber-50 border border-amber-200/50',
     },
     {
       step: '3',
-      title: 'Connect',
-      description: 'Customers view your details and reach out to book you.',
+      title: t('provider.connectStep'),
+      description: t('provider.connectStepDesc'),
       icon: 'calendar' as const,
       color: '#059669',
       bg: 'bg-emerald-50 border border-emerald-200/50',
@@ -73,17 +75,17 @@ export default function ServiceCreatedScreen() {
           </View>
 
           {/* Celebration Heading */}
-          <Text className="text-2xl font-sans-extrabold text-gray-900 leading-8">Service Submitted Successfully</Text>
+          <Text className="text-2xl font-sans-extrabold text-gray-900 leading-8">{t('provider.serviceSubmitted')}</Text>
 
           {/* Subtext */}
           <Text className="text-xs font-sans-medium text-gray-500 mt-2 leading-5">
-            Your service details have been saved and are ready for the next step.
+            {t('provider.serviceSubmittedDesc')}
           </Text>
 
           {/* View Service button directly under success text */}
           <View className="w-full max-w-[180px] mt-5">
             <Button
-              title="View Service"
+              title={t('provider.viewService')}
               variant="primary"
               size="md"
               onPress={handleGoToServices}

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -33,6 +34,7 @@ export default function ReportProblemScreen() {
   const insets = useSafeAreaInsets();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [screenshotUploaded, setScreenshotUploaded] = useState(false);
 
@@ -52,7 +54,7 @@ export default function ReportProblemScreen() {
 
   const handleUploadScreenshot = () => {
     setScreenshotUploaded(true);
-    showSnackbar({ message: 'Screenshot uploaded successfully!', type: 'success' });
+    showSnackbar({ message: t('settings.screenshotUploaded'), type: 'success' });
   };
 
   const handleReportSubmit = (data: ReportProblemFormData) => {
@@ -99,15 +101,15 @@ export default function ReportProblemScreen() {
         }}
       >
         <SectionHeader
-          title="Report a Problem"
-          description="Encountered a bug or technical problem? Describe it below to help us fix it."
+          title={t('settings.reportProblemTitle')}
+          description={t('settings.reportProblemDesc')}
           className="mb-5"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
         <View style={cardShadow} className="bg-white border border-gray-200 rounded-xl p-4">
           {/* Category Selector */}
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Problem Type</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('settings.problemType')}</Text>
           <View className="flex-row flex-wrap gap-2 mb-4">
             <Controller
               control={control}
@@ -139,11 +141,11 @@ export default function ReportProblemScreen() {
           <Controller
             control={control}
             name="subject"
-            rules={{ required: 'Short title is required' }}
+            rules={{ required: t('settings.problemTitleRequired') }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Problem Title"
-                placeholder="e.g. Cannot complete eSewa transaction"
+                label={t('settings.problemTitle')}
+                placeholder={t('settings.problemTitlePlaceholder')}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -158,13 +160,13 @@ export default function ReportProblemScreen() {
             control={control}
             name="description"
             rules={{
-              required: 'Description is required',
-              minLength: { value: 10, message: 'Please describe the bug in detail' },
+              required: t('settings.descriptionRequired'),
+              minLength: { value: 10, message: t('settings.descriptionMinLength') },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Describe What Happened"
-                placeholder="Describe what occurred, any error messages, and what screen you were on."
+                label={t('settings.describeWhatHappened')}
+                placeholder={t('settings.describePlaceholder')}
                 multiline
                 numberOfLines={4}
                 value={value}
@@ -183,8 +185,8 @@ export default function ReportProblemScreen() {
             name="stepsToReproduce"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Steps to Reproduce (Optional)"
-                placeholder="e.g. 1. Open bookings, 2. Tap cancel button, 3. App freeze"
+                label={t('settings.stepsToReproduce')}
+                placeholder={t('settings.stepsToReproducePlaceholder')}
                 multiline
                 numberOfLines={3}
                 value={value}
@@ -197,7 +199,9 @@ export default function ReportProblemScreen() {
           />
 
           {/* Screenshot upload attachment */}
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Attach Screenshot (Optional)</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+            {t('settings.attachScreenshot')}
+          </Text>
           <Pressable
             onPress={handleUploadScreenshot}
             className={`border border-dashed rounded-lg py-3.5 mb-5 items-center justify-center flex-row ${
@@ -212,13 +216,13 @@ export default function ReportProblemScreen() {
             <Text
               className={`text-xs font-sans-semibold ml-2 ${screenshotUploaded ? 'text-emerald-700' : 'text-gray-500'}`}
             >
-              {screenshotUploaded ? 'Screenshot Attached.png' : 'Click to Upload screenshot'}
+              {screenshotUploaded ? 'Screenshot Attached.png' : t('settings.clickToUploadScreenshot')}
             </Text>
           </Pressable>
 
           {/* Submit */}
           <Button
-            title="Submit Report"
+            title={t('common.submit')}
             variant="primary"
             loading={loading}
             onPress={handleSubmit(handleReportSubmit)}

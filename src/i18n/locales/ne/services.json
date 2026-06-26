@@ -1,0 +1,21 @@
+{
+  "searchPlaceholder": "सेवा वा प्रदायकहरू खोज्नुहोस्...",
+  "bookingConfirmed": "बुकिङ पुष्टि भयो!",
+  "bookingConfirmedDesc": "सेवालोमा बुक गर्नुभएकोमा धन्यवाद। तपाईंको सेवा प्रदायकले चाँडै सम्पर्क गर्नेछ।",
+  "providerNotFound": "प्रदायक फेला परेन",
+  "providerNotFoundDesc": "तपाईंले खोजिरहनुभएको प्रदायक अवस्थित छैन वा निष्क्रिय गरिएको छ।",
+  "noBio": "प्रदायकले कुनै बायो वा विवरण प्रदान गरेको छैन।",
+  "experiencedProfessional": "अनुभवी पेशेवर",
+  "always": "सधैं",
+  "defaultWorkingHours": "०९:०० AM - ०५:०० PM",
+  "days": "दिन",
+  "hrs": "घन्टा",
+  "services": "सेवाहरू",
+  "serviceOffering": "सेवा प्रस्ताव",
+  "project": "परियोजना {{number}}",
+  "bookNow": "अहिले बुक गर्नुहोस्",
+  "sendRequest": "अनुरोध पठाउनुहोस्",
+  "filterTitle": "फिल्टर",
+  "sortBy": "क्रमबद्ध गर्नुहोस्",
+  "allCategories": "सबै कोटीहरू"
+}

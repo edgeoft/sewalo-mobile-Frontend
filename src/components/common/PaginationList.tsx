@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -18,11 +19,14 @@ export default function PaginationList<T>({
   keyExtractor,
   renderItem,
   pageSize = 5,
-  emptyTitle = 'No records found',
-  emptyDescription = 'Try changing your filters or searching.',
+  emptyTitle,
+  emptyDescription,
   emptyContent,
   listClassName = 'gap-3',
 }: PaginationListProps<T>) {
+  const { t } = useTranslation();
+  const resolvedEmptyTitle = emptyTitle ?? t('errors.recordsNotFound');
+  const resolvedEmptyDescription = emptyDescription ?? t('errors.recordsNotFoundDesc');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Total pages calculation
@@ -59,8 +63,8 @@ export default function PaginationList<T>({
 
     return (
       <View className="rounded-xl border border-gray-200 bg-white px-5 py-8 items-center">
-        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{emptyTitle}</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5">{emptyDescription}</Text>
+        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{resolvedEmptyTitle}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5">{resolvedEmptyDescription}</Text>
       </View>
     );
   }
@@ -83,7 +87,7 @@ export default function PaginationList<T>({
           onPress={handlePrevPage}
           disabled={isFirstPage}
           accessibilityRole="button"
-          accessibilityLabel="Previous Page"
+          accessibilityLabel={t('components.previousPage')}
           className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
             isFirstPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}
@@ -92,14 +96,14 @@ export default function PaginationList<T>({
         </Pressable>
 
         <Text className="text-xs font-sans-semibold text-gray-500">
-          Page {activePage} of {totalPages}
+          {t('components.pageOf', { active: activePage, total: totalPages })}
         </Text>
 
         <Pressable
           onPress={handleNextPage}
           disabled={isLastPage}
           accessibilityRole="button"
-          accessibilityLabel="Next Page"
+          accessibilityLabel={t('components.nextPage')}
           className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
             isLastPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}

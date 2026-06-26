@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -30,6 +31,7 @@ export default function ContactSupportScreen() {
   const { mutate: submitContact, isPending } = useSubmitContact();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
+  const { t } = useTranslation();
 
   const {
     control,
@@ -51,14 +53,14 @@ export default function ContactSupportScreen() {
 
   const handleCallSupport = () => {
     showError({
-      title: 'Call Support',
-      message: 'Select a support number to call:',
+      title: t('settings.callSupport'),
+      message: t('settings.selectSupportNumber'),
       actions: [
         {
           text: 'NTC (9744985161)',
           onPress: () => {
             Linking.openURL('tel:+9779744985161').catch(() => {
-              showSnackbar({ message: 'Call function is not supported on this device.', type: 'error' });
+              showSnackbar({ message: t('settings.callNotSupported'), type: 'error' });
             });
           },
         },
@@ -66,17 +68,17 @@ export default function ContactSupportScreen() {
           text: 'Ncell (9713969243)',
           onPress: () => {
             Linking.openURL('tel:+9779713969243').catch(() => {
-              showSnackbar({ message: 'Call function is not supported on this device.', type: 'error' });
+              showSnackbar({ message: t('settings.callNotSupported'), type: 'error' });
             });
           },
         },
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
       ],
     });
   };
 
   const handleLiveChat = () => {
-    showSnackbar({ message: 'Connecting you to a Sewalo support agent...', type: 'info' });
+    showSnackbar({ message: t('customer.connectingToSupport'), type: 'info' });
   };
 
   const handleTicketSubmit = (data: SupportTicketFormData) => {
@@ -137,8 +139,8 @@ export default function ContactSupportScreen() {
         }}
       >
         <SectionHeader
-          title="Contact Support"
-          description="Have questions or issues? Get in touch with our customer service team."
+          title={t('settings.contactSupportTitle')}
+          description={t('settings.contactSupportDesc')}
           className="mb-5"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -154,8 +156,10 @@ export default function ContactSupportScreen() {
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
               <Feather name="message-circle" size={20} color="#485aff" />
             </View>
-            <Text className="text-xs font-sans-bold text-gray-900 text-center">Live Chat</Text>
-            <Text className="text-[10px] font-sans-medium text-emerald-500 text-center mt-1">Online (5m wait)</Text>
+            <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.liveChat')}</Text>
+            <Text className="text-[10px] font-sans-medium text-emerald-500 text-center mt-1">
+              {t('settings.onlineWait')}
+            </Text>
           </Pressable>
 
           {/* Hotline */}
@@ -167,7 +171,7 @@ export default function ContactSupportScreen() {
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
               <Feather name="phone-call" size={18} color="#485aff" />
             </View>
-            <Text className="text-xs font-sans-bold text-gray-900 text-center">Call Support</Text>
+            <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.callSupport')}</Text>
             <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">9744985161 / 9713969243</Text>
           </Pressable>
         </View>
@@ -177,15 +181,15 @@ export default function ContactSupportScreen() {
           {/* Full Name Field */}
           <View className="mb-4">
             <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
-              Full Name <Text className="text-destructive font-sans-bold">*</Text>
+              {t('settings.fullName')} <Text className="text-destructive font-sans-bold">*</Text>
             </Text>
             <Controller
               control={control}
               name="fullName"
-              rules={{ required: 'Full name is required' }}
+              rules={{ required: t('settings.fullNameRequired') }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  placeholder="Your name"
+                  placeholder={t('settings.yourNamePlaceholder')}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -199,21 +203,21 @@ export default function ContactSupportScreen() {
           {/* Email Field */}
           <View className="mb-4">
             <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
-              Email <Text className="text-destructive font-sans-bold">*</Text>
+              {t('settings.email')} <Text className="text-destructive font-sans-bold">*</Text>
             </Text>
             <Controller
               control={control}
               name="email"
               rules={{
-                required: 'Email is required',
+                required: t('settings.emailRequired'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address',
+                  message: t('settings.invalidEmail'),
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  placeholder="your.email@example.com"
+                  placeholder={t('settings.emailPlaceholder')}
                   keyboardType="email-address"
                   value={value}
                   onChangeText={onChange}
@@ -228,13 +232,13 @@ export default function ContactSupportScreen() {
           {/* Phone Number Field */}
           <View className="mb-4">
             <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
-              Phone Number <Text className="text-destructive font-sans-bold">*</Text>
+              {t('settings.phoneNumber')} <Text className="text-destructive font-sans-bold">*</Text>
             </Text>
             <PhoneNumberField
               control={control}
               name="phoneNumber"
               label=""
-              placeholder="98XXXXXXXX"
+              placeholder={t('settings.phonePlaceholder')}
               error={errors.phoneNumber?.message}
             />
           </View>
@@ -242,18 +246,18 @@ export default function ContactSupportScreen() {
           {/* Subject Field */}
           <View className="mb-4">
             <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
-              Subject <Text className="text-destructive font-sans-bold">*</Text>
+              {t('settings.subject')} <Text className="text-destructive font-sans-bold">*</Text>
             </Text>
             <Controller
               control={control}
               name="subject"
               rules={{
-                required: 'Subject is required',
-                maxLength: { value: 120, message: 'Subject cannot exceed 120 characters' },
+                required: t('settings.subjectRequired'),
+                maxLength: { value: 120, message: t('settings.subjectMaxLength') },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  placeholder="What's this about?"
+                  placeholder={t('settings.subjectPlaceholder')}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -269,19 +273,19 @@ export default function ContactSupportScreen() {
           {/* Message Field */}
           <View className="mb-5">
             <Text className="text-xs font-sans-bold text-gray-700 mb-1.5 ml-0.5">
-              Message <Text className="text-destructive font-sans-bold">*</Text>
+              {t('settings.message')} <Text className="text-destructive font-sans-bold">*</Text>
             </Text>
             <Controller
               control={control}
               name="message"
               rules={{
-                required: 'Message is required',
-                maxLength: { value: 2000, message: 'Message cannot exceed 2000 characters' },
-                minLength: { value: 10, message: 'Message must be at least 10 characters' },
+                required: t('settings.messageRequired'),
+                maxLength: { value: 2000, message: t('settings.messageMaxLength') },
+                minLength: { value: 10, message: t('settings.messageMinLength') },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  placeholder="Type your message here..."
+                  placeholder={t('settings.messagePlaceholder')}
                   multiline
                   numberOfLines={6}
                   value={value}
@@ -298,7 +302,7 @@ export default function ContactSupportScreen() {
 
           {/* Send Message Button */}
           <Button
-            title="Send Message"
+            title={t('settings.sendMessage')}
             variant="primary"
             loading={isPending}
             onPress={handleSubmit(handleTicketSubmit)}

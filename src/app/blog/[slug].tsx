@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { ScrollView, Text, View, Image, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -9,6 +10,7 @@ import { useGetBlogBySlugQuery } from '@/api';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 export default function BlogDetailScreen() {
+  const { t } = useTranslation();
   const { slug } = useLocalSearchParams<{ slug: string }>();
 
   const { data: blogData, isLoading } = useGetBlogBySlugQuery(slug || '');
@@ -31,7 +33,7 @@ export default function BlogDetailScreen() {
   const getReadTime = (description: string) => {
     const words = description.split(/\s+/).length;
     const time = Math.max(1, Math.ceil(words / 200));
-    return `${time} min read`;
+    return t('common.minRead', { time });
   };
 
   const formatDate = (dateString: string) => {
@@ -61,9 +63,9 @@ export default function BlogDetailScreen() {
         <Header showBackButton />
         <View className="flex-1 justify-center items-center p-5">
           <Feather name="alert-circle" size={48} color="#ef4444" />
-          <Text className="text-base font-sans-bold text-gray-900 mt-4">Article Not Found</Text>
+          <Text className="text-base font-sans-bold text-gray-900 mt-4">{t('blog.articleNotFound')}</Text>
           <Text className="text-sm font-sans-medium text-gray-500 text-center mt-2 leading-5">
-            The article you are looking for does not exist or has been removed.
+            {t('blog.articleNotFoundDesc')}
           </Text>
         </View>
       </View>
@@ -84,7 +86,7 @@ export default function BlogDetailScreen() {
           <View className="flex-row items-center justify-between mt-6 mb-4">
             <View className="rounded-xl bg-[#eef1ff] px-3 py-1">
               <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">
-                {blog.category?.name || 'General'}
+                {blog.category?.name || t('blog.general')}
               </Text>
             </View>
             <View className="flex-row items-center gap-1.5">
@@ -106,7 +108,9 @@ export default function BlogDetailScreen() {
               <Feather name="user" size={16} color="#64748b" />
             </View>
             <View>
-              <Text className="text-xs font-sans-bold text-gray-800">Published by {blog.author}</Text>
+              <Text className="text-xs font-sans-bold text-gray-800">
+                {t('blog.publishedBy')} {blog.author}
+              </Text>
               <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">{formatDate(blog.created_at)}</Text>
             </View>
           </View>

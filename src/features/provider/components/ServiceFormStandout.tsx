@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -29,18 +30,19 @@ export default function ServiceFormStandout({
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   // 1. Photo Grid Handlers
   const handlePickImage = async () => {
     if (watchWorkSamples.length >= 5) {
-      showSnackbar({ message: 'You can upload up to 5 work samples.', type: 'error' });
+      showSnackbar({ message: t('provider.uploadSamples'), type: 'error' });
       return;
     }
 
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        showSnackbar({ message: 'We need access to your photo library to select work samples.', type: 'error' });
+        showSnackbar({ message: t('provider.photoLibraryAccess'), type: 'error' });
         return;
       }
 

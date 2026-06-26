@@ -10,6 +10,7 @@ import {
   useWindowDimensions,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import SelectionOption from './SelectionOption';
 
@@ -35,15 +36,18 @@ export default function SelectSheet({
   options,
   value,
   onSelect,
-  placeholder = 'Select an option',
-  title = 'Select Option',
+  placeholder,
+  title,
   description,
   label,
   error,
   disabled = false,
 }: SelectSheetProps) {
+  const { t } = useTranslation();
   const { height } = useWindowDimensions();
   const [modalVisible, setModalVisible] = useState(false);
+  const resolvedPlaceholder = placeholder ?? t('common.selectOption');
+  const resolvedTitle = title ?? t('common.select');
 
   const selectedOption = options.find((o) => o.value === value);
 
@@ -74,7 +78,7 @@ export default function SelectSheet({
           className={`form-input-text flex-1 ${selectedOption ? '' : 'text-[#898f8f]'}`}
           style={{ includeFontPadding: false, textAlignVertical: 'center' }}
         >
-          {selectedOption ? selectedOption.label : placeholder}
+          {selectedOption ? selectedOption.label : resolvedPlaceholder}
         </Text>
         <View className="ml-3">
           <Feather name="chevron-down" size={16} color="#9ca3af" />
@@ -98,7 +102,7 @@ export default function SelectSheet({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">{title}</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{resolvedTitle}</Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"

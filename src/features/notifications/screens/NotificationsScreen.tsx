@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -20,6 +21,7 @@ import NotificationCard from '../components/NotificationCard';
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>(NOTIFICATION_FILTERS.All);
 
   const { data: notificationsData, isLoading } = useGetNotificationsQuery({
@@ -51,8 +53,8 @@ export default function NotificationsScreen() {
 
   const filterOptions = useMemo<SegmentedControlOption<NotificationFilter>[]>(
     () => [
-      { value: NOTIFICATION_FILTERS.All, label: 'All' },
-      { value: NOTIFICATION_FILTERS.Unread, label: 'Unread' },
+      { value: NOTIFICATION_FILTERS.All, label: t('notifications.all') },
+      { value: NOTIFICATION_FILTERS.Unread, label: t('notifications.unread') },
     ],
     [],
   );
@@ -64,12 +66,12 @@ export default function NotificationsScreen() {
           <Feather name="bell-off" size={28} color="#9ca3af" />
         </View>
         <Text className="text-base font-sans-semibold text-gray-900 mb-1">
-          {activeFilter === NOTIFICATION_FILTERS.Unread ? 'No unread notifications' : 'No notifications yet'}
+          {activeFilter === NOTIFICATION_FILTERS.Unread ? t('notifications.emptyUnread') : t('notifications.emptyAll')}
         </Text>
         <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 px-6">
           {activeFilter === NOTIFICATION_FILTERS.Unread
-            ? "You've read all your notifications."
-            : "You'll see updates here when something new arrives."}
+            ? t('notifications.emptyUnreadDesc')
+            : t('notifications.emptyAllDesc')}
         </Text>
       </View>
     ),
@@ -91,10 +93,12 @@ export default function NotificationsScreen() {
       >
         <View className="mb-6 flex-row items-center justify-between">
           <View>
-            <Text className="text-2xl font-sans-extrabold text-gray-950 tracking-tight">Notifications</Text>
+            <Text className="text-2xl font-sans-extrabold text-gray-950 tracking-tight">
+              {t('notifications.title')}
+            </Text>
             {unreadCount > 0 && (
               <Text className="text-xs font-sans-medium text-gray-500 mt-1">
-                {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
+                {t('notifications.unreadCount', { count: unreadCount })}
               </Text>
             )}
           </View>
@@ -107,7 +111,7 @@ export default function NotificationsScreen() {
               className="flex-row items-center rounded-lg bg-primary/10 px-3.5 py-2 active:opacity-80"
             >
               <Feather name="check-square" size={14} color="#485aff" />
-              <Text className="text-xs font-sans-bold text-primary ml-1.5">Mark All Read</Text>
+              <Text className="text-xs font-sans-bold text-primary ml-1.5">{t('notifications.markAllRead')}</Text>
             </Pressable>
           )}
         </View>
@@ -130,8 +134,8 @@ export default function NotificationsScreen() {
             keyExtractor={(item) => item.id}
             initialVisibleCount={6}
             pageSize={4}
-            loadMoreLabel="Load More Notifications"
-            endReachedLabel="No more notifications"
+            loadMoreLabel={t('common.loadMore')}
+            endReachedLabel={t('common.allCaughtUp')}
             emptyContent={emptyContent}
             listClassName="gap-1"
             renderItem={(item) => (

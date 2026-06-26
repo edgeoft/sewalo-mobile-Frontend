@@ -1,6 +1,7 @@
 'use dom';
 
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface LocationData {
   address: string;
@@ -149,6 +150,7 @@ export default function LocationMapPicker({
   onSelectLocation,
   onCancel,
 }: Props) {
+  const { t } = useTranslation();
   const [isMapLibraryLoaded, setIsMapLibraryLoaded] = useState(false);
   const [lat, setLat] = useState(initialLat);
   const [lng, setLng] = useState(initialLng);
@@ -422,8 +424,8 @@ export default function LocationMapPicker({
   // Submit selected location
   const handleConfirm = async () => {
     let finalCity = '';
-    let finalState = 'Bagmati';
-    let finalCountry = 'Nepal';
+    let finalState = t('common.na');
+    let finalCountry = t('home.nepal');
 
     // Extract address details dynamically from OSM Nominatim API if available
     try {
@@ -433,17 +435,17 @@ export default function LocationMapPicker({
       if (response.ok) {
         const data = await response.json();
         const addr = data.address || {};
-        finalCity = addr.city || addr.town || addr.village || 'Kathmandu';
-        finalState = addr.state || 'Bagmati';
-        finalCountry = addr.country || 'Nepal';
+        finalCity = addr.city || addr.town || addr.village || t('common.na');
+        finalState = addr.state || t('common.na');
+        finalCountry = addr.country || t('home.nepal');
       }
     } catch {
       // Fallback defaults
-      finalCity = 'Kathmandu';
+      finalCity = t('common.na');
     }
 
     await onSelectLocation({
-      address: addressText || searchQuery || 'Kathmandu, Nepal',
+      address: addressText || searchQuery || `${t('common.na')}, ${t('home.nepal')}`,
       lat,
       lng,
       city: finalCity,
@@ -473,7 +475,7 @@ export default function LocationMapPicker({
         <div style={{ position: 'relative' }}>
           <input
             type="text"
-            placeholder="Search address or landmark..."
+            placeholder={t('components.searchAddress')}
             value={searchQuery}
             onChange={handleSearchChange}
             style={styles.searchInput}
@@ -515,9 +517,9 @@ export default function LocationMapPicker({
         {/* Selected Address Display */}
         <div style={styles.selectedAddressText}>
           {isReverseGeocoding ? (
-            <span style={{ color: '#485aff' }}>Resolving location details...</span>
+            <span style={{ color: '#485aff' }}>{t('components.resolvingLocation')}</span>
           ) : (
-            `Selected: ${addressText || 'Drag marker to pick a location'}`
+            t('components.selectedLocation', { address: addressText || t('components.dragMarker') })
           )}
         </div>
 
@@ -558,7 +560,7 @@ export default function LocationMapPicker({
       {!isMapLibraryLoaded ? (
         <div style={styles.loadingContainer}>
           <div style={styles.spinner} />
-          <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>Initializing Map Components...</div>
+          <div style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>{t('components.initializingMap')}</div>
         </div>
       ) : (
         <div ref={mapContainerRef} style={styles.map} />
@@ -567,7 +569,7 @@ export default function LocationMapPicker({
       {/* Bottom Action Footer */}
       <div style={styles.footer}>
         <button onClick={handleCancel} style={{ ...styles.button, ...styles.secondaryButton }}>
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           onClick={handleConfirm}
@@ -579,7 +581,7 @@ export default function LocationMapPicker({
             cursor: !isMapLibraryLoaded || isReverseGeocoding ? 'not-allowed' : 'pointer',
           }}
         >
-          Confirm Location
+          {t('components.confirmLocation')}
         </button>
       </div>
     </div>

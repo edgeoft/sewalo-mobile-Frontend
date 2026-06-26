@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
 import { type CustomerBookingItem } from '../constants/customerBookings';
+import { useTranslation } from 'react-i18next';
 
 interface FinalInvoiceCardProps {
   booking: CustomerBookingItem;
@@ -27,6 +28,7 @@ export default function FinalInvoiceCard({
   onPayNow,
   onDownloadInvoice,
 }: FinalInvoiceCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -46,20 +48,22 @@ export default function FinalInvoiceCard({
 
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
-      <Text className="text-base font-sans-bold text-gray-900 mb-3">Final Invoice</Text>
+      <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.finalInvoice')}</Text>
 
       <View className="gap-0.5">
         {renderInvoiceRow(booking.serviceName ?? booking.serviceLabel, basePriceValue.toLocaleString())}
-        {renderInvoiceRow('Platform Fee', platformFeeValue.toLocaleString())}
-        {renderInvoiceRow('VAT (13%)', vatValue.toLocaleString())}
+        {renderInvoiceRow(t('customer.platformFee'), platformFeeValue.toLocaleString())}
+        {renderInvoiceRow(t('customer.vat'), vatValue.toLocaleString())}
 
-        {couponDiscountValue > 0 && renderInvoiceRow('Coupon Discount', couponDiscountValue.toLocaleString(), true)}
-        {loyaltyDiscountValue > 0 && renderInvoiceRow('Loyalty Discount', loyaltyDiscountValue.toLocaleString(), true)}
+        {couponDiscountValue > 0 &&
+          renderInvoiceRow(t('customer.couponDiscount'), couponDiscountValue.toLocaleString(), true)}
+        {loyaltyDiscountValue > 0 &&
+          renderInvoiceRow(t('customer.loyaltyDiscount'), loyaltyDiscountValue.toLocaleString(), true)}
 
         <View className="border-t border-gray-100 my-2" />
 
         <View className="flex-row items-center justify-between py-1">
-          <Text className="text-base font-sans-bold text-gray-900">Total :</Text>
+          <Text className="text-base font-sans-bold text-gray-900">{t('customer.total')}</Text>
           <Text className="text-lg font-sans-bold text-gray-900">Rs. {totalPayableValue.toLocaleString()}</Text>
         </View>
       </View>
@@ -67,7 +71,7 @@ export default function FinalInvoiceCard({
       {/* Buttons */}
       <View className="mt-4 gap-3">
         <Button
-          title="Download Invoice"
+          title={t('customer.downloadInvoice')}
           onPress={onDownloadInvoice}
           className="border-gray-200 bg-white active:bg-gray-50 h-12"
           textClassName="text-gray-900 font-sans-semibold"

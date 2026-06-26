@@ -60,7 +60,7 @@ export default function LanguageSelector() {
               </Pressable>
             </View>
 
-            <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose your preferred app language</Text>
+            <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('common.chooseLanguage')}</Text>
 
             <View className="gap-y-2.5">
               {languages.map((lang) => {
@@ -69,8 +69,8 @@ export default function LanguageSelector() {
                   <SelectionOption
                     key={lang.code}
                     onPress={() => handleSelectLanguage(lang.code)}
-                    title={lang.label}
-                    subtitle={isSelected ? 'Currently selected' : undefined}
+                    title={lang.code === 'en' ? t('common.english') : lang.label}
+                    subtitle={isSelected ? t('common.currentlySelected') : undefined}
                     selected={isSelected}
                     icon={<Text className="text-lg">{lang.flag}</Text>}
                     iconStyle="plain"

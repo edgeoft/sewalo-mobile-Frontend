@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -13,18 +14,20 @@ export interface HomeServiceCategory {
   slug?: string;
 }
 
-export const DEFAULT_HOME_SERVICE_CATEGORIES: HomeServiceCategory[] = [
-  { icon: 'code', label: 'Computers & IT' },
-  { icon: 'pen-tool', label: 'Design' },
-  { icon: 'home', label: 'Cleaning' },
-  { icon: 'droplet', label: 'Plumbing' },
-  { icon: 'tool', label: 'Maintenance' },
-  { icon: 'zap', label: 'Electrical' },
-  { icon: 'scissors', label: 'Beauty' },
-  { icon: 'truck', label: 'Moving' },
-  { icon: 'feather', label: 'Painting' },
-  { icon: 'sun', label: 'Gardening' },
-];
+export function getDefaultHomeServiceCategories(t: (key: string) => string): HomeServiceCategory[] {
+  return [
+    { icon: 'code', label: t('home.computersAndIT') },
+    { icon: 'pen-tool', label: t('home.design') },
+    { icon: 'home', label: t('home.cleaning') },
+    { icon: 'droplet', label: t('home.plumbing') },
+    { icon: 'tool', label: t('home.maintenance') },
+    { icon: 'zap', label: t('home.electrical') },
+    { icon: 'scissors', label: t('home.beauty') },
+    { icon: 'truck', label: t('home.moving') },
+    { icon: 'feather', label: t('home.painting') },
+    { icon: 'sun', label: t('home.gardening') },
+  ];
+}
 
 export interface HomeServiceCategoriesSectionProps {
   title: string;

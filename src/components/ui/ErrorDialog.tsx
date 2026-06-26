@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorDialogAction {
   text: string;
@@ -28,6 +29,7 @@ export function useErrorDialog(): ErrorDialogContextValue {
 }
 
 export function ErrorDialogProvider({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [config, setConfig] = useState<ErrorDialogConfig | null>(null);
   const [visible, setVisible] = useState(false);
   const opacity = useMemo(() => new Animated.Value(0), []);
@@ -108,7 +110,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                 })
               ) : (
                 <Pressable onPress={hideError} className="py-3 rounded-lg bg-primary items-center">
-                  <Text className="font-sans-bold text-sm text-white">OK</Text>
+                  <Text className="font-sans-bold text-sm text-white">{t('common.ok')}</Text>
                 </Pressable>
               )}
             </View>

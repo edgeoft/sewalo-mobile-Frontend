@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
+import { useTranslation } from 'react-i18next';
 
 export interface Coupon {
   id: string;
@@ -41,6 +42,7 @@ export default function DiscountLoyaltyCard({
   pointsRate,
   availableCoupons,
 }: DiscountLoyaltyCardProps) {
+  const { t } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { height } = useWindowDimensions();
 
@@ -50,7 +52,9 @@ export default function DiscountLoyaltyCard({
     <View className="gap-y-4">
       {/* Coupon Selection */}
       <View>
-        <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">Apply Coupon</Text>
+        <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">
+          {t('customer.applyCoupon')}
+        </Text>
         <Pressable
           onPress={() => setDropdownOpen(true)}
           className="form-input-container form-input-container-single"

@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
+import type { TFunction } from 'i18next';
 
 import { SideDrawerFooterAction, SideDrawerSection } from './SideDrawer';
 
@@ -29,143 +30,157 @@ interface CreateGuestDrawerConfigArgs {
 const brandColor = '#485aff';
 const warningColor = '#f59e0b';
 
-const roleSections: { title: string; items: DrawerActionDefinition[] }[] = [
-  {
-    title: 'Account & Profile',
-    items: [
-      {
-        id: 'edit-profile',
-        title: 'Edit profile',
-        subtitle: 'Update your name, photo and contact details',
-        icon: 'user',
-      },
-      {
-        id: 'change-password',
-        title: 'Change password',
-        subtitle: 'Keep your account secure',
-        icon: 'lock',
-      },
-    ],
-  },
-  {
-    title: 'Preferences',
-    items: [
-      {
-        id: 'notification-settings',
-        title: 'Notification settings',
-        subtitle: 'Manage app alerts and updates',
-        icon: 'bell',
-      },
-      {
-        id: 'privacy-settings',
-        title: 'Privacy settings',
-        subtitle: 'Control visibility and data preferences',
-        icon: 'shield',
-      },
-    ],
-  },
-  {
-    title: 'Support & Info',
-    items: [
-      {
-        id: 'help-faq',
-        title: 'Help & FAQ',
-        subtitle: 'Find answers to common questions',
-        icon: 'help-circle',
-      },
-      {
-        id: 'contact-support',
-        title: 'Contact support',
-        subtitle: 'Reach the Sewalo support team',
-        icon: 'message-circle',
-      },
-      {
-        id: 'report-problem',
-        title: 'Report a problem',
-        subtitle: 'Send an issue or bug report',
-        icon: 'alert-triangle',
-        color: warningColor,
-      },
-      {
-        id: 'terms-conditions',
-        title: 'Terms & conditions',
-        subtitle: 'Review usage terms',
-        icon: 'file',
-      },
-      {
-        id: 'privacy-policy',
-        title: 'Privacy policy',
-        subtitle: 'Read how your data is handled',
-        icon: 'lock',
-      },
-    ],
-  },
-  {
-    title: 'Secondary actions',
-    items: [
-      {
-        id: 'refer-friend',
-        title: 'Refer a friend',
-        subtitle: 'Invite others to Sewalo',
-        icon: 'users',
-      },
-      {
-        id: 'rate-app',
-        title: 'Rate the app',
-        subtitle: 'Share your feedback',
-        icon: 'star',
-        color: warningColor,
-      },
-      {
-        id: 'about-sewalo',
-        title: 'About Sewalo',
-        subtitle: 'Learn more about the app',
-        icon: 'info',
-      },
-    ],
-  },
-];
+interface RoleSection {
+  id: string;
+  title: string;
+  items: DrawerActionDefinition[];
+}
 
-const guestSupportActions: DrawerActionDefinition[] = [
-  {
-    id: 'rate-app',
-    title: 'Rate the app',
-    subtitle: 'Share your feedback',
-    icon: 'star',
-    color: warningColor,
-  },
-  {
-    id: 'about-sewalo',
-    title: 'About Sewalo',
-    subtitle: 'Learn more about the app',
-    icon: 'info',
-  },
-  {
-    id: 'privacy-policy',
-    title: 'Privacy policy',
-    subtitle: 'Read how your data is handled',
-    icon: 'lock',
-  },
-  {
-    id: 'terms-conditions',
-    title: 'Terms & conditions',
-    subtitle: 'Review usage terms',
-    icon: 'file',
-  },
-  {
-    id: 'report-problem',
-    title: 'Report a problem',
-    subtitle: 'Send an issue or bug report',
-    icon: 'alert-triangle',
-    color: warningColor,
-  },
-  {
-    id: 'contact-support',
-    title: 'Contact support',
-    subtitle: 'Reach the Sewalo support team',
-    icon: 'message-circle',
-  },
-];
+function createRoleSections(t: TFunction): RoleSection[] {
+  return [
+    {
+      id: 'account',
+      title: t('navigation.accountAndProfile'),
+      items: [
+        {
+          id: 'edit-profile',
+          title: t('navigation.editProfile'),
+          subtitle: t('navigation.editProfileSubtitle'),
+          icon: 'user',
+        },
+        {
+          id: 'change-password',
+          title: t('navigation.changePassword'),
+          subtitle: t('navigation.changePasswordSubtitle'),
+          icon: 'lock',
+        },
+      ],
+    },
+    {
+      id: 'preferences',
+      title: t('navigation.preferences'),
+      items: [
+        {
+          id: 'notification-settings',
+          title: t('navigation.notificationSettings'),
+          subtitle: t('navigation.notificationSettingsSubtitle'),
+          icon: 'bell',
+        },
+        {
+          id: 'privacy-settings',
+          title: t('navigation.privacySettings'),
+          subtitle: t('navigation.privacySettingsSubtitle'),
+          icon: 'shield',
+        },
+      ],
+    },
+    {
+      id: 'support',
+      title: t('navigation.supportAndInfo'),
+      items: [
+        {
+          id: 'help-faq',
+          title: t('navigation.helpAndFaq'),
+          subtitle: t('navigation.helpAndFaqSubtitle'),
+          icon: 'help-circle',
+        },
+        {
+          id: 'contact-support',
+          title: t('navigation.contactSupport'),
+          subtitle: t('navigation.contactSupportSubtitle'),
+          icon: 'message-circle',
+        },
+        {
+          id: 'report-problem',
+          title: t('navigation.reportProblem'),
+          subtitle: t('navigation.reportProblemSubtitle'),
+          icon: 'alert-triangle',
+          color: warningColor,
+        },
+        {
+          id: 'terms-conditions',
+          title: t('navigation.termsAndConditions'),
+          subtitle: t('navigation.termsAndConditionsSubtitle'),
+          icon: 'file',
+        },
+        {
+          id: 'privacy-policy',
+          title: t('navigation.privacyPolicy'),
+          subtitle: t('navigation.privacyPolicySubtitle'),
+          icon: 'lock',
+        },
+      ],
+    },
+    {
+      id: 'secondary',
+      title: t('navigation.secondaryActions'),
+      items: [
+        {
+          id: 'refer-friend',
+          title: t('navigation.referFriend'),
+          subtitle: t('navigation.referFriendSubtitle'),
+          icon: 'users',
+        },
+        {
+          id: 'rate-app',
+          title: t('navigation.rateApp'),
+          subtitle: t('navigation.rateAppSubtitle'),
+          icon: 'star',
+          color: warningColor,
+        },
+        {
+          id: 'about-sewalo',
+          title: t('navigation.aboutSewalo'),
+          subtitle: t('navigation.aboutSewaloSubtitle'),
+          icon: 'info',
+        },
+      ],
+    },
+  ];
+}
+
+function createGuestSupportActions(t: TFunction): DrawerActionDefinition[] {
+  return [
+    {
+      id: 'rate-app',
+      title: t('navigation.rateApp'),
+      subtitle: t('navigation.rateAppSubtitle'),
+      icon: 'star',
+      color: warningColor,
+    },
+    {
+      id: 'about-sewalo',
+      title: t('navigation.aboutSewalo'),
+      subtitle: t('navigation.aboutSewaloSubtitle'),
+      icon: 'info',
+    },
+    {
+      id: 'privacy-policy',
+      title: t('navigation.privacyPolicy'),
+      subtitle: t('navigation.privacyPolicySubtitle'),
+      icon: 'lock',
+    },
+    {
+      id: 'terms-conditions',
+      title: t('navigation.termsAndConditions'),
+      subtitle: t('navigation.termsAndConditionsSubtitle'),
+      icon: 'file',
+    },
+    {
+      id: 'report-problem',
+      title: t('navigation.reportProblem'),
+      subtitle: t('navigation.reportProblemSubtitle'),
+      icon: 'alert-triangle',
+      color: warningColor,
+    },
+    {
+      id: 'contact-support',
+      title: t('navigation.contactSupport'),
+      subtitle: t('navigation.contactSupportSubtitle'),
+      icon: 'message-circle',
+    },
+  ];
+}
 
 function createActionItem(definition: DrawerActionDefinition, onActionPress?: (actionId: string) => void) {
   return {
@@ -179,17 +194,18 @@ function createActionItem(definition: DrawerActionDefinition, onActionPress?: (a
 }
 
 function createLanguageSection(
+  t: TFunction,
   currentLanguage: string,
   onLanguageChange: (code: string) => void,
   onActionPress?: (actionId: string) => void,
 ): SideDrawerSection {
   return {
-    title: 'Preferences',
+    title: t('navigation.preferences'),
     items: [
       {
         type: 'language-toggle',
         id: 'language',
-        title: 'Language',
+        title: t('navigation.language'),
         value: currentLanguage,
         onChange: (code: string) => {
           onLanguageChange(code);
@@ -200,21 +216,19 @@ function createLanguageSection(
   };
 }
 
-export function createRoleDrawerConfig({
-  currentLanguage,
-  onLanguageChange,
-  onActionPress,
-  onLogout,
-}: CreateRoleDrawerConfigArgs): {
+export function createRoleDrawerConfig(
+  t: TFunction,
+  { currentLanguage, onLanguageChange, onActionPress, onLogout }: CreateRoleDrawerConfigArgs,
+): {
   sections: SideDrawerSection[];
   footerAction: SideDrawerFooterAction;
 } {
-  const sections = roleSections.map((section) => ({
+  const sections = createRoleSections(t).map((section) => ({
     title: section.title,
     items:
-      section.title === 'Preferences'
+      section.id === 'preferences'
         ? [
-            ...createLanguageSection(currentLanguage, onLanguageChange, onActionPress).items,
+            ...createLanguageSection(t, currentLanguage, onLanguageChange, onActionPress).items,
             ...section.items.map((item) => createActionItem(item, onActionPress)),
           ]
         : section.items.map((item) => createActionItem(item, onActionPress)),
@@ -223,7 +237,7 @@ export function createRoleDrawerConfig({
   return {
     sections,
     footerAction: {
-      label: 'Logout',
+      label: t('navigation.logout'),
       onPress: onLogout,
       icon: <Feather name="log-out" size={18} color="#dc2626" />,
       destructive: true,
@@ -231,20 +245,19 @@ export function createRoleDrawerConfig({
   };
 }
 
-export function createGuestDrawerConfig({
-  currentLanguage,
-  onLanguageChange,
-  onActionPress,
-}: CreateGuestDrawerConfigArgs): {
+export function createGuestDrawerConfig(
+  t: TFunction,
+  { currentLanguage, onLanguageChange, onActionPress }: CreateGuestDrawerConfigArgs,
+): {
   sections: SideDrawerSection[];
   footerAction?: SideDrawerFooterAction;
 } {
   return {
     sections: [
-      createLanguageSection(currentLanguage, onLanguageChange, onActionPress),
+      createLanguageSection(t, currentLanguage, onLanguageChange, onActionPress),
       {
-        title: 'Support & Info',
-        items: guestSupportActions.map((item) => createActionItem(item, onActionPress)),
+        title: t('navigation.supportAndInfo'),
+        items: createGuestSupportActions(t).map((item) => createActionItem(item, onActionPress)),
       },
     ],
   };

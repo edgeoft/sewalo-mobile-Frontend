@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { type ReactNode } from 'react';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import HeaderIconButton from '@/components/ui/HeaderIconButton';
@@ -36,6 +37,7 @@ type CustomHeaderProps = HeaderBaseProps & {
 type HeaderProps = LanguageHeaderProps | MenuHeaderProps | CustomHeaderProps;
 
 export default function Header(props: HeaderProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { role } = useAuth();
   const { showBackButton = false, leadingContent, containerClassName, contentClassName, includeBottomBorder } = props;
@@ -60,7 +62,7 @@ export default function Header(props: HeaderProps) {
         <View className="flex-row items-center">
           <HeaderIconButton
             icon="bell"
-            accessibilityLabel="Open notifications"
+            accessibilityLabel={t('home.notificationAccessibility')}
             onPress={props.onNotificationsPress}
             badgeCount={badgeCount}
           />

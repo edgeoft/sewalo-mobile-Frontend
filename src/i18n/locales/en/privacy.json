@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "title": "Privacy Policy",
+    "description": "Please read Sewalo's Privacy Policy to understand how we collect, use, and protect your personal information."
+  },
+  "pageTitle": "Privacy Policy",
+  "sections": {
+    "introduction": {
+      "title": "Introduction",
+      "content": [
+        "Effective Date: Baisakh 1, 2083",
+        "This Privacy Policy explains how Edgeoft Private Limited and the Sewalo application collect, use, process, store, disclose, share, and protect the personal information and data obtained through the application (the \"Application\", \"we\", \"our\", or \"us\"). This Policy also applies to any websites and other related applications developed or operated by us in connection with our services. Accordingly, references to the \"Application\", \"we\", \"our\", or \"us\" shall be deemed to include such websites and related applications, unless the context requires otherwise.",
+        "Please review this Policy carefully to understand our information practices. By accessing or using the Application, you acknowledge that you have read, understood, and agree to be bound by the terms and practices described herein."
+      ]
+    },
+    "purpose": {
+      "title": "Purpose of Data Collection",
+      "content": [
+        "We collect and use personal and service-related information for the following purposes:",
+        "Dispute Resolution: To investigate and resolve any disputes or issues that may arise between users or service providers.",
+        "Safety and Fraud Prevention: To protect the safety of users and prevent fraudulent or unauthorized activities on the platform.",
+        "Customer Service Enhancement: To improve the quality, efficiency, and responsiveness of our services."
+      ]
+    },
+    "dataCollection": {
+      "title": "1. Data We Collect",
+      "content": [
+        "We may collect the following categories of information in connection with your use of the Application in order to give you the best service:",
+        "Personal Information: Information that may be used to identify you, including your name, email address, contact number, location-related information, and profile photograph.",
+        "Verification Information: Documents and related information submitted for the purpose of verifying your identity or profile status on the Application.",
+        "Service Data: Information generated through your use of the services, including service listings, booking details.",
+        "Payment Information: Sewalo has partnered with eSewa to facilitate secure in-application payments. In doing so, Sewalo collects only the minimum payment-related information necessary for transaction processing, which is handled exclusively by the authorized third-party payment processor. Payment information is processed in accordance with eSewa's security and privacy standards, and Sewalo does not store user's sensitive financial data.",
+        "Usage and Technical Data: Information related to your interaction with the Application, including log files, cookies, device information, and similar technical data."
+      ]
+    },
+    "chatAndCall": {
+      "title": "2. Chat and Call Records",
+      "content": [
+        "At present, Sewalo does not offer an in-application messaging or chat feature between users. Any communications conducted outside the Application are neither monitored nor recorded by Sewalo and are not subject to Sewalo's privacy or data protection measures.",
+        "In the event that in-application messaging or communication features are introduced in the future, this Privacy Policy will be revised accordingly to specify how such communications and related records are collected, processed, stored, and used."
+      ]
+    },
+    "dataUse": {
+      "title": "3. Use of Your Data",
+      "content": [
+        "By using the Sewalo platform, you acknowledge and consent that we may collect, process, and use your personal information for the following purposes:",
+        "Identity Verification and Safety: To verify user identities and promote trust, safety, and security on the platform.",
+        "Service Facilitation: To enable and manage interactions between Customers and Service Providers.",
+        "Platform Improvement: To enhance, personalize, and optimize platform features, functionality, and user experience.",
+        "Communication: To send important updates, notifications, and promotional messages, subject to your consent where required by law.",
+        "Legal Compliance: To fulfill applicable legal, regulatory, and contractual obligations.",
+        "Verification: To confirm your email address or mobile number via one-time passwords (OTPs) or other verification mechanisms.",
+        "Reminders and Alerts: To provide reminders regarding account or profile completion, missing documents, or other platform requirements.",
+        "Booking and Task Updates: To notify you of the status of bookings, tasks, or services.",
+        "Referral and Reward Tracking: To track referrals, assign rewards, and manage incentive programs in accordance with platform rules.",
+        "",
+        "Note: Sewalo uses your data solely for the purposes described above and shall not be responsible for any consequences arising from inaccurate or incomplete information provided by Users."
+      ]
+    },
+    "dataSharing": {
+      "title": "4. Sharing of Your Data",
+      "content": [
+        "We may share your personal information in the following circumstances:",
+        "Service Providers: With Service Providers, as necessary to facilitate and fulfill a confirmed booking or service request.",
+        "Third-Party Service Providers: With authorized third-party partners, such as payment processors, analytics providers, or other service providers, to support platform operations and functionality.",
+        "Legal Compliance: With governmental, regulatory, or law enforcement authorities when required by applicable law, regulation, or legal process."
+      ]
+    },
+    "aggregatedData": {
+      "title": "5. Use of Aggregated and Anonymous Data",
+      "content": [
+        "We may collect, process, and analyze anonymized data in aggregate form to better understand user interactions with the Sewalo platform, enhance our services, and optimize the overall user experience. Such data does not include personally identifiable information, including but not limited to your name, phone number, or email address.",
+        "Sewalo reserves the right to license, share, or sell aggregated and de-identified information to third parties for purposes including, but not limited to:",
+        "Industry research and market analysis;",
+        "Demographic profiling and trend assessment;",
+        "Insights into platform performance, usage patterns, and service optimization.",
+        "This information is strictly de-identified and cannot be used to identify individual users. All handling of such data shall comply with applicable industry standards and best practices for privacy and data protection."
+      ]
+    },
+    "cookies": {
+      "title": "6. Cookies and Tracking",
+      "content": [
+        "Sewalo uses cookies and similar tracking technologies to enhance user experience, facilitate login, personalize content, and collect analytics for platform optimization and performance monitoring.",
+        "",
+        "Types of Cookies Used:",
+        "Essential Cookies: Necessary for basic platform functionality, including login, session management, and secure access.",
+        "Performance and Analytics Cookies: Collect anonymous information on platform usage and user interactions to improve features, usability, and overall service quality.",
+        "Functional Cookies: Enable personalization of content and preferences to enhance user experience.",
+        "Third-Party Cookies: May be set by third-party service providers for analytics, advertising, or integration with other services.",
+        "",
+        "Managing Cookies:",
+        "Users may manage, disable, or delete cookies through their browser or device settings. Please note that disabling or removing certain cookies may affect the functionality or performance of the platform.",
+        "",
+        "Consent:",
+        "By continuing to use the Sewalo platform, Users consent to the use of cookies and similar tracking technologies as described herein, unless applicable law requires explicit consent, in which case Sewalo will obtain such consent prior to placement."
+      ]
+    },
+    "userRights": {
+      "title": "7. User Rights",
+      "content": [
+        "As a User of the Sewalo platform, you have the following rights with respect to your personal data:",
+        "Access and Correction: You may view, review, and update your profile information to ensure accuracy and completeness.",
+        "Account Deletion: You may request the deletion of your account and associated personal data, subject to any legal or contractual obligations.",
+        "Marketing and Communications: You may opt out of receiving promotional or marketing communications from Sewalo at any time."
+      ]
+    },
+    "dataRetention": {
+      "title": "8. Data Retention",
+      "content": [
+        "Sewalo retains personal data for as long as your account remains active. Upon account closure or deactivation, certain information may continue to be retained for a limited period as necessary to comply with legal obligations, prevent fraud, resolve disputes, enforce agreements, or for other legitimate business purposes."
+      ]
+    },
+    "security": {
+      "title": "9. Security",
+      "content": [
+        "Sewalo implements industry-standard security measures, including SSL encryption, secure hosting, and periodic security audits, to protect user data and platform integrity. Users are advised not to share passwords, authentication credentials, or any other sensitive information through chat or other unsecured communication channels."
+      ]
+    },
+    "children": {
+      "title": "10. Children's Privacy",
+      "content": ["Sewalo is not intended for users under 18."]
+    },
+    "location": {
+      "title": "11. Location Information",
+      "content": [
+        "Sewalo may collect and use information about your location in the following ways:",
+        "General Location: Determined based on your IP address, network information, or other indirect indicators.",
+        "Precise Geolocation: Obtained directly from your device, only if you have granted explicit permission for location access.",
+        "",
+        "Location information may be used for the following purposes:",
+        "Service Matching: To connect Customers with nearby Service Providers.",
+        "Personalized Results: To display services, offers, or content relevant to your geographic area.",
+        "Trust and Safety: To enhance platform security, prevent fraud, and verify service areas.",
+        "",
+        "Users may control the sharing of precise geolocation data through their device settings. Please note that declining or disabling location access may limit certain location-based features and functionality on the platform."
+      ]
+    },
+    "limitations": {
+      "title": "12. Limitations of Platform Oversight",
+      "content": [
+        "Sewalo shall not be responsible or liable for any interactions, communications, transactions, or disputes that occur outside the Sewalo platform. Where a Customer or Service Provider independently arranges or conducts a service without booking through the Sewalo platform, Sewalo shall have no obligation to provide support, dispute resolution, data protection, or any related assistance in connection with such off-platform transactions."
+      ]
+    },
+    "notifications": {
+      "title": "13. Notifications",
+      "content": [
+        "Sewalo may send alerts, notifications, and reminders to Users through in-app messages (including toast notifications), short message service (SMS), or email. Such communications may include, but are not limited to, profile or document verification reminders, updates regarding booking status (including confirmation, commencement, or completion of services), and invoice or payment-related notifications. Users may manage and adjust their communication preferences through their account or profile settings, where such options are made available."
+      ]
+    },
+    "wallet": {
+      "title": "14. Virtual Wallet and Invoices",
+      "content": [
+        "Certain Service Providers may have access to a virtual wallet feature for the purpose of viewing earnings and issuing invoices through the Sewalo platform. Wallet and invoice-related data shall be used solely for facilitating services and related transactions and shall not be shared with third parties, except where required by applicable law or necessary for payment processing and platform operations."
+      ]
+    },
+    "updates": {
+      "title": "15. Policy Updates",
+      "content": [
+        "Sewalo reserves the right to amend or update this Privacy Policy from time to time. Continued access to or use of the Sewalo platform following the publication of any updates shall constitute acceptance of the revised Privacy Policy."
+      ]
+    }
+  }
+}

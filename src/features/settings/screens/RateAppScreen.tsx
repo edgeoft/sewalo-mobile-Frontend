@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -17,6 +18,7 @@ export default function RateAppScreen() {
   const insets = useSafeAreaInsets();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
+  const { t } = useTranslation();
 
   const [rating, setRating] = useState<number>(0);
   const [feedbackText, setFeedbackText] = useState('');
@@ -24,7 +26,7 @@ export default function RateAppScreen() {
 
   const handleSubmitRating = () => {
     if (rating === 0) {
-      showSnackbar({ message: 'Please choose a star rating (1 to 5 stars) before submitting.', type: 'error' });
+      showSnackbar({ message: t('settings.rateAppPrompt'), type: 'error' });
       return;
     }
 
@@ -32,8 +34,8 @@ export default function RateAppScreen() {
     setTimeout(() => {
       setLoading(false);
       showError({
-        title: 'Feedback Submitted',
-        message: 'Thank you for your rating! Your review helps us refine the Sewalo booking experience.',
+        title: t('settings.feedbackSubmitted'),
+        message: t('settings.thankYouForRating'),
         actions: [
           {
             text: 'Return',
@@ -70,8 +72,8 @@ export default function RateAppScreen() {
         }}
       >
         <SectionHeader
-          title="Rate the App"
-          description="Love using Sewalo? Share your thoughts and help us improve!"
+          title={t('settings.rateAppTitle')}
+          description={t('settings.rateAppDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -81,11 +83,9 @@ export default function RateAppScreen() {
             <Feather name="award" size={24} color="#f59e0b" />
           </View>
 
-          <Text className="text-sm font-sans-bold text-gray-900 text-center mb-1">
-            How is your experience with Sewalo?
-          </Text>
+          <Text className="text-sm font-sans-bold text-gray-900 text-center mb-1">{t('settings.howIsExperience')}</Text>
           <Text className="text-xs font-sans-medium text-gray-400 text-center leading-4 mb-5">
-            Your review will be shared with our product development team.
+            {t('settings.reviewSharedWithTeam')}
           </Text>
 
           {/* Star Selection Row */}
@@ -104,8 +104,8 @@ export default function RateAppScreen() {
 
           {/* Custom Text feedback */}
           <Input
-            label="Write a Review (Optional)"
-            placeholder="Tell us what you like or how we can improve the app..."
+            label={t('settings.writeReview')}
+            placeholder={t('settings.writeReviewPlaceholder')}
             multiline
             numberOfLines={4}
             value={feedbackText}
@@ -115,7 +115,7 @@ export default function RateAppScreen() {
           />
 
           <Button
-            title="Submit Feedback"
+            title={t('settings.submitFeedback')}
             variant="primary"
             loading={loading}
             onPress={handleSubmitRating}

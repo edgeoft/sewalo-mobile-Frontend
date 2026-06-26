@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, Image, Linking, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -20,6 +21,7 @@ export default function ProviderServicesScreen() {
   const insets = useSafeAreaInsets();
   const { data, isLoading } = useGetMyServicesQuery();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const handleCreateService = () => {
     router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } });
@@ -28,7 +30,7 @@ export default function ProviderServicesScreen() {
   const handleOpenPortfolio = (url: string) => {
     if (!url) return;
     Linking.openURL(url).catch(() => {
-      showSnackbar({ message: 'Unable to open portfolio website.', type: 'error' });
+      showSnackbar({ message: t('provider.unableToOpenPortfolio'), type: 'error' });
     });
   };
 
@@ -329,8 +331,8 @@ export default function ProviderServicesScreen() {
         ) : (
           <View className="flex-1">
             <SectionHeader
-              title="My Services"
-              description="Manage your service catalog, prices, and bookings details."
+              title={t('provider.myServices')}
+              description={t('provider.myServicesDesc')}
               className="mb-6"
               titleClassName="text-2xl"
             />
@@ -348,15 +350,15 @@ export default function ProviderServicesScreen() {
               </Svg>
 
               <Text className="text-base font-sans-bold text-gray-900 mt-5 mb-1.5 text-center">
-                No Services Created Yet
+                {t('provider.emptyServicesTitle')}
               </Text>
 
               <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 mb-6 max-w-[280px]">
-                Create and publish your services to start receiving bookings from customers in your area.
+                {t('provider.emptyServicesDesc')}
               </Text>
 
               <Button
-                title="Create a Service"
+                title={t('provider.createService')}
                 variant="primary"
                 size="sm"
                 className="px-6 rounded-lg"

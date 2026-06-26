@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation, Trans } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
@@ -28,35 +29,36 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   return shuffled.slice(0, n);
 }
 
-const heroCopyByVariant = {
-  guest: {
-    backgroundHeight: 286,
-    title: (
-      <>
-        Find <Text className="text-primary">trusted</Text>
-        {'\n'}professionals near you
-      </>
-    ),
-    subtitle: 'Book verified service providers in minutes.',
-    searchPlaceholder: 'What services are you looking for today?',
-  },
-  customer: {
-    backgroundHeight: 188,
-    title: 'Your next booking starts here',
-    subtitle: 'Find trusted professionals, compare options, and book the right fit for your home needs.',
-    searchPlaceholder: 'Search services or providers for your next task',
-  },
-  provider: {
-    backgroundHeight: 220,
-    title: 'Grow your business',
-    subtitle: 'Manage bookings, track ratings, and monitor your earnings overview.',
-    searchPlaceholder: '',
-  },
-};
-
 export default function HomeTopSection({ variant, stats, categories }: HomeTopSectionProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
+  const heroCopyByVariant = {
+    guest: {
+      backgroundHeight: 286,
+      title: (
+        <Trans i18nKey="home.guestHeroTitle">
+          Find <Text className="text-primary">trusted</Text>
+          {'\n'}professionals near you
+        </Trans>
+      ),
+      subtitle: t('home.guestHeroSubtitle'),
+      searchPlaceholder: t('home.guestSearchPlaceholder'),
+    },
+    customer: {
+      backgroundHeight: 188,
+      title: t('home.customerHeroTitle'),
+      subtitle: t('home.customerHeroSubtitle'),
+      searchPlaceholder: t('home.customerSearchPlaceholder'),
+    },
+    provider: {
+      backgroundHeight: 220,
+      title: t('home.providerHeroTitle'),
+      subtitle: t('home.providerHeroSubtitle'),
+      searchPlaceholder: '',
+    },
+  };
 
   const handleSearchPress = () => {
     router.push(variant === 'customer' ? ROUTES.customer.findServices : ROUTES.guest.findServices);
@@ -107,7 +109,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
               </View>
               <View>
                 <Text className="text-lg font-sans-bold text-gray-900">{displayStats.pendingOrders}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">Pending</Text>
+                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.pending')}</Text>
               </View>
             </View>
 
@@ -121,7 +123,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
               </View>
               <View>
                 <Text className="text-lg font-sans-bold text-gray-900">{displayStats.avgRating}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">Avg Rating</Text>
+                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.avgRating')}</Text>
               </View>
             </View>
 
@@ -135,7 +137,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
               </View>
               <View>
                 <Text className="text-lg font-sans-bold text-gray-900">{displayStats.completedOrders}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">Completed</Text>
+                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.completed')}</Text>
               </View>
             </View>
 
@@ -149,7 +151,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
               </View>
               <View>
                 <Text className="text-lg font-sans-bold text-gray-900">{displayStats.completionRate}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">Completion</Text>
+                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.completion')}</Text>
               </View>
             </View>
           </View>

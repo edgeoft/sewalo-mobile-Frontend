@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet, SafeAreaView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import LocationMapPicker from './LocationMapPicker';
 
 interface LocationData {
@@ -21,15 +22,10 @@ interface LocationSelectorProps {
   error?: string;
 }
 
-export default function LocationSelector({
-  value,
-  lat,
-  lng,
-  onChange,
-  placeholder = 'Select your location...',
-  error,
-}: LocationSelectorProps) {
+export default function LocationSelector({ value, lat, lng, onChange, placeholder, error }: LocationSelectorProps) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
+  const resolvedPlaceholder = placeholder ?? t('components.selectLocation');
 
   return (
     <View className="w-full">
@@ -52,7 +48,7 @@ export default function LocationSelector({
             numberOfLines={1}
             className={`text-sm flex-1 ${value ? 'text-gray-900 font-sans-medium' : 'text-[#898f8f]'}`}
           >
-            {value ? value : placeholder}
+            {value ? value : resolvedPlaceholder}
           </Text>
         </View>
         <Feather name="chevron-right" size={16} color="#898f8f" />

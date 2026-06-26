@@ -3,6 +3,7 @@ import { Modal, View, Text, StyleSheet, Pressable, Platform, KeyboardAvoidingVie
 import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
 import { PAYMENT_METHODS, type PaymentMethod } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface PaymentOptionsModalProps {
   visible: boolean;
@@ -12,6 +13,7 @@ interface PaymentOptionsModalProps {
 }
 
 export default function PaymentOptionsModal({ visible, onClose, onConfirm, totalAmount }: PaymentOptionsModalProps) {
+  const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<PaymentMethod | null>(null);
 
   const handleConfirm = () => {
@@ -29,9 +31,9 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
         >
           <View className="px-6 pt-6 pb-4 border-b border-gray-100 flex-row justify-between items-center">
             <View className="flex-1 mr-4">
-              <Text className="text-lg font-sans-extrabold text-gray-950">Payment Method</Text>
+              <Text className="text-lg font-sans-extrabold text-gray-950">{t('customer.paymentMethod')}</Text>
               <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
-                Select how you&apos;d like to pay Rs. {totalAmount.toLocaleString()}
+                {t('customer.paymentMethodDesc')} Rs. {totalAmount.toLocaleString()}
               </Text>
             </View>
             <Pressable
@@ -97,9 +99,15 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
           </View>
 
           <View className="px-6 pt-2 pb-6 gap-y-2.5">
-            <Button title="Proceed" variant="primary" size="md" onPress={handleConfirm} disabled={!selectedOption} />
             <Button
-              title="Cancel"
+              title={t('common.continue')}
+              variant="primary"
+              size="md"
+              onPress={handleConfirm}
+              disabled={!selectedOption}
+            />
+            <Button
+              title={t('common.cancel')}
               variant="outline"
               size="md"
               onPress={onClose}

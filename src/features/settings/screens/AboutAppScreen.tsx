@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Linking, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -12,6 +13,7 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 export default function AboutAppScreen() {
   const insets = useSafeAreaInsets();
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const [checking, setChecking] = useState(false);
 
   const handleCheckUpdates = () => {
@@ -19,7 +21,7 @@ export default function AboutAppScreen() {
     setTimeout(() => {
       setChecking(false);
       showSnackbar({
-        message: 'Your app is up to date! Version 1.0.0 is the latest version available.',
+        message: t('settings.appUpToDate'),
         type: 'success',
       });
     }, 1500);
@@ -27,7 +29,7 @@ export default function AboutAppScreen() {
 
   const handleOpenLink = (url: string) => {
     Linking.openURL(url).catch(() => {
-      showSnackbar({ message: 'Unable to open link on this device: ' + url, type: 'error' });
+      showSnackbar({ message: t('settings.unableToOpenLink') + url, type: 'error' });
     });
   };
 
@@ -53,8 +55,8 @@ export default function AboutAppScreen() {
         }}
       >
         <SectionHeader
-          title="About Sewalo"
-          description="Learn more about Sewalo application, developer team, and version updates."
+          title={t('settings.aboutTitle')}
+          description={t('settings.aboutDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />

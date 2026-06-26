@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { useTranslation } from 'react-i18next';
 
 interface StatusReasonCardProps {
   booking: {
@@ -15,6 +16,7 @@ interface StatusReasonCardProps {
 
 export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
   const { showSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const { status, cancelReason, rejectReason, dateTime, bookingDate } = booking;
   const isCancelled = status === BOOKING_STATUSES.Cancelled;
   const isRejected = status === BOOKING_STATUSES.Rejected;
@@ -29,7 +31,7 @@ export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
     elevation: 2,
   };
 
-  const title = isCancelled ? 'Cancellation Details' : 'Rejection Details';
+  const title = isCancelled ? t('customer.cancellationDetails') : t('customer.rejectionDetails');
   const dateValue = dateTime || bookingDate || '30 May 2026 • 4:15 PM';
   const displayReason =
     cancelReason ||
@@ -37,7 +39,7 @@ export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
     (isCancelled ? 'No cancellation reason provided.' : 'No rejection reason provided.');
 
   const handleContactSupport = () => {
-    showSnackbar({ message: 'Connecting to Sewalo support agent...', type: 'info' });
+    showSnackbar({ message: t('customer.connectingToSupport'), type: 'info' });
   };
 
   const renderInfoRow = (label: string, value: string) => (
