@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -10,6 +11,7 @@ import PayoutAccountsManager from '../components/PayoutAccountsManager';
 
 export default function PayoutAccountsScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View className="flex-1 bg-secondary">
@@ -27,8 +29,8 @@ export default function PayoutAccountsScreen() {
         <PayoutAccountsManager
           header={
             <SectionHeader
-              title="Payout Accounts"
-              description="Manage your bank accounts and digital wallets for service payout transfers."
+              title={t('provider.payoutAccounts')}
+              description={t('provider.payoutAccountsDesc')}
               className="flex-1"
               titleClassName="text-2xl text-gray-950 font-sans-extrabold"
             />

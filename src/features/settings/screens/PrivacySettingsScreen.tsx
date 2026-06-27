@@ -53,17 +53,16 @@ export default function PrivacySettingsScreen() {
       title: t('settings.deleteAccount'),
       message: t('settings.deleteAccountConfirm'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Confirm Delete',
+          text: t('settings.permanentlyDelete'),
           style: 'destructive',
           onPress: () => {
             showError({
-              title: 'Final Confirmation Required',
-              message:
-                'Please confirm once more that you want to DELETE your account. All data will be destroyed immediately.',
+              title: t('settings.finalConfirmationTitle'),
+              message: t('settings.finalConfirmationMessage'),
               actions: [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
                   text: 'Permanently Delete',
                   style: 'destructive',

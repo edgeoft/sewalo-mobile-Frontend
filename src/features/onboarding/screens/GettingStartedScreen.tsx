@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleShe
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import TopBar from '@/components/navigation/TopBar';
 import LanguageSelector from '@/components/ui/LanguageSelector';
@@ -23,6 +24,7 @@ import FinishOnboardingStep from '../components/FinishOnboardingStep';
 import { useOnboarding } from '../hooks/useOnboarding';
 
 export default function GettingStartedScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const {
     activeIndex,
@@ -79,12 +81,10 @@ export default function GettingStartedScreen() {
                 <View className="flex-row justify-between items-start mb-4">
                   <View className="flex-1 mr-4">
                     <Text className="text-2xl font-sans-extrabold text-gray-950 leading-tight">
-                      Hi {user?.name || 'User'},
+                      {t('onboarding.welcomeGreeting', { name: user?.name || 'User' })}
                     </Text>
                     <Text className="text-sm font-sans-semibold text-gray-500 mt-1">
-                      {role === 'provider'
-                        ? 'Ready to showcase your skills and connect with customers in your area?'
-                        : 'Ready to search for verified home service providers in your local area?'}
+                      {role === 'provider' ? t('onboarding.welcomeProviderMsg') : t('onboarding.welcomeCustomerMsg')}
                     </Text>
                   </View>
 
@@ -92,7 +92,7 @@ export default function GettingStartedScreen() {
                   <View className="bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-full flex-row items-center flex-shrink-0">
                     <Feather name="clock" size={12} color="#485aff" />
                     <Text className="text-[10px] font-sans-bold text-primary ml-1">
-                      {role === 'provider' ? 'Takes 4-5 mins' : 'Takes 2-3 mins'}
+                      {role === 'provider' ? t('onboarding.takesProviderTime') : t('onboarding.takesCustomerTime')}
                     </Text>
                   </View>
                 </View>
@@ -105,11 +105,10 @@ export default function GettingStartedScreen() {
                 {/* Title & Description instructions */}
                 <View className="items-center px-2 mb-4">
                   <Text className="text-base font-sans-extrabold text-gray-900 text-center leading-snug">
-                    Start creating your profile by following easy steps
+                    {t('onboarding.createProfileTitle')}
                   </Text>
                   <Text className="text-xs font-sans-medium text-gray-400 text-center mt-1.5 leading-relaxed">
-                    We&apos;ll guide you through each step to make sure your profile stands out and helps you get the
-                    most out of Sewalo.
+                    {t('onboarding.createProfileDesc')}
                   </Text>
                 </View>
               </View>
@@ -128,7 +127,7 @@ export default function GettingStartedScreen() {
               }}
             >
               <Button
-                title="Get Started Now"
+                title={t('onboarding.getStartedNow')}
                 rightIcon={<Feather name="arrow-right" size={16} color="white" />}
                 onPress={handleNext}
                 variant="primary"
@@ -223,7 +222,7 @@ export default function GettingStartedScreen() {
         <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
           <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
             <ActivityIndicator size="large" color="#485aff" />
-            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Saving progress...</Text>
+            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">{t('onboarding.savingProgress')}</Text>
           </View>
         </View>
       )}

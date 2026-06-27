@@ -3,6 +3,7 @@ import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
 import { Pressable, Text, View, ScrollView, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -16,6 +17,7 @@ import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 
 export default function FindServicesScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const segments = useSegments() as string[];
@@ -98,12 +100,12 @@ export default function FindServicesScreen() {
   const handleProviderPress = (providerSlugOrId: string) => {
     if (isGuest) {
       showError({
-        title: 'Authentication Required',
-        message: 'Please sign in or create an account to view service provider details and book their services.',
+        title: t('auth.authRequiredTitle'),
+        message: t('auth.authRequiredProviderMsg'),
         actions: [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Sign In',
+            text: t('auth.login'),
             onPress: () => router.push(ROUTES.auth.signin),
           },
         ],
@@ -148,12 +150,12 @@ export default function FindServicesScreen() {
   const handleFavouritePress = (serviceId: string) => {
     if (isGuest) {
       showError({
-        title: 'Authentication Required',
-        message: 'Please sign in or create an account to save services to your favourites.',
+        title: t('auth.authRequiredTitle'),
+        message: t('auth.authRequiredFavMsg'),
         actions: [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Sign In',
+            text: t('auth.login'),
             onPress: () => router.push(ROUTES.auth.signin),
           },
         ],
@@ -189,10 +191,10 @@ export default function FindServicesScreen() {
         {/* Page Header (Title + Subtitle) */}
         <View className="mb-6">
           <Text className="text-2xl font-sans-extrabold text-left text-gray-950 mb-1.5 tracking-tight">
-            Find Services
+            {t('services.findServicesTitle')}
           </Text>
           <Text className="text-sm font-sans-medium text-gray-500 leading-relaxed">
-            Find and book professional service providers near you.
+            {t('services.findServicesSubtitle')}
           </Text>
         </View>
 
@@ -200,7 +202,7 @@ export default function FindServicesScreen() {
         <View className="flex-row items-center gap-2 mb-6">
           <View className="flex-1">
             <Input
-              placeholder="What services are you looking for?"
+              placeholder={t('services.searchPlaceholder2')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               inputClassName="pr-12 text-sm"
@@ -228,7 +230,9 @@ export default function FindServicesScreen() {
 
         {/* Categories Horizontal Scroll */}
         <View className="mb-6">
-          <Text className="text-lg font-sans-bold text-gray-950 mb-3 tracking-tight">Browse by category</Text>
+          <Text className="text-lg font-sans-bold text-gray-950 mb-3 tracking-tight">
+            {t('services.browseByCategory')}
+          </Text>
 
           {isLoadingCategories ? (
             <View className="items-center justify-center py-8">
@@ -251,7 +255,7 @@ export default function FindServicesScreen() {
                     selectedCategorySlug === undefined ? 'text-white' : 'text-gray-700'
                   }`}
                 >
-                  All Services
+                  {t('services.allServices')}
                 </Text>
               </Pressable>
 
@@ -293,7 +297,9 @@ export default function FindServicesScreen() {
 
         {/* Service Providers Listing */}
         <View className="flex-1">
-          <Text className="text-lg font-sans-bold text-gray-950 mb-4 tracking-tight">Service Providers</Text>
+          <Text className="text-lg font-sans-bold text-gray-950 mb-4 tracking-tight">
+            {t('services.serviceProviders')}
+          </Text>
 
           {isLoadingServices ? (
             <View className="flex-1 items-center justify-center py-20">
@@ -302,9 +308,9 @@ export default function FindServicesScreen() {
           ) : verifiedServices.length === 0 ? (
             <View className="py-12 items-center justify-center">
               <Feather name="search" size={40} color="#94a3b8" />
-              <Text className="text-sm font-sans-semibold text-gray-900 mt-4">No service providers found</Text>
+              <Text className="text-sm font-sans-semibold text-gray-900 mt-4">{t('services.noProvidersFound')}</Text>
               <Text className="text-xs font-sans-medium text-gray-400 mt-1 text-center px-6">
-                Try adjusting your search terms or filtering by a different category.
+                {t('services.noProvidersFoundDesc')}
               </Text>
             </View>
           ) : (
@@ -335,7 +341,7 @@ export default function FindServicesScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <View className="bg-white rounded-t-3xl p-6 gap-6 max-h-[85%]">
             <View className="flex-row justify-between items-center pb-2 border-b border-gray-100">
-              <Text className="text-lg font-sans-bold text-gray-900">Filters</Text>
+              <Text className="text-lg font-sans-bold text-gray-900">{t('services.filterTitle')}</Text>
               <Pressable onPress={() => setIsFilterModalOpen(false)} className="p-1">
                 <Feather name="x" size={20} color="#475569" />
               </Pressable>
@@ -344,18 +350,18 @@ export default function FindServicesScreen() {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18 }}>
               {/* Price Range */}
               <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">Price Range</Text>
+                <Text className="text-sm font-sans-bold text-gray-800">{t('services.priceRange')}</Text>
                 <View className="flex-row items-center gap-3">
                   <TextInput
-                    placeholder="Min Price"
+                    placeholder={t('services.minPrice')}
                     keyboardType="numeric"
                     value={minPrice}
                     onChangeText={setMinPrice}
                     className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50/50"
                   />
-                  <Text className="text-gray-400 font-sans-medium">to</Text>
+                  <Text className="text-gray-400 font-sans-medium">{t('services.to')}</Text>
                   <TextInput
-                    placeholder="Max Price"
+                    placeholder={t('services.maxPrice')}
                     keyboardType="numeric"
                     value={maxPrice}
                     onChangeText={setMaxPrice}
@@ -366,7 +372,7 @@ export default function FindServicesScreen() {
 
               {/* Minimum Rating */}
               <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">Minimum Rating</Text>
+                <Text className="text-sm font-sans-bold text-gray-800">{t('services.minimumRating')}</Text>
                 <View className="flex-row gap-2">
                   {['1', '2', '3', '4', '5'].map((star) => (
                     <Pressable
@@ -391,12 +397,12 @@ export default function FindServicesScreen() {
 
               {/* Service Location */}
               <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">Service Location</Text>
+                <Text className="text-sm font-sans-bold text-gray-800">{t('services.serviceLocationFilter')}</Text>
                 <View className="gap-2">
                   {[
-                    { label: 'Fixed Studio', value: 'fixed_location' },
-                    { label: 'At Customer Location', value: 'customer_location' },
-                    { label: 'Remote / Online Call', value: 'remote_location' },
+                    { label: t('services.fixedStudio'), value: 'fixed_location' },
+                    { label: t('services.atCustomerLocation'), value: 'customer_location' },
+                    { label: t('services.remoteOnlineCall'), value: 'remote_location' },
                   ].map((loc) => (
                     <Pressable
                       key={loc.value}
@@ -420,8 +426,13 @@ export default function FindServicesScreen() {
             </ScrollView>
 
             <View className="flex-row items-center gap-3 pt-3 border-t border-gray-100">
-              <Button title="Reset" variant="outline" onPress={handleResetFilters} className="flex-1" />
-              <Button title="Apply Filters" variant="primary" onPress={handleApplyFilters} className="flex-1" />
+              <Button title={t('services.reset')} variant="outline" onPress={handleResetFilters} className="flex-1" />
+              <Button
+                title={t('services.applyFilters')}
+                variant="primary"
+                onPress={handleApplyFilters}
+                className="flex-1"
+              />
             </View>
           </View>
         </View>

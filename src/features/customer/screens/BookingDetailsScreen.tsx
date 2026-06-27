@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -49,6 +50,7 @@ function SectionDivider() {
 
 export default function BookingDetailsScreen({ booking }: BookingDetailsScreenProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [loyaltyPoints, setLoyaltyPoints] = useState<string>('');
@@ -101,7 +103,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     const points = parseInt(numericText) || 0;
 
     if (points > loyaltyBalance) {
-      showSnackbar({ message: `You only have ${loyaltyBalance} loyalty points.`, type: 'info' });
+      showSnackbar({ message: t('customer.onlyLoyaltyPoints', { balance: loyaltyBalance }), type: 'info' });
       setLoyaltyPoints(loyaltyBalance.toString());
       return;
     }
@@ -110,7 +112,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     const maxAllowedDiscount = basePriceValue + platformFeeValue - couponDiscountValue;
     if (pointsVal > maxAllowedDiscount) {
       const maxPoints = Math.floor(maxAllowedDiscount / pointsRate);
-      showSnackbar({ message: `You can only redeem up to ${maxPoints} points for this invoice.`, type: 'info' });
+      showSnackbar({ message: t('customer.maxRedeemPoints', { maxPoints }), type: 'info' });
       setLoyaltyPoints(maxPoints.toString());
       return;
     }
@@ -120,11 +122,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
   const handleCancel = () => {
     showError({
-      title: 'Cancel Booking',
-      message: 'Are you sure you want to cancel this booking? This action cannot be undone.',
+      title: t('customer.cancelBooking'),
+      message: t('customer.cancelBookingConfirm'),
       actions: [
-        { text: 'No', style: 'cancel' },
-        { text: 'Yes, Cancel', style: 'destructive', onPress: () => submitCancel() },
+        { text: t('customer.no'), style: 'cancel' },
+        { text: t('customer.yesCancel'), style: 'destructive', onPress: () => submitCancel() },
       ],
     });
   };
@@ -132,7 +134,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const submitCancel = (reason?: string) => {
     cancelBooking.mutate(
       { id: booking.id, reason },
-      { onSuccess: () => showSnackbar({ message: 'Your booking has been cancelled.', type: 'success' }) },
+      { onSuccess: () => showSnackbar({ message: t('customer.bookingCancelled'), type: 'success' }) },
     );
   };
 
@@ -154,7 +156,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
       {
         onSuccess: (response) => {
           if (response.type === PAYMENT_METHODS.Cash) {
-            showSnackbar({ message: 'Payment completed successfully!', type: 'success' });
+            showSnackbar({ message: t('customer.paymentCompleted'), type: 'success' });
           } else {
             const { payment } = response;
             const form = document.createElement('form');
@@ -192,10 +194,10 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     if (!invoice?.id) return;
     downloadInvoice.mutate(invoice.id, {
       onSuccess: () => {
-        showSnackbar({ message: 'Invoice downloaded successfully.', type: 'success' });
+        showSnackbar({ message: t('customer.invoiceDownloaded'), type: 'success' });
       },
       onError: (error) => {
-        showSnackbar({ message: error.message || 'Failed to download invoice.', type: 'error' });
+        showSnackbar({ message: error.message || t('customer.failedToDownloadInvoice'), type: 'error' });
       },
     });
   };
@@ -247,8 +249,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         }}
       >
         <SectionHeader
-          title="Booking Details"
-          description="View status and progression of your booking."
+          title={t('customer.bookingDetailsTitle')}
+          description={t('customer.bookingDetailsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -261,7 +263,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             className="flex-row items-center justify-center gap-2 mb-4 py-3 rounded-lg border border-red-200 bg-red-50 active:bg-red-100"
           >
             <Feather name="x-circle" size={16} color="#ef4444" />
-            <Text className="text-sm font-sans-semibold text-red-600">Cancel Booking</Text>
+            <Text className="text-sm font-sans-semibold text-red-600">{t('customer.cancelBooking')}</Text>
           </Pressable>
         )}
 
@@ -336,19 +338,19 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="calendar" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Booking Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Date</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.date')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{serviceDate}</Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Time</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.time')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{startTime}</Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Location</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.location')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>
                       {location}
                     </Text>
@@ -356,7 +358,9 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 </View>
                 {additionalNote ? (
                   <View className="mt-3 pt-3 border-t border-gray-100">
-                    <Text className="text-xs font-sans-medium text-gray-500 mb-1">Special Instructions</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500 mb-1">
+                      {t('customer.specialInstructions')}
+                    </Text>
                     <Text className="text-xs font-sans-medium text-gray-700 leading-5">{additionalNote}</Text>
                   </View>
                 ) : null}
@@ -368,16 +372,16 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="briefcase" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Service Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Service</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('home.service')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{serviceName || categoryName}</Text>
                   </View>
                   {categoryName ? (
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-xs font-sans-medium text-gray-500">Category</Text>
+                      <Text className="text-xs font-sans-medium text-gray-500">{t('customer.category')}</Text>
                       <Text className="text-xs font-sans-semibold text-gray-800">{categoryName}</Text>
                     </View>
                   ) : null}
@@ -396,19 +400,21 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="tag" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Price Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.priceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">{serviceName || 'Service'} Price</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">
+                      {serviceName || t('home.service')} {t('customer.price')}
+                    </Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
                   </View>
                   <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
-                    <Text className="text-sm font-sans-bold text-gray-900">Total</Text>
+                    <Text className="text-sm font-sans-bold text-gray-900">{t('customer.total')}</Text>
                     <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
                   </View>
                 </View>
@@ -425,7 +431,9 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   <View className="flex-row items-center mb-3">
                     <Feather name="alert-circle" size={15} color="#ef4444" />
                     <Text className="text-sm font-sans-bold text-gray-900 ml-2">
-                      {booking.status === BOOKING_STATUSES.Cancelled ? 'Cancellation Details' : 'Rejection Details'}
+                      {booking.status === BOOKING_STATUSES.Cancelled
+                        ? t('customer.cancellationDetails')
+                        : t('customer.rejectionDetails')}
                     </Text>
                   </View>
                   <View className="bg-red-50/50 border border-red-100 rounded-lg p-3">
@@ -444,11 +452,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
               <View className="flex-row items-center mb-4">
                 <Feather name="file-text" size={15} color="#485aff" />
-                <Text className="text-sm font-sans-bold text-gray-900 ml-2">Invoice Summary</Text>
+                <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
               </View>
               <View className="gap-y-2.5 mb-4">
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">Base Price</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                 </View>
                 <View className="flex-row justify-between">
@@ -469,11 +477,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
               <View className="border-t border-gray-100 pt-4 gap-y-2.5 mb-4">
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">Base Price</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">Platform Fee</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.platformFee')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">
                     Rs. {platformFeeValue.toLocaleString()}
                   </Text>
@@ -484,7 +492,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 </View>
                 {couponDiscountValue > 0 && (
                   <View className="flex-row justify-between">
-                    <Text className="text-xs font-sans-medium text-green-600">Coupon Discount</Text>
+                    <Text className="text-xs font-sans-medium text-green-600">{t('customer.couponDiscount')}</Text>
                     <Text className="text-xs font-sans-semibold text-green-600">
                       - Rs. {couponDiscountValue.toLocaleString()}
                     </Text>
@@ -492,7 +500,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 )}
                 {loyaltyDiscountValue > 0 && (
                   <View className="flex-row justify-between">
-                    <Text className="text-xs font-sans-medium text-green-600">Loyalty Discount</Text>
+                    <Text className="text-xs font-sans-medium text-green-600">{t('customer.loyaltyDiscount')}</Text>
                     <Text className="text-xs font-sans-semibold text-green-600">
                       - Rs. {loyaltyDiscountValue.toLocaleString()}
                     </Text>
@@ -501,7 +509,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               </View>
 
               <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center mb-4">
-                <Text className="text-sm font-sans-bold text-gray-900">Total Payable</Text>
+                <Text className="text-sm font-sans-bold text-gray-900">{t('customer.totalPayable')}</Text>
                 <Text className="text-lg font-sans-extrabold text-primary">
                   Rs. {totalPayableValue.toLocaleString()}
                 </Text>
@@ -512,7 +520,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   onPress={handlePayNow}
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
                 >
-                  <Text className="text-sm font-sans-bold text-white">Pay Now</Text>
+                  <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
                 </Pressable>
                 <Pressable
                   onPress={handleDownloadInvoice}
@@ -522,7 +530,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   {downloadInvoice.isPending ? (
                     <ActivityIndicator size="small" color="#485aff" />
                   ) : (
-                    <Text className="text-sm font-sans-semibold text-primary">Download Invoice</Text>
+                    <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                   )}
                 </Pressable>
               </View>
@@ -535,7 +543,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
             <View className="flex-row items-center mb-4">
               <Feather name="file-text" size={15} color="#485aff" />
-              <Text className="text-sm font-sans-bold text-gray-900 ml-2">Invoice Summary</Text>
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
             </View>
             <View className="gap-y-2.5 mb-4">
               <View className="flex-row justify-between">
@@ -549,7 +557,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             </View>
 
             <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center mb-4">
-              <Text className="text-sm font-sans-bold text-gray-900">Total Paid</Text>
+              <Text className="text-sm font-sans-bold text-gray-900">{t('customer.totalPaid')}</Text>
               <Text className="text-lg font-sans-extrabold text-primary">Rs. {totalPayableValue.toLocaleString()}</Text>
             </View>
 
@@ -570,7 +578,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   onPress={handleRateProvider}
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
                 >
-                  <Text className="text-sm font-sans-bold text-white">Rate Provider</Text>
+                  <Text className="text-sm font-sans-bold text-white">{t('customer.rateProvider')}</Text>
                 </Pressable>
               )}
             </View>

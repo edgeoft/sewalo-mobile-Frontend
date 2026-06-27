@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -19,6 +20,7 @@ import EmptyFavouritesState from '../components/EmptyFavouritesState';
 export default function CustomerFavouritesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [page] = useState(1);
 
   const { data: favoritesData, isLoading, isError, refetch } = useGetFavoritesQuery({ page, limit: 20 });
@@ -51,8 +53,8 @@ export default function CustomerFavouritesScreen() {
         }}
       >
         <SectionHeader
-          title="My Favourites"
-          description="View your saved providers and services."
+          title={t('customer.myFavouritesTitle')}
+          description={t('customer.myFavouritesDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -62,12 +64,12 @@ export default function CustomerFavouritesScreen() {
             <View className="h-12 w-12 rounded-full bg-red-50 items-center justify-center mb-4">
               <Feather name="alert-triangle" size={24} color="#dc2626" />
             </View>
-            <Text className="text-base font-sans-bold text-gray-900 mb-1">Failed to load favorites</Text>
+            <Text className="text-base font-sans-bold text-gray-900 mb-1">{t('customer.failedToLoadFavorites')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 text-center mb-6 leading-5">
-              We encountered a network issue while retrieving your saved items.
+              {t('customer.failedToLoadFavoritesDesc')}
             </Text>
             <View className="w-full max-w-[200px]">
-              <Button title="Retry Connection" variant="primary" onPress={handleRetry} />
+              <Button title={t('customer.retryConnection')} variant="primary" onPress={handleRetry} />
             </View>
           </View>
         ) : isLoading ? (
@@ -80,8 +82,8 @@ export default function CustomerFavouritesScreen() {
             keyExtractor={(item: FavoriteItem) => item.id}
             initialVisibleCount={4}
             pageSize={4}
-            loadMoreLabel="Load More Favourites"
-            endReachedLabel="No more favourites"
+            loadMoreLabel={t('customer.loadMoreFavourites')}
+            endReachedLabel={t('customer.noMoreFavourites')}
             emptyContent={<EmptyFavouritesState />}
             renderItem={(item: FavoriteItem) => {
               const service = item.service;
@@ -105,11 +107,14 @@ export default function CustomerFavouritesScreen() {
                     const serviceId = service?.id || item.service_id;
                     addRemoveFav.mutate(
                       { service_id: serviceId },
-                      { onSuccess: () => showSnackbar({ message: 'Removed from favourites', type: 'success' }) },
+                      {
+                        onSuccess: () =>
+                          showSnackbar({ message: t('customer.removedFromFavourites'), type: 'success' }),
+                      },
                     );
                     refetch();
                   }}
-                  actionLabel="View Details"
+                  actionLabel={t('home.viewDetails')}
                   variant="details"
                   onPress={() => {
                     const slug = provider?.slug || service?.id || item.service_id;

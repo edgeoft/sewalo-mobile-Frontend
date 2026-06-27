@@ -160,7 +160,7 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
               onPress={onClose}
               className="w-9 h-9 rounded-lg items-center justify-center bg-[#f7f9ff] active:opacity-75"
               accessibilityRole="button"
-              accessibilityLabel="Close drawer"
+              accessibilityLabel={t('common.close')}
             >
               <Text className="text-xl leading-5 text-gray-700">×</Text>
             </Pressable>
@@ -214,7 +214,7 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
                             >
                               <Text className="text-base mr-1">{item.value.startsWith('en') ? '🇺🇸' : '🇳🇵'}</Text>
                               <Text className="text-xs font-sans-bold text-gray-700">
-                                {item.value.startsWith('en') ? 'English' : 'नेपाली'}
+                                {item.value.startsWith('en') ? t('common.english') : t('common.nepali')}
                               </Text>
                             </Pressable>
                           </View>

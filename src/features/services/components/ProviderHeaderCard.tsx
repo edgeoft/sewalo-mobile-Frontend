@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { FALLBACKS } from '@/utils/image';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
@@ -33,6 +34,7 @@ export default function ProviderHeaderCard({
   onSharePress,
   onFavoritePress,
 }: ProviderHeaderCardProps) {
+  const { t } = useTranslation();
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -67,7 +69,8 @@ export default function ProviderHeaderCard({
                   {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
                 </Text>
                 <Text className="text-[11px] font-sans-medium text-gray-400">
-                  ({reviewCount > 0 ? `${reviewCount} Reviews` : 'No Reviews'})
+                  ({reviewCount > 0 ? t('services.reviewsCount', { count: reviewCount }) : t('services.noReviewsCount')}
+                  )
                 </Text>
               </Pressable>
             </View>

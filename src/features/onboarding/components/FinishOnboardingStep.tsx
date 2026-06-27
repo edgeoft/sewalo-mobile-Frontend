@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -11,6 +12,7 @@ interface FinishOnboardingStepProps {
 }
 
 export default function FinishOnboardingStep({ onFinish }: FinishOnboardingStepProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -21,9 +23,11 @@ export default function FinishOnboardingStep({ onFinish }: FinishOnboardingStepP
           <Feather name="check" size={56} color="#059669" />
         </View>
 
-        <Text className="text-2xl font-sans-extrabold text-gray-950 text-center mb-2">You are all set!</Text>
+        <Text className="text-2xl font-sans-extrabold text-gray-950 text-center mb-2">
+          {t('onboarding.allSetTitle')}
+        </Text>
         <Text className="text-sm font-sans-medium text-gray-500 text-center px-6 leading-relaxed">
-          Almost there! Click finish to complete your onboarding profile and start using Sewalo.
+          {t('onboarding.allSetDesc')}
         </Text>
       </View>
 
@@ -39,7 +43,13 @@ export default function FinishOnboardingStep({ onFinish }: FinishOnboardingStepP
           elevation: 10,
         }}
       >
-        <Button title="Finish Setup" onPress={onFinish} variant="primary" size="sm" className="w-full bg-primary" />
+        <Button
+          title={t('onboarding.finishSetup')}
+          onPress={onFinish}
+          variant="primary"
+          size="sm"
+          className="w-full bg-primary"
+        />
       </View>
     </ContentLayout>
   );

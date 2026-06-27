@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
@@ -51,6 +52,7 @@ function SectionDivider() {
 
 export default function ProviderBookingDetailsScreen({ booking: initialBooking }: ProviderBookingDetailsScreenProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const updateBooking = useUpdateBooking();
   const confirmPayment = useConfirmPayment();
 
@@ -85,11 +87,11 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     currentStatus === BOOKING_STATUSES.Paid;
 
   const statusMessages: Record<string, string> = {
-    confirmed: 'Booking accepted successfully',
-    rejected: 'Booking rejected',
-    in_progress: 'Job marked as in progress',
-    completed: 'Job marked as completed',
-    ready_to_pay: 'Invoice sent to customer',
+    confirmed: t('provider.bookingAccepted'),
+    rejected: t('provider.bookingRejected'),
+    in_progress: t('provider.jobMarkedInProgress'),
+    completed: t('provider.jobMarkedCompleted'),
+    ready_to_pay: t('provider.invoiceSent'),
   };
 
   const handleStatusUpdate = (status: string, options?: { cancellation_reason?: string }) => {
@@ -107,23 +109,23 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
   const handleAccept = () => {
     showError({
-      title: 'Accept Booking',
-      message: 'Are you sure you want to accept this booking?',
+      title: t('provider.acceptBookingTitle'),
+      message: t('provider.acceptBookingConfirm'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Accept', onPress: () => handleStatusUpdate('confirmed') },
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('provider.accept'), onPress: () => handleStatusUpdate('confirmed') },
       ],
     });
   };
 
   const handleReject = () => {
     showError({
-      title: 'Reject Booking',
-      message: 'Are you sure you want to reject this booking?',
+      title: t('provider.rejectBookingTitle'),
+      message: t('provider.rejectBookingConfirm'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Reject',
+          text: t('provider.reject'),
           style: 'destructive',
           onPress: () =>
             handleStatusUpdate('rejected', {
@@ -144,34 +146,34 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
   const handleSendInvoice = () => {
     if (invoiceTotal <= 0) {
-      showSnackbar({ message: 'Please set a valid invoice amount.', type: 'error' });
+      showSnackbar({ message: t('provider.validInvoiceAmount'), type: 'error' });
       return;
     }
     showError({
-      title: 'Send Invoice',
-      message: `Send invoice for Rs. ${invoiceTotal.toFixed(2)} to the customer?`,
+      title: t('provider.sendInvoiceTitle'),
+      message: t('provider.sendInvoiceConfirm', { amount: invoiceTotal.toFixed(2) }),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Send', onPress: () => handleStatusUpdate('ready_to_pay') },
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('provider.send'), onPress: () => handleStatusUpdate('ready_to_pay') },
       ],
     });
   };
 
   const handleReceivedPayment = () => {
     showError({
-      title: 'Confirm Payment',
-      message: 'Have you received the payment from the customer?',
+      title: t('provider.confirmPaymentTitle'),
+      message: t('provider.confirmPaymentMessage'),
       actions: [
-        { text: 'No', style: 'cancel' },
+        { text: t('customer.no'), style: 'cancel' },
         {
-          text: 'Yes, Confirm',
+          text: t('provider.yesConfirm'),
           onPress: () => {
             confirmPayment.mutate(
               { bookingId: initialBooking.id, payload: { has_received_payment: true } },
               {
                 onSuccess: (result) => {
                   setCurrentStatus(result.status);
-                  showSnackbar({ message: 'Payment confirmed successfully.', type: 'success' });
+                  showSnackbar({ message: t('provider.paymentConfirmed'), type: 'success' });
                 },
               },
             );
@@ -194,8 +196,8 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
         }}
       >
         <SectionHeader
-          title="Booking Details"
-          description="Manage this booking and update its status."
+          title={t('customer.bookingDetailsTitle')}
+          description={t('customer.bookingDetailsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -244,19 +246,19 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="calendar" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Booking Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Date</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('provider.date')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{serviceDate}</Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Time</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('provider.time')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{startTime}</Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Location</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.location')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>
                       {location}
                     </Text>
@@ -264,7 +266,9 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                 </View>
                 {additionalNote ? (
                   <View className="mt-3 pt-3 border-t border-gray-100">
-                    <Text className="text-xs font-sans-medium text-gray-500 mb-1">Special Instructions</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500 mb-1">
+                      {t('customer.specialInstructions')}
+                    </Text>
                     <Text className="text-xs font-sans-medium text-gray-700 leading-5">{additionalNote}</Text>
                   </View>
                 ) : null}
@@ -276,22 +280,22 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="briefcase" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Service Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">Service</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('provider.service')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{serviceName || categoryName}</Text>
                   </View>
                   {categoryName ? (
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-xs font-sans-medium text-gray-500">Category</Text>
+                      <Text className="text-xs font-sans-medium text-gray-500">{t('provider.category')}</Text>
                       <Text className="text-xs font-sans-semibold text-gray-800">{categoryName}</Text>
                     </View>
                   ) : null}
                   {descriptionText ? (
                     <View className="mt-1">
-                      <Text className="text-xs font-sans-medium text-gray-500 mb-1">Description</Text>
+                      <Text className="text-xs font-sans-medium text-gray-500 mb-1">{t('provider.description')}</Text>
                       <Text className="text-xs font-sans-medium text-gray-700 leading-5">{descriptionText}</Text>
                     </View>
                   ) : null}
@@ -304,7 +308,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               <View>
                 <View className="flex-row items-center mb-3">
                   <Feather name="tag" size={15} color="#485aff" />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">Price Details</Text>
+                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('provider.priceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
@@ -314,11 +318,11 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                     </Text>
                   </View>
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('provider.vat')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vatValue.toLocaleString()}</Text>
                   </View>
                   <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
-                    <Text className="text-sm font-sans-bold text-gray-900">Total</Text>
+                    <Text className="text-sm font-sans-bold text-gray-900">{t('provider.total')}</Text>
                     <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
                   </View>
                 </View>
@@ -335,7 +339,9 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   <View className="flex-row items-center mb-3">
                     <Feather name="alert-circle" size={15} color="#ef4444" />
                     <Text className="text-sm font-sans-bold text-gray-900 ml-2">
-                      {currentStatus === BOOKING_STATUSES.Cancelled ? 'Cancellation Details' : 'Rejection Details'}
+                      {currentStatus === BOOKING_STATUSES.Cancelled
+                        ? t('provider.cancellationDetails')
+                        : t('provider.rejectionDetails')}
                     </Text>
                   </View>
                   <View className="bg-red-50/50 border border-red-100 rounded-lg p-3">
@@ -381,27 +387,37 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
         {currentStatus === BOOKING_STATUSES.Pending && (
           <View className="flex-row gap-3">
             <Button
-              title="Reject"
+              title={t('provider.reject')}
               variant="outline"
               onPress={handleReject}
               className="flex-1 border-gray-300"
               textClassName="text-gray-600"
             />
-            <Button title="Accept" variant="primary" onPress={handleAccept} className="flex-1" />
+            <Button title={t('provider.accept')} variant="primary" onPress={handleAccept} className="flex-1" />
           </View>
         )}
         {currentStatus === BOOKING_STATUSES.Confirmed && (
-          <Button title="Job Started" variant="primary" onPress={handleJobStarted} className="w-full" />
+          <Button title={t('provider.jobStarted')} variant="primary" onPress={handleJobStarted} className="w-full" />
         )}
         {currentStatus === BOOKING_STATUSES.InProgress && (
-          <Button title="Job Completed" variant="primary" onPress={handleJobCompleted} className="w-full" />
+          <Button
+            title={t('provider.jobCompleted')}
+            variant="primary"
+            onPress={handleJobCompleted}
+            className="w-full"
+          />
         )}
         {currentStatus === BOOKING_STATUSES.Completed && (
-          <Button title="Send to Customer" variant="primary" onPress={handleSendInvoice} className="w-full" />
+          <Button
+            title={t('provider.sendToCustomer')}
+            variant="primary"
+            onPress={handleSendInvoice}
+            className="w-full"
+          />
         )}
         {currentStatus === BOOKING_STATUSES.PaymentInitiated && (
           <Button
-            title="Received Payment"
+            title={t('provider.receivedPayment')}
             variant="primary"
             onPress={handleReceivedPayment}
             className="w-full bg-green-600"
@@ -409,12 +425,12 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
         )}
         {currentStatus === BOOKING_STATUSES.ReadyToPay && (
           <View className="py-2 items-center">
-            <Text className="text-sm font-sans-semibold text-gray-500">Waiting for customer payment...</Text>
+            <Text className="text-sm font-sans-semibold text-gray-500">{t('provider.waitingForPayment')}</Text>
           </View>
         )}
         {currentStatus === BOOKING_STATUSES.Paid && (
           <View className="py-2 items-center">
-            <Text className="text-sm font-sans-semibold text-green-600">Booking Fully Paid & Complete</Text>
+            <Text className="text-sm font-sans-semibold text-green-600">{t('provider.bookingPaidComplete')}</Text>
           </View>
         )}
       </View>

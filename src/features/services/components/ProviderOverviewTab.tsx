@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface ExperienceItem {
   id: number;
@@ -42,8 +43,9 @@ export default function ProviderOverviewTab({
   experienceList,
   certificates,
 }: ProviderOverviewTabProps) {
+  const { t } = useTranslation();
   const getYear = (dateStr?: string | null) => {
-    if (!dateStr) return 'Present';
+    if (!dateStr) return t('services.present');
     return dateStr.split('-')[0];
   };
 
@@ -56,10 +58,8 @@ export default function ProviderOverviewTab({
     <View className="gap-y-4">
       {/* About Bio Section */}
       <View className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
-        <Text className="text-sm font-sans-bold text-gray-950 mb-2">About Provider</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 leading-5">
-          {bio || 'No bio or description provided by the provider.'}
-        </Text>
+        <Text className="text-sm font-sans-bold text-gray-950 mb-2">{t('services.aboutProvider')}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 leading-5">{bio || t('services.noBio')}</Text>
       </View>
 
       {/* Merged Background, Skills, Experience Container */}
@@ -68,14 +68,16 @@ export default function ProviderOverviewTab({
         <View className="gap-y-3">
           <View className="flex-row items-center gap-2">
             <Feather name="briefcase" size={14} color="#485aff" />
-            <Text className="text-xs font-sans-bold text-gray-900">{experience || 'Experienced Professional'}</Text>
+            <Text className="text-xs font-sans-bold text-gray-900">
+              {experience || t('services.experiencedProfessional')}
+            </Text>
           </View>
 
           <View className="flex-row items-center gap-2">
             <Feather name="globe" size={14} color="#485aff" />
-            <Text className="text-xs font-sans-bold text-gray-900">Languages:</Text>
+            <Text className="text-xs font-sans-bold text-gray-900">{t('services.languages')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500">
-              {languages.length > 0 ? languages.join(', ') : 'Not specified'}
+              {languages.length > 0 ? languages.join(', ') : t('services.notSpecified')}
             </Text>
           </View>
         </View>
@@ -85,7 +87,7 @@ export default function ProviderOverviewTab({
           <>
             <View className="h-[1px] bg-slate-100" />
             <View className="gap-y-2">
-              <Text className="text-xs font-sans-bold text-gray-900">Work Experience</Text>
+              <Text className="text-xs font-sans-bold text-gray-900">{t('services.workExperience')}</Text>
               <View className="gap-y-2">
                 {experienceList.map((exp) => (
                   <View key={exp.id} className="bg-slate-50/50 border border-slate-100 rounded-lg p-3">
@@ -110,7 +112,7 @@ export default function ProviderOverviewTab({
           <>
             <View className="h-[1px] bg-slate-100" />
             <View className="gap-y-2">
-              <Text className="text-xs font-sans-bold text-gray-900">Education</Text>
+              <Text className="text-xs font-sans-bold text-gray-900">{t('services.education')}</Text>
               <View className="gap-y-2">
                 {education.map((edu) => (
                   <View key={edu.id} className="bg-slate-50/50 border border-slate-100 rounded-lg p-3">
@@ -135,7 +137,7 @@ export default function ProviderOverviewTab({
           <>
             <View className="h-[1px] bg-slate-100" />
             <View className="gap-y-2">
-              <Text className="text-xs font-sans-bold text-gray-900">Skills & Expertise</Text>
+              <Text className="text-xs font-sans-bold text-gray-900">{t('services.skillsExpertise')}</Text>
               <View className="flex-row flex-wrap gap-2">
                 {skills.map((skill) => (
                   <View key={skill} className="bg-gray-100 rounded-lg px-2.5 py-1">
@@ -151,7 +153,7 @@ export default function ProviderOverviewTab({
       {/* Certificates Section */}
       {hasCertificates && (
         <View className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
-          <Text className="text-sm font-sans-bold text-gray-950 mb-3">Certificates & Documents</Text>
+          <Text className="text-sm font-sans-bold text-gray-950 mb-3">{t('services.certificatesDocuments')}</Text>
           <View className="gap-y-2">
             {(certificates as any[]).map((cert, index) => {
               const val = typeof cert === 'string' ? cert : cert.value;

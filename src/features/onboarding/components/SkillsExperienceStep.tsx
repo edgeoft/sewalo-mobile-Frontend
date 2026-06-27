@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -42,6 +43,7 @@ export default function SkillsExperienceStep({
   onSkip,
   stepper,
 }: SkillsExperienceStepProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   const handleAddEducation = () => {
@@ -118,9 +120,9 @@ export default function SkillsExperienceStep({
         <View style={shadowStyle} className="rounded-xl border border-gray-200 bg-white p-4 mb-5">
           <View className="flex-row items-center justify-between mb-4">
             <View className="flex-1 mr-2">
-              <Text className="text-base font-sans-bold text-gray-950">Education (Optional)</Text>
+              <Text className="text-base font-sans-bold text-gray-950">{t('onboarding.education')}</Text>
               <Text className="text-[11px] font-sans-medium text-gray-500 mt-0.5 leading-normal">
-                Enter details about your academic degree and background.
+                {t('onboarding.educationDesc')}
               </Text>
             </View>
             <Pressable
@@ -128,21 +130,23 @@ export default function SkillsExperienceStep({
               className="flex-row items-center bg-primary/10 px-2.5 py-1.5 rounded-lg active:opacity-75"
             >
               <Feather name="plus" size={14} color="#485aff" />
-              <Text className="text-xs font-sans-bold text-primary ml-1">Add More</Text>
+              <Text className="text-xs font-sans-bold text-primary ml-1">{t('onboarding.addMore')}</Text>
             </Pressable>
           </View>
 
           {education.length === 0 ? (
             <View className="py-6 items-center justify-center border border-dashed border-gray-200 rounded-lg">
               <Feather name="book-open" size={24} color="#94a3b8" />
-              <Text className="text-xs font-sans-medium text-gray-400 mt-2">No education details added yet</Text>
+              <Text className="text-xs font-sans-medium text-gray-400 mt-2">{t('onboarding.noEducationAdded')}</Text>
             </View>
           ) : (
             <View className="gap-y-4">
               {education.map((item, idx) => (
                 <View key={item.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50/50 relative">
                   <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-xs font-sans-bold text-gray-800">Education #{idx + 1}</Text>
+                    <Text className="text-xs font-sans-bold text-gray-800">
+                      {t('onboarding.educationNumber', { number: idx + 1 })}
+                    </Text>
                     <Pressable onPress={() => handleRemoveEducation(item.id)} className="p-1 active:opacity-60">
                       <Feather name="trash-2" size={14} color="#ef4444" />
                     </Pressable>
@@ -150,16 +154,16 @@ export default function SkillsExperienceStep({
 
                   <View className="gap-y-3">
                     <Input
-                      label="Degree / Course"
-                      placeholder="e.g. Bachelor in Computer Science"
+                      label={t('onboarding.degreeCourse')}
+                      placeholder={t('onboarding.degreePlaceholder')}
                       value={item.degree}
                       onChangeText={(val) => handleEducationChange(item.id, 'degree', val)}
                       inputStyle={{ padding: 0 }}
                       className="bg-white"
                     />
                     <Input
-                      label="School / Institute"
-                      placeholder="e.g. Tribhuvan University"
+                      label={t('onboarding.schoolInstitute')}
+                      placeholder={t('onboarding.schoolPlaceholder')}
                       value={item.institute}
                       onChangeText={(val) => handleEducationChange(item.id, 'institute', val)}
                       inputStyle={{ padding: 0 }}
@@ -168,8 +172,8 @@ export default function SkillsExperienceStep({
                     <View className="flex-row gap-x-2">
                       <View className="flex-1">
                         <Input
-                          label="Start Year"
-                          placeholder="e.g. 2018"
+                          label={t('onboarding.startYear')}
+                          placeholder={t('onboarding.startYearPlaceholder')}
                           value={item.startDate}
                           onChangeText={(val) => handleEducationChange(item.id, 'startDate', val)}
                           keyboardType="numeric"
@@ -180,8 +184,8 @@ export default function SkillsExperienceStep({
                       </View>
                       <View className="flex-1">
                         <Input
-                          label="End Year (or Present)"
-                          placeholder="e.g. 2022"
+                          label={t('onboarding.endYearPresent')}
+                          placeholder={t('onboarding.endYearPlaceholder')}
                           value={item.endDate}
                           onChangeText={(val) => handleEducationChange(item.id, 'endDate', val)}
                           inputStyle={{ padding: 0 }}
@@ -200,9 +204,9 @@ export default function SkillsExperienceStep({
         <View style={shadowStyle} className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
           <View className="flex-row items-center justify-between mb-4">
             <View className="flex-1 mr-2">
-              <Text className="text-base font-sans-bold text-gray-950">Work Experience (Optional)</Text>
+              <Text className="text-base font-sans-bold text-gray-950">{t('onboarding.workExperience')}</Text>
               <Text className="text-[11px] font-sans-medium text-gray-500 mt-0.5 leading-normal">
-                Enter details about past jobs or client projects.
+                {t('onboarding.workExperienceDesc')}
               </Text>
             </View>
             <Pressable
@@ -210,21 +214,23 @@ export default function SkillsExperienceStep({
               className="flex-row items-center bg-primary/10 px-2.5 py-1.5 rounded-lg active:opacity-75"
             >
               <Feather name="plus" size={14} color="#485aff" />
-              <Text className="text-xs font-sans-bold text-primary ml-1">Add More</Text>
+              <Text className="text-xs font-sans-bold text-primary ml-1">{t('onboarding.addMore')}</Text>
             </Pressable>
           </View>
 
           {experience.length === 0 ? (
             <View className="py-6 items-center justify-center border border-dashed border-gray-200 rounded-lg">
               <Feather name="briefcase" size={24} color="#94a3b8" />
-              <Text className="text-xs font-sans-medium text-gray-400 mt-2">No experience details added yet</Text>
+              <Text className="text-xs font-sans-medium text-gray-400 mt-2">{t('onboarding.noExperienceAdded')}</Text>
             </View>
           ) : (
             <View className="gap-y-4">
               {experience.map((item, idx) => (
                 <View key={item.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50/50 relative">
                   <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-xs font-sans-bold text-gray-800">Experience #{idx + 1}</Text>
+                    <Text className="text-xs font-sans-bold text-gray-800">
+                      {t('onboarding.experienceNumber', { number: idx + 1 })}
+                    </Text>
                     <Pressable onPress={() => handleRemoveExperience(item.id)} className="p-1 active:opacity-60">
                       <Feather name="trash-2" size={14} color="#ef4444" />
                     </Pressable>
@@ -232,16 +238,16 @@ export default function SkillsExperienceStep({
 
                   <View className="gap-y-3">
                     <Input
-                      label="Job Title / Role"
-                      placeholder="e.g. Senior Electrician"
+                      label={t('onboarding.jobTitleRole')}
+                      placeholder={t('onboarding.jobTitlePlaceholder')}
                       value={item.title}
                       onChangeText={(val) => handleExperienceChange(item.id, 'title', val)}
                       inputStyle={{ padding: 0 }}
                       className="bg-white"
                     />
                     <Input
-                      label="Company / Employer"
-                      placeholder="e.g. Kathmandu Home Services"
+                      label={t('onboarding.companyEmployer')}
+                      placeholder={t('onboarding.companyPlaceholder')}
                       value={item.companyName}
                       onChangeText={(val) => handleExperienceChange(item.id, 'companyName', val)}
                       inputStyle={{ padding: 0 }}
@@ -250,8 +256,8 @@ export default function SkillsExperienceStep({
                     <View className="flex-row gap-x-2">
                       <View className="flex-1">
                         <Input
-                          label="Start Year"
-                          placeholder="e.g. 2020"
+                          label={t('onboarding.startYear')}
+                          placeholder={t('onboarding.startYearPlaceholder')}
                           value={item.startDate}
                           onChangeText={(val) => handleExperienceChange(item.id, 'startDate', val)}
                           keyboardType="numeric"
@@ -262,8 +268,8 @@ export default function SkillsExperienceStep({
                       </View>
                       <View className="flex-1">
                         <Input
-                          label="End Year (or Present)"
-                          placeholder="e.g. Present"
+                          label={t('onboarding.endYearPresent')}
+                          placeholder={t('onboarding.endYearPlaceholder')}
                           value={item.endDate}
                           onChangeText={(val) => handleExperienceChange(item.id, 'endDate', val)}
                           inputStyle={{ padding: 0 }}
@@ -291,9 +297,15 @@ export default function SkillsExperienceStep({
           elevation: 10,
         }}
       >
-        <Button title="Save" onPress={onNext} variant="primary" size="sm" className="w-full bg-primary" />
         <Button
-          title="Skip this step"
+          title={t('onboarding.save')}
+          onPress={onNext}
+          variant="primary"
+          size="sm"
+          className="w-full bg-primary"
+        />
+        <Button
+          title={t('onboarding.skipStep')}
           onPress={onSkip}
           variant="ghost"
           size="sm"

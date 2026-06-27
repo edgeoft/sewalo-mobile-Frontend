@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 
@@ -16,6 +17,7 @@ export default function ProviderBookingStickyBar({
   totalPrice,
   onBookPress,
 }: ProviderBookingStickyBarProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -24,11 +26,13 @@ export default function ProviderBookingStickyBar({
       style={[styles.shadowLg, { paddingBottom: Math.max(insets.bottom, 16) }]}
     >
       <View>
-        <Text className="text-xs font-sans-medium text-gray-500">{selectedCount} services selected</Text>
+        <Text className="text-xs font-sans-medium text-gray-500">
+          {t('services.servicesSelected', { count: selectedCount })}
+        </Text>
         <Text className="text-lg font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
       </View>
       <Button
-        title="Book Selected"
+        title={t('services.bookSelected')}
         variant="primary"
         onPress={onBookPress}
         className="px-6 py-2.5 rounded-xl"

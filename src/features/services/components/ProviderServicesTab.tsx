@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
@@ -21,6 +22,7 @@ export default function ProviderServicesTab({
   onServiceToggle,
   onBookPackage,
 }: ProviderServicesTabProps) {
+  const { t } = useTranslation();
   return (
     <View className="gap-y-5">
       {/* Special Package Deals (Conditional) */}
@@ -28,7 +30,7 @@ export default function ProviderServicesTab({
         <View className="gap-y-3">
           <View className="flex-row items-center gap-1.5">
             <Feather name="zap" size={16} color="#485aff" />
-            <Text className="text-sm font-sans-extrabold text-gray-950">Special Package Deals</Text>
+            <Text className="text-sm font-sans-extrabold text-gray-950">{t('services.specialPackageDeals')}</Text>
           </View>
 
           <View className="bg-[#eef1ff] border border-blue-100 rounded-lg p-4">
@@ -40,7 +42,7 @@ export default function ProviderServicesTab({
             {/* Package Inclusions Card */}
             <View className="bg-white rounded-lg p-3.5 mb-4 border border-blue-50/50">
               <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider mb-2">
-                Package Includes:
+                {t('services.packageIncludes')}
               </Text>
               {specialPackage.inclusions.map((item, idx) => (
                 <View key={idx} className="flex-row items-center mb-1.5">
@@ -54,7 +56,9 @@ export default function ProviderServicesTab({
 
             <View className="flex-row items-center justify-between mb-4">
               <View>
-                <Text className="text-[9px] font-sans-semibold text-gray-400 uppercase">Package Price</Text>
+                <Text className="text-[9px] font-sans-semibold text-gray-400 uppercase">
+                  {t('services.packagePrice')}
+                </Text>
                 <Text className="text-base font-sans-extrabold text-primary">{specialPackage.price}</Text>
               </View>
 
@@ -65,7 +69,7 @@ export default function ProviderServicesTab({
             </View>
 
             <Button
-              title="Book Package"
+              title={t('services.bookPackage')}
               variant="primary"
               onPress={onBookPackage}
               className="py-3 rounded-lg"
@@ -78,10 +82,10 @@ export default function ProviderServicesTab({
       {/* Individual Services */}
       <View className="gap-y-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm font-sans-extrabold text-gray-950">Individual services</Text>
+          <Text className="text-sm font-sans-extrabold text-gray-950">{t('services.individualServices')}</Text>
           <View className="bg-gray-100 rounded-lg px-2 py-0.5">
             <Text className="text-[10px] font-sans-semibold text-gray-500">
-              {individualServices.length} Services available
+              {t('services.servicesAvailable', { count: individualServices.length })}
             </Text>
           </View>
         </View>
@@ -123,14 +127,14 @@ export default function ProviderServicesTab({
       <View className="bg-amber-50/50 border border-amber-200 rounded-lg p-4">
         <View className="flex-row items-center gap-1.5 mb-2">
           <Feather name="info" size={14} color="#b45309" />
-          <Text className="text-xs font-sans-bold text-amber-800">Pricing & Duration Information</Text>
+          <Text className="text-xs font-sans-bold text-amber-800">{t('services.pricingInfo')}</Text>
         </View>
         {[
-          'All prices are in Nepali Rupees (NPR) and are subject to change',
-          'Duration estimates may vary based on project complexity',
-          'Package deals offer better value than individual services',
-          'Contact provider directly for custom quotes or bulk discounts',
-          'Booking requires advance payment or deposit',
+          t('services.pricingBullet1'),
+          t('services.pricingBullet2'),
+          t('services.pricingBullet3'),
+          t('services.pricingBullet4'),
+          t('services.pricingBullet5'),
         ].map((bullet, idx) => (
           <View key={idx} className="flex-row items-start mb-1.5">
             <Text className="text-[8px] text-amber-600 mr-2 mt-1">•</Text>

@@ -21,13 +21,16 @@ interface ReportProblemFormData {
   stepsToReproduce: string;
 }
 
-const ISSUE_CATEGORIES = [
-  { value: 'crash', label: 'App Crash / Freeze' },
-  { value: 'performance', label: 'Slow / Lagging UI' },
-  { value: 'payment', label: 'Payment Glitch' },
-  { value: 'account', label: 'Account Login Issue' },
-  { value: 'other', label: 'Other Technical Bug' },
-];
+const useIssueCategories = () => {
+  const { t } = useTranslation();
+  return [
+    { value: 'crash', label: t('settings.issueCrash') },
+    { value: 'performance', label: t('settings.issuePerformance') },
+    { value: 'payment', label: t('settings.issuePayment') },
+    { value: 'account', label: t('settings.issueAccount') },
+    { value: 'other', label: t('settings.issueOther') },
+  ];
+};
 
 export default function ReportProblemScreen() {
   const router = useRouter();
@@ -37,6 +40,7 @@ export default function ReportProblemScreen() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [screenshotUploaded, setScreenshotUploaded] = useState(false);
+  const ISSUE_CATEGORIES = useIssueCategories();
 
   const {
     control,
@@ -62,13 +66,13 @@ export default function ReportProblemScreen() {
     setTimeout(() => {
       setLoading(false);
       showError({
-        title: 'Problem Reported',
-        message:
-          'Thank you for reporting this issue. Our QA team will investigate the details. Ticket ID: #BUG-' +
-          Math.floor(1000 + Math.random() * 9000),
+        title: t('settings.problemReportedTitle'),
+        message: t('settings.problemReportedMessage', {
+          ticketId: '#BUG-' + Math.floor(1000 + Math.random() * 9000),
+        }),
         actions: [
           {
-            text: 'Return',
+            text: t('settings.return'),
             onPress: () => {
               reset();
               router.back();
@@ -216,7 +220,7 @@ export default function ReportProblemScreen() {
             <Text
               className={`text-xs font-sans-semibold ml-2 ${screenshotUploaded ? 'text-emerald-700' : 'text-gray-500'}`}
             >
-              {screenshotUploaded ? 'Screenshot Attached.png' : t('settings.clickToUploadScreenshot')}
+              {screenshotUploaded ? t('settings.screenshotAttached') : t('settings.clickToUploadScreenshot')}
             </Text>
           </Pressable>
 

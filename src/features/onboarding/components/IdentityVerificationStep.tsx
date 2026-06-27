@@ -3,6 +3,7 @@ import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } fro
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -25,6 +26,7 @@ export default function IdentityVerificationStep({
   role,
   stepper,
 }: IdentityVerificationStepProps) {
+  const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
   const [previewVisible, setPreviewVisible] = useState(false);
   const insets = useSafeAreaInsets();
@@ -35,7 +37,7 @@ export default function IdentityVerificationStep({
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         showSnackbar({
-          message: 'We need access to your photo library to select a verification document.',
+          message: t('onboarding.verificationPermissionError'),
           type: 'error',
         });
         return;
@@ -51,7 +53,7 @@ export default function IdentityVerificationStep({
         setDocumentImage(result.assets[0].uri);
       }
     } catch {
-      showSnackbar({ message: 'Something went wrong while selecting the image.', type: 'error' });
+      showSnackbar({ message: t('onboarding.verificationPickerError'), type: 'error' });
     }
   };
 
@@ -82,15 +84,13 @@ export default function IdentityVerificationStep({
         {/* Info Text */}
         <View style={cardShadow} className="mb-4 p-4 bg-gray-50 rounded-xl">
           <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-            {isProvider
-              ? 'Uploading a government-issued ID is optional but highly recommended to verify your account and build trust with customers.'
-              : 'Verifying your identity is optional but helps increase trust, secure bookings faster, and unlock special account privileges.'}
+            {isProvider ? t('onboarding.identityVerificationProvider') : t('onboarding.identityVerificationCustomer')}
           </Text>
         </View>
 
         {/* Upload Card */}
         <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
-          <Text className="text-sm font-sans-bold text-gray-950 mb-3">Identity Document (Optional)</Text>
+          <Text className="text-sm font-sans-bold text-gray-950 mb-3">{t('onboarding.identityDocument')}</Text>
 
           <View className="gap-y-4">
             {documentImage ? (
@@ -107,7 +107,7 @@ export default function IdentityVerificationStep({
                   className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
                 >
                   <Feather name="eye" size={12} color="#ffffff" />
-                  <Text className="text-[10px] font-sans-bold text-white ml-1">View Image</Text>
+                  <Text className="text-[10px] font-sans-bold text-white ml-1">{t('onboarding.viewImage')}</Text>
                 </Pressable>
               </View>
             ) : (
@@ -118,8 +118,8 @@ export default function IdentityVerificationStep({
                 <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2">
                   <Feather name="camera" size={20} color="#485aff" />
                 </View>
-                <Text className="text-sm font-sans-semibold text-gray-800">Upload ID Image</Text>
-                <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">JPEG or PNG up to 5MB</Text>
+                <Text className="text-sm font-sans-semibold text-gray-800">{t('onboarding.uploadIdImage')}</Text>
+                <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{t('onboarding.uploadFormat')}</Text>
               </Pressable>
             )}
           </View>
@@ -139,7 +139,7 @@ export default function IdentityVerificationStep({
         }}
       >
         <Button
-          title="Save"
+          title={t('onboarding.save')}
           onPress={onNext}
           disabled={!documentImage}
           variant="primary"
@@ -147,7 +147,7 @@ export default function IdentityVerificationStep({
           className="w-full bg-primary"
         />
         <Button
-          title="Skip this step"
+          title={t('onboarding.skipStep')}
           onPress={onSkip}
           variant="ghost"
           size="sm"

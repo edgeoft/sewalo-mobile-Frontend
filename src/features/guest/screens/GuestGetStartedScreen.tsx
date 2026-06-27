@@ -88,7 +88,7 @@ export default function GuestGetStartedScreen() {
           <GuestRoleActionCard
             variant="outline"
             title={t('auth.alreadyHaveAccount')}
-            description="Sign in to access your saved profile and active bookings"
+            description={t('auth.signinToAccess')}
             onPress={() => router.push(ROUTES.auth.signin)}
           />
         </View>
@@ -118,43 +118,43 @@ export default function GuestGetStartedScreen() {
         >
           <View className="bg-gray-50/50 px-4 py-2 border-b border-gray-100">
             <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider">
-              Support & Information
+              {t('navigation.supportAndInfo')}
             </Text>
           </View>
           <AccountMenuItem
             icon="star"
-            title="Rate the app"
-            subtitle="Share your feedback"
+            title={t('navigation.rateApp')}
+            subtitle={t('navigation.rateAppSubtitle')}
             onPress={() => router.push(ROUTES.guest.rateApp)}
           />
           <AccountMenuItem
             icon="info"
-            title="About Sewalo"
-            subtitle="Learn more about the app"
+            title={t('navigation.aboutSewalo')}
+            subtitle={t('navigation.aboutSewaloSubtitle')}
             onPress={() => router.push(ROUTES.guest.aboutSewalo)}
           />
           <AccountMenuItem
             icon="shield"
-            title="Privacy policy"
-            subtitle="Read how your data is handled"
+            title={t('navigation.privacyPolicy')}
+            subtitle={t('navigation.privacyPolicySubtitle')}
             onPress={() => router.push(ROUTES.guest.privacyPolicy)}
           />
           <AccountMenuItem
             icon="file-text"
-            title="Terms & conditions"
-            subtitle="Review usage terms"
+            title={t('navigation.termsAndConditions')}
+            subtitle={t('navigation.termsAndConditionsSubtitle')}
             onPress={() => router.push(ROUTES.guest.termsOfService)}
           />
           <AccountMenuItem
             icon="alert-triangle"
-            title="Report a problem"
-            subtitle="Send an issue or bug report"
+            title={t('navigation.reportProblem')}
+            subtitle={t('navigation.reportProblemSubtitle')}
             onPress={() => router.push(ROUTES.guest.reportProblem)}
           />
           <AccountMenuItem
             icon="message-circle"
-            title="Contact support"
-            subtitle="Reach the Sewalo support team"
+            title={t('navigation.contactSupport')}
+            subtitle={t('navigation.contactSupportSubtitle')}
             onPress={() => router.push(ROUTES.guest.contactSupport)}
           />
         </View>

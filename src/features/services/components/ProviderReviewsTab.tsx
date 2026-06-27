@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { ReviewItem } from '@/types';
 
@@ -11,15 +12,16 @@ interface ProviderReviewsTabProps {
 }
 
 export default function ProviderReviewsTab({ rating, reviewCount, reviews }: ProviderReviewsTabProps) {
+  const { t } = useTranslation();
   if (reviews.length === 0) {
     return (
       <View className="bg-white border border-gray-200 rounded-lg px-5 py-8 items-center" style={styles.shadowMin}>
         <View className="h-16 w-16 bg-[#fffbf0] rounded-full items-center justify-center mb-3 border border-[#fef3c7]">
           <Feather name="message-square" size={28} color="#d97706" />
         </View>
-        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">No reviews yet</Text>
+        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('services.noReviewsYet')}</Text>
         <Text className="text-xs font-sans-medium text-gray-400 text-center leading-4 max-w-[240px]">
-          Be the first one to book a service and write an honest review.
+          {t('services.noReviewsDesc')}
         </Text>
       </View>
     );
@@ -68,7 +70,9 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
             {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
           </Text>
           <View className="my-1">{renderStars(isNaN(Number(rating)) ? 0 : parseFloat(rating), 12)}</View>
-          <Text className="text-[10px] font-sans-semibold text-gray-400">{reviewCount} Reviews</Text>
+          <Text className="text-[10px] font-sans-semibold text-gray-400">
+            {t('services.reviewsCount', { count: reviewCount })}
+          </Text>
         </View>
 
         {/* Progress Bars */}
@@ -119,7 +123,7 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
                 <View className="flex-row items-center mb-1">
                   <Feather name="corner-down-right" size={12} color="#485aff" className="mr-1.5" />
                   <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider">
-                    Reply from Provider
+                    {t('services.replyFromProvider')}
                   </Text>
                 </View>
                 <Text className="text-xs font-sans-medium text-gray-500 leading-4.5">{rev.reply}</Text>

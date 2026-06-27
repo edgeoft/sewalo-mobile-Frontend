@@ -40,7 +40,7 @@ export default function ReferFriendScreen() {
       showSnackbar({ message: t('customer.referLinkCopied'), type: 'success' });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      showSnackbar({ message: 'Failed to copy to clipboard.', type: 'error' });
+      showSnackbar({ message: t('customer.failedToCopy'), type: 'error' });
     }
   };
 
@@ -48,10 +48,10 @@ export default function ReferFriendScreen() {
     if (!referralLink) return;
     try {
       await Share.share({
-        message: `Use my referral link to sign up on Sewalo and we both earn loyalty points! ${referralLink}`,
+        message: t('customer.shareMessage', { link: referralLink }),
       });
     } catch (error: any) {
-      showSnackbar({ message: 'Failed to share: ' + error.message, type: 'error' });
+      showSnackbar({ message: t('customer.failedToShare', { error: error.message }), type: 'error' });
     }
   };
 
@@ -114,7 +114,7 @@ export default function ReferFriendScreen() {
 
               <View className="flex-row gap-3">
                 <Button
-                  title={copied ? 'Copied' : 'Copy Link'}
+                  title={copied ? t('common.copied') : t('customer.copyLink')}
                   onPress={handleCopyLink}
                   variant={copied ? 'outline' : 'primary'}
                   className="flex-1 h-11"
@@ -123,7 +123,7 @@ export default function ReferFriendScreen() {
                   }
                 />
                 <Button
-                  title="Share"
+                  title={t('customer.share')}
                   onPress={handleShare}
                   variant="primary"
                   className="flex-1 h-11"
@@ -135,27 +135,31 @@ export default function ReferFriendScreen() {
             {/* 3. Stats Cards */}
             <View className="flex-row gap-x-3 mb-5">
               <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-xl p-4 items-center">
-                <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">Friends Referred</Text>
+                <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">
+                  {t('customer.friendsReferred')}
+                </Text>
                 <Text className="text-lg font-sans-extrabold text-gray-900 mt-1">{totalReferred}</Text>
               </View>
 
               <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-xl p-4 items-center">
-                <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">Loyalty Points</Text>
+                <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">
+                  {t('customer.loyaltyPoints')}
+                </Text>
                 <Text className="text-lg font-sans-extrabold text-gray-900 mt-1">{loyaltyPoints}</Text>
               </View>
             </View>
 
             {/* 4. How it Works */}
-            <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">How it Works</Text>
+            <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('customer.howItWorks')}</Text>
             <View className="gap-y-4 mb-5">
               <View className="flex-row items-start">
                 <View className="h-8 w-8 rounded-full bg-primary/10 items-center justify-center mr-3 mt-0.5">
                   <Feather name="send" size={14} color="#485aff" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">1. Share your link</Text>
+                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.shareYourLink')}</Text>
                   <Text className="text-[11px] font-sans-medium text-gray-400 mt-1 leading-4">
-                    Share your unique referral link with friends via social media, messaging, or email.
+                    {t('customer.shareYourLinkDesc')}
                   </Text>
                 </View>
               </View>
@@ -165,9 +169,9 @@ export default function ReferFriendScreen() {
                   <Feather name="user-plus" size={14} color="#485aff" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">2. They sign up</Text>
+                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.theySignUp')}</Text>
                   <Text className="text-[11px] font-sans-medium text-gray-400 mt-1 leading-4">
-                    Your friend signs up using your referral link and creates their account.
+                    {t('customer.theySignUpDesc')}
                   </Text>
                 </View>
               </View>
@@ -177,30 +181,32 @@ export default function ReferFriendScreen() {
                   <Feather name="award" size={14} color="#485aff" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">3. You both earn</Text>
+                  <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.youBothEarn')}</Text>
                   <Text className="text-[11px] font-sans-medium text-gray-400 mt-1 leading-4">
-                    You both receive 100 loyalty points each instantly after they sign up.
+                    {t('customer.youBothEarnDesc')}
                   </Text>
                 </View>
               </View>
             </View>
 
             {/* 5. Benefits */}
-            <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Benefits</Text>
+            <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('customer.benefits')}</Text>
             <View className="gap-y-3 mb-5">
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
                 <Feather name="users" size={16} color="#485aff" />
-                <Text className="text-xs font-sans-medium text-gray-700 ml-3">Unlimited referrals — no cap</Text>
+                <Text className="text-xs font-sans-medium text-gray-700 ml-3">{t('customer.benefitUnlimited')}</Text>
               </View>
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
                 <Feather name="zap" size={16} color="#485aff" />
                 <Text className="text-xs font-sans-medium text-gray-700 ml-3">
-                  Instant rewards credited immediately
+                  {t('customer.benefitInstantRewards')}
                 </Text>
               </View>
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
                 <Feather name="clock" size={16} color="#485aff" />
-                <Text className="text-xs font-sans-medium text-gray-700 ml-3">Points never expire</Text>
+                <Text className="text-xs font-sans-medium text-gray-700 ml-3">
+                  {t('customer.benefitPointsNeverExpire')}
+                </Text>
               </View>
             </View>
           </>

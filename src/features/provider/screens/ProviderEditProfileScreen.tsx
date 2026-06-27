@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Header from '@/components/navigation/Header';
@@ -19,6 +20,7 @@ import { Availability } from '@/types';
 
 export default function ProviderEditProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { user, isLoading } = useAuth();
 
   const { showSnackbar } = useSnackbar();
@@ -65,7 +67,7 @@ export default function ProviderEditProfileScreen() {
       }
       updateProfile(payload, {
         onSuccess: () => {
-          showSnackbar({ message: 'Basic information saved successfully!', type: 'success' });
+          showSnackbar({ message: t('provider.basicInfoSaved'), type: 'success' });
         },
       });
     };
@@ -144,7 +146,7 @@ export default function ProviderEditProfileScreen() {
         })),
       },
       {
-        onSuccess: () => showSnackbar({ message: 'Skills and experience saved successfully!', type: 'success' }),
+        onSuccess: () => showSnackbar({ message: t('provider.skillsExperienceSaved'), type: 'success' }),
       },
     );
   };
@@ -162,7 +164,7 @@ export default function ProviderEditProfileScreen() {
         end_time: workingHoursEnd,
       },
       {
-        onSuccess: () => showSnackbar({ message: 'Availability schedule saved successfully!', type: 'success' }),
+        onSuccess: () => showSnackbar({ message: t('provider.availabilitySaved'), type: 'success' }),
       },
     );
   };
@@ -185,8 +187,8 @@ export default function ProviderEditProfileScreen() {
           }}
         >
           <SectionHeader
-            title="Edit Partner Profile"
-            description="Manage your business profile information, experience details, and availability."
+            title={t('provider.editPartnerProfile')}
+            description={t('provider.editProfileDesc')}
             className="mb-6"
             titleClassName="text-2xl text-gray-950 font-sans-extrabold"
           />

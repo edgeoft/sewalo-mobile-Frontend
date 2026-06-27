@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -19,6 +20,7 @@ import { FALLBACKS, getImageUrl } from '@/utils/image';
 export default function CustomerBookingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
@@ -90,8 +92,8 @@ export default function CustomerBookingsScreen() {
         }}
       >
         <SectionHeader
-          title="My Bookings"
-          description="Track all bookings and filter by status."
+          title={t('customer.myBookingsTitle')}
+          description={t('customer.myBookingsDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -108,7 +110,7 @@ export default function CustomerBookingsScreen() {
           <Pressable
             onPress={() => setSearchExpanded((prev) => !prev)}
             accessibilityRole="button"
-            accessibilityLabel={searchExpanded ? 'Close search' : 'Open search'}
+            accessibilityLabel={searchExpanded ? t('common.close') : t('common.search')}
             className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-80"
             style={{
               shadowColor: '#0f172a',
@@ -125,7 +127,7 @@ export default function CustomerBookingsScreen() {
         {searchExpanded ? (
           <View className="mb-5">
             <Input
-              placeholder="Search booking by provider, service, or location"
+              placeholder={t('customer.searchBookingPlaceholder')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               leftIcon={null}
@@ -154,12 +156,12 @@ export default function CustomerBookingsScreen() {
             keyExtractor={(booking) => booking.id}
             initialVisibleCount={4}
             pageSize={4}
-            loadMoreLabel="Load More Bookings"
-            endReachedLabel="No more bookings"
+            loadMoreLabel={t('customer.loadMoreBookings')}
+            endReachedLabel={t('customer.noMoreBookings')}
             emptyContent={
               <EmptyBookingsState
-                title="No bookings match your filter"
-                description="Try changing your status filter or search query."
+                title={t('customer.noBookingsMatchFilter')}
+                description={t('customer.noBookingsMatchFilterDesc')}
               />
             }
             renderItem={(booking) => (
@@ -172,7 +174,7 @@ export default function CustomerBookingsScreen() {
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}
-                actionLabel="View Details"
+                actionLabel={t('home.viewDetails')}
                 variant="booking"
                 onPress={() => {
                   router.push(ROUTES.customer.bookingDetail(booking.id));

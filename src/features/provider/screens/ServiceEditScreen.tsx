@@ -4,6 +4,7 @@ import { useForm, Resolver, useWatch } from 'react-hook-form';
 import { View, ActivityIndicator } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -38,6 +39,7 @@ const defaultValues: ServiceFormData = {
 export default function ServiceEditScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { mode } = useLocalSearchParams<{ mode?: 'add' | 'edit' }>();
 
   const isEditMode = mode === 'edit';
@@ -187,7 +189,7 @@ export default function ServiceEditScreen() {
         { ...payload, id: service.id },
         {
           onSuccess: () => {
-            showSnackbar({ message: 'Service updated successfully!', type: 'success' });
+            showSnackbar({ message: t('provider.serviceUpdated'), type: 'success' });
             router.replace(ROUTES.provider.services);
           },
         },
@@ -195,7 +197,7 @@ export default function ServiceEditScreen() {
     } else {
       createService(payload, {
         onSuccess: () => {
-          showSnackbar({ message: 'Service created successfully!', type: 'success' });
+          showSnackbar({ message: t('provider.serviceCreatedSuccess'), type: 'success' });
           router.replace(ROUTES.provider.serviceCreated as Href);
         },
       });
@@ -219,12 +221,8 @@ export default function ServiceEditScreen() {
         }}
       >
         <SectionHeader
-          title={isEditMode ? 'Edit Service' : 'Create a Service'}
-          description={
-            isEditMode
-              ? 'Update your service catalog rates, delivery preferences, and work details.'
-              : 'Add a new service offering to your catalog to start getting booked.'
-          }
+          title={isEditMode ? t('provider.editService') : t('provider.createService')}
+          description={isEditMode ? t('provider.editServiceDesc') : t('provider.createServiceDesc')}
           className="mb-6"
           titleClassName="text-2xl"
         />
@@ -268,7 +266,7 @@ export default function ServiceEditScreen() {
         onSave={handleSubmit(onSubmit)}
         disabled={loading}
         loading={loading}
-        infoMessage={success ? 'All changes saved.' : undefined}
+        infoMessage={success ? t('provider.allChangesSaved') : undefined}
       />
     </View>
   );

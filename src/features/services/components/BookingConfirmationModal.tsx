@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -73,6 +74,7 @@ export default function BookingConfirmationModal({
   totalPrice,
   onConfirm,
 }: BookingConfirmationModalProps) {
+  const { t } = useTranslation();
   const [serviceDate, setServiceDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [location, setLocation] = useState('');
@@ -115,10 +117,10 @@ export default function BookingConfirmationModal({
     const newErrors: Record<string, string> = {};
 
     if (!serviceDate.trim()) {
-      newErrors.serviceDate = 'Service date is required';
+      newErrors.serviceDate = t('services.serviceDateRequired');
     }
     if (!startTime.trim()) {
-      newErrors.startTime = 'Start time is required';
+      newErrors.startTime = t('services.startTimeRequired');
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -196,10 +198,8 @@ export default function BookingConfirmationModal({
         >
           <View className="px-6 pt-6 pb-4 border-b border-gray-100 flex-row justify-between items-center">
             <View className="flex-1 mr-4">
-              <Text className="text-lg font-sans-extrabold text-gray-950">Confirm Booking Service</Text>
-              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
-                Please fill the details below to book the service.
-              </Text>
+              <Text className="text-lg font-sans-extrabold text-gray-950">{t('services.confirmBookingService')}</Text>
+              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{t('services.confirmBookingDesc')}</Text>
             </View>
             <Pressable
               onPress={onClose}
@@ -213,10 +213,10 @@ export default function BookingConfirmationModal({
             <View className="bg-blue-50/30 border border-blue-200 rounded-lg p-4 flex-row justify-between items-center mb-6">
               <View className="flex-1 mr-3">
                 <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider mb-1">
-                  selected service(s)
+                  {t('services.selectedServices')}
                 </Text>
                 <Text className="text-xs font-sans-extrabold text-gray-800" numberOfLines={2}>
-                  {servicesDisplay || 'Custom Service Package'}
+                  {servicesDisplay}
                 </Text>
                 <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">{durationDisplay}</Text>
               </View>
@@ -227,8 +227,8 @@ export default function BookingConfirmationModal({
               <Pressable onPress={openDatePicker}>
                 <View pointerEvents="none">
                   <Input
-                    label="Service Date *"
-                    placeholder="Select service date"
+                    label={t('services.serviceDate')}
+                    placeholder={t('services.selectServiceDatePlaceholder')}
                     value={serviceDate}
                     onChangeText={() => {}}
                     error={errors.serviceDate}
@@ -240,8 +240,8 @@ export default function BookingConfirmationModal({
               <Pressable onPress={openTimePicker}>
                 <View pointerEvents="none">
                   <Input
-                    label="Start Time *"
-                    placeholder="Select start time"
+                    label={t('services.startTimeLabel')}
+                    placeholder={t('services.selectStartTimePlaceholder')}
                     value={startTime}
                     onChangeText={() => {}}
                     error={errors.startTime}
@@ -251,19 +251,21 @@ export default function BookingConfirmationModal({
               </Pressable>
 
               <View>
-                <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Location *</Text>
+                <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+                  {t('services.locationLabel')}
+                </Text>
                 <LocationSelector
                   value={location}
                   lat={locationLat}
                   lng={locationLng}
                   onChange={handleLocationChange}
-                  placeholder="Select service location"
+                  placeholder={t('services.selectServiceLocation')}
                 />
               </View>
 
               <Input
-                label="Additional Notes"
-                placeholder="Any Special Instructions..."
+                label={t('services.additionalNotes')}
+                placeholder={t('services.specialInstructions')}
                 value={notes}
                 onChangeText={setNotes}
                 multiline={true}
@@ -273,10 +275,10 @@ export default function BookingConfirmationModal({
             </View>
 
             <View className="pt-2 pb-6 border-t border-gray-100 gap-y-2.5">
-              <Button title="Confirm Booking" variant="primary" size="md" onPress={handleConfirm} />
+              <Button title={t('services.confirmBooking')} variant="primary" size="md" onPress={handleConfirm} />
 
               <Button
-                title="Cancel"
+                title={t('common.cancel')}
                 variant="outline"
                 size="md"
                 onPress={onClose}
@@ -304,7 +306,7 @@ export default function BookingConfirmationModal({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Select Service Date</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectServiceDate')}</Text>
               <Pressable
                 onPress={() => setDatePickerVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -315,7 +317,7 @@ export default function BookingConfirmationModal({
 
             <View className="flex-row justify-between mb-6 gap-x-2">
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Year</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.year')}</Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -338,7 +340,7 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-[1.5]">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Month</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.month')}</Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -361,7 +363,7 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Day</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.day')}</Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -384,7 +386,12 @@ export default function BookingConfirmationModal({
               </View>
             </View>
 
-            <Button title="Confirm Date" onPress={handleConfirmDate} variant="primary" className="w-full" />
+            <Button
+              title={t('services.confirmDate')}
+              onPress={handleConfirmDate}
+              variant="primary"
+              className="w-full"
+            />
           </View>
         </View>
       </Modal>
@@ -405,7 +412,7 @@ export default function BookingConfirmationModal({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Select Start Time</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectStartTime')}</Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -416,7 +423,7 @@ export default function BookingConfirmationModal({
 
             <View className="flex-row justify-center gap-x-4 mb-6">
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Hour</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.hour')}</Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -439,7 +446,9 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Minute</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('services.minute')}
+                </Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -462,7 +471,9 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Period</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('services.period')}
+                </Text>
                 <View className="border border-gray-100 rounded-lg">
                   {PERIODS.map((p) => (
                     <Pressable
@@ -481,7 +492,12 @@ export default function BookingConfirmationModal({
               </View>
             </View>
 
-            <Button title="Confirm Time" onPress={handleConfirmTime} variant="primary" className="w-full" />
+            <Button
+              title={t('services.confirmTime')}
+              onPress={handleConfirmTime}
+              variant="primary"
+              className="w-full"
+            />
           </View>
         </View>
       </Modal>

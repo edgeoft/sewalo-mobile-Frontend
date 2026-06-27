@@ -3,6 +3,7 @@ import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import { PaginationList, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -20,6 +21,7 @@ type EarningsFilter = EARNINGS_FILTER_STATUS;
 export default function ProviderEarningsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<EarningsTab>(COMMISSION_TYPE.MY_EARNINGS);
   const [filterStatus, setFilterStatus] = useState<EarningsFilter>(EARNINGS_FILTER_STATUS.ALL);
@@ -100,8 +102,8 @@ export default function ProviderEarningsScreen() {
         }}
       >
         <SectionHeader
-          title="Earnings Dashboard"
-          description="Monitor your net payouts, commissions due, and incoming dispatches."
+          title={t('provider.earningsDashboardTitle')}
+          description={t('provider.earningsDashboardDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -111,12 +113,12 @@ export default function ProviderEarningsScreen() {
             <View className="h-12 w-12 rounded-full bg-red-50 items-center justify-center mb-4">
               <Feather name="alert-triangle" size={24} color="#dc2626" />
             </View>
-            <Text className="text-base font-sans-bold text-gray-900 mb-1">Failed to load earnings data</Text>
+            <Text className="text-base font-sans-bold text-gray-900 mb-1">{t('provider.failedToLoadEarnings')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 text-center mb-6 leading-5">
-              We encountered a network or server error while retrieving your financial summary.
+              {t('provider.failedToLoadEarningsDesc')}
             </Text>
             <View className="w-full max-w-[200px]">
-              <Button title="Retry Connection" variant="primary" onPress={handleRetry} />
+              <Button title={t('provider.retryConnection')} variant="primary" onPress={handleRetry} />
             </View>
           </View>
         ) : (
@@ -139,7 +141,7 @@ export default function ProviderEarningsScreen() {
                     </View>
                     <View>
                       <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider">
-                        Total Earnings (Net)
+                        {t('provider.totalEarningsNet')}
                       </Text>
                       <Text className="text-xl font-sans-extrabold text-gray-900 mt-0.5">
                         {dashboardStats.totalEarnings}
@@ -147,7 +149,7 @@ export default function ProviderEarningsScreen() {
                     </View>
                   </View>
                   <View className="rounded-full bg-emerald-50 px-2 py-0.5">
-                    <Text className="text-[10px] font-sans-bold text-emerald-700">Cleared</Text>
+                    <Text className="text-[10px] font-sans-bold text-emerald-700">{t('provider.cleared')}</Text>
                   </View>
                 </View>
 
@@ -163,12 +165,12 @@ export default function ProviderEarningsScreen() {
                         <Feather name="arrow-up-right" size={16} color="#dc2626" />
                       </View>
                       <View className="rounded-full bg-red-50 px-1.5 py-0.5">
-                        <Text className="text-[9px] font-sans-bold text-red-700">Admin Fee</Text>
+                        <Text className="text-[9px] font-sans-bold text-red-700">{t('provider.adminFee')}</Text>
                       </View>
                     </View>
                     <View>
                       <Text className="text-[9px] font-sans-semibold text-gray-400 uppercase tracking-wider">
-                        Payable to Admin
+                        {t('provider.payableToAdmin')}
                       </Text>
                       <Text className="text-base font-sans-bold text-gray-900 mt-0.5">
                         {dashboardStats.payableToAdmin}
@@ -186,12 +188,12 @@ export default function ProviderEarningsScreen() {
                         <Feather name="clock" size={16} color="#2563eb" />
                       </View>
                       <View className="rounded-full bg-blue-50 px-1.5 py-0.5">
-                        <Text className="text-[9px] font-sans-bold text-blue-700">Processing</Text>
+                        <Text className="text-[9px] font-sans-bold text-blue-700">{t('provider.processing')}</Text>
                       </View>
                     </View>
                     <View>
                       <Text className="text-[9px] font-sans-semibold text-gray-400 uppercase tracking-wider">
-                        Pending Dispatch
+                        {t('provider.pendingDispatch')}
                       </Text>
                       <Text className="text-base font-sans-bold text-gray-900 mt-0.5">
                         {dashboardStats.pendingDispatch}
@@ -206,7 +208,7 @@ export default function ProviderEarningsScreen() {
             <View className="flex-row items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3 mb-6">
               <Feather name="info" size={15} color="#4f46e5" />
               <Text className="flex-1 text-[11px] font-sans-semibold text-indigo-700 leading-4">
-                A 15% commission is automatically deducted from the gross credited amount for platform fees.
+                {t('provider.commissionBanner')}
               </Text>
             </View>
 
@@ -225,7 +227,7 @@ export default function ProviderEarningsScreen() {
                   <Text
                     className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.MY_EARNINGS ? 'text-gray-900' : 'text-gray-500'}`}
                   >
-                    Receivable Earnings
+                    {t('provider.receivableEarnings')}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -240,7 +242,7 @@ export default function ProviderEarningsScreen() {
                   <Text
                     className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.COMMISSION_DUE ? 'text-gray-900' : 'text-gray-500'}`}
                   >
-                    Commissions Due
+                    {t('provider.commissionsDue')}
                   </Text>
                 </Pressable>
               </View>
@@ -253,12 +255,12 @@ export default function ProviderEarningsScreen() {
                   const isActive = filterStatus === status;
                   const label =
                     status === EARNINGS_FILTER_STATUS.ALL
-                      ? 'All'
+                      ? t('provider.all')
                       : status === EARNINGS_FILTER_STATUS.PAID
                         ? activeTab === COMMISSION_TYPE.MY_EARNINGS
-                          ? 'Received'
-                          : 'Paid'
-                        : 'Unpaid';
+                          ? t('provider.received')
+                          : t('provider.paid')
+                        : t('provider.unpaid');
 
                   return (
                     <Pressable
@@ -288,8 +290,8 @@ export default function ProviderEarningsScreen() {
                   data={commissionsData?.data || []}
                   keyExtractor={(item: Commission) => item.id}
                   pageSize={4}
-                  emptyTitle="No receivable earnings found"
-                  emptyDescription="There are no earnings matching the current filter."
+                  emptyTitle={t('provider.noReceivableEarnings')}
+                  emptyDescription={t('provider.noEarningsMatchingFilter')}
                   renderItem={(item: Commission) => {
                     const isReceived = item.has_paid;
                     return (
@@ -318,7 +320,7 @@ export default function ProviderEarningsScreen() {
                                 isReceived ? 'text-emerald-700' : 'text-amber-700'
                               }`}
                             >
-                              {isReceived ? 'Received' : 'Unpaid'}
+                              {isReceived ? t('provider.received') : t('provider.unpaid')}
                             </Text>
                           </View>
                         </View>
@@ -331,8 +333,8 @@ export default function ProviderEarningsScreen() {
                   data={commissionsData?.data || []}
                   keyExtractor={(item: Commission) => item.id}
                   pageSize={4}
-                  emptyTitle="No commissions due found"
-                  emptyDescription="There are no commissions matching the current filter."
+                  emptyTitle={t('provider.noCommissionsDue')}
+                  emptyDescription={t('provider.noCommissionsMatchingFilter')}
                   renderItem={(item: Commission) => {
                     const isCommissionPaid = item.has_paid;
                     return (
@@ -353,10 +355,10 @@ export default function ProviderEarningsScreen() {
                         </View>
                         <View className="items-end">
                           <Text className="text-sm font-sans-bold text-red-650 mb-0.5">
-                            Fee: - Rs. {(item.amount || 0).toLocaleString()}
+                            {t('provider.fee')}: - Rs. {(item.amount || 0).toLocaleString()}
                           </Text>
                           <Text className="text-[10px] font-sans-medium text-gray-400 mb-1">
-                            Net: Rs. {(item.total_earned_after_commission || 0).toLocaleString()}
+                            {t('provider.net')}: Rs. {(item.total_earned_after_commission || 0).toLocaleString()}
                           </Text>
                           <View
                             className={`rounded-full px-2 py-0.5 ${isCommissionPaid ? 'bg-emerald-50' : 'bg-red-50'}`}
@@ -366,7 +368,7 @@ export default function ProviderEarningsScreen() {
                                 isCommissionPaid ? 'text-emerald-700' : 'text-red-700'
                               }`}
                             >
-                              {isCommissionPaid ? 'Paid' : 'Unpaid'}
+                              {isCommissionPaid ? t('provider.paid') : t('provider.unpaid')}
                             </Text>
                           </View>
                         </View>

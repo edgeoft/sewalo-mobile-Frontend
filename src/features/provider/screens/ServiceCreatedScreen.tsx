@@ -102,30 +102,27 @@ export default function ServiceCreatedScreen() {
                 <View className="h-6 w-6 rounded-full bg-primary/10 items-center justify-center">
                   <Feather name="shield" size={12} color="#485aff" />
                 </View>
-                <Text className="text-xs font-sans-bold text-gray-900">Admin Review</Text>
+                <Text className="text-xs font-sans-bold text-gray-900">{t('provider.adminReview')}</Text>
               </View>
               <View className="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5">
-                <Text className="text-[9px] font-sans-bold text-amber-700 uppercase">Under Review</Text>
+                <Text className="text-[9px] font-sans-bold text-amber-700 uppercase">{t('provider.underReview')}</Text>
               </View>
             </View>
 
             <Text className="text-xs font-sans-medium text-gray-500 leading-5 mb-4">
-              Your service is currently being reviewed by our team and after verification, it appears in the
-              marketplace.
+              {t('provider.reviewDescription')}
             </Text>
 
             <View className="flex-row items-center gap-2 pt-3 border-t border-gray-200/50">
               <View className="h-2 w-2 rounded-full bg-primary/70" />
-              <Text className="text-[10px] font-sans-semibold text-gray-400">
-                Usually completed within one business day.
-              </Text>
+              <Text className="text-[10px] font-sans-semibold text-gray-400">{t('provider.reviewTimespan')}</Text>
             </View>
           </View>
 
           {/* Discovery Card (How Customers Will Find You) */}
           <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
             <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-4">
-              How customers will find you
+              {t('provider.howCustomersFindYou')}
             </Text>
 
             <View className="gap-y-4">
@@ -139,7 +136,7 @@ export default function ServiceCreatedScreen() {
                   </View>
                   <View className="flex-1">
                     <Text className="text-[9px] font-sans-bold uppercase tracking-wider" style={{ color: item.color }}>
-                      Step {item.step}
+                      {t('provider.stepNumber', { number: item.step })}
                     </Text>
                     <Text className="text-xs font-sans-bold text-gray-900 mt-0.5">{item.title}</Text>
                     <Text className="text-xs font-sans-medium text-gray-500 mt-1 leading-normal">

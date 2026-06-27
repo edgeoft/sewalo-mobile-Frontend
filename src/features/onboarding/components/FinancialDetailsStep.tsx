@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -14,6 +15,7 @@ interface FinancialDetailsStepProps {
 }
 
 export default function FinancialDetailsStep({ onNext, onSkip, stepper }: FinancialDetailsStepProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -32,9 +34,9 @@ export default function FinancialDetailsStep({ onNext, onSkip, stepper }: Financ
         <PayoutAccountsManager
           header={
             <View>
-              <Text className="text-xl font-sans-extrabold text-gray-950 mb-1">Financial Details (Optional)</Text>
+              <Text className="text-xl font-sans-extrabold text-gray-950 mb-1">{t('onboarding.financialDetails')}</Text>
               <Text className="text-sm font-sans-medium text-gray-500 leading-normal">
-                Manage your payout accounts. This is where you will receive your earnings.
+                {t('onboarding.financialDetailsDesc')}
               </Text>
             </View>
           }
@@ -53,9 +55,15 @@ export default function FinancialDetailsStep({ onNext, onSkip, stepper }: Financ
           elevation: 10,
         }}
       >
-        <Button title="Continue" onPress={onNext} variant="primary" size="sm" className="w-full bg-primary" />
         <Button
-          title="Skip for now"
+          title={t('onboarding.continue')}
+          onPress={onNext}
+          variant="primary"
+          size="sm"
+          className="w-full bg-primary"
+        />
+        <Button
+          title={t('onboarding.skipForNow')}
           onPress={onSkip}
           variant="ghost"
           size="sm"

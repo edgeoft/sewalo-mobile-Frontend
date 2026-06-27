@@ -31,5 +31,14 @@
   "logout": "लगआउट गर्नुहोस्",
   "account": "खाता",
   "actions": "कार्यहरू",
-  "drawerSubtitle": "आफ्नो खाता, प्राथमिकताहरू, सहयोग र अन्य व्यवस्थापन गर्नुहोस्।"
+  "drawerSubtitle": "आफ्नो खाता, प्राथमिकताहरू, सहयोग र अन्य व्यवस्थापन गर्नुहोस्।",
+  "tabHome": "गृहपृष्ठ",
+  "tabFindServices": "सेवाहरू खोज्नुहोस्",
+  "tabBeProvider": "प्रदायक बन्नुहोस्",
+  "tabGetStarted": "सुरु गर्नुहोस्",
+  "tabBookings": "बुकिङहरू",
+  "tabFavourites": "मनपर्ने",
+  "tabAccount": "खाता",
+  "tabServices": "सेवाहरू",
+  "tabEarnings": "आम्दानी"
 }

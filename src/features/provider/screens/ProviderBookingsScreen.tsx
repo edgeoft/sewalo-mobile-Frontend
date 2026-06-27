@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList, SectionHeader } from '@/components/common';
 import { ProviderOrderCard } from '@/components/home';
@@ -45,6 +46,7 @@ function formatTime(timeString: string) {
 export default function ProviderBookingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
@@ -83,7 +85,7 @@ export default function ProviderBookingsScreen() {
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
       { id, data: { status: 'confirmed' } },
-      { onSuccess: () => showSnackbar({ message: 'Booking accepted successfully', type: 'success' }) },
+      { onSuccess: () => showSnackbar({ message: t('provider.bookingAccepted'), type: 'success' }) },
     );
   };
 
@@ -93,7 +95,7 @@ export default function ProviderBookingsScreen() {
         id,
         data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
       },
-      { onSuccess: () => showSnackbar({ message: 'Booking declined', type: 'success' }) },
+      { onSuccess: () => showSnackbar({ message: t('provider.bookingDeclined'), type: 'success' }) },
     );
   };
 
@@ -131,8 +133,8 @@ export default function ProviderBookingsScreen() {
         }}
       >
         <SectionHeader
-          title="Incoming Bookings"
-          description="Manage client bookings and filter requests by status."
+          title={t('provider.incomingBookingsTitle')}
+          description={t('provider.incomingBookingsDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -149,7 +151,7 @@ export default function ProviderBookingsScreen() {
           <Pressable
             onPress={() => setSearchExpanded((prev) => !prev)}
             accessibilityRole="button"
-            accessibilityLabel={searchExpanded ? 'Close search' : 'Open search'}
+            accessibilityLabel={searchExpanded ? t('provider.closeSearch') : t('provider.openSearch')}
             className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-80"
             style={{
               shadowColor: '#0f172a',
@@ -166,7 +168,7 @@ export default function ProviderBookingsScreen() {
         {searchExpanded ? (
           <View className="mb-5">
             <Input
-              placeholder="Search booking by customer, service, or location"
+              placeholder={t('provider.searchBookingPlaceholder')}
               value={searchQuery}
               onChangeText={setSearchQuery}
               leftIcon={null}
@@ -195,12 +197,12 @@ export default function ProviderBookingsScreen() {
             keyExtractor={(booking) => booking.id}
             initialVisibleCount={4}
             pageSize={4}
-            loadMoreLabel="Load More Bookings"
-            endReachedLabel="No more bookings"
+            loadMoreLabel={t('customer.loadMoreBookings')}
+            endReachedLabel={t('customer.noMoreBookings')}
             emptyContent={
               <EmptyBookingsState
-                title="No bookings match your filter"
-                description="Try changing your status filter or search query."
+                title={t('customer.noBookingsMatchFilter')}
+                description={t('customer.noBookingsMatchFilterDesc')}
               />
             }
             renderItem={(booking) => (

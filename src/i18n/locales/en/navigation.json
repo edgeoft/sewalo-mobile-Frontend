@@ -31,5 +31,14 @@
   "logout": "Logout",
   "account": "Account",
   "actions": "Actions",
-  "drawerSubtitle": "Manage your account, preferences, support and more."
+  "drawerSubtitle": "Manage your account, preferences, support and more.",
+  "tabHome": "Home",
+  "tabFindServices": "Find Services",
+  "tabBeProvider": "Be a Provider",
+  "tabGetStarted": "Get Started",
+  "tabBookings": "Bookings",
+  "tabFavourites": "Favourites",
+  "tabAccount": "Account",
+  "tabServices": "Services",
+  "tabEarnings": "Earnings"
 }

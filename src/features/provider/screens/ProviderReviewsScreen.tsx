@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -67,6 +68,7 @@ function ReviewCard({ rating }: { rating: Rating }) {
 
 export default function ProviderReviewsScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const { data: ratingsData, isLoading } = useGetMyRatingsQuery({ limit: 50 });
 
@@ -85,8 +87,8 @@ export default function ProviderReviewsScreen() {
         }}
       >
         <SectionHeader
-          title="My Reviews"
-          description="See what your customers are saying about your services."
+          title={t('provider.myReviews')}
+          description={t('provider.myReviewsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -101,16 +103,18 @@ export default function ProviderReviewsScreen() {
             keyExtractor={(item) => item.id}
             initialVisibleCount={4}
             pageSize={4}
-            loadMoreLabel="Load More Reviews"
-            endReachedLabel="No more reviews"
+            loadMoreLabel={t('customer.loadMoreReviews')}
+            endReachedLabel={t('customer.noMoreReviews')}
             emptyContent={
               <View className="items-center justify-center py-12 px-6">
                 <View className="h-16 w-16 bg-gray-100 rounded-full items-center justify-center mb-4">
                   <Feather name="star" size={28} color="#94a3b8" />
                 </View>
-                <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">No reviews yet</Text>
+                <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">
+                  {t('customer.noReviewsYet')}
+                </Text>
                 <Text className="text-xs font-sans-medium text-gray-400 text-center leading-5">
-                  Reviews from your customers will appear here once they complete bookings.
+                  {t('customer.noReviewsYetDesc')}
                 </Text>
               </View>
             }

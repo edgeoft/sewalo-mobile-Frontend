@@ -38,7 +38,7 @@ export default function RateAppScreen() {
         message: t('settings.thankYouForRating'),
         actions: [
           {
-            text: 'Return',
+            text: t('settings.return'),
             onPress: () => {
               setRating(0);
               setFeedbackText('');

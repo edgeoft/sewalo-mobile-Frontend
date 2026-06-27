@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, Pressable, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -50,6 +51,7 @@ function ReviewCard({
   onEdit: (r: Rating) => void;
   onDelete: (r: Rating) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
       <View className="flex-row items-start justify-between">
@@ -79,14 +81,14 @@ function ReviewCard({
           className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-indigo-50"
         >
           <Feather name="edit-2" size={13} color="#485aff" />
-          <Text className="text-xs font-sans-semibold text-primary ml-1.5">Edit</Text>
+          <Text className="text-xs font-sans-semibold text-primary ml-1.5">{t('customer.edit')}</Text>
         </Pressable>
         <Pressable
           onPress={() => onDelete(rating)}
           className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-red-50"
         >
           <Feather name="trash-2" size={13} color="#ef4444" />
-          <Text className="text-xs font-sans-semibold text-red-500 ml-1.5">Delete</Text>
+          <Text className="text-xs font-sans-semibold text-red-500 ml-1.5">{t('customer.delete')}</Text>
         </Pressable>
       </View>
     </View>
@@ -95,6 +97,7 @@ function ReviewCard({
 
 export default function MyReviewsScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const [editingRating, setEditingRating] = useState<Rating | null>(null);
 
   const { data: ratingsData, isLoading } = useGetMyRatingsQuery({ limit: 50 });
@@ -106,16 +109,16 @@ export default function MyReviewsScreen() {
 
   const handleDeleteReview = (rating: Rating) => {
     showError({
-      title: 'Delete Review',
-      message: 'Are you sure you want to delete this review? This action cannot be undone.',
+      title: t('customer.deleteReview'),
+      message: t('customer.deleteReviewConfirm'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => {
             deleteRating.mutate(rating.id, {
-              onSuccess: () => showSnackbar({ message: 'Review deleted successfully.', type: 'success' }),
+              onSuccess: () => showSnackbar({ message: t('customer.reviewDeleted'), type: 'success' }),
             });
           },
         },
@@ -136,8 +139,8 @@ export default function MyReviewsScreen() {
         }}
       >
         <SectionHeader
-          title="My Reviews"
-          description="Manage and view the reviews you have submitted for your service bookings."
+          title={t('customer.myReviewsTitle')}
+          description={t('customer.myReviewsDesc')}
           className="mb-6"
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
@@ -152,16 +155,18 @@ export default function MyReviewsScreen() {
             keyExtractor={(item) => item.id}
             initialVisibleCount={4}
             pageSize={4}
-            loadMoreLabel="Load More Reviews"
-            endReachedLabel="No more reviews"
+            loadMoreLabel={t('customer.loadMoreReviews')}
+            endReachedLabel={t('customer.noMoreReviews')}
             emptyContent={
               <View className="items-center justify-center py-12 px-6">
                 <View className="h-16 w-16 bg-gray-100 rounded-full items-center justify-center mb-4">
                   <Feather name="star" size={28} color="#94a3b8" />
                 </View>
-                <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">No reviews yet</Text>
+                <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">
+                  {t('customer.noReviewsYet')}
+                </Text>
                 <Text className="text-xs font-sans-medium text-gray-400 text-center leading-5">
-                  Once you complete a booking, you can share your feedback and see it here.
+                  {t('customer.noReviewsYetDesc')}
                 </Text>
               </View>
             }

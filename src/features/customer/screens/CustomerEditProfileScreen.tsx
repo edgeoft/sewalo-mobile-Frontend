@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -17,6 +18,7 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { user, isLoading } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
@@ -61,7 +63,7 @@ export default function CustomerEditProfileScreen() {
       }
       updateProfile(payload, {
         onSuccess: () => {
-          showSnackbar({ message: 'Profile updated successfully!', type: 'success' });
+          showSnackbar({ message: t('customer.profileUpdated'), type: 'success' });
           router.back();
         },
       });
@@ -99,8 +101,8 @@ export default function CustomerEditProfileScreen() {
           }}
         >
           <SectionHeader
-            title="Edit Profile"
-            description="Manage your account profile information."
+            title={t('customer.editProfileTitle')}
+            description={t('customer.editProfileDesc')}
             className="mb-6"
             titleClassName="text-2xl text-gray-950 font-sans-extrabold"
           />

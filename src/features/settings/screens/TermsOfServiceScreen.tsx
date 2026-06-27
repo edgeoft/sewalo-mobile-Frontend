@@ -130,7 +130,7 @@ export default function TermsOfServiceScreen() {
         </View>
 
         <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-3">
-          If you have questions regarding these terms, please contact us at terms@sewalo.com
+          {t('settings.termsContact')}
         </Text>
       </ContentLayout>
     </View>

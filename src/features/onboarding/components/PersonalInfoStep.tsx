@@ -14,6 +14,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
@@ -70,6 +71,7 @@ export default function PersonalInfoStep({
   loading = false,
   stepper,
 }: PersonalInfoStepProps) {
+  const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -85,7 +87,7 @@ export default function PersonalInfoStep({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        showSnackbar({ message: 'We need access to your photo library to select a profile picture.', type: 'error' });
+        showSnackbar({ message: t('onboarding.permissionPhotoLibrary'), type: 'error' });
         return;
       }
 
@@ -101,7 +103,7 @@ export default function PersonalInfoStep({
         setValue('avatar', pickedUri, { shouldValidate: true });
       }
     } catch {
-      showSnackbar({ message: 'Something went wrong while picking the avatar.', type: 'error' });
+      showSnackbar({ message: t('onboarding.photoPickerError'), type: 'error' });
     }
   };
 
@@ -164,9 +166,9 @@ export default function PersonalInfoStep({
           className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
         >
           <View className="mb-4">
-            <Text className="text-base font-sans-bold text-gray-950 mb-1">Personal Details</Text>
+            <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('onboarding.personalDetails')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-              Please finalize your basic details below to get started.
+              {t('onboarding.personalDetailsDesc')}
             </Text>
           </View>
 
@@ -199,8 +201,8 @@ export default function PersonalInfoStep({
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Email Address *"
-                  placeholder="Enter your email address"
+                  label={t('onboarding.emailAddress')}
+                  placeholder={t('onboarding.enterEmail')}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -214,7 +216,9 @@ export default function PersonalInfoStep({
 
             {/* Location */}
             <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Location (City/Address) *</Text>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+                {t('onboarding.locationCityAddress')}
+              </Text>
               <Controller
                 control={control}
                 name="location"
@@ -225,7 +229,7 @@ export default function PersonalInfoStep({
                       value={value}
                       lat={formValues.lat || 27.700769}
                       lng={formValues.lng || 85.30014}
-                      placeholder="Select your location in the map..."
+                      placeholder={t('onboarding.selectLocationMap')}
                       onChange={(data) => {
                         onChange(data.address);
                         setValue('lat', data.lat);
@@ -243,7 +247,9 @@ export default function PersonalInfoStep({
 
             {/* Date of Birth */}
             <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Date of Birth *</Text>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+                {t('onboarding.dateOfBirth')}
+              </Text>
               <Pressable
                 onPress={openDatePicker}
                 className={`form-input-container form-input-container-single justify-between ${
@@ -259,7 +265,7 @@ export default function PersonalInfoStep({
                 }}
               >
                 <Text className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-[#898f8f]'}`}>
-                  {watchDateOfBirth ? watchDateOfBirth : 'Select your birthday'}
+                  {watchDateOfBirth ? watchDateOfBirth : t('onboarding.selectBirthday')}
                 </Text>
                 <Feather name="calendar" size={16} color="#898f8f" />
               </Pressable>
@@ -272,7 +278,9 @@ export default function PersonalInfoStep({
 
             {/* Languages */}
             <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Languages *</Text>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+                {t('onboarding.languages')}
+              </Text>
               <Pressable
                 onPress={() => setLangModalVisible(true)}
                 className={`form-input-container form-input-container-single justify-between ${
@@ -291,7 +299,7 @@ export default function PersonalInfoStep({
                   numberOfLines={1}
                   className={`text-sm flex-1 ${watchLanguages.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
                 >
-                  {watchLanguages.length > 0 ? watchLanguages.join(', ') : 'Select languages you speak'}
+                  {watchLanguages.length > 0 ? watchLanguages.join(', ') : t('onboarding.selectLanguages')}
                 </Text>
                 <Feather name="chevron-down" size={16} color="#898f8f" />
               </Pressable>
@@ -318,7 +326,7 @@ export default function PersonalInfoStep({
         }}
       >
         <Button
-          title="Save"
+          title={t('onboarding.save')}
           onPress={onNext}
           loading={loading}
           variant="primary"
@@ -343,7 +351,7 @@ export default function PersonalInfoStep({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Languages</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('onboarding.languagesModalTitle')}</Text>
               <Pressable
                 onPress={() => setLangModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -352,7 +360,7 @@ export default function PersonalInfoStep({
               </Pressable>
             </View>
 
-            <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose the languages you can speak</Text>
+            <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('onboarding.chooseLanguages')}</Text>
 
             <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
               <View className="gap-y-2.5 pb-4">
@@ -391,7 +399,7 @@ export default function PersonalInfoStep({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Select Birthday</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('onboarding.selectBirthdayTitle')}</Text>
               <Pressable
                 onPress={() => setDobModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -403,7 +411,7 @@ export default function PersonalInfoStep({
             <View className="flex-row justify-between mb-6 gap-x-2">
               {/* Day Selector */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Day</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('onboarding.day')}</Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -427,7 +435,9 @@ export default function PersonalInfoStep({
 
               {/* Month Selector */}
               <View className="flex-[1.5]">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Month</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('onboarding.month')}
+                </Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -451,7 +461,9 @@ export default function PersonalInfoStep({
 
               {/* Year Selector */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Year</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('onboarding.year')}
+                </Text>
                 <ScrollView
                   style={{ height: 150 }}
                   showsVerticalScrollIndicator={false}
@@ -474,7 +486,12 @@ export default function PersonalInfoStep({
               </View>
             </View>
 
-            <Button title="Confirm Date" onPress={handleConfirmDate} variant="primary" className="w-full" />
+            <Button
+              title={t('onboarding.confirmDate')}
+              onPress={handleConfirmDate}
+              variant="primary"
+              className="w-full"
+            />
           </View>
         </View>
       </Modal>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -29,6 +30,7 @@ export default function AvailabilityStep({
   onNext,
   stepper,
 }: AvailabilityStepProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<'start' | 'end'>('start');
@@ -82,21 +84,27 @@ export default function AvailabilityStep({
         {stepper}
         <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
           <View className="mb-4">
-            <Text className="text-base font-sans-bold text-gray-950 mb-1">Set Working Hours</Text>
+            <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('onboarding.setWorkingHours')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-              Specify the days and times you are available to receive client bookings.
+              {t('onboarding.setWorkingHoursDesc')}
             </Text>
           </View>
 
           <View className="gap-y-5">
             {/* Working Days */}
             <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Select your working days *</Text>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">
+                {t('onboarding.selectWorkingDays')}
+              </Text>
               <View className="gap-y-2">
                 {[
-                  { id: 'everyday', label: 'Everyday', description: 'Available seven days a week' },
-                  { id: 'sunday_friday', label: 'Sunday - Friday', description: 'Standard weekdays availability' },
-                  { id: 'weekend', label: 'Weekend (Sat)', description: 'Available only on Saturdays' },
+                  { id: 'everyday', label: t('onboarding.everyday'), description: t('onboarding.everydayDesc') },
+                  {
+                    id: 'sunday_friday',
+                    label: t('onboarding.sundayFriday'),
+                    description: t('onboarding.sundayFridayDesc'),
+                  },
+                  { id: 'weekend', label: t('onboarding.weekend'), description: t('onboarding.weekendDesc') },
                 ].map((day) => {
                   const isSelected = workingDays === day.id;
                   return (
@@ -143,7 +151,9 @@ export default function AvailabilityStep({
 
             {/* Working Hours */}
             <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Select your working hours *</Text>
+              <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">
+                {t('onboarding.selectWorkingHours')}
+              </Text>
               <View className="flex-row items-center justify-between gap-x-3">
                 {/* Start Time button */}
                 <Pressable
@@ -198,7 +208,13 @@ export default function AvailabilityStep({
           elevation: 10,
         }}
       >
-        <Button title="Save" onPress={onNext} variant="primary" size="sm" className="w-full bg-primary" />
+        <Button
+          title={t('onboarding.save')}
+          onPress={onNext}
+          variant="primary"
+          size="sm"
+          className="w-full bg-primary"
+        />
       </View>
 
       {/* Time Picker Modal */}
@@ -218,7 +234,7 @@ export default function AvailabilityStep({
 
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-gray-900 text-xl font-sans-extrabold">
-                Select {pickerTarget === 'start' ? 'Start' : 'End'} Time
+                {pickerTarget === 'start' ? t('onboarding.selectStartTime') : t('onboarding.selectEndTime')}
               </Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
@@ -231,7 +247,7 @@ export default function AvailabilityStep({
             <View className="flex-row justify-center gap-x-4 mb-6">
               {/* Hours */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Hour</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.hour')}</Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -255,7 +271,9 @@ export default function AvailabilityStep({
 
               {/* Minutes */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Minute</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('services.minute')}
+                </Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
@@ -279,7 +297,9 @@ export default function AvailabilityStep({
 
               {/* AM/PM */}
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">Period</Text>
+                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                  {t('services.period')}
+                </Text>
                 <View className="border border-gray-100 rounded-lg">
                   {PERIODS.map((p) => (
                     <Pressable
@@ -298,7 +318,12 @@ export default function AvailabilityStep({
               </View>
             </View>
 
-            <Button title="Confirm Time" onPress={handleConfirmTime} variant="primary" className="w-full" />
+            <Button
+              title={t('onboarding.confirmTime')}
+              onPress={handleConfirmTime}
+              variant="primary"
+              className="w-full"
+            />
           </View>
         </View>
       </Modal>

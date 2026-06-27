@@ -72,28 +72,28 @@ export default function AboutAppScreen() {
           </View>
 
           <Text className="text-lg font-sans-extrabold text-gray-900 mb-1">Sewalo</Text>
-          <Text className="text-xs font-sans-semibold text-primary mb-5">Reliable Services, At Your Doorstep</Text>
+          <Text className="text-xs font-sans-semibold text-primary mb-5">{t('settings.tagline')}</Text>
 
           <View className="w-full border-t border-gray-50 pt-4 gap-y-3">
             <View className="flex-row justify-between items-center">
-              <Text className="text-xs font-sans-semibold text-gray-400">Version</Text>
+              <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.version')}</Text>
               <Text className="text-xs font-sans-bold text-gray-800">1.0.0 (Build 47)</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-xs font-sans-semibold text-gray-400">Developer</Text>
+              <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.developer')}</Text>
               <Text className="text-xs font-sans-bold text-gray-800">Edgeoft Pvt. Ltd.</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-xs font-sans-semibold text-gray-400">Website</Text>
+              <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.website')}</Text>
               <Pressable onPress={() => handleOpenLink('https://sewalo.com')} className="active:opacity-50">
                 <Text className="text-xs font-sans-bold text-primary underline">www.sewalo.com</Text>
               </Pressable>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-xs font-sans-semibold text-gray-400">Release Date</Text>
+              <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.releaseDate')}</Text>
               <Text className="text-xs font-sans-bold text-gray-800">June 2026</Text>
             </View>
           </View>
@@ -101,7 +101,7 @@ export default function AboutAppScreen() {
 
         {/* Check Updates Button */}
         <Button
-          title={checking ? 'Checking...' : 'Check for Updates'}
+          title={checking ? t('settings.checking') : t('settings.checkForUpdates')}
           variant="outline"
           loading={checking}
           onPress={handleCheckUpdates}
@@ -112,10 +112,10 @@ export default function AboutAppScreen() {
         {/* Copyright Footer */}
         <View className="mt-8 items-center justify-center">
           <Text className="text-[10px] font-sans-semibold text-gray-400 text-center leading-4">
-            &copy; 2026 Edgeoft Pvt. Ltd. All rights reserved.
+            {t('settings.copyright')}
           </Text>
           <Text className="text-[10px] font-sans-medium text-gray-450 text-center mt-1 leading-4">
-            Made with love in Kathmandu, Nepal.
+            {t('settings.madeWithLove')}
           </Text>
         </View>
       </ContentLayout>

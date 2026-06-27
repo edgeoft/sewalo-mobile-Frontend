@@ -93,14 +93,11 @@ export default function ContactSupportScreen() {
       {
         onSuccess: (res) => {
           showSnackbar({
-            message:
-              'Thank you, ' +
-              data.fullName +
-              '! Your message has been received. Ticket ID: #SWL-' +
-              (res.data?.id || Math.floor(100000 + Math.random() * 900000)) +
-              '.\n\nOur support team will respond to you via email at ' +
-              data.email +
-              ' within 2-4 hours.',
+            message: t('settings.ticketCreated', {
+              name: data.fullName,
+              ticketId: '#SWL-' + (res.data?.id || Math.floor(100000 + Math.random() * 900000)),
+              email: data.email,
+            }),
             type: 'success',
             duration: 5000,
           });
@@ -109,7 +106,7 @@ export default function ContactSupportScreen() {
         },
         onError: (error) => {
           showSnackbar({
-            message: error.message || 'Failed to submit contact request. Please try again.',
+            message: error.message || t('settings.failedToSubmitContact'),
             type: 'error',
           });
         },
@@ -313,9 +310,7 @@ export default function ContactSupportScreen() {
 
         {/* Support hours notice */}
         <View className="mt-1 items-center justify-center">
-          <Text className="text-[10px] font-sans-medium text-gray-400 text-center">
-            Standard support hours: Sunday - Friday, 9:00 AM - 6:00 PM (NPT)
-          </Text>
+          <Text className="text-[10px] font-sans-medium text-gray-400 text-center">{t('settings.supportHours')}</Text>
         </View>
       </ContentLayout>
     </View>

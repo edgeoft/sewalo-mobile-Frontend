@@ -68,7 +68,7 @@ export default function ProviderServicesScreen() {
   const offerings =
     service?.service_offerings?.map((offering) => ({
       id: offering.id,
-      title: offering.sub_category?.name || 'Service Offering',
+      title: offering.sub_category?.name || t('provider.serviceOffering'),
       price: `Rs. ${offering.price}`,
       duration: `${offering.duration} ${offering.duration_unit || 'hrs'}`,
     })) || [];
@@ -78,7 +78,7 @@ export default function ProviderServicesScreen() {
     service?.service_packages?.map((pkg) => ({
       id: pkg.id,
       title: pkg.name,
-      description: pkg.description || 'Custom curated packages to fit all your needs and requirements.',
+      description: pkg.description || t('provider.customPackagesDesc'),
       price: `Rs. ${pkg.price}`,
     })) || [];
 
@@ -130,27 +130,37 @@ export default function ProviderServicesScreen() {
                     <Text className="text-xl font-sans-extrabold text-gray-900 leading-7">{service.name}</Text>
                     {service.provider?.status === USER_STATUSES.Verified && (
                       <View className="rounded-full bg-emerald-50 border border-emerald-200/50 px-2 py-0.5 self-start">
-                        <Text className="text-[8px] font-sans-bold text-emerald-700 uppercase">Verified</Text>
+                        <Text className="text-[8px] font-sans-bold text-emerald-700 uppercase">
+                          {t('provider.verified')}
+                        </Text>
                       </View>
                     )}
                     {service.provider?.status === USER_STATUSES.Completed && (
                       <View className="rounded-full bg-amber-50 border border-amber-200/50 px-2 py-0.5 self-start">
-                        <Text className="text-[8px] font-sans-bold text-amber-700 uppercase">Under Review</Text>
+                        <Text className="text-[8px] font-sans-bold text-amber-700 uppercase">
+                          {t('provider.underReview')}
+                        </Text>
                       </View>
                     )}
                     {service.provider?.status === USER_STATUSES.Pending && (
                       <View className="rounded-full bg-gray-50 border border-gray-200/50 px-2 py-0.5 self-start">
-                        <Text className="text-[8px] font-sans-bold text-gray-500 uppercase">Pending</Text>
+                        <Text className="text-[8px] font-sans-bold text-gray-500 uppercase">
+                          {t('provider.pending')}
+                        </Text>
                       </View>
                     )}
                     {service.provider?.status === USER_STATUSES.Rejected && (
                       <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
-                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Rejected</Text>
+                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">
+                          {t('provider.rejected')}
+                        </Text>
                       </View>
                     )}
                     {service.provider?.status === USER_STATUSES.Suspended && (
                       <View className="rounded-full bg-red-50 border border-red-200/50 px-2 py-0.5 self-start">
-                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">Suspended</Text>
+                        <Text className="text-[8px] font-sans-bold text-red-700 uppercase">
+                          {t('provider.suspended')}
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -178,7 +188,7 @@ export default function ProviderServicesScreen() {
             {/* 2. About / Description Card */}
             <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
               <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-2">
-                About the Service
+                {t('provider.aboutService')}
               </Text>
               <Text className="text-xs font-sans-medium text-gray-500 leading-5">{service.description}</Text>
             </View>
@@ -187,7 +197,7 @@ export default function ProviderServicesScreen() {
             {offerings.length > 0 && (
               <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
                 <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
-                  Services Offered
+                  {t('provider.servicesOffered')}
                 </Text>
                 <View className="gap-y-3">
                   {offerings.map((sub, idx) => (
@@ -204,7 +214,7 @@ export default function ProviderServicesScreen() {
                         <View>
                           <Text className="text-xs font-sans-semibold text-gray-700">{sub.title}</Text>
                           <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">
-                            Duration: {sub.duration}
+                            {t('provider.duration')}: {sub.duration}
                           </Text>
                         </View>
                       </View>
@@ -219,7 +229,7 @@ export default function ProviderServicesScreen() {
             {packages.length > 0 && (
               <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
                 <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
-                  Featured Package Deals
+                  {t('provider.featuredPackageDeals')}
                 </Text>
                 <Carousel
                   data={packages}
@@ -238,7 +248,7 @@ export default function ProviderServicesScreen() {
                             {pkg.title}
                           </Text>
                           <View className="bg-primary/10 rounded px-1.5 py-0.5 self-start mt-1">
-                            <Text className="text-[9px] font-sans-bold text-primary">Best Value</Text>
+                            <Text className="text-[9px] font-sans-bold text-primary">{t('provider.bestValue')}</Text>
                           </View>
                         </View>
                         <Text className="text-xs font-sans-bold text-primary">{pkg.price}</Text>
@@ -254,14 +264,16 @@ export default function ProviderServicesScreen() {
             {portfolioPhotos.length > 1 && (
               <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
                 <View className="flex-row items-center justify-between mb-3">
-                  <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider">Work Portfolio</Text>
+                  <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider">
+                    {t('provider.workPortfolio')}
+                  </Text>
                   {service.portfolio_url ? (
                     <Pressable
                       onPress={() => handleOpenPortfolio(service.portfolio_url)}
                       className="flex-row items-center gap-1"
                     >
                       <Feather name="link" size={10} color="#485aff" />
-                      <Text className="text-[10px] font-sans-bold text-primary underline">Website</Text>
+                      <Text className="text-[10px] font-sans-bold text-primary underline">{t('provider.website')}</Text>
                     </Pressable>
                   ) : null}
                 </View>
@@ -284,7 +296,7 @@ export default function ProviderServicesScreen() {
             {/* 6. Service Locations & Availability Card */}
             <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
               <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
-                Service Locations & Availability
+                {t('provider.serviceLocations')}
               </Text>
               <View className="gap-y-3">
                 {locations.map((loc, idx) => (
@@ -307,7 +319,7 @@ export default function ProviderServicesScreen() {
                       </Text>
                     </View>
                     <Text className={`text-[10px] font-sans-bold ${loc.active ? 'text-emerald-600' : 'text-gray-400'}`}>
-                      {loc.active ? 'Available' : 'Not Offered'}
+                      {loc.active ? t('provider.available') : t('provider.notOffered')}
                     </Text>
                   </View>
                 ))}
@@ -317,7 +329,9 @@ export default function ProviderServicesScreen() {
             {/* 7. Hashtags Card */}
             {service.tags && service.tags.length > 0 && (
               <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4">
-                <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">Hashtags</Text>
+                <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
+                  {t('provider.hashtags')}
+                </Text>
                 <View className="flex-row flex-wrap gap-1.5">
                   {service.tags.map((tag, idx) => (
                     <View key={idx} className="bg-indigo-50/50 rounded-full px-3 py-1">

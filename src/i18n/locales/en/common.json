@@ -31,5 +31,6 @@
   "minRead": "{{time}} min read",
   "loadMore": "Load More",
   "allCaughtUp": "You're all caught up",
-  "na": "N/A"
+  "na": "N/A",
+  "copied": "Copied"
 }
