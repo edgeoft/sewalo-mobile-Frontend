@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -12,13 +13,16 @@ import { ROUTES } from '@/constants/routes';
 
 import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
-import { CUSTOMER_ACCOUNT_MENU } from '../constants/accountMenu';
+import { getCustomerAccountMenu } from '../constants/accountMenu';
 import { getImageUrl } from '../../auth/utils/image';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
+  const { t } = useTranslation();
+
+  const menuSections = getCustomerAccountMenu(t);
 
   const handleEditProfile = () => {
     router.push(ROUTES.customer.editProfile);
@@ -104,8 +108,8 @@ export default function CustomerAccountScreen() {
       >
         {/* Title */}
         <SectionHeader
-          title="Account"
-          description="Manage your profile, rewards, and app settings."
+          title={t('customer.accountMenuTitle')}
+          description={t('customer.accountMenuDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -129,13 +133,13 @@ export default function CustomerAccountScreen() {
 
             <View className="ml-4 flex-1">
               <Text className="text-base font-sans-extrabold text-gray-900 leading-5">
-                {user?.name || 'Guest User'}
+                {user?.name || t('customer.guestUser')}
               </Text>
               <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                {user?.email || 'No email provided'}
+                {user?.email || t('customer.noEmail')}
               </Text>
               <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                {user?.phone || 'No phone number'}
+                {user?.phone || t('customer.noPhone')}
               </Text>
             </View>
           </View>
@@ -146,7 +150,7 @@ export default function CustomerAccountScreen() {
 
         {/* 3. Settings Categories (Config Driven) */}
         <View className="gap-y-5">
-          {CUSTOMER_ACCOUNT_MENU.map((section) => (
+          {menuSections.map((section) => (
             <AccountMenuSectionCard
               key={section.title}
               section={section}

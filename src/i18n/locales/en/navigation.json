@@ -29,5 +29,7 @@
   "aboutSewaloSubtitle": "Learn more about the app",
   "language": "Language",
   "logout": "Logout",
+  "account": "Account",
+  "actions": "Actions",
   "drawerSubtitle": "Manage your account, preferences, support and more."
 }

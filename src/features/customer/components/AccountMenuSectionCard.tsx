@@ -11,6 +11,7 @@ export interface AccountMenuItemOption {
 }
 
 export interface AccountMenuSection {
+  id: string;
   title: string;
   items: AccountMenuItemOption[];
 }
@@ -34,7 +35,7 @@ export default function AccountMenuSectionCard({
     elevation: 1,
   };
 
-  const isActionsSection = section.title === 'Actions';
+  const isActionsSection = section.id === 'actions';
 
   return (
     <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white overflow-hidden">

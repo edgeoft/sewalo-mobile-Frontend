@@ -39,5 +39,18 @@
   "editProfileTitle": "Edit Profile",
   "bookingNotFound": "Booking Not Found",
   "bookingNotFoundDesc": "The booking you are looking for does not exist or has been removed.",
-  "confirmBooking": "Confirm Booking"
+  "confirmBooking": "Confirm Booking",
+  "couponDiscount": "Coupon Discount",
+  "editReview": "Edit Review",
+  "loyaltyDiscount": "Loyalty Discount",
+  "noReferralCode": "No referral code available",
+  "referHeroTitle": "Refer & Earn",
+  "referHeroDesc": "Share your referral link with friends and earn rewards when they book their first service.",
+  "serviceWork": "Service Work",
+  "writeReview": "Write a Review",
+  "yourReferralLink": "Your Referral Link",
+  "accountMenuDesc": "Manage your profile, rewards, and app settings.",
+  "guestUser": "Guest User",
+  "noEmail": "No email provided",
+  "noPhone": "No phone number"
 }

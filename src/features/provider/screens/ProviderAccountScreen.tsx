@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Image, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -11,13 +12,16 @@ import { useAuth } from '@/providers/AuthProvider';
 
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import { Feather } from '@expo/vector-icons';
-import { PROVIDER_ACCOUNT_MENU } from '../constants/accountMenu';
+import { getProviderAccountMenu } from '../constants/accountMenu';
 import { getImageUrl } from '../../auth/utils/image';
 
 export default function ProviderAccountScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
+  const { t } = useTranslation();
+
+  const menuSections = getProviderAccountMenu(t);
 
   const handleEditProfile = () => {
     router.push(ROUTES.provider.editProfile);
@@ -103,8 +107,8 @@ export default function ProviderAccountScreen() {
       >
         {/* Title */}
         <SectionHeader
-          title="Account"
-          description="Manage your business profile, payouts, and preferences."
+          title={t('provider.accountMenuTitle')}
+          description={t('provider.accountMenuDesc')}
           className="mb-5"
           titleClassName="text-2xl"
         />
@@ -131,12 +135,14 @@ export default function ProviderAccountScreen() {
             </View>
 
             <View className="ml-4 flex-1">
-              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">{user?.name || 'Partner'}</Text>
-              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                {user?.email || 'No email provided'}
+              <Text className="text-base font-sans-extrabold text-gray-900 leading-5">
+                {user?.name || t('provider.partner')}
               </Text>
               <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-                {user?.phone || 'No phone number'}
+                {user?.email || t('provider.noEmail')}
+              </Text>
+              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                {user?.phone || t('provider.noPhone')}
               </Text>
 
               {/* Rating */}
@@ -155,7 +161,7 @@ export default function ProviderAccountScreen() {
 
         {/* 2. Settings Categories (Config Driven) */}
         <View className="gap-y-5">
-          {PROVIDER_ACCOUNT_MENU.map((section) => (
+          {menuSections.map((section) => (
             <AccountMenuSectionCard
               key={section.title}
               section={section}

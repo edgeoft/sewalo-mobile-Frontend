@@ -30,5 +30,6 @@
   "chooseLanguage": "Choose your preferred app language",
   "minRead": "{{time}} min read",
   "loadMore": "Load More",
-  "allCaughtUp": "You're all caught up"
+  "allCaughtUp": "You're all caught up",
+  "na": "N/A"
 }

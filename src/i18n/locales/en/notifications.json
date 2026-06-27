@@ -15,5 +15,6 @@
   "emptyDescription": "You don't have any notifications at the moment. We'll notify you when something arrives.",
   "minAgo": "min ago",
   "hAgo": "h ago",
-  "dAgo": "d ago"
+  "dAgo": "d ago",
+  "delete": "Delete"
 }
