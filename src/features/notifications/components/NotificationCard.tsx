@@ -60,15 +60,14 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
 
   return (
     <View
-      className={`border rounded-lg p-4 mb-3 ${
-        isUnread ? 'bg-primary/5 border-primary/10' : 'bg-white border-gray-200/80'
-      }`}
+      className={`border rounded-lg p-4 mb-3 ${isUnread ? 'border-primary/10' : 'bg-white border-gray-200/80'}`}
       style={{
+        backgroundColor: isUnread ? '#f0f1ff' : '#ffffff',
         shadowColor: '#0f172a',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.02,
         shadowRadius: 6,
-        elevation: 1,
+        elevation: 0,
       }}
     >
       <Pressable
