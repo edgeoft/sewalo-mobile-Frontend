@@ -14,7 +14,7 @@ import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
-import { useGetMyBookingsQuery } from '@/api';
+import { useGetBookingsQuery } from '@/api';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 export default function CustomerBookingsScreen() {
@@ -26,7 +26,7 @@ export default function CustomerBookingsScreen() {
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
 
   const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
-  const { data: bookingsData, isLoading } = useGetMyBookingsQuery({ status: statusParam, limit: 50 });
+  const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, page: 1, limit: 50 });
 
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
@@ -170,7 +170,12 @@ export default function CustomerBookingsScreen() {
                 name={booking.provider?.name || 'Service Provider'}
                 serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
                 location={formatLocation(booking)}
-                rating={Number(booking.service?.average_rating || booking.provider?.avg_rating || 0).toFixed(1)}
+                rating={Number(
+                  booking.service?.average_rating ||
+                    booking.provider?.average_rating ||
+                    booking.provider?.avg_rating ||
+                    0,
+                ).toFixed(1)}
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}

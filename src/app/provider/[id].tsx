@@ -6,11 +6,22 @@ import { Feather } from '@expo/vector-icons';
 import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsScreen';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
-import { useGetProviderDetailsQuery } from '@/api';
-import { ProviderDetail, ProviderDetailsResponse } from '@/types';
+import { useGetProviderDetailsQuery, useGetProviderRatingsQuery } from '@/api';
+import { type ProviderDetail, type ProviderDetailsResponse, type ReviewItem, type Rating } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
+
+function mapRatingToReviewItem(rating: Rating): ReviewItem {
+  return {
+    id: rating.id,
+    customerName: rating.user?.name || 'Customer',
+    customerAvatar: getImageUrl(rating.user?.avatar) || FALLBACKS.avatar,
+    rating: rating.rate,
+    date: rating.created_at,
+    comment: rating.review,
+  };
+}
 
 export default function DynamicProviderDetailRoute() {
   const { t } = useTranslation();
@@ -20,16 +31,20 @@ export default function DynamicProviderDetailRoute() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const providerSlug = slug || '';
 
-  // Fetch real provider details from API using slug
-  const { data: apiData, isLoading } = useGetProviderDetailsQuery(providerSlug, {
+  const { data: apiData, isLoading: isLoadingProvider } = useGetProviderDetailsQuery(providerSlug, {
     enabled: isLoggedIn,
+  });
+
+  const providerId = apiData?.provider?.id || '';
+  const { data: ratingsData } = useGetProviderRatingsQuery(providerId, {
+    enabled: isLoggedIn && !!providerId,
   });
 
   if (!isLoggedIn) {
     return <Redirect href={ROUTES.auth.signin} />;
   }
 
-  if (isLoading) {
+  if (isLoadingProvider) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
         <ActivityIndicator size="large" color="#485aff" />
@@ -37,7 +52,7 @@ export default function DynamicProviderDetailRoute() {
     );
   }
 
-  const mapApiToProviderDetail = (data: ProviderDetailsResponse): ProviderDetail | null => {
+  const mapApiToProviderDetail = (data: ProviderDetailsResponse, reviews: ReviewItem[]): ProviderDetail | null => {
     if (!data || !data.provider) return null;
     const { provider, services } = data;
     const firstService = services?.[0];
@@ -96,6 +111,10 @@ export default function DynamicProviderDetailRoute() {
         title: t('services.project', { number: idx + 1 }),
       })) || [];
 
+    const providerRating =
+      provider.average_rating || provider.avg_rating?.toString() || firstService?.average_rating || '0';
+    const providerReviewCount = provider.total_ratings || firstService?.total_ratings || reviews.length || 0;
+
     return {
       id: provider.id,
       serviceId: firstService?.id,
@@ -106,10 +125,10 @@ export default function DynamicProviderDetailRoute() {
       serviceLabel: firstService?.category?.name || t('services.services'),
       location: formatLocation(provider),
       fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || t('home.nepal'),
-      rating: Number(firstService?.average_rating || provider.avg_rating || 0).toFixed(1),
-      reviewCount: firstService?.total_ratings || provider.profile_views || 0,
+      rating: Number(providerRating).toFixed(1),
+      reviewCount: providerReviewCount,
       startingPrice: getStartingPrice(firstService?.service_offerings),
-      ordersCompleted: `${firstService?.total_ratings || 0} ${t('home.orders')}`,
+      ordersCompleted: `${providerReviewCount} ${t('home.orders')}`,
       specialPackagesCount: firstService?.service_packages?.length || 0,
       availability: provider.availability || t('services.always'),
       availabilityLabel: provider.availability || t('services.always'),
@@ -157,11 +176,12 @@ export default function DynamicProviderDetailRoute() {
       specialPackage,
       individualServices,
       portfolio,
-      reviews: [],
+      reviews,
     };
   };
 
-  const realProvider = apiData ? mapApiToProviderDetail(apiData) : null;
+  const reviews: ReviewItem[] = ratingsData?.data?.map(mapRatingToReviewItem) || [];
+  const realProvider = apiData ? mapApiToProviderDetail(apiData, reviews) : null;
 
   if (!realProvider) {
     return (

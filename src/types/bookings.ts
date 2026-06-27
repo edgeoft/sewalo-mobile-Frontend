@@ -251,6 +251,10 @@ export interface Rating {
 
 export type GetMyRatingsResponse = PaginatedResponse<Rating>;
 
+export type GetProviderRatingResponse = {
+  data: Rating[];
+};
+
 export interface GetMyRatingsParams {
   page?: number;
   limit?: number;

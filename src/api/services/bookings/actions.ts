@@ -18,6 +18,7 @@ import type {
   Rating,
   GetMyRatingsResponse,
   GetMyRatingsParams,
+  GetProviderRatingResponse,
 } from '@/types';
 
 // Booking Actions
@@ -103,6 +104,10 @@ export const createRatingAction = async (payload: CreateRatingPayload): Promise<
 
 export const getMyRatingsAction = async (params: GetMyRatingsParams = {}): Promise<GetMyRatingsResponse> => {
   return internalClient.get('/ratings/my-ratings', { params });
+};
+
+export const getProviderRatingsAction = async (providerId: string): Promise<GetProviderRatingResponse> => {
+  return internalClient.get<GetProviderRatingResponse>(`/ratings/provider/${providerId}`);
 };
 
 export const updateRatingAction = async ({ id, ...payload }: UpdateRatingPayload): Promise<Rating> => {

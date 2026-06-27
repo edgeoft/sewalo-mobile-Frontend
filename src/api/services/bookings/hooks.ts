@@ -13,6 +13,7 @@ import {
   confirmPaymentAction,
   createRatingAction,
   getMyRatingsAction,
+  getProviderRatingsAction,
   updateRatingAction,
   deleteRatingAction,
 } from './actions';
@@ -32,6 +33,7 @@ import type {
   Rating,
   GetMyRatingsResponse,
   GetMyRatingsParams,
+  GetProviderRatingResponse,
 } from '@/types';
 
 // Booking Hooks
@@ -175,6 +177,17 @@ export const useCreateRating = () => {
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['my-ratings'] });
     },
+  });
+};
+
+export const useGetProviderRatingsQuery = (providerId: string) => {
+  return useQuery<GetProviderRatingResponse, Error>({
+    queryKey: ['provider-ratings', providerId],
+    queryFn: () => getProviderRatingsAction(providerId),
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    enabled: !!providerId,
   });
 };
 

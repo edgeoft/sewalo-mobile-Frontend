@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import { Image, View, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -208,9 +208,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           {/* Customer Section */}
           <View className="flex-row items-center">
             {customerAvatar ? (
-              <View className="h-12 w-12 rounded-full bg-gray-100 overflow-hidden">
-                <Feather name="user" size={24} color="#cbd5e1" style={{ lineHeight: 48, textAlign: 'center' }} />
-              </View>
+              <Image source={{ uri: customerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
                 <Feather name="user" size={20} color="#485aff" />

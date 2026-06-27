@@ -72,7 +72,9 @@ export interface FavoriteProvider {
   name: string;
   slug: string;
   avatar: string | null;
+  average_rating?: string;
   avg_rating: number | null;
+  total_ratings?: number;
   profile_views: number | null;
   city: string | null;
   address: string | null;

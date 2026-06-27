@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
+import { Image, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -210,7 +210,9 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || '';
   const categoryName = booking.service?.category?.name || '';
-  const providerRating = Number(booking.service?.average_rating || booking.provider?.avg_rating || 0).toFixed(1);
+  const providerRating = Number(
+    booking.service?.average_rating || booking.provider?.average_rating || booking.provider?.avg_rating || 0,
+  ).toFixed(1);
   const serviceDate = formatDate(booking.service_date || '');
   const startTime = formatTime(booking.start_time || '');
   const location = booking.address || 'Kathmandu Metropolitan City';
@@ -271,9 +273,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           {/* Provider Section */}
           <View className="flex-row items-center">
             {providerAvatar ? (
-              <View className="h-12 w-12 rounded-full bg-gray-100 overflow-hidden">
-                <Feather name="user" size={24} color="#cbd5e1" style={{ lineHeight: 48, textAlign: 'center' }} />
-              </View>
+              <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
                 <Feather name="user" size={20} color="#485aff" />

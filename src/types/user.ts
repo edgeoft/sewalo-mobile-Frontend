@@ -52,6 +52,8 @@ export interface UserProfile {
   end_time: string | null;
   profile_views: number | null;
   avg_rating: number | null;
+  average_rating?: string;
+  total_ratings?: number;
   profile_verified_at: string | null;
   last_login_at: string | null;
   certificates: string[] | null;

@@ -8,7 +8,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useCategoriesQuery, useGetMyBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
+import { useCategoriesQuery, useGetBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
 import { useMemo } from 'react';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { UserProfile } from '@/types';
@@ -19,7 +19,7 @@ export default function CustomerHomeScreen() {
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: categoriesData } = useCategoriesQuery('homepage');
-  const { data: bookingsData } = useGetMyBookingsQuery({ limit: 5 });
+  const { data: bookingsData } = useGetBookingsQuery({ page: 1, limit: 5 });
   const { data: featuredBlogData } = useGetFeaturedBlogQuery();
 
   const categories = useMemo(() => {
@@ -58,12 +58,12 @@ export default function CustomerHomeScreen() {
         serviceLabel: service?.category?.name || t('home.service'),
         location: formatLocation(provider),
         ordersCompleted: service ? `${service.total_ratings || 0} ${t('home.ordersCompleted')}` : '',
-        rating: provider?.avg_rating?.toString() || '0',
+        rating: provider?.average_rating || provider?.avg_rating?.toString() || '0',
         bookedPrice,
         status: b.status,
       };
     });
-  }, [bookingsData]);
+  }, [bookingsData, t]);
 
   const featuredBlog = featuredBlogData?.data;
 

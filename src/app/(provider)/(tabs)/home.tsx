@@ -10,6 +10,8 @@ import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { useProviderDashboardQuery, useUpdateBooking, useGetFeaturedBlogQuery } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { useMemo } from 'react';
 
 export default function ProviderHomeScreen() {
   const { t } = useTranslation();
@@ -48,6 +50,15 @@ export default function ProviderHomeScreen() {
       },
     );
   };
+
+  const recentOrders = useMemo(() => {
+    return (
+      dashboardData?.recentBookings?.map((order) => ({
+        ...order,
+        customerAvatar: getImageUrl(order.customerAvatar) || FALLBACKS.avatar,
+      })) ?? []
+    );
+  }, [dashboardData?.recentBookings]);
 
   if (isLoading) {
     return (
@@ -102,7 +113,7 @@ export default function ProviderHomeScreen() {
           <RecentOrdersSection
             title={t('home.recentOrders')}
             actionLabel={t('common.viewAll')}
-            orders={dashboardData?.recentBookings || []}
+            orders={recentOrders}
             onActionPress={() => router.push(ROUTES.provider.bookings)}
             onOrderPress={(order) => router.push(ROUTES.provider.bookingDetail(order.id))}
             onAcceptOrder={handleAcceptOrder}
