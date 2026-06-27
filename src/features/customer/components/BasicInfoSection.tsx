@@ -236,7 +236,6 @@ export default function BasicInfoSection({
                     includeFontPadding: false,
                     textAlignVertical: 'center',
                     padding: 0,
-                    lineHeight: undefined,
                   }}
                 />
               )}

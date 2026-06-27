@@ -230,7 +230,6 @@ export default function ServiceFormStandout({
                 style={{
                   includeFontPadding: false,
                   textAlignVertical: 'center',
-                  lineHeight: undefined,
                 }}
               />
               <Pressable onPress={handleAddTag} className="pl-3 active:opacity-70">

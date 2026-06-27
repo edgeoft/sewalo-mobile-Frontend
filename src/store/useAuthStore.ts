@@ -1,6 +1,6 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { queryClient } from '@/api/client/query/queryClient';
-import { getProfileAction } from '@/api';
+import { getProfileAction } from '@/api/services/auth/actions';
 import { UserProfile, USER_ROLES, UserRole } from '@/types';
 import { create } from 'zustand';
 

@@ -64,7 +64,6 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
                 includeFontPadding: false,
                 textAlignVertical: 'center',
                 padding: 0,
-                lineHeight: undefined,
               }}
             />
           )}

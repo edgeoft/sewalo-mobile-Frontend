@@ -138,7 +138,7 @@ export default function OtpVerificationScreen() {
               keyboardType="number-pad"
               maxLength={6}
               className="w-full h-full text-center text-xl font-sans-bold text-gray-900 m-0 p-0"
-              style={{ textAlignVertical: 'center', padding: 0, includeFontPadding: false, lineHeight: undefined }}
+              style={{ textAlignVertical: 'center', padding: 0, includeFontPadding: false }}
               selectTextOnFocus
             />
           </View>

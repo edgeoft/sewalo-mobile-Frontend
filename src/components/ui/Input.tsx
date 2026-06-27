@@ -59,7 +59,7 @@ export default function Input({
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholderTextColor="#898f8f"
-          style={[{ includeFontPadding: false, textAlignVertical: 'center', lineHeight: undefined }, inputStyle]}
+          style={[{ includeFontPadding: false, textAlignVertical: 'center' }, inputStyle]}
           className={`form-input-text ${inputClassName}`}
           {...props}
         />
