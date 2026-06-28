@@ -213,5 +213,8 @@
   "category": "Category",
   "service": "Service",
   "total": "Total",
-  "vat": "VAT (13%)"
+  "vat": "VAT (13%)",
+  "accountSetAsPrimary": "Account set as your primary payout method.",
+  "accountAddedSuccess": "Account added successfully!",
+  "endService": "End Service"
 }

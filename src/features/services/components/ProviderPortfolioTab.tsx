@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { FALLBACKS } from '@/utils/image';
 
@@ -12,6 +13,7 @@ interface ProviderPortfolioTabProps {
 }
 
 export default function ProviderPortfolioTab({ portfolio, onImagePress }: ProviderPortfolioTabProps) {
+  const { t } = useTranslation();
   const [erroredIds, setErroredIds] = useState<Set<string>>(new Set());
 
   const handleImageError = (id: string) => {
@@ -23,7 +25,7 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
         <View className="h-16 w-16 bg-gray-50 rounded-full items-center justify-center mb-3">
           <Feather name="image" size={28} color="#94a3b8" />
         </View>
-        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">No work samples uploaded</Text>
+        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('services.noWorkSamples')}</Text>
         <Text className="text-xs font-sans-medium text-gray-400 text-center leading-4 max-w-[240px]">
           This provider hasn&apos;t uploaded any past work or case studies to their portfolio yet.
         </Text>

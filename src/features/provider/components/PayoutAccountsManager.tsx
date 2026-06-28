@@ -73,7 +73,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       {
         onSuccess: () => {
           return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
-            showSnackbar({ message: 'Account set as your primary payout method.', type: 'success' });
+            showSnackbar({ message: t('provider.accountSetAsPrimary'), type: 'success' });
           });
         },
       },
@@ -82,12 +82,12 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
 
   const handleRemove = (id: number) => {
     showError({
-      title: 'Remove Account',
-      message: 'Are you sure you want to remove this account?',
+      title: t('components.removeAccountTitle'),
+      message: t('components.removeAccountConfirm'),
       actions: [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Remove',
+          text: t('common.remove'),
           style: 'destructive',
           onPress: () => {
             deleteAccount(id, {
@@ -115,7 +115,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
             setShowAddForm(false);
             reset();
-            showSnackbar({ message: 'Account added successfully!', type: 'success' });
+            showSnackbar({ message: t('provider.accountAddedSuccess'), type: 'success' });
           });
         },
       },
@@ -163,7 +163,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
             <View className="w-12 h-1.5 bg-gray-200 rounded-full self-center mb-6" />
 
             <View className="flex-row items-center justify-between mb-6">
-              <Text className="text-xl font-sans-extrabold text-gray-900">Add New Account</Text>
+              <Text className="text-xl font-sans-extrabold text-gray-900">{t('components.addNewAccount')}</Text>
               <Pressable
                 disabled={isCreating}
                 onPress={() => {
@@ -181,7 +181,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
 
               <View className="mt-8 mb-4">
                 <Button
-                  title={isCreating ? 'Saving...' : 'Save Account'}
+                  title={isCreating ? t('components.saving') : t('components.saveAccount')}
                   variant="primary"
                   disabled={isCreating}
                   onPress={handleSubmit(handleAddSubmit)}
@@ -193,7 +193,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       </Modal>
 
       {/* Digital Wallets Section */}
-      <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Digital Wallets</Text>
+      <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('components.digitalWallets')}</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
           <View className="items-center justify-center py-8">
@@ -201,7 +201,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           </View>
         ) : wallets.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
-            <Text className="text-xs font-sans-medium text-gray-400">No digital wallets linked yet.</Text>
+            <Text className="text-xs font-sans-medium text-gray-400">{t('components.noDigitalWallets')}</Text>
           </View>
         ) : (
           wallets.map((wallet: FinanceAccount) => {
@@ -222,11 +222,11 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                     <View className="flex-1">
                       <View className="flex-row items-center">
                         <Text className="text-sm font-sans-bold text-gray-900 mr-2">
-                          {wallet.name || 'Digital Wallet'}
+                          {wallet.name || t('provider.digitalWallet')}
                         </Text>
                         {wallet.is_default && (
                           <View className="bg-primary/10 px-2 py-0.5 rounded-full">
-                            <Text className="text-[9px] font-sans-bold text-primary">Primary</Text>
+                            <Text className="text-[9px] font-sans-bold text-primary">{t('common.primary')}</Text>
                           </View>
                         )}
                       </View>
@@ -234,7 +234,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                         {wallet.account_holder_name}
                       </Text>
                       <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
-                        Mobile: {wallet.account_no || 'N/A'}
+                        Mobile: {wallet.account_no || t('common.na')}
                       </Text>
                     </View>
                   </View>
@@ -245,7 +245,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                     onPress={() => handleRemove(wallet.id)}
                     className="px-3 py-1.5 rounded-lg active:bg-red-50"
                   >
-                    <Text className="text-xs font-sans-bold text-red-500">Remove</Text>
+                    <Text className="text-xs font-sans-bold text-red-500">{t('common.remove')}</Text>
                   </Pressable>
 
                   {!wallet.is_default && (
@@ -253,7 +253,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                       onPress={() => handleSetPrimary(wallet.id)}
                       className="border border-primary/20 px-3 py-1.5 rounded-lg active:bg-primary/5"
                     >
-                      <Text className="text-xs font-sans-bold text-primary">Set Primary</Text>
+                      <Text className="text-xs font-sans-bold text-primary">{t('components.setPrimary')}</Text>
                     </Pressable>
                   )}
                 </View>
@@ -264,7 +264,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       </View>
 
       {/* Bank Accounts Section */}
-      <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">Bank Accounts</Text>
+      <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('components.bankAccounts')}</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
           <View className="items-center justify-center py-8">
@@ -272,7 +272,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           </View>
         ) : banks.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
-            <Text className="text-xs font-sans-medium text-gray-400">No bank accounts linked yet.</Text>
+            <Text className="text-xs font-sans-medium text-gray-400">{t('components.noBankAccounts')}</Text>
           </View>
         ) : (
           banks.map((bank: FinanceAccount) => (
@@ -284,10 +284,12 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                   </View>
                   <View className="flex-1">
                     <View className="flex-row items-center">
-                      <Text className="text-sm font-sans-bold text-gray-900 mr-2">{bank.name || 'Bank Account'}</Text>
+                      <Text className="text-sm font-sans-bold text-gray-900 mr-2">
+                        {bank.name || t('provider.bankAccount')}
+                      </Text>
                       {bank.is_default && (
                         <View className="bg-primary/10 px-2 py-0.5 rounded-full">
-                          <Text className="text-[9px] font-sans-bold text-primary">Primary</Text>
+                          <Text className="text-[9px] font-sans-bold text-primary">{t('common.primary')}</Text>
                         </View>
                       )}
                     </View>
@@ -301,7 +303,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
 
               <View className="flex-row justify-end gap-x-2 border-t border-gray-50 mt-4 pt-3">
                 <Pressable onPress={() => handleRemove(bank.id)} className="px-3 py-1.5 rounded-lg active:bg-red-50">
-                  <Text className="text-xs font-sans-bold text-red-500">Remove</Text>
+                  <Text className="text-xs font-sans-bold text-red-500">{t('common.remove')}</Text>
                 </Pressable>
 
                 {!bank.is_default && (
@@ -309,7 +311,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                     onPress={() => handleSetPrimary(bank.id)}
                     className="border border-primary/20 px-3 py-1.5 rounded-lg active:bg-primary/5"
                   >
-                    <Text className="text-xs font-sans-bold text-primary">Set Primary</Text>
+                    <Text className="text-xs font-sans-bold text-primary">{t('components.setPrimary')}</Text>
                   </Pressable>
                 )}
               </View>
@@ -326,7 +328,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
         >
           <View className="bg-white p-4 rounded-xl items-center shadow-lg">
             <ActivityIndicator size="large" color="#485aff" />
-            <Text className="text-sm font-sans-bold text-gray-800 mt-3">Processing...</Text>
+            <Text className="text-sm font-sans-bold text-gray-800 mt-3">{t('components.processingEllipsis')}</Text>
           </View>
         </View>
       )}

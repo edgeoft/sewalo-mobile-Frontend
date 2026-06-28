@@ -124,7 +124,7 @@ export default function ServiceFormStandout({
       className="rounded-xl border border-gray-200 bg-white p-3.5 mb-6"
     >
       <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Make It Stand Out</Text>
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('services.makeItStandOut')}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
           Add high-quality work samples, search tags, and a link to your portfolio website.
         </Text>
@@ -132,7 +132,7 @@ export default function ServiceFormStandout({
 
       {/* Work Samples Horizontal Scroll */}
       <View className="mb-5">
-        <Text className="text-xs font-sans-bold text-gray-800 mb-2.5 ml-0.5">Work Samples (Max 5)</Text>
+        <Text className="text-xs font-sans-bold text-gray-800 mb-2.5 ml-0.5">{t('services.workSamplesMax')}</Text>
 
         <ScrollView
           horizontal
@@ -175,7 +175,7 @@ export default function ServiceFormStandout({
               <View className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mb-1">
                 <Feather name="plus" size={15} color="#485aff" />
               </View>
-              <Text className="text-[10px] font-sans-semibold text-gray-400">Add Photo</Text>
+              <Text className="text-[10px] font-sans-semibold text-gray-400">{t('common.addPhoto')}</Text>
             </Pressable>
           )}
         </ScrollView>
@@ -183,7 +183,7 @@ export default function ServiceFormStandout({
 
       {/* Tag/Chip Input */}
       <View className="mb-5">
-        <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">Hashtags</Text>
+        <Text className="text-xs font-sans-semibold text-gray-700 mb-2 ml-0.5">{t('services.hashtags')}</Text>
 
         <View className="flex-row flex-wrap gap-2 items-center">
           {/* Tag input chips container */}
@@ -242,7 +242,7 @@ export default function ServiceFormStandout({
               className="border border-dashed border-gray-300 bg-gray-50/50 rounded-full px-3 py-1 flex-row items-center active:bg-gray-100"
             >
               <Feather name="plus" size={11} color="#485aff" className="mr-1" />
-              <Text className="text-xs font-sans-semibold text-primary">Add Tag</Text>
+              <Text className="text-xs font-sans-semibold text-primary">{t('common.addTag')}</Text>
             </Pressable>
           )}
         </View>

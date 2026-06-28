@@ -66,10 +66,11 @@ export default function RatingModal({
         { id: existingRating!.id, rate: rating, review: review.trim(), provider_id: providerId, booking_id: bookingId },
         {
           onSuccess: () => {
-            showSnackbar({ message: 'Your review has been updated successfully.', type: 'success' });
+            showSnackbar({ message: t('customer.reviewUpdated'), type: 'success' });
             onClose();
           },
-          onError: (error) => showSnackbar({ message: error.message || 'Failed to update review.', type: 'error' }),
+          onError: (error) =>
+            showSnackbar({ message: error.message || t('customer.reviewUpdateFailed'), type: 'error' }),
         },
       );
     } else {
@@ -77,10 +78,11 @@ export default function RatingModal({
         { rate: rating, review: review.trim(), provider_id: providerId, booking_id: bookingId },
         {
           onSuccess: () => {
-            showSnackbar({ message: 'Your review has been submitted successfully.', type: 'success' });
+            showSnackbar({ message: t('customer.reviewSubmitted'), type: 'success' });
             onClose();
           },
-          onError: (error) => showSnackbar({ message: error.message || 'Failed to submit review.', type: 'error' }),
+          onError: (error) =>
+            showSnackbar({ message: error.message || t('customer.reviewSubmitFailed'), type: 'error' }),
         },
       );
     }
@@ -114,18 +116,18 @@ export default function RatingModal({
             </View>
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-5">
-              Share your experience with {providerName}&apos;s service
+              {t('customer.shareExperience', { providerName })}
             </Text>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 8 }}>
               <View className="bg-gray-50 rounded-lg border border-gray-200 p-3 mb-5">
-                <Text className="text-xs font-sans-medium text-gray-500 mb-0.5">Service</Text>
+                <Text className="text-xs font-sans-medium text-gray-500 mb-0.5">{t('customer.serviceLabel')}</Text>
                 <Text className="text-sm font-sans-bold text-gray-900">{serviceName}</Text>
                 <Text className="text-xs font-sans-medium text-gray-600">{providerName}</Text>
               </View>
 
               <Text className="text-sm font-sans-bold text-gray-900 mb-3">
-                Rating <Text className="text-red-500">*</Text>
+                {t('customer.ratingLabel')} <Text className="text-red-500">*</Text>
               </Text>
               <View className="flex-row items-center gap-1 mb-5">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -141,16 +143,16 @@ export default function RatingModal({
                 ))}
                 {rating > 0 && (
                   <Text className="ml-2 text-sm font-sans-medium text-gray-700">
-                    {rating} {rating === 1 ? 'star' : 'stars'}
+                    {rating} {rating === 1 ? t('common.star') : t('common.stars')}
                   </Text>
                 )}
               </View>
 
               <Text className="text-sm font-sans-bold text-gray-900 mb-2">
-                Your Review <Text className="text-red-500">*</Text>
+                {t('customer.yourReview')} <Text className="text-red-500">*</Text>
               </Text>
               <TextInput
-                placeholder="Share details of your experience..."
+                placeholder={t('customer.reviewPlaceholder')}
                 placeholderTextColor="#9ca3af"
                 multiline
                 value={review}
@@ -160,7 +162,7 @@ export default function RatingModal({
                 style={{ includeFontPadding: false }}
               />
               <Text className="text-xs font-sans-medium text-gray-500 mt-1.5 ml-1">
-                {review.length} characters (minimum 10)
+                {t('customer.charactersCount', { count: review.length })}
               </Text>
 
               <View className="flex-row gap-3 mt-6">
@@ -168,7 +170,7 @@ export default function RatingModal({
                   onPress={handleClose}
                   className="flex-1 py-3.5 rounded-lg border border-gray-300 items-center active:opacity-70"
                 >
-                  <Text className="text-sm font-sans-semibold text-gray-700">Cancel</Text>
+                  <Text className="text-sm font-sans-semibold text-gray-700">{t('common.cancel')}</Text>
                 </Pressable>
                 <Pressable
                   onPress={handleSubmit}
@@ -179,7 +181,7 @@ export default function RatingModal({
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text className="text-sm font-sans-bold text-white">
-                      {isEditing ? 'Update Review' : 'Submit Review'}
+                      {isEditing ? t('customer.updateReview') : t('customer.submitReview')}
                     </Text>
                   )}
                 </Pressable>

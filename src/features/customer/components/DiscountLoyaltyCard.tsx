@@ -76,7 +76,7 @@ export default function DiscountLoyaltyCard({
               </Text>
             </View>
           ) : (
-            <Text className="form-input-text flex-1 text-[#898f8f]">Select a coupon</Text>
+            <Text className="form-input-text flex-1 text-[#898f8f]">{t('components.selectCoupon')}</Text>
           )}
           <View className="ml-3">
             <Feather name="chevron-down" size={16} color="#9ca3af" />
@@ -85,7 +85,7 @@ export default function DiscountLoyaltyCard({
         {selectedCoupon && (
           <Pressable onPress={() => onSelectCoupon(null)} className="flex-row items-center mt-2">
             <Feather name="x" size={12} color="#ef4444" />
-            <Text className="text-xs font-sans-medium text-red-500 ml-1">Remove coupon</Text>
+            <Text className="text-xs font-sans-medium text-red-500 ml-1">{t('components.removeCoupon')}</Text>
           </Pressable>
         )}
 
@@ -105,7 +105,7 @@ export default function DiscountLoyaltyCard({
               <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
               <View className="flex-row items-center justify-between mb-1">
-                <Text className="text-gray-900 text-xl font-sans-extrabold">Available Coupons</Text>
+                <Text className="text-gray-900 text-xl font-sans-extrabold">{t('components.availableCoupons')}</Text>
                 <Pressable
                   onPress={() => setDropdownOpen(false)}
                   className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -161,14 +161,16 @@ export default function DiscountLoyaltyCard({
       <View>
         <View className="flex-row items-center justify-between mb-1.5">
           <Text className="text-xs font-sans-bold text-gray-950 uppercase tracking-wide ml-0.5">
-            Redeem Loyalty Points
+            {t('components.redeemLoyaltyPoints')}
           </Text>
-          <Text className="text-xs font-sans-bold text-primary">Balance: {loyaltyBalance} pts</Text>
+          <Text className="text-xs font-sans-bold text-primary">
+            {t('components.balancePts', { balance: loyaltyBalance })}
+          </Text>
         </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
             <Input
-              placeholder="Enter points"
+              placeholder={t('components.enterPoints')}
               keyboardType="numeric"
               value={loyaltyPoints}
               onChangeText={onChangeLoyaltyPoints}
@@ -177,7 +179,7 @@ export default function DiscountLoyaltyCard({
             />
           </View>
           <View className="h-12 px-3 border border-gray-200 rounded-lg bg-gray-50 justify-center min-w-[90px]">
-            <Text className="text-xs font-sans-medium text-gray-500 text-center">Value</Text>
+            <Text className="text-xs font-sans-medium text-gray-500 text-center">{t('common.value')}</Text>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">Rs. {pointsValue}</Text>
           </View>
         </View>

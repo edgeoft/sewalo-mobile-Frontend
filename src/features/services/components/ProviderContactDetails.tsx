@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 
 interface ProviderContactDetailsProps {
@@ -21,6 +22,7 @@ export default function ProviderContactDetails({
   onEmailPress,
   onDirectionsPress,
 }: ProviderContactDetailsProps) {
+  const { t } = useTranslation();
   return (
     <View className="bg-white border border-gray-200 rounded-lg p-4 gap-y-3.5" style={styles.shadowSm}>
       {/* Location */}
@@ -29,7 +31,9 @@ export default function ProviderContactDetails({
           <Feather name="map-pin" size={14} color="#485aff" />
         </View>
         <View className="flex-1">
-          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">Location</Text>
+          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+            {t('services.location')}
+          </Text>
           <Text className="text-xs font-sans-medium text-gray-700 leading-4">{fullLocation}</Text>
         </View>
         <Feather name="chevron-right" size={14} color="#94a3b8" />
@@ -43,7 +47,9 @@ export default function ProviderContactDetails({
           <Feather name="phone" size={14} color="#485aff" />
         </View>
         <View className="flex-1">
-          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">Phone</Text>
+          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+            {t('common.phone')}
+          </Text>
           <Text className="text-xs font-sans-bold text-primary">{phone}</Text>
         </View>
         <Feather name="chevron-right" size={14} color="#94a3b8" />
@@ -57,7 +63,9 @@ export default function ProviderContactDetails({
           <Feather name="mail" size={14} color="#485aff" />
         </View>
         <View className="flex-1">
-          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">Email</Text>
+          <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+            {t('common.email')}
+          </Text>
           <Text className="text-xs font-sans-bold text-primary">{email}</Text>
         </View>
         <Feather name="chevron-right" size={14} color="#94a3b8" />

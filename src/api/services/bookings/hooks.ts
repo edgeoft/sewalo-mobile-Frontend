@@ -180,14 +180,14 @@ export const useCreateRating = () => {
   });
 };
 
-export const useGetProviderRatingsQuery = (providerId: string) => {
+export const useGetProviderRatingsQuery = (providerId: string, options?: { enabled?: boolean }) => {
   return useQuery<GetProviderRatingResponse, Error>({
     queryKey: ['provider-ratings', providerId],
     queryFn: () => getProviderRatingsAction(providerId),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
-    enabled: !!providerId,
+    enabled: options?.enabled ?? !!providerId,
   });
 };
 

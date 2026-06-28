@@ -50,7 +50,7 @@ export default function ProviderInvoiceEditorCard({
       <View className="gap-1">
         {/* Editable Base Price */}
         <View className="flex-row items-center justify-between py-1">
-          <Text className="text-xs font-sans-medium text-gray-500">Service Cost</Text>
+          <Text className="text-xs font-sans-medium text-gray-500">{t('services.serviceCost')}</Text>
           <View className="flex-row items-center border border-gray-200 rounded-lg px-2 py-0.5 bg-gray-50">
             <Text className="text-xs font-sans-semibold text-gray-900 mr-1">Rs.</Text>
             <TextInput
@@ -62,13 +62,13 @@ export default function ProviderInvoiceEditorCard({
           </View>
         </View>
 
-        {renderInfoRow('Platform Fee', `Rs. ${platformFee.toLocaleString()}`)}
-        {renderInfoRow('VAT (13%)', `Rs. ${vatValue.toFixed(2)}`)}
+        {renderInfoRow(t('services.platformFee'), `Rs. ${platformFee.toLocaleString()}`)}
+        {renderInfoRow(t('services.vat'), `Rs. ${vatValue.toFixed(2)}`)}
 
         <View className="border-t border-gray-100 my-2" />
 
         <View className="flex-row items-center justify-between py-1">
-          <Text className="text-base font-sans-bold text-gray-900">Total Payable:</Text>
+          <Text className="text-base font-sans-bold text-gray-900">{t('services.totalPayable')}</Text>
           <Text className="text-lg font-sans-bold text-primary">Rs. {total.toFixed(2)}</Text>
         </View>
       </View>

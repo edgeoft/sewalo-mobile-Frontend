@@ -213,5 +213,8 @@
   "category": "कोटी",
   "service": "सेवा",
   "total": "जम्मा",
-  "vat": "VAT (१३%)"
+  "vat": "VAT (१३%)",
+  "accountSetAsPrimary": "खाता तपाईंको प्राथमिक भुक्तानी विधिको रूपमा सेट गरियो।",
+  "accountAddedSuccess": "खाता सफलतापूर्वक थपियो!",
+  "endService": "सेवा समाप्त गर्नुहोस्"
 }

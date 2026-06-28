@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 
@@ -8,6 +9,7 @@ interface BookingProviderCardProps {
 }
 
 export default function BookingProviderCard({ booking }: BookingProviderCardProps) {
+  const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 4 },
@@ -80,7 +82,7 @@ export default function BookingProviderCard({ booking }: BookingProviderCardProp
       {/* Action Button */}
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Call Provider"
+        accessibilityLabel={t('services.callProvider')}
         className="mt-4 py-3 rounded-lg border border-gray-200 bg-white items-center justify-center active:bg-gray-50"
       >
         <Text className="text-sm font-sans-semibold text-gray-900">Call Provider</Text>

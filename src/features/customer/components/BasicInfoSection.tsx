@@ -19,6 +19,7 @@ import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { useTranslation } from 'react-i18next';
 
 export interface BasicInfoFormData {
   fullName: string;
@@ -74,6 +75,7 @@ export default function BasicInfoSection({
   onSave,
   loading = false,
 }: BasicInfoSectionProps) {
+  const { t } = useTranslation();
   const { height } = useWindowDimensions();
   const { showSnackbar } = useSnackbar();
   const [langModalVisible, setLangModalVisible] = useState(false);
@@ -157,10 +159,8 @@ export default function BasicInfoSection({
       className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
     >
       <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Basic Information</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          Update your profile name, location, contact number, and other basic credentials.
-        </Text>
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('components.basicInfo')}</Text>
+        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">{t('components.basicInfoDesc')}</Text>
       </View>
 
       <View className="gap-y-4">
@@ -191,8 +191,8 @@ export default function BasicInfoSection({
           name="fullName"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Full name *"
-              placeholder="Enter your full name"
+              label={`${t('auth.fullName')} *`}
+              placeholder={t('components.enterFullName')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -204,7 +204,7 @@ export default function BasicInfoSection({
 
         {/* Mobile Number (+977 styled like PhoneNumberField) */}
         <View className="w-full">
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Mobile Number *</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{`${t('common.mobileNumber')} *`}</Text>
           <View
             className={`form-input-container form-input-container-single ${
               errors.mobileNumber ? 'form-input-container-error' : ''
@@ -254,8 +254,8 @@ export default function BasicInfoSection({
           name="location"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Location *"
-              placeholder="e.g. Kathmandu, Bagmati Province, Nepal"
+              label={`${t('services.location')} *`}
+              placeholder={t('components.locationPlaceholder')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -281,7 +281,7 @@ export default function BasicInfoSection({
             }}
           >
             <Text className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-[#898f8f]'}`}>
-              {watchDateOfBirth ? watchDateOfBirth : 'Select your birthday'}
+              {watchDateOfBirth ? watchDateOfBirth : t('components.selectBirthdayPlaceholder')}
             </Text>
             <Feather name="calendar" size={16} color="#898f8f" />
           </Pressable>
@@ -289,7 +289,7 @@ export default function BasicInfoSection({
 
         {/* Languages (Optional) */}
         <View>
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Languages (Optional)</Text>
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('components.languages')}</Text>
           <Pressable
             onPress={() => setLangModalVisible(true)}
             className="form-input-container form-input-container-single justify-between border-gray-200"
@@ -306,7 +306,7 @@ export default function BasicInfoSection({
               numberOfLines={1}
               className={`text-sm flex-1 ${watchLanguages.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
             >
-              {watchLanguages.length > 0 ? watchLanguages.join(', ') : 'Select languages you speak'}
+              {watchLanguages.length > 0 ? watchLanguages.join(', ') : t('components.selectLanguagesPlaceholder')}
             </Text>
             <Feather name="chevron-down" size={16} color="#898f8f" />
           </Pressable>
@@ -332,7 +332,13 @@ export default function BasicInfoSection({
         />
 
         {/* Save Profile Button */}
-        <Button title="Save profile" onPress={onSave} loading={loading} variant="primary" className="mt-2 bg-primary" />
+        <Button
+          title={t('common.save')}
+          onPress={onSave}
+          loading={loading}
+          variant="primary"
+          className="mt-2 bg-primary"
+        />
       </View>
 
       {/* Languages Drawer Selector Modal */}

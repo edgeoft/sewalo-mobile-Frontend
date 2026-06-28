@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, Pressable, Modal, SafeAreaView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import LocationMapPicker from './LocationMapPicker';
@@ -74,18 +74,9 @@ export default function LocationSelector({ value, lat, lng, onChange, placeholde
             onCancel={async () => {
               setModalVisible(false);
             }}
-            dom={{ style: styles.domMap }}
           />
         </SafeAreaView>
       </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  domMap: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-});

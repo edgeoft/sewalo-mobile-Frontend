@@ -387,7 +387,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   ) : null}
                   {descriptionText ? (
                     <View className="mt-1">
-                      <Text className="text-xs font-sans-medium text-gray-500 mb-1">Description</Text>
+                      <Text className="text-xs font-sans-medium text-gray-500 mb-1">{t('common.description')}</Text>
                       <Text className="text-xs font-sans-medium text-gray-700 leading-5">{descriptionText}</Text>
                     </View>
                   ) : null}
@@ -460,7 +460,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
                 </View>
               </View>
@@ -487,7 +487,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   </Text>
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
                 </View>
                 {couponDiscountValue > 0 && (
@@ -547,11 +547,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             </View>
             <View className="gap-y-2.5 mb-4">
               <View className="flex-row justify-between">
-                <Text className="text-xs font-sans-medium text-gray-500">Base Price</Text>
+                <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                 <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
               </View>
               <View className="flex-row justify-between">
-                <Text className="text-xs font-sans-medium text-gray-500">VAT (13%)</Text>
+                <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
                 <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
               </View>
             </View>
@@ -570,7 +570,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 {downloadInvoice.isPending ? (
                   <ActivityIndicator size="small" color="#485aff" />
                 ) : (
-                  <Text className="text-sm font-sans-semibold text-primary">Download Invoice</Text>
+                  <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                 )}
               </Pressable>
               {booking.status === BOOKING_STATUSES.Paid && (

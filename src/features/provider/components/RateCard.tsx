@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
@@ -26,19 +27,19 @@ interface RateCardProps {
   onDurationUnitChange: (val: DurationUnitType) => void;
 }
 
-const BILLING_BASIS_OPTIONS: { value: BillingBasisType; label: string }[] = [
-  { value: 'per_hour', label: 'Per Hour' },
-  { value: 'per_day', label: 'Per Day' },
-  { value: 'per_job', label: 'Per Job' },
-  { value: 'per_project', label: 'Per Project' },
-  { value: 'per_session', label: 'Per Session' },
+const BILLING_BASIS_OPTIONS: { value: BillingBasisType; labelKey: string }[] = [
+  { value: 'per_hour', labelKey: 'services.billingBasisPerHour' },
+  { value: 'per_day', labelKey: 'services.billingBasisPerDay' },
+  { value: 'per_job', labelKey: 'services.billingBasisPerJob' },
+  { value: 'per_project', labelKey: 'services.billingBasisPerProject' },
+  { value: 'per_session', labelKey: 'services.billingBasisPerSession' },
 ];
 
-const DURATION_UNIT_OPTIONS: { value: DurationUnitType; label: string }[] = [
-  { value: 'minutes', label: 'Minutes' },
-  { value: 'hours', label: 'Hours' },
-  { value: 'days', label: 'Days' },
-  { value: 'weeks', label: 'Weeks' },
+const DURATION_UNIT_OPTIONS: { value: DurationUnitType; labelKey: string }[] = [
+  { value: 'minutes', labelKey: 'services.durationUnitMinutes' },
+  { value: 'hours', labelKey: 'services.durationUnitHours' },
+  { value: 'days', labelKey: 'services.durationUnitDays' },
+  { value: 'weeks', labelKey: 'services.durationUnitWeeks' },
 ];
 
 export default function RateCard({
@@ -56,6 +57,7 @@ export default function RateCard({
   onDurationUnitChange,
 }: RateCardProps) {
   const { height } = useWindowDimensions();
+  const { t } = useTranslation();
   const [basisModalVisible, setBasisModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
@@ -86,8 +88,8 @@ export default function RateCard({
           {/* Price Input */}
           <View className="flex-1">
             <Input
-              label="Price"
-              placeholder="e.g. 1500"
+              label={t('services.price')}
+              placeholder={t('services.pricePlaceholder')}
               keyboardType="numeric"
               value={priceValue}
               onChangeText={onPriceChange}
@@ -99,7 +101,7 @@ export default function RateCard({
 
           {/* Billing Basis Selector */}
           <View className="flex-1">
-            <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Billing Basis</Text>
+            <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('services.billingBasis')}</Text>
             <Pressable
               onPress={() => setBasisModalVisible(true)}
               className={`form-input-container form-input-container-single justify-between ${
@@ -114,7 +116,7 @@ export default function RateCard({
                 paddingHorizontal: 14,
               }}
             >
-              <Text className="text-sm text-gray-900">{selectedBasis.label}</Text>
+              <Text className="text-sm text-gray-900">{t(selectedBasis.labelKey)}</Text>
               <Feather name="chevron-down" size={15} color="#898f8f" />
             </Pressable>
             {billingBasisError && (
@@ -128,8 +130,8 @@ export default function RateCard({
           {/* Duration Input */}
           <View className="flex-1">
             <Input
-              label="Estimated Duration"
-              placeholder="e.g. 2"
+              label={t('services.estimatedDuration')}
+              placeholder={t('services.durationPlaceholder')}
               keyboardType="numeric"
               value={durationValue}
               onChangeText={onDurationChange}
@@ -154,7 +156,7 @@ export default function RateCard({
                 paddingHorizontal: 14,
               }}
             >
-              <Text className="text-sm text-gray-900">{selectedUnit.label}</Text>
+              <Text className="text-sm text-gray-900">{t(selectedUnit.labelKey)}</Text>
               <Feather name="chevron-down" size={15} color="#898f8f" />
             </Pressable>
           </View>
@@ -177,7 +179,7 @@ export default function RateCard({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Billing Basis</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.billingBasis')}</Text>
               <Pressable
                 onPress={() => setBasisModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -186,7 +188,7 @@ export default function RateCard({
               </Pressable>
             </View>
 
-            <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose how you bill for this service</Text>
+            <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('services.chooseBillingBasis')}</Text>
 
             <View className="gap-y-2.5">
               {BILLING_BASIS_OPTIONS.map((opt) => {
@@ -195,7 +197,7 @@ export default function RateCard({
                   <SelectionOption
                     key={opt.value}
                     onPress={() => handleSelectBasis(opt.value)}
-                    title={opt.label}
+                    title={t(opt.labelKey)}
                     selected={isSelected}
                     indicatorType="radio"
                     gradientColors={['#eef0ff', '#f8fafc']}
@@ -223,7 +225,7 @@ export default function RateCard({
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">Duration Unit</Text>
+              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.durationUnit')}</Text>
               <Pressable
                 onPress={() => setUnitModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
@@ -232,7 +234,7 @@ export default function RateCard({
               </Pressable>
             </View>
 
-            <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose the unit of time</Text>
+            <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('services.chooseDurationUnit')}</Text>
 
             <View className="gap-y-2.5">
               {DURATION_UNIT_OPTIONS.map((opt) => {
@@ -241,7 +243,7 @@ export default function RateCard({
                   <SelectionOption
                     key={opt.value}
                     onPress={() => handleSelectUnit(opt.value)}
-                    title={opt.label}
+                    title={t(opt.labelKey)}
                     selected={isSelected}
                     indicatorType="radio"
                     gradientColors={['#eef0ff', '#f8fafc']}

@@ -16,21 +16,21 @@ import { useUploadFile, useUpdateProfile } from '@/api';
 import { getImageUrl } from '@/features/auth/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { useTranslation } from 'react-i18next';
 
 interface IdentityVerificationScreenProps {
   role: 'customer' | 'provider';
 }
 
 export default function IdentityVerificationScreen({ role }: IdentityVerificationScreenProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
 
   const isProvider = role === 'provider';
-  const pageTitle = isProvider ? 'Verification Documents' : 'Identity Verification';
-  const pageDescription = isProvider
-    ? 'Upload government ID to get verified partner status and build trust with clients.'
-    : 'Verify your identity to increase trust, secure bookings, and unlock account features.';
+  const pageTitle = isProvider ? t('components.verificationDocuments') : t('components.identityVerification');
+  const pageDescription = isProvider ? t('components.verificationDocsDesc') : t('components.identityVerificationDesc');
 
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
@@ -153,7 +153,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         <View style={cardShadow} className="mb-6 p-4 bg-amber-50 rounded-xl flex-row items-start">
           <Feather name="clock" size={16} color="#d97706" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-amber-900">Awaiting Approval</Text>
+            <Text className="text-xs font-sans-bold text-amber-900">{t('components.awaitingApproval')}</Text>
             <Text className="text-[11px] font-sans-medium text-amber-700 mt-0.5 leading-normal">{getMessage()}</Text>
           </View>
         </View>
@@ -165,7 +165,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         <View style={cardShadow} className="mb-6 p-4 bg-emerald-50 rounded-xl flex-row items-start">
           <Feather name="check-circle" size={16} color="#059669" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-emerald-900">Verified</Text>
+            <Text className="text-xs font-sans-bold text-emerald-900">{t('components.verified')}</Text>
             <Text className="text-[11px] font-sans-medium text-emerald-700 mt-0.5 leading-normal">{getMessage()}</Text>
           </View>
         </View>
@@ -177,9 +177,9 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         <View style={cardShadow} className="mb-6 p-4 bg-rose-50 rounded-xl flex-row items-start">
           <Feather name="alert-triangle" size={16} color="#dc2626" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-rose-900">Verification Rejected</Text>
+            <Text className="text-xs font-sans-bold text-rose-900">{t('components.verificationRejected')}</Text>
             <Text className="text-[11px] font-sans-semibold text-rose-700 mt-0.5 leading-normal">
-              Reason: {getMessage()}
+              {t('common.reason')}: {getMessage()}
             </Text>
           </View>
         </View>
@@ -213,7 +213,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
         {/* 2. MAIN DOCUMENT CARD SECTION */}
         <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4 mb-6">
-          <Text className="text-sm font-sans-bold text-gray-950 mb-3.5">Identity Document</Text>
+          <Text className="text-sm font-sans-bold text-gray-950 mb-3.5">{t('services.identityDocument')}</Text>
 
           <View className="gap-y-4">
             <View>
@@ -239,18 +239,22 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                     className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
                   >
                     <Feather name="eye" size={12} color="#ffffff" />
-                    <Text className="text-[10px] font-sans-bold text-white ml-1">View Image</Text>
+                    <Text className="text-[10px] font-sans-bold text-white ml-1">{t('services.viewImage')}</Text>
                   </Pressable>
                   {isVerified && (
                     <View className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-emerald-500 rounded-full flex-row items-center">
                       <Feather name="check" size={12} color="#ffffff" />
-                      <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">Approved</Text>
+                      <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">
+                        {t('components.approved')}
+                      </Text>
                     </View>
                   )}
                   {isRejected && (
                     <View className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-rose-500 rounded-full flex-row items-center">
                       <Feather name="x" size={12} color="#ffffff" />
-                      <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">Rejected</Text>
+                      <Text className="text-[9px] font-sans-extrabold text-white ml-0.5 uppercase">
+                        {t('components.rejected')}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -262,8 +266,10 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                   <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2">
                     <Feather name="camera" size={20} color="#485aff" />
                   </View>
-                  <Text className="text-sm font-sans-semibold text-gray-800">Upload ID Image</Text>
-                  <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">JPEG or PNG up to 5MB</Text>
+                  <Text className="text-sm font-sans-semibold text-gray-800">{t('services.uploadIdImage')}</Text>
+                  <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
+                    {t('services.imageUploadFormat')}
+                  </Text>
                 </Pressable>
               )}
             </View>
@@ -273,7 +279,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         {/* 3. ACTION BUTTONS */}
         {isFormEmptyMode || isRejected ? (
           <Button
-            title={isRejected ? 'Re-submit for Verification' : 'Submit for Verification'}
+            title={isRejected ? t('components.reSubmitVerification') : t('components.submitVerification')}
             loading={loading}
             disabled={!documentImage || loading}
             onPress={handleSubmit}
