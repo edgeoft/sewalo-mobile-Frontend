@@ -117,15 +117,14 @@ export default function CustomerHomeScreen() {
             />
           )}
 
-          {bookings.length > 0 && (
-            <RecentBookingsSection
-              title={t('home.recentBookings')}
-              actionLabel={t('common.viewAll')}
-              bookings={bookings}
-              onActionPress={() => router.push(ROUTES.customer.bookings)}
-              onBookingPress={() => router.push(ROUTES.customer.bookings)}
-            />
-          )}
+          <RecentBookingsSection
+            title={t('home.recentBookings')}
+            actionLabel={t('common.viewAll')}
+            bookings={bookings}
+            onActionPress={() => router.push(ROUTES.customer.bookings)}
+            onBookingPress={() => router.push(ROUTES.customer.bookings)}
+            onExplorePress={() => router.push(ROUTES.customer.findServices)}
+          />
 
           {featuredBlog && (
             <HomeArticleSection

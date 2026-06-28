@@ -16,8 +16,8 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
-      className={`p-2.5 px-3 rounded-xl border flex-row items-center justify-between mb-2 bg-white ${
-        selected ? 'border-primary bg-indigo-50/10' : 'border-gray-200'
+      className={`p-2.5 px-3 rounded-xl border flex-row items-center justify-between mb-2 ${
+        selected ? 'border-primary bg-indigo-50/10' : 'border-gray-200 bg-white'
       }`}
       style={
         selected
@@ -26,7 +26,7 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.03,
               shadowRadius: 2,
-              elevation: 1,
+              elevation: 0,
             }
           : undefined
       }

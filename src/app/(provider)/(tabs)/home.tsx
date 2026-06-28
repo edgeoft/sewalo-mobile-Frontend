@@ -8,7 +8,13 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useProviderDashboardQuery, useUpdateBooking, useGetFeaturedBlogQuery } from '@/api';
+import {
+  useProviderDashboardQuery,
+  useUpdateBooking,
+  useGetFeaturedBlogQuery,
+  useGetMyServicesQuery,
+  useGetProfileQuery,
+} from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useMemo } from 'react';
@@ -21,8 +27,13 @@ export default function ProviderHomeScreen() {
 
   const { data: dashboardData, isLoading, refetch, isRefetching } = useProviderDashboardQuery();
   const { data: featuredBlogData } = useGetFeaturedBlogQuery();
+  const { data: myServicesData } = useGetMyServicesQuery();
+  const { data: profileData } = useGetProfileQuery();
   const updateBooking = useUpdateBooking();
   const { showSnackbar } = useSnackbar();
+
+  const hasService = !!myServicesData?.data?.id;
+  const providerName = profileData?.user?.name || '';
 
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
@@ -118,6 +129,11 @@ export default function ProviderHomeScreen() {
             onOrderPress={(order) => router.push(ROUTES.provider.bookingDetail(order.id))}
             onAcceptOrder={handleAcceptOrder}
             onDeclineOrder={handleDeclineOrder}
+            hasService={hasService}
+            providerName={providerName}
+            onCreateServicePress={() =>
+              router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } })
+            }
           />
 
           <PerformanceMetricsSection

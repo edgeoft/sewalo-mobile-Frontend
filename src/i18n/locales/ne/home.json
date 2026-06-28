@@ -54,5 +54,14 @@
   "gardening": "बगैंचा",
   "bookingAccepted": "बुकिङ सफलतापूर्वक स्वीकार गरियो",
   "bookingDeclined": "बुकिङ अस्वीकार गरियो",
-  "notificationAccessibility": "सूचनाहरू खोल्नुहोस्"
+  "notificationAccessibility": "सूचनाहरू खोल्नुहोस्",
+  "noRecentBookings": "हालको कुनै बुकिङ छैन",
+  "noRecentBookingsDesc": "कुनै पनि कामका लागि तुरुन्तै उत्कृष्ट स्थानीय पेशेवरहरू खोज्न र बुक गर्न सक्नुहुनेछ।",
+  "exploreServices": "सेवाहरू खोज्नुहोस्",
+  "createFirstService": "आफ्नो पहिलो सेवा सिर्जना गर्नुहोस्",
+  "createFirstServiceDesc": "ग्राहकहरूबाट बुकिङ अनुरोधहरू प्राप्त गर्नका लागि कृपया आफ्नो सेवा सूची सिर्जना गर्नुहोस्।",
+  "createService": "सेवा सिर्जना गर्नुहोस्",
+  "boostYourBookings": "बुकिङहरू बढाउनुहोस्",
+  "shareProfileDesc": "तपाईंको सेवा अब उपलब्ध छ! थप ग्राहकहरू आकर्षित गर्न आफ्नो प्रोफाइल लिङ्क साझा गर्नुहोस्।",
+  "shareProfile": "प्रोफाइल साझा गर्नुहोस्"
 }

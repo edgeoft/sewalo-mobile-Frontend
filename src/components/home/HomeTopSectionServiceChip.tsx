@@ -15,7 +15,7 @@ export default function HomeTopSectionServiceChip({ label, onPress }: HomeTopSec
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.08,
         shadowRadius: 8,
-        elevation: 2,
+        elevation: 0,
       }}
     >
       <Text className="text-xs font-sans-semibold text-primary">{label}</Text>

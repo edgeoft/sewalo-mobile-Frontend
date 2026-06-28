@@ -34,7 +34,7 @@ export default function FinalInvoiceCard({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 0,
   };
 
   const renderInvoiceRow = (label: string, value: string, isDiscount = false) => (

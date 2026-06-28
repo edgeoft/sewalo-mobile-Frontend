@@ -14,7 +14,7 @@ export default function PriceInfoCard({ booking }: PriceInfoCardProps) {
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 0,
   };
 
   const renderInfoRow = (label: string, value: string) => (

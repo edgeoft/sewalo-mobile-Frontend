@@ -238,7 +238,7 @@ export default function RadialStepper({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.04,
         shadowRadius: 10,
-        elevation: 2,
+        elevation: 0,
         backgroundColor: resolvedConfig.bgColor,
       }}
     >

@@ -109,7 +109,7 @@ export default function HelpFaqScreen() {
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
-    elevation: 1,
+    elevation: 0,
   };
 
   return (
@@ -138,7 +138,7 @@ export default function HelpFaqScreen() {
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.02,
               shadowRadius: 4,
-              elevation: 1,
+              elevation: 0,
             }}
           />
         </View>

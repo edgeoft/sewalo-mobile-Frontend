@@ -28,7 +28,7 @@ export default function NotificationSettingsScreen() {
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
-    elevation: 1,
+    elevation: 0,
   };
 
   const renderToggleItem = (

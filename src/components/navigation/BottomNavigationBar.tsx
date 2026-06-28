@@ -46,7 +46,7 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.04,
         shadowRadius: 4,
-        elevation: 8,
+        elevation: 0,
       }}
       className="flex-row bg-white border-t border-gray-100/50 w-full"
     >

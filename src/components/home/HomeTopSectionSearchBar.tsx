@@ -17,7 +17,7 @@ export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTo
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.08,
           shadowRadius: 18,
-          elevation: 4,
+          elevation: 0,
         }}
       >
         <Input

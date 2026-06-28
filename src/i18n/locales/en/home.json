@@ -54,5 +54,14 @@
   "gardening": "Gardening",
   "bookingAccepted": "Booking accepted successfully",
   "bookingDeclined": "Booking declined",
-  "notificationAccessibility": "Open notifications"
+  "notificationAccessibility": "Open notifications",
+  "noRecentBookings": "No Recent Bookings",
+  "noRecentBookingsDesc": "Find and book top-rated local professionals for any task instantly.",
+  "exploreServices": "Explore Services",
+  "createFirstService": "Create Your First Service",
+  "createFirstServiceDesc": "Create a service listing to start receiving booking requests from customers.",
+  "createService": "Create Service",
+  "boostYourBookings": "Boost Your Bookings",
+  "shareProfileDesc": "Your service is live! Share your professional profile link to attract direct clients.",
+  "shareProfile": "Share Profile"
 }

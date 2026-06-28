@@ -64,7 +64,7 @@ export default function BlogListScreen() {
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.04,
                     shadowRadius: 10,
-                    elevation: 2,
+                    elevation: 0,
                   }}
                   className="rounded-xl border border-gray-200 bg-white p-3"
                   accessibilityRole="button"

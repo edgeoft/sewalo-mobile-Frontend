@@ -84,6 +84,7 @@ export default function CustomerBookingsScreen() {
 
       <ContentLayout
         scrollable
+        enableRefresh
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
@@ -117,7 +118,7 @@ export default function CustomerBookingsScreen() {
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.04,
               shadowRadius: 10,
-              elevation: 2,
+              elevation: 0,
             }}
           >
             <Feather name={searchExpanded ? 'x' : 'search'} size={18} color={searchExpanded ? '#64748b' : '#485aff'} />
@@ -138,7 +139,7 @@ export default function CustomerBookingsScreen() {
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.08,
                 shadowRadius: 18,
-                elevation: 4,
+                elevation: 0,
               }}
               rightIcon={<Feather name="search" size={20} color="#485aff" />}
             />

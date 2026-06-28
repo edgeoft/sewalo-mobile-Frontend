@@ -80,7 +80,7 @@ export default function ProviderEarningsScreen() {
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.04,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 0,
   };
 
   return (
@@ -94,6 +94,7 @@ export default function ProviderEarningsScreen() {
 
       <ContentLayout
         scrollable
+        enableRefresh
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,

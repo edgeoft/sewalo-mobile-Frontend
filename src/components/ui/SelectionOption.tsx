@@ -40,8 +40,8 @@ export default function SelectionOption({
     <Pressable
       onPress={onPress}
       className={`rounded-lg border overflow-hidden relative ${
-        selected ? 'border-primary' : 'border-gray-200'
-      } bg-white ${className}`}
+        selected ? 'border-primary bg-transparent' : 'border-gray-200 bg-white'
+      } ${className}`}
     >
       {/* Animated Linear Gradient Background */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: opacityAnim }]}>
@@ -53,7 +53,7 @@ export default function SelectionOption({
         />
       </Animated.View>
 
-      <View className="flex-row items-center py-2.5 px-3.5 bg-transparent">
+      <View style={{ backgroundColor: 'transparent' }} className="flex-row items-center py-2.5 px-3.5">
         {/* Left Icon */}
         {icon && (
           <View

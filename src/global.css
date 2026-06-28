@@ -2,7 +2,7 @@
 @import 'uniwind';
 
 :root {
-  --radius: 12px;
+  --radius: 10px;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -101,9 +101,11 @@
   --color-form-field-placeholder: var(--form-field-placeholder);
 
   --radius-lg: 10px;
-  --radius-md: calc(var(--radius) - 4px);
-  --radius-sm: calc(var(--radius) - 6px);
-  --radius-xl: var(--radius);
+  --radius-md: 10px;
+  --radius-sm: 10px;
+  --radius-xl: 10px;
+  --radius-2xl: 10px;
+  --radius-3xl: 10px;
 
   --animate-float-slow: float 4s ease-in-out infinite;
   --animate-float-delay: float 4s ease-in-out infinite 2s;

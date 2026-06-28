@@ -121,7 +121,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 8,
-    elevation: 1,
+    elevation: 0,
   };
 
   // Status helper text mapping (borderless, with soft backgrounds and a subtle shadow)

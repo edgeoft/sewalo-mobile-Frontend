@@ -50,7 +50,7 @@ export default function HomeArticleSection({
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.04,
           shadowRadius: 10,
-          elevation: 2,
+          elevation: 0,
           borderRadius: 10,
         }}
         className="border border-gray-200 bg-white p-5 active:opacity-95"

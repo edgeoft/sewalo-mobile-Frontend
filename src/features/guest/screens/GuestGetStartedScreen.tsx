@@ -112,7 +112,7 @@ export default function GuestGetStartedScreen() {
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.03,
             shadowRadius: 8,
-            elevation: 1,
+            elevation: 0,
           }}
           className="rounded-xl border border-gray-200 bg-white overflow-hidden mb-6"
         >

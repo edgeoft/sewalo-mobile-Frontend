@@ -45,6 +45,7 @@ export default function CustomerFavouritesScreen() {
 
       <ContentLayout
         scrollable
+        enableRefresh
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
