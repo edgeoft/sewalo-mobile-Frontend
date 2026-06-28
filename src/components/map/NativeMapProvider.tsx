@@ -1,21 +1,85 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import MapView, { Marker, Region, MapPressEvent } from 'react-native-maps';
-import type { LatLng } from 'react-native-maps';
+import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import type { MapProviderProps } from './types';
 
-interface MarkerDragEvent {
-  nativeEvent: { coordinate: LatLng };
-}
-
 interface SearchResult {
   display_name: string;
   lat: string;
   lon: string;
+}
+
+function generateMapHTML(lat: number, lng: number) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #map { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  var map = L.map('map', {
+    center: [${lat}, ${lng}],
+    zoom: 16,
+    zoomControl: false
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OSM'
+  }).addTo(map);
+
+  var marker = L.marker([${lat}, ${lng}], { draggable: true }).addTo(map);
+
+  function sendMessage(type, data) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, ...data }));
+  }
+
+  marker.on('dragend', function(e) {
+    var pos = marker.getLatLng();
+    sendMessage('coordinateChanged', { latitude: pos.lat.toFixed(6), longitude: pos.lng.toFixed(6) });
+  });
+
+  map.on('click', function(e) {
+    marker.setLatLng(e.latlng);
+    sendMessage('coordinateChanged', { latitude: e.latlng.lat.toFixed(6), longitude: e.latlng.lng.toFixed(6) });
+  });
+
+  window.addEventListener('message', function(e) {
+    try {
+      var msg = JSON.parse(e.data);
+      if (msg.type === 'setMarker') {
+        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
+        marker.setLatLng(ll);
+        map.setView(ll, map.getZoom());
+      }
+    } catch(err) {}
+  });
+
+  document.addEventListener('message', function(e) {
+    try {
+      var msg = JSON.parse(e.data);
+      if (msg.type === 'setMarker') {
+        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
+        marker.setLatLng(ll);
+        map.setView(ll, map.getZoom());
+      }
+    } catch(err) {}
+  });
+</script>
+</body>
+</html>`;
 }
 
 export default function NativeMapProvider({
@@ -33,8 +97,44 @@ export default function NativeMapProvider({
   const [isSearching, setIsSearching] = useState(false);
   const [isReverseGeocoding, setIsReverseGeocoding] = useState(false);
 
-  const mapRef = useRef<MapView>(null);
+  const webViewRef = useRef<WebView>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const reverseGeocode = useCallback(async (lat: number, lng: number) => {
+    setIsReverseGeocoding(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setAddressText(data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+      }
+    } catch (err) {
+      console.warn('Reverse geocode failed:', err);
+    } finally {
+      setIsReverseGeocoding(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!initialAddress) {
+      const fetchInitial = async () => {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setAddressText(data.display_name || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
+          }
+        } catch (err) {
+          console.warn('Reverse geocode failed:', err);
+        }
+      };
+      fetchInitial();
+    }
+  }, [initialAddress, initialLat, initialLng]);
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
@@ -70,7 +170,22 @@ export default function NativeMapProvider({
     setSearchResults([]);
     setCoordinate({ latitude: lat, longitude: lng });
     setAddressText(result.display_name);
-    mapRef.current?.animateToRegion({ latitude: lat, longitude: lng, latitudeDelta: 0.02, longitudeDelta: 0.02 }, 300);
+    reverseGeocode(lat, lng);
+    webViewRef.current?.postMessage(JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }));
+  };
+
+  const handleMessage = (event: WebViewMessageEvent) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === 'coordinateChanged') {
+        const lat = parseFloat(data.latitude);
+        const lng = parseFloat(data.longitude);
+        setCoordinate({ latitude: lat, longitude: lng });
+        reverseGeocode(lat, lng);
+      }
+    } catch (err) {
+      console.warn('WebView message parse failed:', err);
+    }
   };
 
   const handleConfirm = async () => {
@@ -102,65 +217,6 @@ export default function NativeMapProvider({
       state: finalState,
       country: finalCountry,
     });
-  };
-
-  const reverseGeocode = async (lat: number, lng: number) => {
-    setIsReverseGeocoding(true);
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setAddressText(data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
-      }
-    } catch (err) {
-      console.warn('Reverse geocode failed:', err);
-    } finally {
-      setIsReverseGeocoding(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!initialAddress) {
-      const fetchAddress = async () => {
-        setIsReverseGeocoding(true);
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setAddressText(data.display_name || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
-          }
-        } catch (err) {
-          console.warn('Reverse geocode failed:', err);
-        } finally {
-          setIsReverseGeocoding(false);
-        }
-      };
-      fetchAddress();
-    }
-  }, [initialAddress, initialLat, initialLng]);
-
-  const handleMarkerDragEnd = (event: MarkerDragEvent) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setCoordinate({ latitude, longitude });
-    reverseGeocode(latitude, longitude);
-  };
-
-  const handleMapPress = (event: MapPressEvent) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setCoordinate({ latitude, longitude });
-    mapRef.current?.animateToRegion({ latitude, longitude, latitudeDelta: 0.02, longitudeDelta: 0.02 }, 300);
-    reverseGeocode(latitude, longitude);
-  };
-
-  const initialRegion: Region = {
-    latitude: initialLat,
-    longitude: initialLng,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
   };
 
   const renderSearchResult = ({ item }: { item: SearchResult }) => (
@@ -205,17 +261,17 @@ export default function NativeMapProvider({
       </View>
 
       <View className="flex-1 relative">
-        <MapView
-          ref={mapRef}
+        <WebView
+          ref={webViewRef}
+          source={{ html: generateMapHTML(coordinate.latitude, coordinate.longitude) }}
           style={styles.map}
-          initialRegion={initialRegion}
-          onPress={handleMapPress}
-          showsUserLocation={false}
-          showsMyLocationButton={false}
-          toolbarEnabled={false}
-        >
-          <Marker coordinate={coordinate} draggable onDragEnd={handleMarkerDragEnd} />
-        </MapView>
+          onMessage={handleMessage}
+          javaScriptEnabled
+          domStorageEnabled
+          scrollEnabled={false}
+          bounces={false}
+          overScrollMode="never"
+        />
 
         {searchResults.length > 0 && (
           <View style={styles.dropdown}>
