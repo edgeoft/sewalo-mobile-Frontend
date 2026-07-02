@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';

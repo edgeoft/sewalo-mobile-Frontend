@@ -38,11 +38,21 @@ interface PersonalInfoStepProps {
 }
 
 const AVAILABLE_LANGUAGES = [
-  { id: 'en', name: 'English' },
-  { id: 'ne', name: 'Nepali' },
-  { id: 'new', name: 'Newari' },
-  { id: 'mai', name: 'Maithili' },
-  { id: 'bho', name: 'Bhojpuri' },
+  { id: 'english', name: 'English' },
+  { id: 'nepali', name: 'Nepali' },
+  { id: 'hindi', name: 'Hindi' },
+  { id: 'newari', name: 'Newari' },
+  { id: 'tamang', name: 'Tamang' },
+  { id: 'maithili', name: 'Maithili' },
+  { id: 'bhojpuri', name: 'Bhojpuri' },
+  { id: 'magar', name: 'Magar' },
+  { id: 'doteli', name: 'Doteli' },
+  { id: 'tharu', name: 'Tharu' },
+  { id: 'rai', name: 'Rai' },
+  { id: 'limbu', name: 'Limbu' },
+  { id: 'gurung', name: 'Gurung' },
+  { id: 'sherpa', name: 'Sherpa' },
+  { id: 'other', name: 'Other' },
 ];
 
 const MONTHS = [
@@ -107,15 +117,23 @@ export default function PersonalInfoStep({
     }
   };
 
-  const handleLanguageToggle = (langName: string) => {
+  const handleLanguageToggle = (langId: string) => {
     const currentSelected = [...watchLanguages];
-    const index = currentSelected.indexOf(langName);
+    const index = currentSelected.findIndex((l) => l.toLowerCase() === langId.toLowerCase());
     if (index > -1) {
       currentSelected.splice(index, 1);
     } else {
-      currentSelected.push(langName);
+      currentSelected.push(langId);
     }
     setValue('languages', currentSelected, { shouldValidate: true });
+  };
+
+  const handleOpenLangModal = () => {
+    if (watchLanguages.length === 0) {
+      const allLangIds = AVAILABLE_LANGUAGES.map((l) => l.id);
+      setValue('languages', allLangIds, { shouldValidate: true });
+    }
+    setLangModalVisible(true);
   };
 
   const handleConfirmDate = () => {
@@ -282,7 +300,7 @@ export default function PersonalInfoStep({
                 {t('onboarding.languages')}
               </Text>
               <Pressable
-                onPress={() => setLangModalVisible(true)}
+                onPress={handleOpenLangModal}
                 className={`form-input-container form-input-container-single justify-between ${
                   errors.languages ? 'border-destructive' : 'border-gray-200'
                 }`}
@@ -299,7 +317,17 @@ export default function PersonalInfoStep({
                   numberOfLines={1}
                   className={`text-sm flex-1 ${watchLanguages.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
                 >
-                  {watchLanguages.length > 0 ? watchLanguages.join(', ') : t('onboarding.selectLanguages')}
+                  {watchLanguages.length > 0
+                    ? watchLanguages
+                        .map((val) => {
+                          const found = AVAILABLE_LANGUAGES.find(
+                            (l) =>
+                              l.id.toLowerCase() === val.toLowerCase() || l.name.toLowerCase() === val.toLowerCase(),
+                          );
+                          return found ? found.name : val;
+                        })
+                        .join(', ')
+                    : t('onboarding.selectLanguages')}
                 </Text>
                 <Feather name="chevron-down" size={16} color="#898f8f" />
               </Pressable>
@@ -365,11 +393,13 @@ export default function PersonalInfoStep({
             <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
               <View className="gap-y-2.5 pb-4">
                 {AVAILABLE_LANGUAGES.map((lang) => {
-                  const isSelected = watchLanguages.includes(lang.name);
+                  const isSelected = watchLanguages.some(
+                    (l) => l.toLowerCase() === lang.id.toLowerCase() || l.toLowerCase() === lang.name.toLowerCase(),
+                  );
                   return (
                     <SelectionOption
                       key={lang.id}
-                      onPress={() => handleLanguageToggle(lang.name)}
+                      onPress={() => handleLanguageToggle(lang.id)}
                       title={lang.name}
                       selected={isSelected}
                       indicatorType="checkbox"

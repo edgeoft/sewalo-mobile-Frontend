@@ -271,6 +271,17 @@ export function useOnboarding() {
           let state = data.state || '';
           let country = data.country || '';
 
+          const cleanVal = (val: string, fallback: string) => {
+            if (!val || val.trim() === '' || val.toLowerCase() === 'n/a') {
+              return fallback;
+            }
+            return val;
+          };
+
+          city = cleanVal(city, 'Kathmandu');
+          state = cleanVal(state, 'Bagmati');
+          country = cleanVal(country, 'Nepal');
+
           if (!data.lat || !data.lng) {
             const parts = data.location.split(',').map((p: string) => p.trim());
             address = parts[0] || 'Kathmandu';

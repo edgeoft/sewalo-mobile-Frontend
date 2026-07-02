@@ -10,6 +10,9 @@ import { USER_ROLES } from '@/types';
 import OnboardingFooter from '../components/OnboardingFooter';
 import OnboardingHeader from '../components/OnboardingHeader';
 import OnboardingPage from '../components/OnboardingPage';
+import OnboardingIllustrationOne from '@/components/illustrations/OnboardingIllustrationOne';
+import OnboardingIllustrationTwo from '@/components/illustrations/OnboardingIllustrationTwo';
+import OnboardingIllustrationThree from '@/components/illustrations/OnboardingIllustrationThree';
 
 import * as SecureStore from 'expo-secure-store';
 
@@ -72,17 +75,17 @@ export default function OnboardingScreen() {
       {
         title: t('onboarding.screen1.title'),
         description: t('onboarding.screen1.description'),
-        illustration: require('@/assets/onboarding/illustration_one.png'),
+        illustration: <OnboardingIllustrationOne />,
       },
       {
         title: t('onboarding.screen2.title'),
         description: t('onboarding.screen2.description'),
-        illustration: require('@/assets/onboarding/illustration_one.png'),
+        illustration: <OnboardingIllustrationTwo />,
       },
       {
         title: t('onboarding.screen3.title'),
         description: t('onboarding.screen3.description'),
-        illustration: require('@/assets/onboarding/illustration_one.png'),
+        illustration: <OnboardingIllustrationThree />,
       },
     ],
     [t],
@@ -163,7 +166,15 @@ export default function OnboardingScreen() {
                 key={index}
                 title={page.title}
                 description={page.description}
-                illustration={page.illustration}
+                illustration={
+                  index === 0 ? (
+                    <OnboardingIllustrationOne />
+                  ) : index === 1 ? (
+                    <OnboardingIllustrationTwo isActive={activeIndex === index} />
+                  ) : (
+                    <OnboardingIllustrationThree isActive={activeIndex === index} />
+                  )
+                }
               />
             ))}
           </ScrollView>

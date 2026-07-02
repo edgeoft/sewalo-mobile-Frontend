@@ -62,6 +62,7 @@
   "digitalWallets": "Digital Wallets",
   "bankAccounts": "Bank Accounts",
   "basicInfo": "Basic Information",
+  "basicInfoDesc": "Update your personal details, contact info, and profile avatar.",
   "dateOfBirthOptional": "Date of Birth (Optional)",
   "languagesOptional": "Languages (Optional)",
   "chooseLanguages": "Choose the languages you can speak",

@@ -20,11 +20,17 @@ import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
+import LocationSelector from '@/components/ui/LocationSelector';
 
 export interface BasicInfoFormData {
   fullName: string;
   mobileNumber: string;
   location: string;
+  lat?: number;
+  lng?: number;
+  city?: string;
+  state?: string;
+  country?: string;
   dateOfBirth?: string;
   languages?: string[];
   bio?: string;
@@ -43,11 +49,21 @@ interface BasicInfoSectionProps {
 }
 
 const AVAILABLE_LANGUAGES = [
-  { id: 'en', name: 'English' },
-  { id: 'ne', name: 'Nepali' },
-  { id: 'new', name: 'Newari' },
-  { id: 'mai', name: 'Maithili' },
-  { id: 'bho', name: 'Bhojpuri' },
+  { id: 'english', name: 'English' },
+  { id: 'nepali', name: 'Nepali' },
+  { id: 'hindi', name: 'Hindi' },
+  { id: 'newari', name: 'Newari' },
+  { id: 'tamang', name: 'Tamang' },
+  { id: 'maithili', name: 'Maithili' },
+  { id: 'bhojpuri', name: 'Bhojpuri' },
+  { id: 'magar', name: 'Magar' },
+  { id: 'doteli', name: 'Doteli' },
+  { id: 'tharu', name: 'Tharu' },
+  { id: 'rai', name: 'Rai' },
+  { id: 'limbu', name: 'Limbu' },
+  { id: 'gurung', name: 'Gurung' },
+  { id: 'sherpa', name: 'Sherpa' },
+  { id: 'other', name: 'Other' },
 ];
 
 const MONTHS = [
@@ -110,15 +126,23 @@ export default function BasicInfoSection({
   const [tempMonth, setTempMonth] = useState('January');
   const [tempYear, setTempYear] = useState('2000');
 
-  const handleLanguageToggle = (langName: string) => {
+  const handleLanguageToggle = (langId: string) => {
     const currentSelected = [...watchLanguages];
-    const index = currentSelected.indexOf(langName);
+    const index = currentSelected.findIndex((l) => l.toLowerCase() === langId.toLowerCase());
     if (index > -1) {
       currentSelected.splice(index, 1);
     } else {
-      currentSelected.push(langName);
+      currentSelected.push(langId);
     }
     setValue('languages', currentSelected, { shouldValidate: true });
+  };
+
+  const handleOpenLangModal = () => {
+    if (watchLanguages.length === 0) {
+      const allLangIds = AVAILABLE_LANGUAGES.map((l) => l.id);
+      setValue('languages', allLangIds, { shouldValidate: true });
+    }
+    setLangModalVisible(true);
   };
 
   const handleConfirmDate = () => {
@@ -249,21 +273,33 @@ export default function BasicInfoSection({
         </View>
 
         {/* Location */}
-        <Controller
-          control={control}
-          name="location"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label={`${t('services.location')} *`}
-              placeholder={t('components.locationPlaceholder')}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              inputStyle={{ padding: 0 }}
-              error={errors.location?.message as string}
-            />
-          )}
-        />
+        <View className="w-full">
+          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{`${t('services.location')} *`}</Text>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field: { onChange, value } }) => {
+              const formValues = control._formValues;
+              return (
+                <LocationSelector
+                  value={value}
+                  lat={formValues.lat || 27.700769}
+                  lng={formValues.lng || 85.30014}
+                  placeholder={t('components.locationPlaceholder')}
+                  onChange={(data) => {
+                    onChange(data.address);
+                    setValue('lat', data.lat, { shouldValidate: true });
+                    setValue('lng', data.lng, { shouldValidate: true });
+                    setValue('city', data.city, { shouldValidate: true });
+                    setValue('state', data.state, { shouldValidate: true });
+                    setValue('country', data.country, { shouldValidate: true });
+                  }}
+                  error={errors.location?.message as string}
+                />
+              );
+            }}
+          />
+        </View>
 
         {/* Date of Birth (Optional) */}
         <View>
@@ -291,7 +327,7 @@ export default function BasicInfoSection({
         <View>
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('components.languages')}</Text>
           <Pressable
-            onPress={() => setLangModalVisible(true)}
+            onPress={handleOpenLangModal}
             className="form-input-container form-input-container-single justify-between border-gray-200"
             style={{
               shadowColor: '#000',
@@ -306,7 +342,16 @@ export default function BasicInfoSection({
               numberOfLines={1}
               className={`text-sm flex-1 ${watchLanguages.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
             >
-              {watchLanguages.length > 0 ? watchLanguages.join(', ') : t('components.selectLanguagesPlaceholder')}
+              {watchLanguages.length > 0
+                ? watchLanguages
+                    .map((val) => {
+                      const found = AVAILABLE_LANGUAGES.find(
+                        (l) => l.id.toLowerCase() === val.toLowerCase() || l.name.toLowerCase() === val.toLowerCase(),
+                      );
+                      return found ? found.name : val;
+                    })
+                    .join(', ')
+                : t('components.selectLanguagesPlaceholder')}
             </Text>
             <Feather name="chevron-down" size={16} color="#898f8f" />
           </Pressable>
@@ -371,11 +416,13 @@ export default function BasicInfoSection({
             <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
               <View className="gap-y-2.5 pb-4">
                 {AVAILABLE_LANGUAGES.map((lang) => {
-                  const isSelected = watchLanguages.includes(lang.name);
+                  const isSelected = watchLanguages.some(
+                    (l) => l.toLowerCase() === lang.id.toLowerCase() || l.toLowerCase() === lang.name.toLowerCase(),
+                  );
                   return (
                     <SelectionOption
                       key={lang.id}
-                      onPress={() => handleLanguageToggle(lang.name)}
+                      onPress={() => handleLanguageToggle(lang.id)}
                       title={lang.name}
                       selected={isSelected}
                       indicatorType="checkbox"

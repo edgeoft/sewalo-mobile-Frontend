@@ -105,6 +105,12 @@ export default function NativeMapProvider({
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
+            'Accept-Language': 'ne,en',
+          },
+        },
       );
       if (response.ok) {
         const data = await response.json();
@@ -123,6 +129,12 @@ export default function NativeMapProvider({
         try {
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
+            {
+              headers: {
+                'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
+                'Accept-Language': 'ne,en',
+              },
+            },
           );
           if (response.ok) {
             const data = await response.json();
@@ -150,6 +162,12 @@ export default function NativeMapProvider({
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text)}&countrycodes=np&limit=5&addressdetails=1`,
+          {
+            headers: {
+              'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
+              'Accept-Language': 'ne,en',
+            },
+          },
         );
         if (response.ok) {
           const results = await response.json();
@@ -190,27 +208,53 @@ export default function NativeMapProvider({
 
   const handleConfirm = async () => {
     let finalCity = '';
-    let finalState = t('common.na');
-    let finalCountry = t('home.nepal');
+    let finalState = '';
+    let finalCountry = '';
 
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinate.latitude}&lon=${coordinate.longitude}&zoom=16&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
+            'Accept-Language': 'ne,en',
+          },
+        },
       );
       if (response.ok) {
         const data = await response.json();
         const addr = data.address || {};
-        finalCity = addr.city || addr.town || addr.village || t('common.na');
-        finalState = addr.state || t('common.na');
-        finalCountry = addr.country || t('home.nepal');
+        finalCity =
+          addr.city ||
+          addr.town ||
+          addr.village ||
+          addr.municipality ||
+          addr.county ||
+          addr.suburb ||
+          addr.district ||
+          addr.subdistrict ||
+          addr.city_district ||
+          'Kathmandu';
+        finalState = addr.state || addr.region || addr.province || addr.state_district || 'Bagmati';
+        finalCountry = addr.country || 'Nepal';
       }
     } catch (err) {
       console.warn('Reverse geocode on confirm failed:', err);
-      finalCity = t('common.na');
     }
 
+    const cleanStr = (val: string, fallback: string) => {
+      if (!val || val.trim() === '' || val.toLowerCase() === 'n/a' || val === t('common.na')) {
+        return fallback;
+      }
+      return val;
+    };
+
+    finalCity = cleanStr(finalCity, 'Kathmandu');
+    finalState = cleanStr(finalState, 'Bagmati');
+    finalCountry = cleanStr(finalCountry, 'Nepal');
+
     await onSelectLocation({
-      address: addressText || searchQuery || `${t('common.na')}, ${t('home.nepal')}`,
+      address: addressText || searchQuery || `${finalCity}, ${finalState}, ${finalCountry}`,
       lat: coordinate.latitude,
       lng: coordinate.longitude,
       city: finalCity,

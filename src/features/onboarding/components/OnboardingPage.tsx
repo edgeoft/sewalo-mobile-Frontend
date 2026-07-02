@@ -1,3 +1,4 @@
+import React from 'react';
 import { Image, ImageSourcePropType, Text, View, useWindowDimensions } from 'react-native';
 
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -5,7 +6,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 interface OnboardingPageProps {
   title: string;
   description: string;
-  illustration?: ImageSourcePropType;
+  illustration?: ImageSourcePropType | React.ReactNode;
 }
 
 export default function OnboardingPage({
@@ -18,7 +19,11 @@ export default function OnboardingPage({
   return (
     <ContentLayout style={{ width, height: '100%' }} className="items-center justify-start py-6 bg-transparent">
       <View className="flex-1 w-full justify-center items-center bg-transparent border-0 mb-6">
-        <Image source={illustration} className="w-full h-full border-0" resizeMode="contain" />
+        {React.isValidElement(illustration) ? (
+          illustration
+        ) : (
+          <Image source={illustration as ImageSourcePropType} className="w-full h-full border-0" resizeMode="contain" />
+        )}
       </View>
 
       <View className="items-center justify-start w-full px-2 h-28">

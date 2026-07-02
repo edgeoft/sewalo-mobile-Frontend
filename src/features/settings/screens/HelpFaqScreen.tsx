@@ -102,7 +102,7 @@ export default function HelpFaqScreen() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [FAQ_ITEMS, searchQuery, selectedCategory]);
 
   const cardShadow = {
     shadowColor: '#0f172a',

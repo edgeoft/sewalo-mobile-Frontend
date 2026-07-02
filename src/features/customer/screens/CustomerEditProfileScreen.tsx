@@ -24,8 +24,6 @@ export default function CustomerEditProfileScreen() {
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
-  const locationStr = [user?.address, user?.city, user?.state, user?.country].filter(Boolean).join(', ');
-
   const {
     control,
     handleSubmit,
@@ -35,7 +33,12 @@ export default function CustomerEditProfileScreen() {
     defaultValues: {
       fullName: user?.name || '',
       mobileNumber: user?.phone || '',
-      location: locationStr,
+      location: user?.address || '',
+      lat: user?.coordinates?.lat || 27.700769,
+      lng: user?.coordinates?.lng || 85.30014,
+      city: user?.city || '',
+      state: user?.state || '',
+      country: user?.country || '',
       dateOfBirth: user?.dob || '',
       languages: user?.language || [],
       bio: user?.description || '',
@@ -54,10 +57,19 @@ export default function CustomerEditProfileScreen() {
         name: data.fullName,
         phone: data.mobileNumber,
         address: data.location,
+        city: data.city,
+        state: data.state,
+        country: data.country,
         dob: data.dateOfBirth,
         language: data.languages,
         description: data.bio,
       };
+      if (data.lat !== undefined && data.lng !== undefined) {
+        payload.coordinates = {
+          lat: Number(data.lat),
+          lng: Number(data.lng),
+        };
+      }
       if (avatarPath) {
         payload.avatar = avatarPath;
       }

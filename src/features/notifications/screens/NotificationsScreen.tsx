@@ -56,7 +56,7 @@ export default function NotificationsScreen() {
       { value: NOTIFICATION_FILTERS.All, label: t('notifications.all') },
       { value: NOTIFICATION_FILTERS.Unread, label: t('notifications.unread') },
     ],
-    [],
+    [t],
   );
 
   const emptyContent = useMemo(
@@ -75,7 +75,7 @@ export default function NotificationsScreen() {
         </Text>
       </View>
     ),
-    [activeFilter],
+    [activeFilter, t],
   );
 
   return (
