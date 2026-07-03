@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { FontProvider } from '@/providers/FontProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { PostHogProvider } from '@/providers/PostHogProvider';
 import { queryClient } from '@/api/client/query/queryClient';
 import { useNotificationObserver } from '@/services/NotificationService';
 import { SnackbarProvider } from '@/components/ui/Snackbar';
@@ -16,22 +17,24 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SnackbarProvider>
-        <ErrorDialogProvider>
-          <AuthProvider>
-            <FontProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: {
-                    backgroundColor: '#07111f',
-                  },
-                }}
-              />
-            </FontProvider>
-          </AuthProvider>
-        </ErrorDialogProvider>
-      </SnackbarProvider>
+      <PostHogProvider>
+        <SnackbarProvider>
+          <ErrorDialogProvider>
+            <AuthProvider>
+              <FontProvider>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: {
+                      backgroundColor: '#07111f',
+                    },
+                  }}
+                />
+              </FontProvider>
+            </AuthProvider>
+          </ErrorDialogProvider>
+        </SnackbarProvider>
+      </PostHogProvider>
     </QueryClientProvider>
   );
 }

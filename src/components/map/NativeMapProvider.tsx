@@ -3,6 +3,7 @@ import { View, Text, Pressable, FlatList, ActivityIndicator, StyleSheet } from '
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
+import { useFeatureFlag } from 'posthog-react-native';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import type { MapProviderProps } from './types';
@@ -11,10 +12,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SearchResult {
   description: string;
-  place_id: string;
+  place_id?: string;
+  display_name?: string;
+  lat?: string;
+  lon?: string;
 }
 
-function generateMapHTML(lat: number, lng: number, apiKey: string) {
+// 1. Google Maps HTML Generator
+function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
   return `
 <!DOCTYPE html>
 <html>
@@ -108,6 +113,78 @@ function generateMapHTML(lat: number, lng: number, apiKey: string) {
 </html>`;
 }
 
+// 2. OpenStreetMap (Leaflet) HTML Generator
+function generateOSMMapHTML(lat: number, lng: number) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #map { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  var map = L.map('map', {
+    center: [${lat}, ${lng}],
+    zoom: 16,
+    zoomControl: false
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OSM'
+  }).addTo(map);
+
+  var marker = L.marker([${lat}, ${lng}], { draggable: true }).addTo(map);
+
+  function sendMessage(type, data) {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, ...data }));
+    }
+  }
+
+  marker.on('dragend', function(e) {
+    var pos = marker.getLatLng();
+    sendMessage('coordinateChanged', { latitude: pos.lat.toFixed(6), longitude: pos.lng.toFixed(6) });
+  });
+
+  map.on('click', function(e) {
+    marker.setLatLng(e.latlng);
+    sendMessage('coordinateChanged', { latitude: e.latlng.lat.toFixed(6), longitude: e.latlng.lng.toFixed(6) });
+  });
+
+  window.addEventListener('message', function(e) {
+    try {
+      var msg = JSON.parse(e.data);
+      if (msg.type === 'setMarker') {
+        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
+        marker.setLatLng(ll);
+        map.setView(ll, map.getZoom());
+      }
+    } catch(err) {}
+  });
+
+  document.addEventListener('message', function(e) {
+    try {
+      var msg = JSON.parse(e.data);
+      if (msg.type === 'setMarker') {
+        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
+        marker.setLatLng(ll);
+        map.setView(ll, map.getZoom());
+      }
+    } catch(err) {}
+  });
+</script>
+</body>
+</html>`;
+}
+
 const extractComponent = (components: any[], types: string[]): string => {
   for (const type of types) {
     const comp = components.find((c: any) => c.types.includes(type));
@@ -129,6 +206,14 @@ export default function NativeMapProvider({
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
   const insets = useSafeAreaInsets();
 
+  // Evaluate Google Maps feature flag via PostHog
+  const isGoogleMapsFlagEnabled = useFeatureFlag('google-maps');
+
+  // If the flag returns undefined, it is still loading from the server.
+  // When it loads, we check if it is active. Since local and dev mode will default to false or not set,
+  // we default to false if it's undefined (meaning we show OSM during load or if off).
+  const useGoogleMaps = isGoogleMapsFlagEnabled === true && !!apiKey;
+
   const [coordinate, setCoordinate] = useState({ latitude: initialLat, longitude: initialLng });
   const [addressText, setAddressText] = useState(initialAddress);
   const [searchQuery, setSearchQuery] = useState('');
@@ -139,18 +224,29 @@ export default function NativeMapProvider({
   const webViewRef = useRef<WebView>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Reverse Geocoding Implementation
   const reverseGeocode = useCallback(
     async (lat: number, lng: number) => {
-      if (!apiKey) return;
       setIsReverseGeocoding(true);
       try {
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=ne,en`,
-        );
-        if (response.ok) {
-          const data = await response.json();
-          if (data.results && data.results.length > 0) {
-            setAddressText(data.results[0].formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+        if (useGoogleMaps) {
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=ne,en`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+              setAddressText(data.results[0].formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+            }
+          }
+        } else {
+          // OpenStreetMap Nominatim reverse geocode
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setAddressText(data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
           }
         }
       } catch (err) {
@@ -159,30 +255,47 @@ export default function NativeMapProvider({
         setIsReverseGeocoding(false);
       }
     },
-    [apiKey],
+    [useGoogleMaps, apiKey],
   );
 
+  // Initial geocoding on mount
   useEffect(() => {
-    if (!initialAddress && apiKey) {
+    if (!initialAddress) {
       const fetchInitial = async () => {
+        setIsReverseGeocoding(true);
         try {
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${initialLat},${initialLng}&key=${apiKey}&language=ne,en`,
-          );
-          if (response.ok) {
-            const data = await response.json();
-            if (data.results && data.results.length > 0) {
-              setAddressText(data.results[0].formatted_address || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
+          if (useGoogleMaps) {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${initialLat},${initialLng}&key=${apiKey}&language=ne,en`,
+            );
+            if (response.ok) {
+              const data = await response.json();
+              if (data.results && data.results.length > 0) {
+                setAddressText(
+                  data.results[0].formatted_address || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`,
+                );
+              }
+            }
+          } else {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
+            );
+            if (response.ok) {
+              const data = await response.json();
+              setAddressText(data.display_name || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
             }
           }
         } catch (err) {
           console.warn('Initial reverse geocode failed:', err);
+        } finally {
+          setIsReverseGeocoding(false);
         }
       };
       fetchInitial();
     }
-  }, [initialAddress, initialLat, initialLng, apiKey]);
+  }, [initialAddress, initialLat, initialLng, useGoogleMaps, apiKey]);
 
+  // Search Address autocomplete
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -192,17 +305,32 @@ export default function NativeMapProvider({
       return;
     }
 
-    if (!apiKey) return;
-
     searchTimeoutRef.current = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&key=${apiKey}&components=country:np&language=ne,en`,
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setSearchResults(data.predictions || []);
+        if (useGoogleMaps) {
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&key=${apiKey}&components=country:np&language=ne,en`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setSearchResults(data.predictions || []);
+          }
+        } else {
+          // OpenStreetMap Nominatim search query
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text)}&countrycodes=np&limit=5`,
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const results = data.map((item: any) => ({
+              description: item.display_name,
+              display_name: item.display_name,
+              lat: item.lat,
+              lon: item.lon,
+            }));
+            setSearchResults(results);
+          }
         }
       } catch (err) {
         console.warn('Search query failed:', err);
@@ -212,29 +340,45 @@ export default function NativeMapProvider({
     }, 450);
   };
 
+  // Select Address search result
   const handleSelectResult = async (result: SearchResult) => {
-    if (!apiKey) return;
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${result.place_id}&fields=geometry,formatted_address&key=${apiKey}`,
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const details = data.result;
-        if (details && details.geometry && details.geometry.location) {
-          const lat = details.geometry.location.lat;
-          const lng = details.geometry.location.lng;
-          const formattedAddress = details.formatted_address || result.description;
+      if (useGoogleMaps) {
+        if (!result.place_id) return;
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/place/details/json?place_id=${result.place_id}&fields=geometry,formatted_address&key=${apiKey}`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const details = data.result;
+          if (details && details.geometry && details.geometry.location) {
+            const lat = details.geometry.location.lat;
+            const lng = details.geometry.location.lng;
+            const formattedAddress = details.formatted_address || result.description;
 
-          setSearchQuery('');
-          setSearchResults([]);
-          setCoordinate({ latitude: lat, longitude: lng });
-          setAddressText(formattedAddress);
-          webViewRef.current?.postMessage(
-            JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }),
-          );
+            setSearchQuery('');
+            setSearchResults([]);
+            setCoordinate({ latitude: lat, longitude: lng });
+            setAddressText(formattedAddress);
+            webViewRef.current?.postMessage(
+              JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }),
+            );
+          }
         }
+      } else {
+        if (!result.lat || !result.lon) return;
+        const lat = parseFloat(result.lat);
+        const lng = parseFloat(result.lon);
+        const formattedAddress = result.display_name || result.description;
+
+        setSearchQuery('');
+        setSearchResults([]);
+        setCoordinate({ latitude: lat, longitude: lng });
+        setAddressText(formattedAddress);
+        webViewRef.current?.postMessage(
+          JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }),
+        );
       }
     } catch (err) {
       console.warn('Place details fetch failed:', err);
@@ -259,13 +403,14 @@ export default function NativeMapProvider({
     }
   };
 
+  // Confirm Location selection
   const handleConfirm = async () => {
     let finalCity = '';
     let finalState = '';
     let finalCountry = '';
 
-    if (apiKey) {
-      try {
+    try {
+      if (useGoogleMaps) {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinate.latitude},${coordinate.longitude}&key=${apiKey}&language=ne,en`,
         );
@@ -283,9 +428,20 @@ export default function NativeMapProvider({
             finalCountry = extractComponent(components, ['country']);
           }
         }
-      } catch (err) {
-        console.warn('Reverse geocode on confirm failed:', err);
+      } else {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinate.latitude}&lon=${coordinate.longitude}&zoom=16&addressdetails=1`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const address = data.address || {};
+          finalCity = address.city || address.town || address.village || address.suburb || '';
+          finalState = address.state || address.region || '';
+          finalCountry = address.country || '';
+        }
       }
+    } catch (err) {
+      console.warn('Reverse geocode on confirm failed:', err);
     }
 
     const cleanStr = (val: string, fallback: string) => {
@@ -321,20 +477,12 @@ export default function NativeMapProvider({
     </Pressable>
   );
 
-  if (!apiKey) {
+  // If the feature flag is loading, render a centered loading spinner for smooth UX
+  if (isGoogleMapsFlagEnabled === undefined) {
     return (
-      <View style={styles.errorContainer}>
-        <Feather name="alert-triangle" size={48} color="#ef4444" className="mb-4" />
-        <Text style={styles.errorText}>
-          Google Maps API Key is missing. Please set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in your env.
-        </Text>
-        <Button
-          title={t('common.cancel')}
-          variant="light"
-          onPress={onCancel}
-          className="mt-6 w-full border border-gray-200"
-          textClassName="text-gray-700"
-        />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#485aff" />
+        <Text style={styles.loadingText}>{t('components.resolvingLocation', 'Loading Map configurations...')}</Text>
       </View>
     );
   }
@@ -374,7 +522,11 @@ export default function NativeMapProvider({
       <View className="flex-1 relative">
         <WebView
           ref={webViewRef}
-          source={{ html: generateMapHTML(initialLat, initialLng, apiKey) }}
+          source={{
+            html: useGoogleMaps
+              ? generateGoogleMapHTML(initialLat, initialLng, apiKey)
+              : generateOSMMapHTML(initialLat, initialLng),
+          }}
           style={styles.map}
           onMessage={handleMessage}
           javaScriptEnabled
@@ -440,6 +592,19 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 0,
     zIndex: 1001,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#f8fafc',
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#64748b',
+    textAlign: 'center',
+    marginTop: 12,
   },
   errorContainer: {
     flex: 1,

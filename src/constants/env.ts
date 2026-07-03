@@ -23,4 +23,14 @@ export const ENV = {
    * Google Maps API Key for maps and geocoding services.
    */
   GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+
+  /**
+   * PostHog Project API Key.
+   */
+  POSTHOG_API_KEY: process.env.EXPO_PUBLIC_POSTHOG_API_KEY || '',
+
+  /**
+   * PostHog Host Instance URL.
+   */
+  POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
 };
