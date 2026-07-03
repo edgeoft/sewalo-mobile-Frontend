@@ -18,4 +18,9 @@ export const ENV = {
    * The current deployment environment (e.g. dev, production).
    */
   APP_ENV: process.env.EXPO_PUBLIC_ENV || 'dev',
+
+  /**
+   * Google Maps API Key for maps and geocoding services.
+   */
+  GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
 };

@@ -1,17 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import Svg, { Path, Circle, Rect, G, GProps } from 'react-native-svg';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  Easing,
-  AnimatedProps,
-} from 'react-native-reanimated';
-const AnimatedG = Animated.createAnimatedComponent(G) as unknown as React.ComponentType<
-  AnimatedProps<GProps> & { style?: StyleProp<ViewStyle> }
->;
+import { View, StyleSheet } from 'react-native';
+import Svg, { Path, Circle, Rect, G } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, Easing } from 'react-native-reanimated';
+const AnimatedG = Animated.createAnimatedComponent(G) as any;
 
 export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boolean }) {
   const progress = useSharedValue(0);

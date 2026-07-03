@@ -1,18 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import Svg, { Path, Circle, Rect, G, Polygon, GProps } from 'react-native-svg';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSequence,
-  Easing,
-  AnimatedProps,
-} from 'react-native-reanimated';
+import { View, StyleSheet } from 'react-native';
+import Svg, { Path, Circle, Rect, G, Polygon } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, Easing } from 'react-native-reanimated';
 
-const AnimatedG = Animated.createAnimatedComponent(G) as unknown as React.ComponentType<
-  AnimatedProps<GProps> & { style?: StyleProp<ViewStyle> }
->;
+const AnimatedG = Animated.createAnimatedComponent(G) as any;
 
 export default function OnboardingIllustrationThree({ isActive }: { isActive?: boolean }) {
   const handX = useSharedValue(60);

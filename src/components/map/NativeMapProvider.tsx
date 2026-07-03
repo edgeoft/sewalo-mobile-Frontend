@@ -6,21 +6,20 @@ import { Feather } from '@expo/vector-icons';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import type { MapProviderProps } from './types';
+import { ENV } from '@/constants/env';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SearchResult {
-  display_name: string;
-  lat: string;
-  lon: string;
+  description: string;
+  place_id: string;
 }
 
-function generateMapHTML(lat: number, lng: number) {
+function generateMapHTML(lat: number, lng: number, apiKey: string) {
   return `
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body, #map { width: 100%; height: 100%; }
@@ -29,40 +28,66 @@ function generateMapHTML(lat: number, lng: number) {
 <body>
 <div id="map"></div>
 <script>
-  var map = L.map('map', {
-    center: [${lat}, ${lng}],
-    zoom: 16,
-    zoomControl: false
-  });
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OSM'
-  }).addTo(map);
-
-  var marker = L.marker([${lat}, ${lng}], { draggable: true }).addTo(map);
+  var map;
+  var marker;
 
   function sendMessage(type, data) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, ...data }));
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, ...data }));
+    }
   }
 
-  marker.on('dragend', function(e) {
-    var pos = marker.getLatLng();
-    sendMessage('coordinateChanged', { latitude: pos.lat.toFixed(6), longitude: pos.lng.toFixed(6) });
-  });
+  // Redirect console logs to React Native WebView
+  (function() {
+    var originalLog = console.log;
+    console.log = function() {
+      originalLog.apply(console, arguments);
+      sendMessage('log', { message: Array.prototype.slice.call(arguments).join(' ') });
+    };
+    var originalError = console.error;
+    console.error = function() {
+      originalError.apply(console, arguments);
+      sendMessage('log', { message: 'ERROR: ' + Array.prototype.slice.call(arguments).join(' ') });
+    };
+    window.addEventListener('error', function(e) {
+      sendMessage('log', { message: 'UNCAUGHT ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno });
+    });
+  })();
 
-  map.on('click', function(e) {
-    marker.setLatLng(e.latlng);
-    sendMessage('coordinateChanged', { latitude: e.latlng.lat.toFixed(6), longitude: e.latlng.lng.toFixed(6) });
-  });
+  function initMap() {
+    var initialPos = { lat: ${lat}, lng: ${lng} };
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: initialPos,
+      zoom: 16,
+      disableDefaultUI: true,
+      gestureHandling: 'greedy'
+    });
+
+    marker = new google.maps.Marker({
+      position: initialPos,
+      map: map,
+      draggable: true
+    });
+
+    marker.addListener('dragend', function() {
+      var pos = marker.getPosition();
+      sendMessage('coordinateChanged', { latitude: pos.lat().toFixed(6), longitude: pos.lng().toFixed(6) });
+    });
+
+    map.addListener('click', function(e) {
+      var pos = e.latLng;
+      marker.setPosition(pos);
+      sendMessage('coordinateChanged', { latitude: pos.lat().toFixed(6), longitude: pos.lng().toFixed(6) });
+    });
+  }
 
   window.addEventListener('message', function(e) {
     try {
       var msg = JSON.parse(e.data);
       if (msg.type === 'setMarker') {
-        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
-        marker.setLatLng(ll);
-        map.setView(ll, map.getZoom());
+        var pos = { lat: parseFloat(msg.lat), lng: parseFloat(msg.lng) };
+        marker.setPosition(pos);
+        map.setCenter(pos);
       }
     } catch(err) {}
   });
@@ -71,16 +96,27 @@ function generateMapHTML(lat: number, lng: number) {
     try {
       var msg = JSON.parse(e.data);
       if (msg.type === 'setMarker') {
-        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
-        marker.setLatLng(ll);
-        map.setView(ll, map.getZoom());
+        var pos = { lat: parseFloat(msg.lat), lng: parseFloat(msg.lng) };
+        marker.setPosition(pos);
+        map.setCenter(pos);
       }
     } catch(err) {}
   });
 </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap" async defer></script>
 </body>
 </html>`;
 }
+
+const extractComponent = (components: any[], types: string[]): string => {
+  for (const type of types) {
+    const comp = components.find((c: any) => c.types.includes(type));
+    if (comp) {
+      return comp.long_name;
+    }
+  }
+  return '';
+};
 
 export default function NativeMapProvider({
   initialLat = 27.700769,
@@ -90,6 +126,9 @@ export default function NativeMapProvider({
   onCancel,
 }: MapProviderProps) {
   const { t } = useTranslation();
+  const apiKey = ENV.GOOGLE_MAPS_API_KEY;
+  const insets = useSafeAreaInsets();
+
   const [coordinate, setCoordinate] = useState({ latitude: initialLat, longitude: initialLng });
   const [addressText, setAddressText] = useState(initialAddress);
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,53 +139,49 @@ export default function NativeMapProvider({
   const webViewRef = useRef<WebView>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const reverseGeocode = useCallback(async (lat: number, lng: number) => {
-    setIsReverseGeocoding(true);
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
-        {
-          headers: {
-            'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
-            'Accept-Language': 'ne,en',
-          },
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setAddressText(data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+  const reverseGeocode = useCallback(
+    async (lat: number, lng: number) => {
+      if (!apiKey) return;
+      setIsReverseGeocoding(true);
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}&language=ne,en`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (data.results && data.results.length > 0) {
+            setAddressText(data.results[0].formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+          }
+        }
+      } catch (err) {
+        console.warn('Reverse geocode failed:', err);
+      } finally {
+        setIsReverseGeocoding(false);
       }
-    } catch (err) {
-      console.warn('Reverse geocode failed:', err);
-    } finally {
-      setIsReverseGeocoding(false);
-    }
-  }, []);
+    },
+    [apiKey],
+  );
 
   useEffect(() => {
-    if (!initialAddress) {
+    if (!initialAddress && apiKey) {
       const fetchInitial = async () => {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
-            {
-              headers: {
-                'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
-                'Accept-Language': 'ne,en',
-              },
-            },
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${initialLat},${initialLng}&key=${apiKey}&language=ne,en`,
           );
           if (response.ok) {
             const data = await response.json();
-            setAddressText(data.display_name || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
+            if (data.results && data.results.length > 0) {
+              setAddressText(data.results[0].formatted_address || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
+            }
           }
         } catch (err) {
-          console.warn('Reverse geocode failed:', err);
+          console.warn('Initial reverse geocode failed:', err);
         }
       };
       fetchInitial();
     }
-  }, [initialAddress, initialLat, initialLng]);
+  }, [initialAddress, initialLat, initialLng, apiKey]);
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
@@ -157,21 +192,17 @@ export default function NativeMapProvider({
       return;
     }
 
+    if (!apiKey) return;
+
     searchTimeoutRef.current = setTimeout(async () => {
       setIsSearching(true);
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text)}&countrycodes=np&limit=5&addressdetails=1`,
-          {
-            headers: {
-              'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
-              'Accept-Language': 'ne,en',
-            },
-          },
+          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(text)}&key=${apiKey}&components=country:np&language=ne,en`,
         );
         if (response.ok) {
-          const results = await response.json();
-          setSearchResults(results);
+          const data = await response.json();
+          setSearchResults(data.predictions || []);
         }
       } catch (err) {
         console.warn('Search query failed:', err);
@@ -181,15 +212,35 @@ export default function NativeMapProvider({
     }, 450);
   };
 
-  const handleSelectResult = (result: SearchResult) => {
-    const lat = parseFloat(result.lat);
-    const lng = parseFloat(result.lon);
-    setSearchQuery('');
-    setSearchResults([]);
-    setCoordinate({ latitude: lat, longitude: lng });
-    setAddressText(result.display_name);
-    reverseGeocode(lat, lng);
-    webViewRef.current?.postMessage(JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }));
+  const handleSelectResult = async (result: SearchResult) => {
+    if (!apiKey) return;
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${result.place_id}&fields=geometry,formatted_address&key=${apiKey}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const details = data.result;
+        if (details && details.geometry && details.geometry.location) {
+          const lat = details.geometry.location.lat;
+          const lng = details.geometry.location.lng;
+          const formattedAddress = details.formatted_address || result.description;
+
+          setSearchQuery('');
+          setSearchResults([]);
+          setCoordinate({ latitude: lat, longitude: lng });
+          setAddressText(formattedAddress);
+          webViewRef.current?.postMessage(
+            JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }),
+          );
+        }
+      }
+    } catch (err) {
+      console.warn('Place details fetch failed:', err);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleMessage = (event: WebViewMessageEvent) => {
@@ -200,6 +251,8 @@ export default function NativeMapProvider({
         const lng = parseFloat(data.longitude);
         setCoordinate({ latitude: lat, longitude: lng });
         reverseGeocode(lat, lng);
+      } else if (data.type === 'log') {
+        console.log('WebView Console:', data.message);
       }
     } catch (err) {
       console.warn('WebView message parse failed:', err);
@@ -211,35 +264,28 @@ export default function NativeMapProvider({
     let finalState = '';
     let finalCountry = '';
 
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinate.latitude}&lon=${coordinate.longitude}&zoom=16&addressdetails=1`,
-        {
-          headers: {
-            'User-Agent': 'SewaloMobile/1.0 (contact@sewalo.com)',
-            'Accept-Language': 'ne,en',
-          },
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const addr = data.address || {};
-        finalCity =
-          addr.city ||
-          addr.town ||
-          addr.village ||
-          addr.municipality ||
-          addr.county ||
-          addr.suburb ||
-          addr.district ||
-          addr.subdistrict ||
-          addr.city_district ||
-          'Kathmandu';
-        finalState = addr.state || addr.region || addr.province || addr.state_district || 'Bagmati';
-        finalCountry = addr.country || 'Nepal';
+    if (apiKey) {
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinate.latitude},${coordinate.longitude}&key=${apiKey}&language=ne,en`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (data.results && data.results.length > 0) {
+            const components = data.results[0].address_components || [];
+            finalCity = extractComponent(components, [
+              'locality',
+              'sublocality',
+              'postal_town',
+              'administrative_area_level_2',
+            ]);
+            finalState = extractComponent(components, ['administrative_area_level_1']);
+            finalCountry = extractComponent(components, ['country']);
+          }
+        }
+      } catch (err) {
+        console.warn('Reverse geocode on confirm failed:', err);
       }
-    } catch (err) {
-      console.warn('Reverse geocode on confirm failed:', err);
     }
 
     const cleanStr = (val: string, fallback: string) => {
@@ -270,14 +316,35 @@ export default function NativeMapProvider({
     >
       <Feather name="map-pin" size={14} color="#94a3b8" />
       <Text className="text-sm text-gray-700 flex-1 ml-2" numberOfLines={1}>
-        {item.display_name}
+        {item.description}
       </Text>
     </Pressable>
   );
 
+  if (!apiKey) {
+    return (
+      <View style={styles.errorContainer}>
+        <Feather name="alert-triangle" size={48} color="#ef4444" className="mb-4" />
+        <Text style={styles.errorText}>
+          Google Maps API Key is missing. Please set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in your env.
+        </Text>
+        <Button
+          title={t('common.cancel')}
+          variant="light"
+          onPress={onCancel}
+          className="mt-6 w-full border border-gray-200"
+          textClassName="text-gray-700"
+        />
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-white border-b border-gray-200 px-4 pt-4 pb-3 z-10">
+      <View
+        className="bg-white border-b border-gray-200 px-4 pb-3 z-10"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="relative">
           <Input
             placeholder={t('components.searchAddress')}
@@ -307,7 +374,7 @@ export default function NativeMapProvider({
       <View className="flex-1 relative">
         <WebView
           ref={webViewRef}
-          source={{ html: generateMapHTML(coordinate.latitude, coordinate.longitude) }}
+          source={{ html: generateMapHTML(initialLat, initialLng, apiKey) }}
           style={styles.map}
           onMessage={handleMessage}
           javaScriptEnabled
@@ -329,7 +396,10 @@ export default function NativeMapProvider({
         )}
       </View>
 
-      <View className="flex-row px-4 py-4 bg-white border-t border-gray-200 gap-3">
+      <View
+        className="flex-row px-4 bg-white border-t border-gray-200 gap-3"
+        style={{ paddingTop: 16, paddingBottom: Math.max(insets.bottom, 16) }}
+      >
         <Button
           title={t('common.cancel')}
           variant="light"
@@ -370,5 +440,19 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 0,
     zIndex: 1001,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#f8fafc',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#ef4444',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginTop: 8,
   },
 });
