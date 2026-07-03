@@ -2,55 +2,17 @@ import axios from 'axios';
 import { createMutex } from './mutex';
 import { StorageAdapter } from './storage';
 import { TokenManager, MultiSlotConfig, TokenSlotConfig, Tokens } from '../types';
-
-const decodeJwt = (token: string): any => {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    const payload = parts[1];
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-    let str = payload.replace(/-/g, '+').replace(/_/g, '/');
-    let output = '';
-    str = str.replace(/=+$/, '');
-    for (
-      let bc = 0, bs = 0, buffer, i = 0;
-      (buffer = str.charAt(i++));
-      ~buffer && ((bs = bc % 4 ? bs * 64 + buffer : buffer), bc++ % 4)
-        ? (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
-        : 0
-    ) {
-      buffer = chars.indexOf(buffer);
-    }
-
-    const jsonPayload = decodeURIComponent(
-      output
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join(''),
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-};
+import { isExpiring } from './jwt';
 
 const createSlotWorker = (slotName: string, config: TokenSlotConfig, storage: StorageAdapter, baseURL: string) => {
   const mutex = createMutex();
   const ACCESS_KEY = `slot_${slotName}_access_token`;
   const REFRESH_KEY = `slot_${slotName}_refresh_token`;
 
-  const isExpiring = (token: string): boolean => {
-    const decoded = decodeJwt(token);
-    if (!decoded || !decoded.exp) return true;
-    const buffer = config.proactiveRefreshSeconds ?? 60;
-    const nowSecs = Math.floor(Date.now() / 1000);
-    return decoded.exp - nowSecs < buffer;
-  };
-
   const getAccessToken = async (): Promise<string | null> => {
     let token = await storage.getItem(ACCESS_KEY);
-    if (token && isExpiring(token)) {
+    const proactiveRefreshSeconds = config.proactiveRefreshSeconds ?? 60;
+    if (token && isExpiring(token, proactiveRefreshSeconds)) {
       try {
         token = await refreshToken();
       } catch {
@@ -79,15 +41,20 @@ const createSlotWorker = (slotName: string, config: TokenSlotConfig, storage: St
   };
 
   const handleAuthFailure = (): void => {
-    clearTokens().then(() => {
-      config.onTokenExpired?.();
-    });
+    clearTokens()
+      .catch((err) => {
+        console.warn(`Failed to clear tokens for slot ${slotName} during auth failure`, err);
+      })
+      .finally(() => {
+        config.onTokenExpired?.();
+      });
   };
 
   const refreshToken = async (): Promise<string | null> => {
     return mutex.runExclusive(async () => {
       const currentToken = await storage.getItem(ACCESS_KEY);
-      if (currentToken && !isExpiring(currentToken)) {
+      const proactiveRefreshSeconds = config.proactiveRefreshSeconds ?? 60;
+      if (currentToken && !isExpiring(currentToken, proactiveRefreshSeconds)) {
         return currentToken;
       }
 

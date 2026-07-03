@@ -16,24 +16,10 @@ export {
 };
 
 // Re-export Helper Types from Constants
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
-export type BookingStatus = (typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES];
 export type NotificationFilter = (typeof NOTIFICATION_FILTERS)[keyof typeof NOTIFICATION_FILTERS];
 export type ServiceLocation = (typeof SERVICE_LOCATIONS)[keyof typeof SERVICE_LOCATIONS];
 export type DeliveryType = (typeof DELIVERY_TYPES)[keyof typeof DELIVERY_TYPES];
 export type PaymentMethod = (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
-
-// Global Notification Interface
-export interface NotificationItem {
-  id: string;
-  type: 'booking' | 'payment' | 'review' | 'promo' | 'system';
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  actionable?: boolean;
-  relatedId?: string;
-}
 
 // Re-export Module/Feature Types
 export * from './common';

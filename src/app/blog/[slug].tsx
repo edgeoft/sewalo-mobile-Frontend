@@ -8,6 +8,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useGetBlogBySlugQuery } from '@/api';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { formatDate } from '@/utils/time';
 
 export default function BlogDetailScreen() {
   const { t } = useTranslation();
@@ -34,19 +35,6 @@ export default function BlogDetailScreen() {
     const words = description.split(/\s+/).length;
     const time = Math.max(1, Math.ceil(words / 200));
     return t('common.minRead', { time });
-  };
-
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      });
-    } catch {
-      return '';
-    }
   };
 
   if (isLoading) {

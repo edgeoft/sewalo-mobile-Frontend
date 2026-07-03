@@ -30,9 +30,20 @@ export const loggingInterceptor = (config: ApiClientConfig): Interceptor => {
     const start = Date.now();
     const correlationId = ctx.correlationId || 'N/A';
 
-    const loggedHeaders = isProd ? redact(ctx.headers) : ctx.headers;
-    const loggedParams = isProd ? redact(ctx.params) : ctx.params;
-    const loggedData = isProd ? redact(ctx.data) : ctx.data;
+    if (isProd) {
+      try {
+        return await next(ctx);
+      } catch (error: any) {
+        console.error(
+          `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${ctx.method} ${ctx.url} - Code: ${error.code || 'N/A'}, Status: ${error.status || 'N/A'}`,
+        );
+        throw error;
+      }
+    }
+
+    const loggedHeaders = ctx.headers;
+    const loggedParams = ctx.params;
+    const loggedData = ctx.data;
 
     console.log(`[API-CLIENT][${name}][REQ] [ID: ${correlationId}] ${ctx.method} ${ctx.url}`, {
       headers: loggedHeaders,
@@ -43,7 +54,7 @@ export const loggingInterceptor = (config: ApiClientConfig): Interceptor => {
     try {
       const response = await next(ctx);
       const duration = Date.now() - start;
-      const loggedResponseData = isProd ? redact(response.data) : response.data;
+      const loggedResponseData = response.data;
 
       console.log(
         `[API-CLIENT][${name}][RES] [ID: ${correlationId}] ${ctx.method} ${ctx.url} - Status ${response.status} (${duration}ms)`,
@@ -53,7 +64,7 @@ export const loggingInterceptor = (config: ApiClientConfig): Interceptor => {
       return response;
     } catch (error: any) {
       const duration = Date.now() - start;
-      const loggedErrorDetails = isProd ? redact(error.details) : error.details;
+      const loggedErrorDetails = error.details;
 
       console.error(
         `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${ctx.method} ${ctx.url} - Code: ${error.code || 'N/A'}, Status: ${error.status || 'N/A'} (${duration}ms)`,

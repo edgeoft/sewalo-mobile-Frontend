@@ -14,15 +14,7 @@ import RatingModal from '../components/RatingModal';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
-function formatDate(isoString: string) {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch {
-    return isoString;
-  }
-}
+import { formatDate } from '@/utils/time';
 
 function StarDisplay({ rate }: { rate: number }) {
   return (

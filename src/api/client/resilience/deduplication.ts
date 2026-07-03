@@ -1,27 +1,22 @@
 import { Interceptor } from '../types';
+import { createCacheKey } from '../utils/cacheKey';
 
 export const createDeduplicator = () => {
   const inFlight = new Map<string, Promise<any>>();
+  const MAX_IN_FLIGHT = 100;
 
-  const getHash = (url: string, params?: any): string => {
-    const sortedParams = params
-      ? JSON.stringify(
-          Object.keys(params)
-            .sort()
-            .reduce((acc: any, key) => {
-              acc[key] = params[key];
-              return acc;
-            }, {}),
-        )
-      : '';
-    return `${url}:${sortedParams}`;
-  };
-
-  const execute = async <T>(url: string, params: any, action: () => Promise<T>): Promise<T> => {
-    const key = getHash(url, params);
+  const execute = async <T>(method: string, url: string, params: any, action: () => Promise<T>): Promise<T> => {
+    const key = createCacheKey(method, url, params);
     let promise = inFlight.get(key);
 
     if (!promise) {
+      if (inFlight.size >= MAX_IN_FLIGHT) {
+        const oldestKey = inFlight.keys().next().value;
+        if (oldestKey !== undefined) {
+          inFlight.delete(oldestKey);
+        }
+      }
+
       promise = action().finally(() => {
         inFlight.delete(key);
       });
@@ -39,6 +34,6 @@ export const deduplicationInterceptor = (deduplicator: ReturnType<typeof createD
     if (ctx.method !== 'GET') {
       return next(ctx);
     }
-    return deduplicator.execute(ctx.url, ctx.params, () => next(ctx));
+    return deduplicator.execute(ctx.method, ctx.url, ctx.params, () => next(ctx));
   };
 };

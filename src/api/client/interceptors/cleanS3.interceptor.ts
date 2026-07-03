@@ -1,6 +1,6 @@
 import { Interceptor } from '../types';
 
-const cleanPayload = (data: any): any => {
+const cleanPayloadInPlace = (data: any): any => {
   if (data === null || data === undefined) {
     return data;
   }
@@ -11,29 +11,30 @@ const cleanPayload = (data: any): any => {
     return data;
   }
   if (Array.isArray(data)) {
-    return data.map(cleanPayload);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = cleanPayloadInPlace(data[i]);
+    }
+    return data;
   }
   if (typeof data === 'object') {
-    // Avoid traversing FormData instances in React Native
     if (data.constructor && data.constructor.name === 'FormData') {
       return data;
     }
-    const cleanObj: any = {};
     for (const key of Object.keys(data)) {
-      cleanObj[key] = cleanPayload(data[key]);
+      data[key] = cleanPayloadInPlace(data[key]);
     }
-    return cleanObj;
+    return data;
   }
   return data;
 };
 
 /**
  * Interceptor that recursively strips query parameters (such as S3 signed URL params)
- * from string values in request payloads before they are sent to the backend.
+ * from string values in request payloads in-place before they are sent to the backend.
  */
 export const cleanS3Interceptor: Interceptor = async (ctx, next) => {
   if (ctx.data) {
-    ctx.data = cleanPayload(ctx.data);
+    cleanPayloadInPlace(ctx.data);
   }
   return next(ctx);
 };

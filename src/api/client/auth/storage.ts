@@ -6,40 +6,50 @@ export type StorageAdapter = {
   removeItem: (key: string) => Promise<void>;
 };
 
-export const secureStorageAdapter: StorageAdapter = {
-  getItem: async (key) => {
-    try {
-      return await SecureStore.getItemAsync(key);
-    } catch {
-      return null;
-    }
-  },
-  setItem: async (key, value) => {
-    try {
-      await SecureStore.setItemAsync(key, value);
-    } catch (err) {
-      // safe fallback/log in non-production environments
-      console.warn(`SecureStore failed to set item for key: ${key}`, err);
-    }
-  },
-  removeItem: async (key) => {
-    try {
-      await SecureStore.deleteItemAsync(key);
-    } catch (err) {
-      console.warn(`SecureStore failed to remove item for key: ${key}`, err);
-    }
-  },
-};
+export const createFallbackStorageAdapter = (): StorageAdapter => {
+  const memoryStore = new Map<string, string>();
+  let useMemory = false;
 
-export const createMemoryStorageAdapter = (): StorageAdapter => {
-  const store = new Map<string, string>();
   return {
-    getItem: async (key) => store.get(key) ?? null,
+    getItem: async (key) => {
+      if (useMemory) {
+        return memoryStore.get(key) ?? null;
+      }
+      try {
+        return await SecureStore.getItemAsync(key);
+      } catch (err) {
+        console.warn('SecureStore.getItemAsync failed, falling back to memory store', err);
+        useMemory = true;
+        return memoryStore.get(key) ?? null;
+      }
+    },
     setItem: async (key, value) => {
-      store.set(key, value);
+      if (useMemory) {
+        memoryStore.set(key, value);
+        return;
+      }
+      try {
+        await SecureStore.setItemAsync(key, value);
+      } catch (err) {
+        console.warn('SecureStore.setItemAsync failed, falling back to memory store', err);
+        useMemory = true;
+        memoryStore.set(key, value);
+      }
     },
     removeItem: async (key) => {
-      store.delete(key);
+      if (useMemory) {
+        memoryStore.delete(key);
+        return;
+      }
+      try {
+        await SecureStore.deleteItemAsync(key);
+      } catch (err) {
+        console.warn('SecureStore.deleteItemAsync failed, falling back to memory store', err);
+        useMemory = true;
+        memoryStore.delete(key);
+      }
     },
   };
 };
+
+export const secureStorageAdapter = createFallbackStorageAdapter();

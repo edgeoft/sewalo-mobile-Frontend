@@ -24,7 +24,7 @@ export const createCacheInvalidator = (cacheStore: ReturnType<typeof createCache
     invalidate: (key: string) => cacheStore.invalidate(key),
     invalidateAll: () => cacheStore.invalidateAll(),
     invalidatePattern: (pattern: RegExp) => {
-      for (const key of cacheStore.store.keys()) {
+      for (const key of cacheStore.getKeys()) {
         if (pattern.test(key)) {
           cacheStore.invalidate(key);
         }

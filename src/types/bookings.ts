@@ -3,6 +3,7 @@ import type { Service } from './services';
 import { PaginatedResponse } from './common';
 
 export type BookingStatus =
+  | 'all'
   | 'pending'
   | 'confirmed'
   | 'in_progress'

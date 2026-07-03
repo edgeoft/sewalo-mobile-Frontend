@@ -11,15 +11,7 @@ import { useGetMyRatingsQuery } from '@/api';
 import type { Rating } from '@/types';
 import { getSource } from '@/utils/image';
 
-function formatDate(isoString: string) {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch {
-    return isoString;
-  }
-}
+import { formatDate } from '@/utils/time';
 
 function StarDisplay({ rate }: { rate: number }) {
   return (

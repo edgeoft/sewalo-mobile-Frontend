@@ -43,3 +43,18 @@ export const formatDate = (dateStr: string | null | undefined): string => {
     return dateStr;
   }
 };
+
+/**
+ * Formats a time string or Date into HH:MM format (24 hour)
+ */
+export const formatTime = (timeString: string | null | undefined): string => {
+  if (!timeString) return '';
+  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+  try {
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return timeString;
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  } catch {
+    return timeString;
+  }
+};

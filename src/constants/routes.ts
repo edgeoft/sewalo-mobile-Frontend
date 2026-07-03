@@ -66,7 +66,7 @@ export const ROUTES = {
   bookingConfirmation: '/booking-confirmation',
   providerDetail: (id: string) => `/provider/${id}` as const,
   blog: {
-    list: '/blog' as any,
-    detail: (slug: string) => `/blog/${slug}` as any,
+    list: '/blog' as const,
+    detail: (slug: string) => `/blog/${slug}` as const,
   },
 } as const;

@@ -24,16 +24,26 @@ export const createOfflineQueue = (clientRequest: (ctx: RequestCtx) => Promise<R
     const currentQueue = [...queue];
     queue = [];
 
-    for (const req of currentQueue) {
-      try {
-        const response = await clientRequest(req.ctx);
-        req.resolve(response);
-      } catch (err) {
-        req.reject(err);
+    try {
+      for (let i = 0; i < currentQueue.length; i++) {
+        const req = currentQueue[i];
+        try {
+          const response = await clientRequest(req.ctx);
+          req.resolve(response);
+        } catch (err: any) {
+          const isNetworkError = err.message === 'Network Error' || err.code === 'ECONNABORTED';
+          if (isNetworkError && !isOnline) {
+            // Re-enqueue this request and the remaining unprocessed ones
+            queue = [...currentQueue.slice(i), ...queue];
+            break;
+          } else {
+            req.reject(err);
+          }
+        }
       }
+    } finally {
+      isFlushing = false;
     }
-
-    isFlushing = false;
   };
 
   const setOnline = (online: boolean): void => {

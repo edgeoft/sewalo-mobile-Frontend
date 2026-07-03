@@ -13,29 +13,7 @@ import { useGetBookingByIdQuery } from '@/api';
 import { getImageUrl } from '@/utils/image';
 import BookingAnimatedCheckmark from '../components/BookingAnimatedCheckmark';
 
-function formatTime(timeString: string) {
-  if (!timeString) return '';
-  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
-  try {
-    const date = new Date(timeString);
-    if (isNaN(date.getTime())) return timeString;
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  } catch {
-    return timeString;
-  }
-}
-
-function formatDate(isoString: string) {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    return date.toISOString().split('T')[0];
-  } catch {
-    return isoString;
-  }
-}
+import { formatDate, formatTime } from '@/utils/time';
 
 export default function BookingConfirmationScreen() {
   const { t } = useTranslation();

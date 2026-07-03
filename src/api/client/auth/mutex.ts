@@ -1,49 +1,28 @@
 export type Mutex = {
-  acquire: () => Promise<() => void>;
   runExclusive: <T>(callback: () => Promise<T>) => Promise<T>;
-  isLocked: () => boolean;
 };
 
 export const createMutex = (): Mutex => {
-  let locked = false;
-  const queue: ((release: () => void) => void)[] = [];
+  let lastPromise = Promise.resolve();
 
-  const acquire = (): Promise<() => void> => {
-    return new Promise((resolve) => {
-      const release = () => {
-        if (queue.length > 0) {
-          const nextResolve = queue.shift();
-          if (nextResolve) {
-            nextResolve(release);
-          }
-        } else {
-          locked = false;
-        }
-      };
-
-      if (locked) {
-        queue.push(resolve);
-      } else {
-        locked = true;
-        resolve(release);
-      }
-    });
+  const runExclusive = <T>(callback: () => Promise<T>): Promise<T> => {
+    const nextPromise = lastPromise.then(
+      async () => {
+        return callback();
+      },
+      async () => {
+        return callback();
+      },
+    );
+    // Ensure lastPromise updates and catches all failures so the chain doesn't break
+    lastPromise = nextPromise.then(
+      () => {},
+      () => {},
+    );
+    return nextPromise;
   };
-
-  const runExclusive = async <T>(callback: () => Promise<T>): Promise<T> => {
-    const release = await acquire();
-    try {
-      return await callback();
-    } finally {
-      release();
-    }
-  };
-
-  const isLocked = () => locked;
 
   return {
-    acquire,
     runExclusive,
-    isLocked,
   };
 };

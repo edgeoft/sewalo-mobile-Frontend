@@ -18,32 +18,10 @@ import { useUpdateBooking, useConfirmPayment } from '@/api';
 import { BOOKING_STATUSES } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
+import { formatDate, formatTime } from '@/utils/time';
+
 interface ProviderBookingDetailsScreenProps {
   booking: Booking;
-}
-
-function formatDate(dateString: string) {
-  if (!dateString) return '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-    return date.toISOString().split('T')[0];
-  } catch {
-    return dateString;
-  }
-}
-
-function formatTime(timeString: string) {
-  if (!timeString) return '';
-  if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
-  try {
-    const date = new Date(timeString);
-    if (isNaN(date.getTime())) return timeString;
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-  } catch {
-    return timeString;
-  }
 }
 
 function SectionDivider() {

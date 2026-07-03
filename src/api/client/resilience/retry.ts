@@ -44,12 +44,21 @@ export const retryInterceptor = (retryConfig: RetryConfig, telemetry?: Telemetry
         }
 
         await new Promise<void>((resolve, reject) => {
-          const timeoutId = setTimeout(resolve, delay);
+          let onAbort: () => void;
+          const timeoutId = setTimeout(() => {
+            if (ctx.signal && onAbort) {
+              ctx.signal.removeEventListener('abort', onAbort);
+            }
+            resolve();
+          }, delay);
+
           if (ctx.signal) {
-            ctx.signal.addEventListener('abort', () => {
+            onAbort = () => {
               clearTimeout(timeoutId);
+              ctx.signal?.removeEventListener('abort', onAbort);
               reject(new Error('Request aborted during retry delay'));
-            });
+            };
+            ctx.signal.addEventListener('abort', onAbort);
           }
         });
       }

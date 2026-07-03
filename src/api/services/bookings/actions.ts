@@ -99,11 +99,11 @@ export const confirmPaymentAction = async (bookingId: string, payload: ConfirmPa
 
 // Rating Actions
 export const createRatingAction = async (payload: CreateRatingPayload): Promise<Rating> => {
-  return internalClient.post('/ratings', payload);
+  return internalClient.post<Rating>('/ratings', payload);
 };
 
 export const getMyRatingsAction = async (params: GetMyRatingsParams = {}): Promise<GetMyRatingsResponse> => {
-  return internalClient.get('/ratings/my-ratings', { params });
+  return internalClient.get<GetMyRatingsResponse>('/ratings/my-ratings', { params });
 };
 
 export const getProviderRatingsAction = async (providerId: string): Promise<GetProviderRatingResponse> => {
@@ -111,9 +111,9 @@ export const getProviderRatingsAction = async (providerId: string): Promise<GetP
 };
 
 export const updateRatingAction = async ({ id, ...payload }: UpdateRatingPayload): Promise<Rating> => {
-  return internalClient.put(`/ratings/${id}`, payload);
+  return internalClient.put<Rating>(`/ratings/${id}`, payload);
 };
 
 export const deleteRatingAction = async (id: string): Promise<void> => {
-  return internalClient.delete(`/ratings/${id}`);
+  return internalClient.delete<void>(`/ratings/${id}`);
 };

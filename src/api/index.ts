@@ -20,8 +20,7 @@ export {
   ApiMethod,
 } from './client/types';
 
-// Storage Adapter
-export { StorageAdapter, secureStorageAdapter, createMemoryStorageAdapter } from './client/auth/storage';
+export { StorageAdapter, secureStorageAdapter, createFallbackStorageAdapter } from './client/auth/storage';
 
 // Query Integration
 export { queryClient } from './client/query/queryClient';
