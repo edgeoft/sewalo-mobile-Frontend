@@ -2,9 +2,9 @@ import React, { createContext, useCallback, useContext, useMemo, useRef, useStat
 import { Animated, Pressable, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-type SnackbarType = 'success' | 'error' | 'info';
+export type SnackbarType = 'success' | 'error' | 'info';
 
-interface SnackbarConfig {
+export interface SnackbarConfig {
   message: string;
   type?: SnackbarType;
   duration?: number;
