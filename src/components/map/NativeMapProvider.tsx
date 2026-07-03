@@ -207,12 +207,12 @@ export default function NativeMapProvider({
   const insets = useSafeAreaInsets();
 
   // Evaluate Google Maps feature flag via PostHog
+  // We use useFeatureFlag but wrap or guard it based on whether PostHog is active.
   const isGoogleMapsFlagEnabled = useFeatureFlag('google-maps');
 
-  // If the flag returns undefined, it is still loading from the server.
-  // When it loads, we check if it is active. Since local and dev mode will default to false or not set,
-  // we default to false if it's undefined (meaning we show OSM during load or if off).
-  const useGoogleMaps = isGoogleMapsFlagEnabled === true && !!apiKey;
+  // If we're not in production, or PostHog is not enabled, useGoogleMaps must be false (using OSM)
+  const isProduction = ENV.APP_ENV === 'production';
+  const useGoogleMaps = isProduction && isGoogleMapsFlagEnabled === true && !!apiKey;
 
   const [coordinate, setCoordinate] = useState({ latitude: initialLat, longitude: initialLng });
   const [addressText, setAddressText] = useState(initialAddress);
@@ -477,8 +477,8 @@ export default function NativeMapProvider({
     </Pressable>
   );
 
-  // If the feature flag is loading, render a centered loading spinner for smooth UX
-  if (isGoogleMapsFlagEnabled === undefined) {
+  // If the feature flag is loading in production, render a centered loading spinner for smooth UX
+  if (isProduction && isGoogleMapsFlagEnabled === undefined) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#485aff" />

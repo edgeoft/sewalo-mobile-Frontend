@@ -7,17 +7,15 @@ interface PostHogProviderProps {
 }
 
 export function PostHogProvider({ children }: PostHogProviderProps) {
-  if (!ENV.POSTHOG_API_KEY) {
-    // If PostHog key is not configured, pass children directly
-    // so it doesn't crash or attempt initialization with empty key.
-    return <>{children}</>;
-  }
+  const isProduction = ENV.APP_ENV === 'production';
+  const apiKey = ENV.POSTHOG_API_KEY || 'disabled-key-placeholder';
 
   return (
     <PHProvider
-      apiKey={ENV.POSTHOG_API_KEY}
+      apiKey={apiKey}
       options={{
-        host: ENV.POSTHOG_HOST,
+        host: ENV.POSTHOG_HOST || 'https://us.i.posthog.com',
+        disabled: !isProduction || !ENV.POSTHOG_API_KEY,
       }}
     >
       {children}
