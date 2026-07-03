@@ -29,6 +29,7 @@ export default function CustomerEditProfileScreen() {
     handleSubmit,
     setValue,
     formState: { errors },
+    reset,
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: user?.name || '',
@@ -46,6 +47,25 @@ export default function CustomerEditProfileScreen() {
     },
     mode: 'onBlur',
   });
+
+  React.useEffect(() => {
+    if (user) {
+      reset({
+        fullName: user.name || '',
+        mobileNumber: user.phone || '',
+        location: user.address || '',
+        lat: user.coordinates?.lat || 27.700769,
+        lng: user.coordinates?.lng || 85.30014,
+        city: user.city || '',
+        state: user.state || '',
+        country: user.country || '',
+        dateOfBirth: user.dob || '',
+        languages: user.language || [],
+        bio: user.description || '',
+        avatar: getImageUrl(user.avatar) || null,
+      });
+    }
+  }, [user, reset]);
 
   const watchLanguages = useWatch({ control, name: 'languages' }) || [];
   const watchDateOfBirth = useWatch({ control, name: 'dateOfBirth' }) || '';
