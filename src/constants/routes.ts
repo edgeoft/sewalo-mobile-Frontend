@@ -40,6 +40,7 @@ export const ROUTES = {
     termsOfService: '/customer/terms-of-service',
     privacyPolicy: '/customer/privacy-policy',
     rateApp: '/customer/rate-app',
+    becomeProvider: '/customer/become-provider',
   },
   provider: {
     home: '/(provider)/(tabs)/home',

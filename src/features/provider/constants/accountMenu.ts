@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import type { TFunction } from 'i18next';
+import { UserProfile } from '@/types';
 
 export interface AccountMenuItemOption {
   id: string;
@@ -16,7 +17,7 @@ export interface AccountMenuSection {
   items: AccountMenuItemOption[];
 }
 
-export function getProviderAccountMenu(t: TFunction): AccountMenuSection[] {
+export function getProviderAccountMenu(t: TFunction, user: UserProfile | null): AccountMenuSection[] {
   return [
     {
       id: 'account',
@@ -118,6 +119,12 @@ export function getProviderAccountMenu(t: TFunction): AccountMenuSection[] {
       id: 'actions',
       title: t('navigation.actions'),
       items: [
+        {
+          id: 'switch-role',
+          icon: 'repeat',
+          title: 'Switch to Customer',
+          subtitle: 'Switch to your customer profile',
+        },
         {
           id: 'logout',
           icon: 'log-out',

@@ -10,6 +10,10 @@ import {
   ProviderDetailsResponse,
   GetServiceListParams,
   GetServiceListResponse,
+  SwitchRolePayload,
+  SwitchRoleResponse,
+  SwitchRoleWithDetailsPayload,
+  SwitchRoleWithDetailsResponse,
 } from '@/types';
 
 // Favourite Actions
@@ -54,4 +58,23 @@ export const getServiceListAction = async (params: GetServiceListParams): Promis
       ...params,
     },
   });
+};
+
+// Role Switching Actions
+export const switchRoleAction = async (data: SwitchRolePayload): Promise<SwitchRoleResponse> => {
+  // ponytail: Keep roles strictly restricted to customer & provider
+  if (data.target_role !== 'customer' && data.target_role !== 'provider') {
+    throw new Error('Invalid target role. Only customer and provider roles are allowed.');
+  }
+  return internalClient.post<SwitchRoleResponse>('/user/switch-role', data);
+};
+
+export const switchRoleWithDetailsAction = async (
+  data: SwitchRoleWithDetailsPayload,
+): Promise<SwitchRoleWithDetailsResponse> => {
+  // ponytail: Keep roles strictly restricted to provider for detail changes
+  if (data.target_role !== 'provider') {
+    throw new Error('Invalid target role. Only switching to provider is allowed with details.');
+  }
+  return internalClient.post<SwitchRoleWithDetailsResponse>('/user/switch-role-with-details', data);
 };

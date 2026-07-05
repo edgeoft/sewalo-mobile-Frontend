@@ -25,7 +25,12 @@ export const ENV = {
   GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
 
   /**
-   * PostHog Project API Key.
+   * PostHog Project Token (starts with phc_).
+   */
+  POSTHOG_PROJECT_TOKEN: process.env.EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN || '',
+
+  /**
+   * PostHog Personal/Secret API Key (starts with phx_).
    */
   POSTHOG_API_KEY: process.env.EXPO_PUBLIC_POSTHOG_API_KEY || '',
 

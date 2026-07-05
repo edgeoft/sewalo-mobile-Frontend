@@ -7,6 +7,8 @@ import {
   updateProfileAction,
   getProviderDetailsAction,
   getServiceListAction,
+  switchRoleAction,
+  switchRoleWithDetailsAction,
 } from './actions';
 import { getProfileAction } from '../auth/actions';
 import {
@@ -21,6 +23,10 @@ import {
   ProviderDetailsResponse,
   GetServiceListParams,
   GetServiceListResponse,
+  SwitchRolePayload,
+  SwitchRoleResponse,
+  SwitchRoleWithDetailsPayload,
+  SwitchRoleWithDetailsResponse,
 } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -131,5 +137,28 @@ export const useGetServicesQuery = (
     retry: false,
     refetchOnWindowFocus: false,
     ...options,
+  });
+};
+
+// Role Switching Hooks
+export const useSwitchRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SwitchRoleResponse, Error, SwitchRolePayload>({
+    mutationFn: switchRoleAction,
+    onSuccess: (response) => {
+      useAuthStore.getState().updateUser(response.user);
+      queryClient.invalidateQueries();
+    },
+  });
+};
+
+export const useSwitchRoleWithDetails = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SwitchRoleWithDetailsResponse, Error, SwitchRoleWithDetailsPayload>({
+    mutationFn: switchRoleWithDetailsAction,
+    onSuccess: (response) => {
+      useAuthStore.getState().updateUser(response.user);
+      queryClient.invalidateQueries();
+    },
   });
 };

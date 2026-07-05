@@ -15,6 +15,7 @@ interface HeaderBaseProps {
   containerClassName?: string;
   contentClassName?: string;
   includeBottomBorder?: boolean;
+  onBackPress?: () => void;
 }
 
 type LanguageHeaderProps = HeaderBaseProps & {
@@ -77,7 +78,7 @@ export default function Header(props: HeaderProps) {
     <TopBar
       leadingContent={leadingContent}
       showBackButton={showBackButton}
-      onBackPress={() => router.back()}
+      onBackPress={props.onBackPress || (() => router.back())}
       rightContent={renderRightContent()}
       containerClassName={containerClassName}
       contentClassName={contentClassName}

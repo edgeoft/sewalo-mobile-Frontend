@@ -14,6 +14,7 @@ export interface UserProfile {
   slug: string;
   role: UserRole;
   current_role: UserRole;
+  available_roles?: UserRole[];
   status: UserStatus;
   status_message?: string;
   avatar: string | null;
@@ -166,4 +167,30 @@ export interface ChangePasswordPayload {
 
 export interface ChangePasswordResponse {
   message: string;
+}
+
+// Role Switching types (strictly restricted to customer and provider)
+export type SwitchTargetRole = 'customer' | 'provider';
+
+export interface SwitchRolePayload {
+  target_role: SwitchTargetRole;
+}
+
+export interface SwitchRoleResponse {
+  message: string;
+  user: UserProfile;
+}
+
+export interface SwitchRoleWithDetailsPayload {
+  target_role: 'provider'; // detail switches are only applicable when becoming a provider
+  availability: Availability | string;
+  availability_days: string[];
+  start_time: string;
+  end_time: string;
+  document: string | null;
+}
+
+export interface SwitchRoleWithDetailsResponse {
+  message: string;
+  user: UserProfile;
 }

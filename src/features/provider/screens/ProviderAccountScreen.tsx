@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +9,8 @@ import Header from '@/components/navigation/Header';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
+import { useSwitchRole } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import { Feather } from '@expo/vector-icons';
@@ -20,8 +22,11 @@ export default function ProviderAccountScreen() {
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
   const { t } = useTranslation();
+  const { showSnackbar } = useSnackbar();
 
-  const menuSections = getProviderAccountMenu(t);
+  const { mutateAsync: switchRole, isPending: isSwitching } = useSwitchRole();
+
+  const menuSections = getProviderAccountMenu(t, user);
 
   const handleEditProfile = () => {
     router.push(ROUTES.provider.editProfile);
@@ -30,6 +35,17 @@ export default function ProviderAccountScreen() {
   const handleLogout = () => {
     logout();
     router.replace(ROUTES.auth.signin);
+  };
+
+  const handleSwitchRole = async () => {
+    try {
+      await switchRole({ target_role: 'customer' });
+      showSnackbar({ message: 'Switched to customer account', type: 'success' });
+      router.replace(ROUTES.customer.home);
+    } catch (err: any) {
+      const errMsg = err?.message || 'Failed to switch role.';
+      showSnackbar({ message: errMsg, type: 'error' });
+    }
   };
 
   const handleItemPress = (itemId: string) => {
@@ -69,6 +85,9 @@ export default function ProviderAccountScreen() {
         break;
       case 'rate-app':
         router.push(ROUTES.provider.rateApp);
+        break;
+      case 'switch-role':
+        handleSwitchRole();
         break;
       case 'logout':
         handleLogout();
@@ -175,6 +194,14 @@ export default function ProviderAccountScreen() {
           ))}
         </View>
       </ContentLayout>
+      {isSwitching && (
+        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
+          <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
+            <ActivityIndicator size="large" color="#485aff" />
+            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Switching account...</Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }

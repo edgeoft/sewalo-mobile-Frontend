@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,8 @@ import { SectionHeader } from '@/components/common';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useAuth } from '@/providers/AuthProvider';
 import { ROUTES } from '@/constants/routes';
+import { useSwitchRole } from '@/api';
+import { useSnackbar } from '@/components/ui/Snackbar';
 
 import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
@@ -21,8 +23,11 @@ export default function CustomerAccountScreen() {
   const insets = useSafeAreaInsets();
   const { logout, user } = useAuth();
   const { t } = useTranslation();
+  const { showSnackbar } = useSnackbar();
 
-  const menuSections = getCustomerAccountMenu(t);
+  const { mutateAsync: switchRole, isPending: isSwitching } = useSwitchRole();
+
+  const menuSections = getCustomerAccountMenu(t, user);
 
   const handleEditProfile = () => {
     router.push(ROUTES.customer.editProfile);
@@ -31,6 +36,22 @@ export default function CustomerAccountScreen() {
   const handleLogout = () => {
     logout();
     router.replace(ROUTES.auth.signin);
+  };
+
+  const handleSwitchRole = async () => {
+    const hasProviderRole = user?.available_roles?.includes('provider');
+    if (hasProviderRole) {
+      try {
+        await switchRole({ target_role: 'provider' });
+        showSnackbar({ message: 'Switched to provider account', type: 'success' });
+        router.replace(ROUTES.provider.home);
+      } catch (err: any) {
+        const errMsg = err?.message || 'Failed to switch role.';
+        showSnackbar({ message: errMsg, type: 'error' });
+      }
+    } else {
+      router.push(ROUTES.customer.becomeProvider as any);
+    }
   };
 
   const handleItemPress = (itemId: string) => {
@@ -70,6 +91,9 @@ export default function CustomerAccountScreen() {
         break;
       case 'rate-app':
         router.push(ROUTES.customer.rateApp);
+        break;
+      case 'switch-role':
+        handleSwitchRole();
         break;
       case 'logout':
         handleLogout();
@@ -162,6 +186,14 @@ export default function CustomerAccountScreen() {
           ))}
         </View>
       </ContentLayout>
+      {isSwitching && (
+        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
+          <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
+            <ActivityIndicator size="large" color="#485aff" />
+            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Switching account...</Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
