@@ -7,15 +7,14 @@ interface PostHogProviderProps {
 }
 
 export function PostHogProvider({ children }: PostHogProviderProps) {
-  const isProduction = ENV.APP_ENV === 'production';
-  const apiKey = ENV.POSTHOG_API_KEY || 'disabled-key-placeholder';
+  const apiKey = ENV.POSTHOG_PROJECT_TOKEN || 'disabled-key-placeholder';
 
   return (
     <PHProvider
       apiKey={apiKey}
       options={{
         host: ENV.POSTHOG_HOST || 'https://us.i.posthog.com',
-        disabled: !isProduction || !ENV.POSTHOG_API_KEY,
+        disabled: !ENV.POSTHOG_PROJECT_TOKEN,
       }}
     >
       {children}

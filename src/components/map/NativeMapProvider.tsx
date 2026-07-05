@@ -225,9 +225,8 @@ export default function NativeMapProvider({
   // We use useFeatureFlag but wrap or guard it based on whether PostHog is active.
   const isGoogleMapsFlagEnabled = useFeatureFlag('google-maps');
 
-  // If we're not in production, or PostHog is not enabled, useGoogleMaps must be false (using OSM)
-  const isProduction = ENV.APP_ENV === 'production';
-  const useGoogleMaps = isProduction && isGoogleMapsFlagEnabled === true && !!apiKey;
+  // If Google Maps is enabled via feature flag and API key is present
+  const useGoogleMaps = isGoogleMapsFlagEnabled === true && !!apiKey;
 
   const [coordinate, setCoordinate] = useState({ latitude: startLat, longitude: startLng });
 
@@ -584,8 +583,8 @@ export default function NativeMapProvider({
     </Pressable>
   );
 
-  // If the feature flag is loading in production, render a centered loading spinner for smooth UX
-  if (isProduction && isGoogleMapsFlagEnabled === undefined) {
+  // If the feature flag is loading, render a centered loading spinner for smooth UX
+  if (isGoogleMapsFlagEnabled === undefined) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#485aff" />
