@@ -48,6 +48,29 @@ const isCrossOrigin = (url: string, baseURL: string): boolean => {
   }
 };
 
+// ponytail: sensitive data redaction helper
+const redact = (obj: any): any => {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(redact);
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    const lowKey = key.toLowerCase();
+    if (
+      lowKey.includes('password') ||
+      lowKey.includes('token') ||
+      lowKey.includes('authorization') ||
+      lowKey.includes('secret') ||
+      lowKey.includes('card')
+    ) {
+      result[key] = '[REDACTED]';
+    } else {
+      result[key] = redact(val);
+    }
+  }
+  return result;
+};
+
 export const createApiClient = (
   config: ApiClientConfig,
 ): ApiClient & {
@@ -55,6 +78,8 @@ export const createApiClient = (
 } => {
   const baseURL = config.baseURL;
   const timeout = config.timeout ?? 10000;
+  const isProd = config.env === 'prod';
+  const name = config.name || 'API';
 
   // Initialize token manager if auth config is provided
   let tokenManager: TokenManager | undefined;
@@ -78,6 +103,7 @@ export const createApiClient = (
     const correlationId = generateUUID();
     axiosConfig.headers = axiosConfig.headers || {};
     axiosConfig.headers['X-Correlation-ID'] = correlationId;
+    (axiosConfig as any).metadata = { startTime: Date.now() };
 
     if (axiosConfig.data) {
       cleanPayloadInPlace(axiosConfig.data);
@@ -93,14 +119,44 @@ export const createApiClient = (
       }
     }
 
+    if (!isProd) {
+      console.log(
+        `[API-CLIENT][${name}][REQ] [ID: ${correlationId}] ${axiosConfig.method?.toUpperCase()} ${axiosConfig.url}`,
+        {
+          headers: redact(axiosConfig.headers),
+          params: redact(axiosConfig.params),
+          data: redact(axiosConfig.data),
+        },
+      );
+    }
+
     return axiosConfig;
   });
 
-  // Response Interceptor: 401 Refresh
+  // Response Interceptor: 401 Refresh & Logging
   axiosInstance.interceptors.response.use(
-    (response) => response,
+    async (response) => {
+      const correlationId = response.config.headers['X-Correlation-ID'] || 'N/A';
+      const startTime = (response.config as any).metadata?.startTime;
+      const duration = startTime ? Date.now() - startTime : 0;
+
+      if (!isProd) {
+        console.log(
+          `[API-CLIENT][${name}][RES] [ID: ${correlationId}] ${response.config.method?.toUpperCase()} ${response.config.url} - Status ${response.status} (${duration}ms)`,
+          { data: redact(response.data) },
+        );
+      }
+
+      return response;
+    },
     async (error) => {
       const originalRequest = error.config;
+      const correlationId = originalRequest?.headers?.['X-Correlation-ID'] || 'N/A';
+      const startTime = originalRequest?.metadata?.startTime;
+      const duration = startTime ? Date.now() - startTime : 0;
+      const status = error.response?.status || 'N/A';
+      const code = error.code || 'N/A';
+
       if (error.response?.status === 401 && !originalRequest._retry && tokenManager?.canRefresh()) {
         originalRequest._retry = true;
         try {
@@ -112,9 +168,31 @@ export const createApiClient = (
           }
         } catch (refreshError) {
           tokenManager.handleAuthFailure();
+          if (isProd) {
+            console.error(
+              `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Code: ${code}, Status: ${status}`,
+            );
+          } else {
+            console.error(
+              `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Code: ${code}, Status: ${status} (${duration}ms)`,
+              { message: error.message, details: redact(error.response?.data) },
+            );
+          }
           return Promise.reject(refreshError);
         }
       }
+
+      if (isProd) {
+        console.error(
+          `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Code: ${code}, Status: ${status}`,
+        );
+      } else {
+        console.error(
+          `[API-CLIENT][${name}][ERR] [ID: ${correlationId}] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Code: ${code}, Status: ${status} (${duration}ms)`,
+          { message: error.message, details: redact(error.response?.data) },
+        );
+      }
+
       return Promise.reject(error);
     },
   );
