@@ -15,14 +15,23 @@ interface LocationData {
 
 interface LocationSelectorProps {
   value: string;
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
+  coordinates?: { lat: number; lng: number } | null;
   onChange: (data: LocationData) => void;
   placeholder?: string;
   error?: string;
 }
 
-export default function LocationSelector({ value, lat, lng, onChange, placeholder, error }: LocationSelectorProps) {
+export default function LocationSelector({
+  value,
+  lat,
+  lng,
+  coordinates,
+  onChange,
+  placeholder,
+  error,
+}: LocationSelectorProps) {
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const resolvedPlaceholder = placeholder ?? t('components.selectLocation');
@@ -64,8 +73,9 @@ export default function LocationSelector({ value, lat, lng, onChange, placeholde
       >
         <SafeAreaView className="flex-1 bg-white">
           <NativeMapProvider
-            initialLat={lat || 27.700769}
-            initialLng={lng || 85.30014}
+            coordinates={coordinates}
+            initialLat={lat}
+            initialLng={lng}
             initialAddress={value}
             onSelectLocation={async (data) => {
               onChange(data);

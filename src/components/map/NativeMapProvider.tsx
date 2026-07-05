@@ -141,7 +141,15 @@ function generateOSMMapHTML(lat: number, lng: number) {
     attribution: '© OSM'
   }).addTo(map);
 
-  var marker = L.marker([${lat}, ${lng}], { draggable: true }).addTo(map);
+  // ponytail: Use inline SVG DivIcon to guarantee marker renders correctly offline/online without default Leaflet asset path errors
+  var customIcon = L.divIcon({
+    html: '<svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0ZM15 20.25C12.1005 20.25 9.75 17.8995 9.75 15C9.75 12.1005 12.1005 9.75 15 9.75C17.8995 9.75 20.25 12.1005 20.25 15C20.25 17.8995 17.8995 20.25 15 20.25Z" fill="#485aff"/></svg>',
+    className: 'custom-pin-icon',
+    iconSize: [30, 42],
+    iconAnchor: [15, 42]
+  });
+
+  var marker = L.marker([${lat}, ${lng}], { draggable: true, icon: customIcon }).addTo(map);
 
   function sendMessage(type, data) {
     if (window.ReactNativeWebView) {
@@ -149,19 +157,22 @@ function generateOSMMapHTML(lat: number, lng: number) {
     }
   }
 
+  // ponytail: pan map to center on new coordinates for better UX
   marker.on('dragend', function(e) {
     var pos = marker.getLatLng();
+    map.panTo(pos);
     sendMessage('coordinateChanged', { latitude: pos.lat.toFixed(6), longitude: pos.lng.toFixed(6) });
   });
 
   map.on('click', function(e) {
     marker.setLatLng(e.latlng);
+    map.panTo(e.latlng);
     sendMessage('coordinateChanged', { latitude: e.latlng.lat.toFixed(6), longitude: e.latlng.lng.toFixed(6) });
   });
 
   window.addEventListener('message', function(e) {
     try {
-      var msg = JSON.parse(e.data);
+      var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
       if (msg.type === 'setMarker') {
         var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
         marker.setLatLng(ll);
@@ -172,7 +183,7 @@ function generateOSMMapHTML(lat: number, lng: number) {
 
   document.addEventListener('message', function(e) {
     try {
-      var msg = JSON.parse(e.data);
+      var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
       if (msg.type === 'setMarker') {
         var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
         marker.setLatLng(ll);
@@ -198,6 +209,7 @@ const extractComponent = (components: any[], types: string[]): string => {
 export default function NativeMapProvider({
   initialLat = 27.700769,
   initialLng = 85.30014,
+  coordinates,
   initialAddress = '',
   onSelectLocation,
   onCancel,
@@ -205,6 +217,9 @@ export default function NativeMapProvider({
   const { t } = useTranslation();
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
   const insets = useSafeAreaInsets();
+
+  const startLat = coordinates?.lat || initialLat;
+  const startLng = coordinates?.lng || initialLng;
 
   // Evaluate Google Maps feature flag via PostHog
   // We use useFeatureFlag but wrap or guard it based on whether PostHog is active.
@@ -214,7 +229,16 @@ export default function NativeMapProvider({
   const isProduction = ENV.APP_ENV === 'production';
   const useGoogleMaps = isProduction && isGoogleMapsFlagEnabled === true && !!apiKey;
 
-  const [coordinate, setCoordinate] = useState({ latitude: initialLat, longitude: initialLng });
+  const [coordinate, setCoordinate] = useState({ latitude: startLat, longitude: startLng });
+
+  // ponytail: Adjust state during render when coordinates/initialLat/initialLng props change to prevent cascading render lint warnings
+  const [prevLat, setPrevLat] = useState(startLat);
+  const [prevLng, setPrevLng] = useState(startLng);
+  if (startLat !== prevLat || startLng !== prevLng) {
+    setPrevLat(startLat);
+    setPrevLng(startLng);
+    setCoordinate({ latitude: startLat, longitude: startLng });
+  }
   const [addressText, setAddressText] = useState(initialAddress);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -243,6 +267,12 @@ export default function NativeMapProvider({
           // OpenStreetMap Nominatim reverse geocode
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
+            {
+              headers: {
+                'User-Agent': 'SewaloApp/1.0',
+                'Accept-Language': 'ne,en',
+              },
+            },
           );
           if (response.ok) {
             const data = await response.json();
@@ -279,6 +309,12 @@ export default function NativeMapProvider({
           } else {
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
+              {
+                headers: {
+                  'User-Agent': 'SewaloApp/1.0',
+                  'Accept-Language': 'ne,en',
+                },
+              },
             );
             if (response.ok) {
               const data = await response.json();
@@ -294,6 +330,61 @@ export default function NativeMapProvider({
       fetchInitial();
     }
   }, [initialAddress, initialLat, initialLng, useGoogleMaps, apiKey]);
+
+  // ponytail: Sync WebView marker location when parent coordinates change (e.g. during edits)
+  useEffect(() => {
+    webViewRef.current?.postMessage(
+      JSON.stringify({ type: 'setMarker', lat: startLat.toString(), lng: startLng.toString() }),
+    );
+  }, [startLat, startLng]);
+  // ponytail: Forward geocode initialAddress on mount to ensure marker and map are positioned on the saved address coordinates
+  useEffect(() => {
+    if (initialAddress) {
+      const geocodeInitial = async () => {
+        try {
+          if (useGoogleMaps) {
+            const response = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(initialAddress)}&key=${apiKey}&language=ne,en`,
+            );
+            if (response.ok) {
+              const data = await response.json();
+              if (data.results && data.results.length > 0) {
+                const loc = data.results[0].geometry.location;
+                setCoordinate({ latitude: loc.lat, longitude: loc.lng });
+                webViewRef.current?.postMessage(
+                  JSON.stringify({ type: 'setMarker', lat: loc.lat.toString(), lng: loc.lng.toString() }),
+                );
+              }
+            }
+          } else {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(initialAddress)}&countrycodes=np&limit=1`,
+              {
+                headers: {
+                  'User-Agent': 'SewaloApp/1.0',
+                  'Accept-Language': 'ne,en',
+                },
+              },
+            );
+            if (response.ok) {
+              const data = await response.json();
+              if (data && data.length > 0) {
+                const lat = parseFloat(data[0].lat);
+                const lng = parseFloat(data[0].lon);
+                setCoordinate({ latitude: lat, longitude: lng });
+                webViewRef.current?.postMessage(
+                  JSON.stringify({ type: 'setMarker', lat: lat.toString(), lng: lng.toString() }),
+                );
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Geocoding initial address failed:', err);
+        }
+      };
+      geocodeInitial();
+    }
+  }, [initialAddress, useGoogleMaps, apiKey]);
 
   // Search Address autocomplete
   const handleSearchChange = (text: string) => {
@@ -320,6 +411,12 @@ export default function NativeMapProvider({
           // OpenStreetMap Nominatim search query
           const response = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text)}&countrycodes=np&limit=5`,
+            {
+              headers: {
+                'User-Agent': 'SewaloApp/1.0',
+                'Accept-Language': 'ne,en',
+              },
+            },
           );
           if (response.ok) {
             const data = await response.json();
@@ -431,6 +528,12 @@ export default function NativeMapProvider({
       } else {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinate.latitude}&lon=${coordinate.longitude}&zoom=16&addressdetails=1`,
+          {
+            headers: {
+              'User-Agent': 'SewaloApp/1.0',
+              'Accept-Language': 'ne,en',
+            },
+          },
         );
         if (response.ok) {
           const data = await response.json();
@@ -459,6 +562,10 @@ export default function NativeMapProvider({
       address: addressText || searchQuery || `${finalCity}, ${finalState}, ${finalCountry}`,
       lat: coordinate.latitude,
       lng: coordinate.longitude,
+      coordinates: {
+        lat: coordinate.latitude,
+        lng: coordinate.longitude,
+      },
       city: finalCity,
       state: finalState,
       country: finalCountry,
@@ -529,6 +636,16 @@ export default function NativeMapProvider({
           }}
           style={styles.map}
           onMessage={handleMessage}
+          onLoadEnd={() => {
+            // ponytail: Ensure marker is centered and synced immediately after WebView finishes loading
+            webViewRef.current?.postMessage(
+              JSON.stringify({
+                type: 'setMarker',
+                lat: coordinate.latitude.toString(),
+                lng: coordinate.longitude.toString(),
+              }),
+            );
+          }}
           javaScriptEnabled
           domStorageEnabled
           scrollEnabled={false}

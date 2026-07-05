@@ -283,8 +283,13 @@ export default function BasicInfoSection({
               return (
                 <LocationSelector
                   value={value}
-                  lat={formValues.lat || 27.700769}
-                  lng={formValues.lng || 85.30014}
+                  coordinates={
+                    formValues.lat !== undefined && formValues.lng !== undefined
+                      ? { lat: Number(formValues.lat), lng: Number(formValues.lng) }
+                      : null
+                  }
+                  lat={formValues.lat}
+                  lng={formValues.lng}
                   placeholder={t('components.locationPlaceholder')}
                   onChange={(data) => {
                     onChange(data.address);
