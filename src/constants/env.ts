@@ -15,11 +15,6 @@ export const ENV = {
   S3_BASE_URL: process.env.EXPO_PUBLIC_S3_BASE_URL || 'https://sewalo-dev.s3.ap-south-1.amazonaws.com/',
 
   /**
-   * The current deployment environment (e.g. dev, production).
-   */
-  APP_ENV: process.env.EXPO_PUBLIC_ENV || 'dev',
-
-  /**
    * Google Maps API Key for maps and geocoding services.
    */
   GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
