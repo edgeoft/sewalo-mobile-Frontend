@@ -224,10 +224,13 @@ export default function NativeMapProvider({
   const webViewRef = useRef<WebView>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const fallbackAddress = (lat: number, lng: number) => `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
   // Reverse Geocoding Implementation
   const reverseGeocode = useCallback(
     async (lat: number, lng: number) => {
       setIsReverseGeocoding(true);
+      let resolvedAddress: string | null = null;
       try {
         if (useGoogleMaps) {
           const response = await fetch(
@@ -236,24 +239,26 @@ export default function NativeMapProvider({
           if (response.ok) {
             const data = await response.json();
             if (data.results && data.results.length > 0) {
-              setAddressText(data.results[0].formatted_address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+              resolvedAddress = data.results[0].formatted_address;
             }
           }
         } else {
-          // OpenStreetMap Nominatim reverse geocode
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
+            { headers: { 'User-Agent': 'SewaloApp/1.0' } },
           );
           if (response.ok) {
             const data = await response.json();
-            setAddressText(data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+            if (data && data.display_name) {
+              resolvedAddress = data.display_name;
+            }
           }
         }
       } catch (err) {
         console.warn('Reverse geocode failed:', err);
-      } finally {
-        setIsReverseGeocoding(false);
       }
+      setAddressText(resolvedAddress || fallbackAddress(lat, lng));
+      setIsReverseGeocoding(false);
     },
     [useGoogleMaps, apiKey],
   );
@@ -263,6 +268,7 @@ export default function NativeMapProvider({
     if (!initialAddress) {
       const fetchInitial = async () => {
         setIsReverseGeocoding(true);
+        let initialResolvedAddress: string | null = null;
         try {
           if (useGoogleMaps) {
             const response = await fetch(
@@ -271,25 +277,26 @@ export default function NativeMapProvider({
             if (response.ok) {
               const data = await response.json();
               if (data.results && data.results.length > 0) {
-                setAddressText(
-                  data.results[0].formatted_address || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`,
-                );
+                initialResolvedAddress = data.results[0].formatted_address;
               }
             }
           } else {
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${initialLat}&lon=${initialLng}&zoom=16&addressdetails=1`,
+              { headers: { 'User-Agent': 'SewaloApp/1.0' } },
             );
             if (response.ok) {
               const data = await response.json();
-              setAddressText(data.display_name || `${initialLat.toFixed(6)}, ${initialLng.toFixed(6)}`);
+              if (data && data.display_name) {
+                initialResolvedAddress = data.display_name;
+              }
             }
           }
         } catch (err) {
           console.warn('Initial reverse geocode failed:', err);
-        } finally {
-          setIsReverseGeocoding(false);
         }
+        setAddressText(initialResolvedAddress || fallbackAddress(initialLat, initialLng));
+        setIsReverseGeocoding(false);
       };
       fetchInitial();
     }
@@ -431,6 +438,7 @@ export default function NativeMapProvider({
       } else {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinate.latitude}&lon=${coordinate.longitude}&zoom=16&addressdetails=1`,
+          { headers: { 'User-Agent': 'SewaloApp/1.0' } },
         );
         if (response.ok) {
           const data = await response.json();
@@ -451,12 +459,18 @@ export default function NativeMapProvider({
       return val;
     };
 
-    finalCity = cleanStr(finalCity, 'Kathmandu');
-    finalState = cleanStr(finalState, 'Bagmati');
-    finalCountry = cleanStr(finalCountry, 'Nepal');
+    finalCity = cleanStr(finalCity, '');
+    finalState = cleanStr(finalState, '');
+    finalCountry = cleanStr(finalCountry, '');
+
+    const resolvedAddress =
+      addressText ||
+      searchQuery ||
+      [finalCity, finalState, finalCountry].filter(Boolean).join(', ') ||
+      fallbackAddress(coordinate.latitude, coordinate.longitude);
 
     await onSelectLocation({
-      address: addressText || searchQuery || `${finalCity}, ${finalState}, ${finalCountry}`,
+      address: resolvedAddress,
       lat: coordinate.latitude,
       lng: coordinate.longitude,
       city: finalCity,

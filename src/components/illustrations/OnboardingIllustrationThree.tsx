@@ -1,9 +1,16 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Svg, { Path, Circle, Rect, G, Polygon } from 'react-native-svg';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, Easing } from 'react-native-reanimated';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
+import Svg, { Circle, G, Path, Polygon, Rect } from 'react-native-svg';
 
-const AnimatedG = Animated.createAnimatedComponent(G) as any;
+const AnimatedG = Animated.createAnimatedComponent(G);
 
 export default function OnboardingIllustrationThree({ isActive }: { isActive?: boolean }) {
   const handX = useSharedValue(60);
@@ -71,7 +78,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
     transform: [{ translateX: handX.value }, { translateY: handY.value }],
   }));
 
-  const starStyle = useAnimatedStyle(() => ({
+  const starProps = useAnimatedProps(() => ({
     transform: [{ scale: starFillScale.value }],
     opacity: starFillScale.value,
   }));
@@ -80,16 +87,16 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
     opacity: starFillScale.value > 0 ? 1 : 0,
   }));
 
-  const rippleStyle = useAnimatedStyle(() => ({
+  const rippleProps = useAnimatedProps(() => ({
     transform: [{ scale: rippleScale.value }],
     opacity: rippleOpacity.value,
   }));
 
-  const neutralFaceStyle = useAnimatedStyle(() => ({
+  const neutralFaceProps = useAnimatedProps(() => ({
     opacity: 1 - starFillScale.value,
   }));
 
-  const happyFaceStyle = useAnimatedStyle(() => ({
+  const happyFaceProps = useAnimatedProps(() => ({
     opacity: starFillScale.value,
   }));
 
@@ -117,7 +124,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
 
           {/* Animated Face Expressions */}
           {/* Neutral Face */}
-          <AnimatedG style={neutralFaceStyle}>
+          <AnimatedG animatedProps={neutralFaceProps}>
             <Circle cx="110" cy="48" r="2.5" fill="#3730a3" />
             <Circle cx="130" cy="48" r="2.5" fill="#3730a3" />
             <Path
@@ -130,7 +137,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
           </AnimatedG>
 
           {/* Happy Face */}
-          <AnimatedG style={happyFaceStyle}>
+          <AnimatedG animatedProps={happyFaceProps}>
             <Path
               d="M106 50 C108 45 112 45 114 50"
               stroke="#3730a3"
@@ -184,7 +191,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
       {/* Animated 5th Star Fill */}
       <View style={StyleSheet.absoluteFill}>
         <Svg width="100%" height="100%" viewBox="0 0 240 240" fill="none">
-          <AnimatedG style={starStyle} origin="175, 155">
+          <AnimatedG animatedProps={starProps} origin="175, 155">
             <Polygon
               points="175,145 178,155 188,155 180,161 183,171 175,165 167,171 170,161 162,155 172,155"
               fill="#fbbf24"
@@ -207,7 +214,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
       {/* Dual-ring Touch Ripple Animation */}
       <View style={StyleSheet.absoluteFill}>
         <Svg width="100%" height="100%" viewBox="0 0 240 240" fill="none">
-          <AnimatedG style={rippleStyle} origin="175, 155">
+          <AnimatedG animatedProps={rippleProps} origin="175, 155">
             <Circle cx="175" cy="155" r="15" fill="none" stroke="#485aff" strokeWidth="3" opacity="0.6" />
             <Circle cx="175" cy="155" r="8" fill="none" stroke="#485aff" strokeWidth="2" opacity="0.4" />
           </AnimatedG>

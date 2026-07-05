@@ -155,7 +155,7 @@ export default function ProviderOverviewTab({
         <View className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
           <Text className="text-sm font-sans-bold text-gray-950 mb-3">{t('services.certificatesDocuments')}</Text>
           <View className="gap-y-2">
-            {(certificates as any[]).map((cert, index) => {
+            {certificates.map((cert, index) => {
               const val = typeof cert === 'string' ? cert : cert.value;
               return (
                 <View key={index} className="flex-row items-center gap-2">

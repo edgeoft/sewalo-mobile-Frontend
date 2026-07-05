@@ -24,7 +24,7 @@ export default function ProviderAccountScreen() {
   const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
 
-  const { mutateAsync: switchRole, isPending: isSwitching } = useSwitchRole();
+  const { mutate: switchRole, isPending: isSwitching } = useSwitchRole();
 
   const menuSections = getProviderAccountMenu(t, user);
 
@@ -37,15 +37,20 @@ export default function ProviderAccountScreen() {
     router.replace(ROUTES.auth.signin);
   };
 
-  const handleSwitchRole = async () => {
-    try {
-      await switchRole({ target_role: 'customer' });
-      showSnackbar({ message: 'Switched to customer account', type: 'success' });
-      router.replace(ROUTES.customer.home);
-    } catch (err: any) {
-      const errMsg = err?.message || 'Failed to switch role.';
-      showSnackbar({ message: errMsg, type: 'error' });
-    }
+  const handleSwitchRole = () => {
+    switchRole(
+      { target_role: 'customer' },
+      {
+        onSuccess: () => {
+          showSnackbar({ message: 'Switched to customer account', type: 'success' });
+          router.replace(ROUTES.customer.home);
+        },
+        onError: (err) => {
+          const errMsg = err?.message || 'Failed to switch role.';
+          showSnackbar({ message: errMsg, type: 'error' });
+        },
+      },
+    );
   };
 
   const handleItemPress = (itemId: string) => {

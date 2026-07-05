@@ -31,7 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   updateUser: (user: UserProfile) =>
     set({
       user,
-      role: user.current_role || user.role,
+      role: user.role,
     }),
 
   login: async (user: UserProfile, accessToken: string, refreshToken?: string) => {
@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     set({
       user,
-      role: user.current_role || user.role,
+      role: user.role,
       isLoggedIn: true,
       isLoading: false,
     });
@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         const response = await getProfileAction();
         set({
           user: response.user,
-          role: response.user.current_role || response.user.role,
+          role: response.user.role,
           isLoggedIn: true,
           isLoading: false,
         });

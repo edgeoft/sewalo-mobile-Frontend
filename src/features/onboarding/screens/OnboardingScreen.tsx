@@ -35,7 +35,7 @@ export default function OnboardingScreen() {
       if (isLoggedIn && user) {
         if (user.status === 'pending') {
           router.replace({
-            pathname: ROUTES.auth.gettingStarted as any,
+            pathname: ROUTES.auth.gettingStarted,
             params: { role, phone: user.phone },
           });
         } else {

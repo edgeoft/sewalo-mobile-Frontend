@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
-import Button from '@/components/ui/Button';
 import { useResendOtp, useVerifyOtp } from '@/api';
+import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 
@@ -105,7 +105,7 @@ export default function OtpVerificationScreen() {
     });
   };
 
-  const errorMsg = localError || (verifyOtpMutation.error as any)?.message || (resendOtpMutation.error as any)?.message;
+  const errorMsg = localError || verifyOtpMutation.error?.message || resendOtpMutation.error?.message;
 
   return (
     <AuthScreenLayout

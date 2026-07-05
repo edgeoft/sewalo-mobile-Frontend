@@ -485,9 +485,9 @@ export function useOnboarding() {
       setRole(role as UserRole);
 
       if (role === 'provider') {
-        router.replace(ROUTES.provider.home as any);
+        router.replace(ROUTES.provider.home);
       } else {
-        router.replace(ROUTES.customer.home as any);
+        router.replace(ROUTES.customer.home);
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : 'Failed to finish profile registration.';

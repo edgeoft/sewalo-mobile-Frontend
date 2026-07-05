@@ -1,21 +1,21 @@
-import { ROUTES } from '@/constants/routes';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { ROUTES } from '@/constants/routes';
+import { formatPhone } from '@/features/auth/utils/phone';
 import { useAuth } from '@/providers/AuthProvider';
 import {
-  USER_ROLES,
   ForgotPasswordInput,
   LoginInput,
   ResendOtpInput,
   ResetPasswordInput,
   SignupInput,
+  USER_ROLES,
   VerifyOtpInput,
 } from '@/types';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
 import { ApiError } from '@/api/client/types';
-import { extractErrorMessage } from '@/api/client/query/errorHandler';
-import { formatPhone } from '@/features/auth/utils/phone';
+import { useRouter } from 'expo-router';
 import {
   forgotPasswordAction,
   loginAction,
@@ -72,11 +72,11 @@ export const useLogin = () => {
     onSuccess: async (res) => {
       showSnackbar({ message: 'Welcome back!', type: 'success' });
       await login(res.user, res.access_token);
-      const role = res.user.current_role || res.user.role;
+      const role = res.user.role;
       setTimeout(() => {
         if (res.user.status === 'pending') {
           router.replace({
-            pathname: ROUTES.auth.gettingStarted as any,
+            pathname: ROUTES.auth.gettingStarted,
             params: { role, phone: formatPhone(res.user.phone) },
           });
         } else {
@@ -131,7 +131,7 @@ export const useVerifyOtp = () => {
           if (res.user && res.access_token) {
             await login(res.user, res.access_token);
           }
-          const userRole = res.user?.current_role || res.user?.role || 'customer';
+          const userRole = res.user?.role || 'customer';
           if (res.user && (res.user.status === 'completed' || res.user.status === 'verified')) {
             if (userRole === USER_ROLES.Provider) {
               router.replace(ROUTES.provider.home);
@@ -140,7 +140,7 @@ export const useVerifyOtp = () => {
             }
           } else {
             router.replace({
-              pathname: ROUTES.auth.gettingStarted as any,
+              pathname: ROUTES.auth.gettingStarted,
               params: { role: userRole, phone: formatPhone(variables.phone) },
             });
           }

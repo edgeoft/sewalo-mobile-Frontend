@@ -30,6 +30,12 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           subtitle: t('navigation.editProfileSubtitle'),
         },
         {
+          id: 'switch-role',
+          icon: 'repeat',
+          title: 'Switch to Provider',
+          subtitle: 'Switch to provider to start taking bookings',
+        },
+        {
           id: 'my-reviews',
           icon: 'star',
           title: t('customer.myReviews'),
@@ -119,14 +125,6 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
       id: 'actions',
       title: t('navigation.actions'),
       items: [
-        {
-          id: 'switch-role',
-          icon: 'repeat',
-          title: user?.available_roles?.includes('provider') ? 'Switch to Provider' : 'Become a Provider',
-          subtitle: user?.available_roles?.includes('provider')
-            ? 'Switch to your provider profile'
-            : 'Setup provider account and start earning',
-        },
         {
           id: 'logout',
           icon: 'log-out',

@@ -7,16 +7,16 @@ import { Pressable, Text, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
+import { getSigninSchema, SigninFormData } from '@/schemas/auth';
 import AuthFooterLink from '../components/AuthFooterLink';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
 import PhoneNumberField from '../components/PhoneNumberField';
-import { getSigninSchema, SigninFormData } from '@/schemas/auth';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
-import { USER_ROLES } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
+import { USER_ROLES } from '@/types';
 
 import { useLogin } from '@/api';
 
@@ -33,7 +33,7 @@ export default function SigninScreen() {
     if (isLoggedIn && user) {
       if (user.status === 'pending') {
         router.replace({
-          pathname: ROUTES.auth.gettingStarted as any,
+          pathname: ROUTES.auth.gettingStarted,
           params: { role, phone: user.phone },
         });
       } else {

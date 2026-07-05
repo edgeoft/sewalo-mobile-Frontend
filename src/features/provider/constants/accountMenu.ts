@@ -30,6 +30,12 @@ export function getProviderAccountMenu(t: TFunction, user: UserProfile | null): 
           subtitle: t('navigation.editProfileSubtitle'),
         },
         {
+          id: 'switch-role',
+          icon: 'repeat',
+          title: 'Switch to Customer',
+          subtitle: 'Switch to your customer profile',
+        },
+        {
           id: 'payout-accounts',
           icon: 'dollar-sign',
           title: t('provider.payoutAccounts'),
@@ -119,12 +125,6 @@ export function getProviderAccountMenu(t: TFunction, user: UserProfile | null): 
       id: 'actions',
       title: t('navigation.actions'),
       items: [
-        {
-          id: 'switch-role',
-          icon: 'repeat',
-          title: 'Switch to Customer',
-          subtitle: 'Switch to your customer profile',
-        },
         {
           id: 'logout',
           icon: 'log-out',

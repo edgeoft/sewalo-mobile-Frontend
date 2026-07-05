@@ -1,16 +1,16 @@
-import { useTranslation } from 'react-i18next';
-import React, { useMemo } from 'react';
-import { Image, ScrollView, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
 
-import Header from '@/components/navigation/Header';
-import ContentLayout from '@/components/layout/ContentLayout';
-import LoadMoreList from '@/components/common/LoadMoreList';
 import { useGetBlogsQuery } from '@/api';
+import LoadMoreList from '@/components/common/LoadMoreList';
+import ContentLayout from '@/components/layout/ContentLayout';
+import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { Blog } from '@/types';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 
 export default function BlogListScreen() {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ export default function BlogListScreen() {
   const { data: blogsData, isLoading: blogsLoading } = useGetBlogsQuery({ show: 'all' });
 
   const handleArticlePress = (blog: Blog) => {
-    router.push(ROUTES.blog.detail(blog.slug) as any);
+    router.push(ROUTES.blog.detail(blog.slug));
   };
 
   const getReadTime = (description: string) => {

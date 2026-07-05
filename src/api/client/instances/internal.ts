@@ -5,7 +5,7 @@ import { ENV } from '@/constants/env';
 export const internalClient = createApiClient({
   name: 'internal-backend',
   baseURL: ENV.API_BASE_URL,
-  env: 'dev',
+  env: ENV.APP_ENV === 'production' ? 'prod' : 'dev',
   timeout: 10000,
   auth: {
     mode: 'single',

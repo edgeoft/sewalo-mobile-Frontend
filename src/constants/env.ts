@@ -7,7 +7,7 @@ export const ENV = {
   /**
    * The base URL for the REST API endpoints (e.g. http://localhost:8000/api).
    */
-  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/api',
+  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/',
 
   /**
    * The base URL for the S3 bucket hosting profile avatars and other uploaded resources.

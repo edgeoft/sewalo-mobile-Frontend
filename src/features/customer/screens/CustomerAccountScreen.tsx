@@ -1,22 +1,21 @@
-import React from 'react';
-import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter, type Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSwitchRole, ApiError } from '@/api';
+import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { SectionHeader } from '@/components/common';
 import LanguageSelector from '@/components/ui/LanguageSelector';
-import { useAuth } from '@/providers/AuthProvider';
-import { ROUTES } from '@/constants/routes';
-import { useSwitchRole } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/providers/AuthProvider';
 
-import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
-import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
-import { getCustomerAccountMenu } from '../constants/accountMenu';
 import { getImageUrl } from '../../auth/utils/image';
+import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
+import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
+import { getCustomerAccountMenu } from '../constants/accountMenu';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
@@ -25,7 +24,7 @@ export default function CustomerAccountScreen() {
   const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
 
-  const { mutateAsync: switchRole, isPending: isSwitching } = useSwitchRole();
+  const { mutate: switchRole, isPending: isSwitching } = useSwitchRole();
 
   const menuSections = getCustomerAccountMenu(t, user);
 
@@ -38,19 +37,33 @@ export default function CustomerAccountScreen() {
     router.replace(ROUTES.auth.signin);
   };
 
-  const handleSwitchRole = async () => {
+  const handleSwitchRole = () => {
     const hasProviderRole = user?.available_roles?.includes('provider');
     if (hasProviderRole) {
-      try {
-        await switchRole({ target_role: 'provider' });
-        showSnackbar({ message: 'Switched to provider account', type: 'success' });
-        router.replace(ROUTES.provider.home);
-      } catch (err: any) {
-        const errMsg = err?.message || 'Failed to switch role.';
-        showSnackbar({ message: errMsg, type: 'error' });
-      }
+      switchRole(
+        { target_role: 'provider' },
+        {
+          onSuccess: () => {
+            showSnackbar({ message: 'Switched to provider account', type: 'success' });
+            router.replace(ROUTES.provider.home);
+          },
+          onError: (err) => {
+            if ((err as ApiError)?.status === 422) {
+              const missing = (err as any)?.details?.missing_fields;
+              const params: Record<string, string> = {};
+              if (missing?.length) {
+                params.missingFields = JSON.stringify(missing);
+              }
+              router.push({ pathname: ROUTES.customer.becomeProvider, params } as Href);
+              return;
+            }
+            const errMsg = err?.message || 'Failed to switch role.';
+            showSnackbar({ message: errMsg, type: 'error' });
+          },
+        },
+      );
     } else {
-      router.push(ROUTES.customer.becomeProvider as any);
+      router.push(ROUTES.customer.becomeProvider as Href);
     }
   };
 

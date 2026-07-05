@@ -24,7 +24,7 @@ export default function ProviderServicesScreen() {
   const { t } = useTranslation();
 
   const handleCreateService = () => {
-    router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } });
+    router.push({ pathname: ROUTES.provider.serviceEdit, params: { mode: 'add' } });
   };
 
   const handleOpenPortfolio = (url: string) => {

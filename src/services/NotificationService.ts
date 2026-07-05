@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { ROUTES } from '@/constants/routes';
 
 Notifications.setNotificationHandler({
@@ -17,7 +17,7 @@ Notifications.setNotificationHandler({
 export function handleNotificationResponse(response: Notifications.NotificationResponse) {
   const data = response.notification.request.content.data;
   const route = (data?.route as string) || ROUTES.notifications;
-  router.push(route as any);
+  router.push(route as Href);
 }
 
 export function useNotificationObserver() {

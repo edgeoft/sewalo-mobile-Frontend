@@ -1,7 +1,7 @@
-import { Redirect, Stack } from 'expo-router';
+import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES } from '@/types';
-import { ROUTES } from '@/constants/routes';
+import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function ProviderLayout() {
@@ -23,7 +23,7 @@ export default function ProviderLayout() {
   }
 
   if (user?.status === 'pending') {
-    return <Redirect href={{ pathname: ROUTES.auth.gettingStarted, params: { role, phone: user.phone } } as any} />;
+    return <Redirect href={{ pathname: ROUTES.auth.gettingStarted, params: { role, phone: user.phone } }} />;
   }
 
   if (role !== USER_ROLES.Provider) {

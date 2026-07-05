@@ -1,8 +1,14 @@
-import { create } from 'axios';
-import { ApiClient, ApiClientConfig, RequestCtx, TokenManager } from './types';
+import { create, InternalAxiosRequestConfig } from 'axios';
+import { ApiClient, ApiClientConfig, RequestCtx, TokenManager, createApiError } from './types';
 import { createSingleTokenManager } from './auth/singleTokenManager';
 import { createSlotTokenManager } from './auth/slotManager';
 import { secureStorageAdapter } from './auth/storage';
+
+interface RequestConfigWithMetadata extends InternalAxiosRequestConfig {
+  metadata?: {
+    startTime?: number;
+  };
+}
 
 // ponytail: uuid generation for correlation ID
 export const generateUUID = (): string => {
@@ -103,7 +109,7 @@ export const createApiClient = (
     const correlationId = generateUUID();
     axiosConfig.headers = axiosConfig.headers || {};
     axiosConfig.headers['X-Correlation-ID'] = correlationId;
-    (axiosConfig as any).metadata = { startTime: Date.now() };
+    (axiosConfig as RequestConfigWithMetadata).metadata = { startTime: Date.now() };
 
     if (axiosConfig.data) {
       cleanPayloadInPlace(axiosConfig.data);
@@ -120,14 +126,14 @@ export const createApiClient = (
     }
 
     if (!isProd) {
-      console.log(
-        `[API-CLIENT][${name}][REQ] [ID: ${correlationId}] ${axiosConfig.method?.toUpperCase()} ${axiosConfig.url}`,
-        {
-          headers: redact(axiosConfig.headers),
-          params: redact(axiosConfig.params),
-          data: redact(axiosConfig.data),
-        },
-      );
+      const fullUrl = axiosConfig.baseURL
+        ? `${axiosConfig.baseURL.replace(/\/$/, '')}/${axiosConfig.url?.replace(/^\//, '')}`
+        : axiosConfig.url;
+      console.log(`[API-CLIENT][${name}][REQ] [ID: ${correlationId}] ${axiosConfig.method?.toUpperCase()} ${fullUrl}`, {
+        headers: redact(axiosConfig.headers),
+        params: redact(axiosConfig.params),
+        data: redact(axiosConfig.data),
+      });
     }
 
     return axiosConfig;
@@ -137,7 +143,7 @@ export const createApiClient = (
   axiosInstance.interceptors.response.use(
     async (response) => {
       const correlationId = response.config.headers['X-Correlation-ID'] || 'N/A';
-      const startTime = (response.config as any).metadata?.startTime;
+      const startTime = (response.config as RequestConfigWithMetadata).metadata?.startTime;
       const duration = startTime ? Date.now() - startTime : 0;
 
       if (!isProd) {
@@ -193,7 +199,15 @@ export const createApiClient = (
         );
       }
 
-      return Promise.reject(error);
+      const apiError = createApiError(error.message, {
+        status: error.response?.status,
+        code: error.code,
+        details: error.response?.data,
+        request: originalRequest,
+        response: error.response,
+      });
+
+      return Promise.reject(apiError);
     },
   );
 

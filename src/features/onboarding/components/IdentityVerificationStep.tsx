@@ -13,7 +13,7 @@ interface IdentityVerificationStepProps {
   documentImage: string | null;
   setDocumentImage: (uri: string | null) => void;
   onNext: () => void;
-  onSkip: () => void;
+  onSkip?: () => void;
   role: 'customer' | 'provider';
   stepper?: React.ReactNode;
 }
@@ -44,8 +44,7 @@ export default function IdentityVerificationStep({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        mediaTypes: 'images',
         quality: 0.8,
       });
 
@@ -146,14 +145,16 @@ export default function IdentityVerificationStep({
           size="sm"
           className="w-full bg-primary"
         />
-        <Button
-          title={t('onboarding.skipStep')}
-          onPress={onSkip}
-          variant="ghost"
-          size="sm"
-          className="w-full border border-gray-200 active:bg-gray-50"
-          textClassName="text-gray-600 font-sans-bold"
-        />
+        {onSkip && (
+          <Button
+            title={t('onboarding.skipStep')}
+            onPress={onSkip}
+            variant="ghost"
+            size="sm"
+            className="w-full border border-gray-200 active:bg-gray-50"
+            textClassName="text-gray-600 font-sans-bold"
+          />
+        )}
       </View>
 
       {/* Full screen modal preview */}

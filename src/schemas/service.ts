@@ -68,7 +68,7 @@ export const serviceFormSchema = z
   .superRefine((data, ctx) => {
     // Validate that every selected service type ID has a rate card filled out
     for (const id of data.serviceTypeIds) {
-      const rate = data.rates[id] as any;
+      const rate = data.rates[id];
       if (!rate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

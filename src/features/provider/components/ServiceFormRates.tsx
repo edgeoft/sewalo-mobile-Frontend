@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { Control, FieldError, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -200,7 +200,9 @@ export default function ServiceFormRates({
               durationUnit: 'hours',
             };
 
-            const rateErrors = errors.rates?.[id] as any;
+            const rateErrors = errors.rates?.[id] as
+              | { price?: FieldError; billingBasis?: FieldError; duration?: FieldError; durationUnit?: FieldError }
+              | undefined;
 
             return (
               <View

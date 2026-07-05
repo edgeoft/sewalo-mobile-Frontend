@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Image,
   Modal,
@@ -88,6 +88,9 @@ export default function PersonalInfoStep({
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
+  const watchLat = useWatch({ control, name: 'lat' }) || 27.700769;
+  const watchLng = useWatch({ control, name: 'lng' }) || 85.30014;
+
   // Date picker state helper
   const [tempDay, setTempDay] = useState('01');
   const [tempMonth, setTempMonth] = useState('January');
@@ -102,9 +105,7 @@ export default function PersonalInfoStep({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
+        mediaTypes: 'images',
         quality: 0.8,
       });
 
@@ -129,10 +130,6 @@ export default function PersonalInfoStep({
   };
 
   const handleOpenLangModal = () => {
-    if (watchLanguages.length === 0) {
-      const allLangIds = AVAILABLE_LANGUAGES.map((l) => l.id);
-      setValue('languages', allLangIds, { shouldValidate: true });
-    }
     setLangModalVisible(true);
   };
 
@@ -240,26 +237,23 @@ export default function PersonalInfoStep({
               <Controller
                 control={control}
                 name="location"
-                render={({ field: { onChange, value } }) => {
-                  const formValues = control._formValues;
-                  return (
-                    <LocationSelector
-                      value={value}
-                      lat={formValues.lat || 27.700769}
-                      lng={formValues.lng || 85.30014}
-                      placeholder={t('onboarding.selectLocationMap')}
-                      onChange={(data) => {
-                        onChange(data.address);
-                        setValue('lat', data.lat);
-                        setValue('lng', data.lng);
-                        setValue('city', data.city);
-                        setValue('state', data.state);
-                        setValue('country', data.country);
-                      }}
-                      error={errors.location?.message as string}
-                    />
-                  );
-                }}
+                render={({ field: { onChange, value } }) => (
+                  <LocationSelector
+                    value={value}
+                    lat={watchLat}
+                    lng={watchLng}
+                    placeholder={t('onboarding.selectLocationMap')}
+                    onChange={(data) => {
+                      onChange(data.address);
+                      setValue('lat', data.lat);
+                      setValue('lng', data.lng);
+                      setValue('city', data.city);
+                      setValue('state', data.state);
+                      setValue('country', data.country);
+                    }}
+                    error={errors.location?.message as string}
+                  />
+                )}
               />
             </View>
 

@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
-import { HomeServiceCategoriesSection, RecentBookingsSection, HomeArticleSection } from '@/components/home';
+import { useCategoriesQuery, useGetBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
+import { HomeArticleSection, HomeServiceCategoriesSection, RecentBookingsSection } from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import { useCategoriesQuery, useGetBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
-import { useMemo } from 'react';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { UserProfile } from '@/types';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { useMemo } from 'react';
 
 export default function CustomerHomeScreen() {
   const { t } = useTranslation();
@@ -133,7 +133,7 @@ export default function CustomerHomeScreen() {
               readTime={getReadTime(featuredBlog.description)}
               articleTitle={featuredBlog.title}
               articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
-              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug) as any)}
+              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
               onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}

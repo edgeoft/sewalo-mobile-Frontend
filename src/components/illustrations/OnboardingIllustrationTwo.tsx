@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Svg, { Path, Circle, Rect, G } from 'react-native-svg';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, Easing } from 'react-native-reanimated';
-const AnimatedG = Animated.createAnimatedComponent(G) as any;
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, { Easing, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+const AnimatedG = Animated.createAnimatedComponent(G);
 
 export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boolean }) {
   const progress = useSharedValue(0);
@@ -39,7 +39,7 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
     }
   }, [isActive, planeOpacity, progress, successOpacity]);
 
-  const planeStyle = useAnimatedStyle(() => {
+  const planeProps = useAnimatedProps(() => {
     const t = progress.value;
     // Bezier control points: P0 = (65, 170), P1 = (120, 20), P2 = (175, 115)
     const x0 = 65,
@@ -65,7 +65,7 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
     };
   });
 
-  const successStyle = useAnimatedStyle(() => {
+  const successProps = useAnimatedProps(() => {
     const yOffset = (1 - successOpacity.value) * 8;
     return {
       transform: [{ translateY: yOffset }],
@@ -140,14 +140,14 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
           <Rect x="178" y="132" width="24" height="11" rx="3.5" fill="#10b981" />
         </G>
         {/* Symmetric Flying Paper Airplane centered at (0, 0) */}
-        <AnimatedG style={planeStyle}>
+        <AnimatedG animatedProps={planeProps}>
           {/* Centered paper plane at (0, 0) */}
           <Path d="M -16 -8 L 16 0 L -16 8 L -8 0 Z" fill="#485aff" />
           <Path d="M -8 0 L 0 3 L -8 6 Z" fill="#e0e7ff" stroke="#485aff" strokeWidth="0.5" />
         </AnimatedG>
 
         {/* Success Popup Confirmation on Device 2 */}
-        <AnimatedG style={successStyle}>
+        <AnimatedG animatedProps={successProps}>
           <G x="145" y="85">
             <Rect x="0" y="0" width="60" height="45" rx="6" fill="#10b981" />
             {/* White check circle */}

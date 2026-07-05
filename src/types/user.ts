@@ -13,7 +13,6 @@ export interface UserProfile {
   phone: string;
   slug: string;
   role: UserRole;
-  current_role: UserRole;
   available_roles?: UserRole[];
   status: UserStatus;
   status_message?: string;

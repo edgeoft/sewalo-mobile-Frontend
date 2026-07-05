@@ -97,20 +97,30 @@ export default function AvailabilityStep({
                 {t('onboarding.selectWorkingDays')}
               </Text>
               <View className="gap-y-2">
-                {[
-                  { id: 'everyday', label: t('onboarding.everyday'), description: t('onboarding.everydayDesc') },
-                  {
-                    id: 'sunday_friday',
-                    label: t('onboarding.sundayFriday'),
-                    description: t('onboarding.sundayFridayDesc'),
-                  },
-                  { id: 'weekend', label: t('onboarding.weekend'), description: t('onboarding.weekendDesc') },
-                ].map((day) => {
+                {(
+                  [
+                    {
+                      id: 'everyday' as const,
+                      label: t('onboarding.everyday'),
+                      description: t('onboarding.everydayDesc'),
+                    },
+                    {
+                      id: 'sunday_friday' as const,
+                      label: t('onboarding.sundayFriday'),
+                      description: t('onboarding.sundayFridayDesc'),
+                    },
+                    {
+                      id: 'weekend' as const,
+                      label: t('onboarding.weekend'),
+                      description: t('onboarding.weekendDesc'),
+                    },
+                  ] as const
+                ).map((day) => {
                   const isSelected = workingDays === day.id;
                   return (
                     <Pressable
                       key={day.id}
-                      onPress={() => setWorkingDays(day.id as any)}
+                      onPress={() => setWorkingDays(day.id)}
                       className={`form-input-container justify-between py-2.5 ${
                         isSelected ? 'border-primary bg-primary/5' : 'border-gray-200'
                       }`}

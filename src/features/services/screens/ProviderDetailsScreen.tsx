@@ -9,7 +9,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
-import { ProviderDetail } from '@/types';
+import { BookServiceFormData, ProviderDetail } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
@@ -162,7 +162,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const createBooking = useCreateBooking();
 
   const handleConfirmBooking = (details: BookingDetails) => {
-    const payload = {
+    const payload: BookServiceFormData = {
       service_id: provider.serviceId || '',
       service_date: details.serviceDate,
       start_time: details.startTime,
@@ -194,7 +194,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           : {}),
     };
 
-    createBooking.mutate(payload as any, {
+    createBooking.mutate(payload, {
       onSuccess: (result) => {
         setIsBookingModalVisible(false);
         if (bookingModalType === 'services') {
@@ -296,17 +296,19 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
             }}
             className="flex-row border-b border-gray-100"
           >
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'services', label: 'Services & Pricing' },
-              { id: 'portfolio', label: 'Portfolio' },
-              { id: 'reviews', label: 'Reviews' },
-            ].map((tab) => {
+            {(
+              [
+                { id: 'overview' as const, label: 'Overview' },
+                { id: 'services' as const, label: 'Services & Pricing' },
+                { id: 'portfolio' as const, label: 'Portfolio' },
+                { id: 'reviews' as const, label: 'Reviews' },
+              ] as const
+            ).map((tab) => {
               const isSelected = activeTab === tab.id;
               return (
                 <Pressable
                   key={tab.id}
-                  onPress={() => setActiveTab(tab.id as any)}
+                  onPress={() => setActiveTab(tab.id)}
                   className={`px-4 py-2 rounded-xl mr-2.5 border ${
                     isSelected ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                   }`}

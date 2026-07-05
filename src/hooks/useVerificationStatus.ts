@@ -27,8 +27,8 @@ export const useVerificationStatus = (): VerificationStatusResult => {
   const { user } = useAuth();
   const status = (user?.status as UserStatus) ?? null;
 
-  const isProvider = user?.current_role === 'provider' || user?.role === 'provider';
-  const isCustomer = user?.current_role === 'customer' || user?.role === 'customer';
+  const isProvider = user?.role === 'provider';
+  const isCustomer = user?.role === 'customer';
   const hasMissingId = isProvider && !!user && !user.document;
 
   const getMessage = (): string => {

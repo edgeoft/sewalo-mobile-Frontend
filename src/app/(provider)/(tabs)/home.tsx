@@ -1,21 +1,21 @@
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
-import { ScrollView, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, RefreshControl, ScrollView, View } from 'react-native';
 
-import { HomeArticleSection, HomeTopSection, RecentOrdersSection, PerformanceMetricsSection } from '@/components/home';
-import ContentLayout from '@/components/layout/ContentLayout';
-import DashboardTopBar from '@/components/navigation/DashboardTopBar';
-import { ROUTES } from '@/constants/routes';
-import { useScroll } from '@/hooks/useScroll';
 import {
-  useProviderDashboardQuery,
-  useUpdateBooking,
   useGetFeaturedBlogQuery,
   useGetMyServicesQuery,
   useGetProfileQuery,
+  useProviderDashboardQuery,
+  useUpdateBooking,
 } from '@/api';
+import { HomeArticleSection, HomeTopSection, PerformanceMetricsSection, RecentOrdersSection } from '@/components/home';
+import ContentLayout from '@/components/layout/ContentLayout';
+import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { ROUTES } from '@/constants/routes';
+import { useScroll } from '@/hooks/useScroll';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useMemo } from 'react';
 
@@ -131,9 +131,7 @@ export default function ProviderHomeScreen() {
             onDeclineOrder={handleDeclineOrder}
             hasService={hasService}
             providerName={providerName}
-            onCreateServicePress={() =>
-              router.push({ pathname: ROUTES.provider.serviceEdit as any, params: { mode: 'add' } })
-            }
+            onCreateServicePress={() => router.push({ pathname: ROUTES.provider.serviceEdit, params: { mode: 'add' } })}
           />
 
           <PerformanceMetricsSection

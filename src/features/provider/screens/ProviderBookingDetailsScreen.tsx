@@ -72,9 +72,9 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     ready_to_pay: t('provider.invoiceSent'),
   };
 
-  const handleStatusUpdate = (status: string, options?: { cancellation_reason?: string }) => {
+  const handleStatusUpdate = (status: Booking['status'], options?: { cancellation_reason?: string }) => {
     updateBooking.mutate(
-      { id: initialBooking.id, data: { status: status as any, ...options } },
+      { id: initialBooking.id, data: { status, ...options } },
       {
         onSuccess: (result) => {
           setCurrentStatus(result.status);

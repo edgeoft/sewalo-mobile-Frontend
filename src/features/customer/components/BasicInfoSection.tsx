@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Image,
   Modal,
@@ -97,6 +97,9 @@ export default function BasicInfoSection({
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
+  const watchLat = useWatch({ control, name: 'lat' }) || 27.700769;
+  const watchLng = useWatch({ control, name: 'lng' }) || 85.30014;
+
   const handlePickAvatar = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -106,9 +109,7 @@ export default function BasicInfoSection({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
+        mediaTypes: 'images',
         quality: 0.8,
       });
 
@@ -138,10 +139,6 @@ export default function BasicInfoSection({
   };
 
   const handleOpenLangModal = () => {
-    if (watchLanguages.length === 0) {
-      const allLangIds = AVAILABLE_LANGUAGES.map((l) => l.id);
-      setValue('languages', allLangIds, { shouldValidate: true });
-    }
     setLangModalVisible(true);
   };
 
@@ -278,26 +275,23 @@ export default function BasicInfoSection({
           <Controller
             control={control}
             name="location"
-            render={({ field: { onChange, value } }) => {
-              const formValues = control._formValues;
-              return (
-                <LocationSelector
-                  value={value}
-                  lat={formValues.lat || 27.700769}
-                  lng={formValues.lng || 85.30014}
-                  placeholder={t('components.locationPlaceholder')}
-                  onChange={(data) => {
-                    onChange(data.address);
-                    setValue('lat', data.lat, { shouldValidate: true });
-                    setValue('lng', data.lng, { shouldValidate: true });
-                    setValue('city', data.city, { shouldValidate: true });
-                    setValue('state', data.state, { shouldValidate: true });
-                    setValue('country', data.country, { shouldValidate: true });
-                  }}
-                  error={errors.location?.message as string}
-                />
-              );
-            }}
+            render={({ field: { onChange, value } }) => (
+              <LocationSelector
+                value={value}
+                lat={watchLat}
+                lng={watchLng}
+                placeholder={t('components.locationPlaceholder')}
+                onChange={(data) => {
+                  onChange(data.address);
+                  setValue('lat', data.lat, { shouldValidate: true });
+                  setValue('lng', data.lng, { shouldValidate: true });
+                  setValue('city', data.city, { shouldValidate: true });
+                  setValue('state', data.state, { shouldValidate: true });
+                  setValue('country', data.country, { shouldValidate: true });
+                }}
+                error={errors.location?.message as string}
+              />
+            )}
           />
         </View>
 
