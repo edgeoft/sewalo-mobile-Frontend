@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, Modal, SafeAreaView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import LocationMapPicker from './LocationMapPicker';
+import NativeMapProvider from '../map/NativeMapProvider';
 
 interface LocationData {
   address: string;
@@ -63,7 +63,7 @@ export default function LocationSelector({ value, lat, lng, onChange, placeholde
         onRequestClose={() => setModalVisible(false)}
       >
         <SafeAreaView className="flex-1 bg-white">
-          <LocationMapPicker
+          <NativeMapProvider
             initialLat={lat || 27.700769}
             initialLng={lng || 85.30014}
             initialAddress={value}

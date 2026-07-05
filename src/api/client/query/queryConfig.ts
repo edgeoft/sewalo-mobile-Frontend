@@ -2,7 +2,7 @@ import { DefaultOptions } from '@tanstack/react-query';
 
 export const defaultQueryOptions: DefaultOptions = {
   queries: {
-    retry: false, // Managed by our resilience layer
+    retry: 3, // React Query's native retry mechanism
     staleTime: 1000 * 60, // 1 minute
     refetchOnWindowFocus: false,
   },

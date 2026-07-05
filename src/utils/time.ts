@@ -26,22 +26,13 @@ export const convertTimeTo24h = (time12: string): string => {
   return `${String(hours).padStart(2, '0')}:${minutes}:00`;
 };
 
-/**
- * Formats an ISO or raw date string to "MMM DD, YYYY" (e.g. Jun 02, 2026)
- */
+// ponytail: simplified manual month mapping and padding using standard toLocaleDateString
 export const formatDate = (dateStr: string | null | undefined): string => {
   if (!dateStr) return '';
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[d.getMonth()];
-    const day = String(d.getDate()).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${month} ${day}, ${year}`;
-  } catch {
-    return dateStr;
-  }
+  const d = new Date(dateStr);
+  return isNaN(d.getTime())
+    ? dateStr
+    : d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 };
 
 /**
