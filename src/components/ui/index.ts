@@ -9,5 +9,6 @@ export { default as Carousel } from './Carousel';
 export { default as SegmentedControl } from './SegmentedControl';
 export { default as LocationSelector } from './LocationSelector';
 export { default as SelectSheet } from './SelectSheet';
+export { default as LoadingOverlay } from './LoadingOverlay';
 export { SnackbarProvider, useSnackbar } from './Snackbar';
 export { ErrorDialogProvider, useErrorDialog } from './ErrorDialog';

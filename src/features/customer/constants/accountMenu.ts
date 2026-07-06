@@ -1,21 +1,6 @@
-import { Feather } from '@expo/vector-icons';
 import type { TFunction } from 'i18next';
-import { UserProfile } from '@/types';
-
-export interface AccountMenuItemOption {
-  id: string;
-  icon: keyof typeof Feather.glyphMap;
-  title: string;
-  subtitle: string;
-  route?: string;
-  destructive?: boolean;
-}
-
-export interface AccountMenuSection {
-  id: string;
-  title: string;
-  items: AccountMenuItemOption[];
-}
+import { UserProfile, AccountMenuSection } from '@/types';
+import { ROUTES } from '@/constants/routes';
 
 export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): AccountMenuSection[] {
   return [
@@ -28,6 +13,7 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           icon: 'user',
           title: t('navigation.editProfile'),
           subtitle: t('navigation.editProfileSubtitle'),
+          route: ROUTES.customer.editProfile,
         },
         {
           id: 'switch-role',
@@ -40,18 +26,21 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           icon: 'star',
           title: t('customer.myReviews'),
           subtitle: t('customer.myReviews'),
+          route: ROUTES.customer.myReviews,
         },
         {
           id: 'identity-verification',
           icon: 'file-text',
           title: t('customer.identityVerification'),
           subtitle: t('customer.identityVerification'),
+          route: ROUTES.customer.identityVerification,
         },
         {
           id: 'refer-friend',
           icon: 'users',
           title: t('customer.referTitle'),
           subtitle: t('navigation.referFriendSubtitle'),
+          route: ROUTES.customer.referFriend,
         },
       ],
     },
@@ -70,18 +59,21 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           icon: 'bell',
           title: t('settings.notificationSettingsTitle'),
           subtitle: t('navigation.notificationSettingsSubtitle'),
+          route: ROUTES.customer.notificationSettings,
         },
         {
           id: 'privacy-settings',
           icon: 'shield',
           title: t('settings.privacySettingsTitle'),
           subtitle: t('navigation.privacySettingsSubtitle'),
+          route: ROUTES.customer.privacySettings,
         },
         {
           id: 'change-password',
           icon: 'lock',
           title: t('navigation.changePassword'),
           subtitle: t('navigation.changePasswordSubtitle'),
+          route: ROUTES.customer.changePassword,
         },
       ],
     },
@@ -94,30 +86,35 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           icon: 'help-circle',
           title: t('settings.helpFaqTitle'),
           subtitle: t('navigation.helpAndFaqSubtitle'),
+          route: ROUTES.customer.helpFaq,
         },
         {
           id: 'contact-support',
           icon: 'message-circle',
           title: t('settings.contactSupportTitle'),
           subtitle: t('navigation.contactSupportSubtitle'),
+          route: ROUTES.customer.contactSupport,
         },
         {
           id: 'terms-of-service',
           icon: 'file-text',
           title: t('navigation.termsAndConditions'),
           subtitle: t('navigation.termsAndConditionsSubtitle'),
+          route: ROUTES.customer.termsOfService,
         },
         {
           id: 'privacy-policy',
           icon: 'shield',
           title: t('navigation.privacyPolicy'),
           subtitle: t('navigation.privacyPolicySubtitle'),
+          route: ROUTES.customer.privacyPolicy,
         },
         {
           id: 'rate-app',
           icon: 'star',
           title: t('settings.rateAppTitle'),
           subtitle: t('navigation.rateAppSubtitle'),
+          route: ROUTES.customer.rateApp,
         },
       ],
     },

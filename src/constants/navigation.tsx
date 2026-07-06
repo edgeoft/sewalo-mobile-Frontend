@@ -4,64 +4,55 @@ import { Feather } from '@expo/vector-icons';
 
 export interface TabConfig {
   label: string;
-  icon: (color: string, focused: boolean) => React.ReactNode;
+  icon: (focused: boolean) => React.ReactNode;
   action?: () => void;
 }
 
 export const BOTTOM_TAB_CONFIGS: Record<string, TabConfig> = {
   home: {
     label: 'Home',
-    icon: (color) => <Feather name="home" size={22} color={color} />,
+    icon: (focused) => <Feather name="home" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   'find-services': {
     label: 'Find Services',
-    icon: (color) => <Feather name="search" size={22} color={color} />,
+    icon: (focused) => <Feather name="search" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   'be-provider': {
     label: 'Be a Provider',
-    icon: (color) => <Feather name="briefcase" size={22} color={color} />,
+    icon: (focused) => <Feather name="briefcase" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   'get-started': {
     label: 'Get Started',
-    icon: (color) => <Feather name="user" size={22} color={color} />,
+    icon: (focused) => <Feather name="user" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   bookings: {
     label: 'Bookings',
-    icon: (color) => <Feather name="calendar" size={22} color={color} />,
+    icon: (focused) => <Feather name="calendar" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   favourites: {
     label: 'Favourites',
-    icon: (color) => <Feather name="heart" size={22} color={color} />,
+    icon: (focused) => <Feather name="heart" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   account: {
     label: 'Account',
-    icon: (color) => <Feather name="user" size={22} color={color} />,
+    icon: (focused) => <Feather name="user" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />,
   },
   services: {
     label: 'Services',
-    icon: (color) => (
+    icon: (focused) => (
       <View className="relative items-center justify-center w-6 h-6">
-        <Feather name="hexagon" size={22} color={color} />
-        <View
-          style={{
-            width: 5,
-            height: 5,
-            borderRadius: 2.5,
-            backgroundColor: color,
-            position: 'absolute',
-          }}
-        />
+        <Feather name="hexagon" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />
+        <View className={`w-1.5 h-1.5 rounded-full absolute ${focused ? 'bg-primary' : 'bg-gray-900'}`} />
       </View>
     ),
   },
   earnings: {
     label: 'Earnings',
-    icon: (color) => (
+    icon: (focused) => (
       <View
-        className="border rounded-full items-center justify-center"
-        style={{ width: 22, height: 22, borderColor: color }}
+        className={`border rounded-full items-center justify-center w-5.5 h-5.5 ${focused ? 'border-primary' : 'border-gray-900'}`}
       >
-        <Feather name="dollar-sign" size={14} color={color} />
+        <Feather name="dollar-sign" size={14} className={focused ? 'text-primary' : 'text-gray-900'} />
       </View>
     ),
   },

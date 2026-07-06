@@ -1,36 +1,41 @@
-export const extractErrorMessage = (error: any): string => {
+export const extractErrorMessage = (error: unknown): string => {
   if (!error) return 'Something went wrong. Please try again.';
 
   if (typeof error === 'string') return error;
 
-  // 1. Check if it has a nested details/data object (from ApiError/Axios)
-  const data = error.details || error.response?.data;
-  if (data) {
-    if (typeof data === 'string') return data;
-    if (typeof data === 'object' && data !== null) {
-      // Laravel validation errors (errors is a key-value object of arrays/strings)
-      if (data.errors && typeof data.errors === 'object' && !Array.isArray(data.errors)) {
-        const laravelErrors: string[] = [];
-        for (const [key, value] of Object.entries(data.errors)) {
-          if (Array.isArray(value)) {
-            laravelErrors.push(`${key}: ${value.join(', ')}`);
-          } else if (typeof value === 'string') {
-            laravelErrors.push(`${key}: ${value}`);
+  if (typeof error === 'object') {
+    const errObj = error as Record<string, unknown>;
+    const details = errObj.details;
+    const response = errObj.response as Record<string, unknown> | undefined;
+    const data = details || response?.data;
+    if (data) {
+      if (typeof data === 'string') return data;
+      if (typeof data === 'object' && data !== null) {
+        const dataObj = data as Record<string, unknown>;
+        // Laravel validation errors (errors is a key-value object of arrays/strings)
+        if (dataObj.errors && typeof dataObj.errors === 'object' && !Array.isArray(dataObj.errors)) {
+          const laravelErrors: string[] = [];
+          for (const [key, value] of Object.entries(dataObj.errors as Record<string, unknown>)) {
+            if (Array.isArray(value)) {
+              laravelErrors.push(`${key}: ${value.join(', ')}`);
+            } else if (typeof value === 'string') {
+              laravelErrors.push(`${key}: ${value}`);
+            }
+          }
+          if (laravelErrors.length > 0) {
+            return laravelErrors.join('; ');
           }
         }
-        if (laravelErrors.length > 0) {
-          return laravelErrors.join('; ');
-        }
+
+        // Laravel general message
+        if (typeof dataObj.message === 'string') return dataObj.message;
       }
-
-      // Laravel general message
-      if (typeof data.message === 'string') return data.message;
     }
-  }
 
-  // 2. Handle standard Error.message
-  if (error.message && typeof error.message === 'string') {
-    return error.message;
+    // 2. Handle standard Error.message
+    if (typeof errObj.message === 'string') {
+      return errObj.message;
+    }
   }
 
   // 3. Fallback to serializing the error object itself
@@ -41,10 +46,16 @@ export const extractErrorMessage = (error: any): string => {
   }
 };
 
-export const globalErrorHandler = (error: any, type: 'query' | 'mutation', detail: any) => {
-  const correlationId = error.request?.correlationId || 'N/A';
-  const status = error.status || error.response?.status || 'N/A';
-  const code = error.code || 'N/A';
+export const globalErrorHandler = (error: unknown, type: 'query' | 'mutation', detail: unknown) => {
+  const errObj = typeof error === 'object' && error !== null ? (error as Record<string, unknown>) : {};
+  const request =
+    typeof errObj.request === 'object' && errObj.request !== null ? (errObj.request as Record<string, unknown>) : {};
+  const correlationId = (request.correlationId as string) || 'N/A';
+
+  const response =
+    typeof errObj.response === 'object' && errObj.response !== null ? (errObj.response as Record<string, unknown>) : {};
+  const status = errObj.status || response.status || 'N/A';
+  const code = errObj.code || 'N/A';
   const formattedMessage = extractErrorMessage(error);
 
   console.error(

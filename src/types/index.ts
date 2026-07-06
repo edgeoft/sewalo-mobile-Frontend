@@ -33,3 +33,4 @@ export * from './notifications';
 export * from './referral';
 export * from './settings';
 export * from './blog';
+export * from './account';

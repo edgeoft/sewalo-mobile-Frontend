@@ -8,10 +8,25 @@ import { BOTTOM_TAB_CONFIGS, TabConfig } from '@/constants/navigation';
 
 export interface BottomTabBarProps {
   state: {
-    routes: any[];
+    routes: {
+      key: string;
+      name: string;
+      params?: any; // kept as any only where router params are generic
+    }[];
     index: number;
   };
-  descriptors: Record<string, any>;
+  descriptors: Record<
+    string,
+    {
+      options: {
+        tabBarAccessibilityLabel?: string;
+        tabBarTestID?: string;
+      };
+      route: any;
+      navigation: any;
+      render: () => React.ReactNode;
+    }
+  >;
   navigation: {
     emit: (options: any) => any;
     navigate: (name: string, params?: any) => void;
@@ -50,19 +65,17 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
       }}
       className="flex-row bg-white border-t border-gray-100/50 w-full"
     >
-      {state.routes.map((route: any, index: number) => {
+      {state.routes.map((route, index: number) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
         const config: TabConfig = BOTTOM_TAB_CONFIGS[route.name] || {
           label: TAB_TRANSLATION_KEYS[route.name] || route.name,
-          icon: (color) => <Feather name="help-circle" size={22} color={color} />,
+          icon: (focused) => (
+            <Feather name="help-circle" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />
+          ),
         };
         const translationKey = TAB_TRANSLATION_KEYS[route.name];
         const translatedLabel = translationKey ? t(translationKey) : config.label;
-
-        const activeColor = '#485aff';
-        const inactiveColor = '#0f172a';
-        const color = isFocused ? activeColor : inactiveColor;
 
         const onPress = () => {
           if (config.action) {
@@ -99,8 +112,11 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
             onLongPress={onLongPress}
             className="flex-1 items-center justify-center pt-2 pb-0.5"
           >
-            <View className="items-center justify-center mb-1.5">{config.icon(color, isFocused)}</View>
-            <Text style={{ fontSize: 11, color }} className={`font-sans-medium tracking-tight text-center`}>
+            <View className="items-center justify-center mb-1.5">{config.icon(isFocused)}</View>
+            <Text
+              style={{ fontSize: 11 }}
+              className={`font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}
+            >
               {translatedLabel}
             </Text>
           </Pressable>

@@ -5,14 +5,25 @@ import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import { useSnackbar } from '@/components/ui/Snackbar';
-import { useSwitchRoleWithDetails, useUploadFile } from '@/api';
+import { useSwitchRoleWithDetails, useUploadFile, ApiError } from '@/api';
 import { convertTimeTo24h } from '@/utils/time';
 import { ROUTES } from '@/constants/routes';
+import { USER_ROLES } from '@/constants/roles';
 import RadialStepper from '@/components/common/RadialStepper';
-import { WORKING_DAYS_OPTIONS, WORKING_DAYS_MAPPING } from '@/constants/availability';
+import {
+  WORKING_DAYS_OPTIONS,
+  WORKING_DAYS_MAPPING,
+  DEFAULT_WORKING_HOURS_START,
+  DEFAULT_WORKING_HOURS_END,
+  WorkingDaysOption,
+} from '@/constants/availability';
 
 import AvailabilityStep from '@/features/onboarding/components/AvailabilityStep';
 import IdentityVerificationStep from '@/features/onboarding/components/IdentityVerificationStep';
+
+interface MissingFieldsResponse {
+  missing_fields?: string[];
+}
 
 export default function BecomeProviderScreen() {
   const router = useRouter();
@@ -36,9 +47,9 @@ export default function BecomeProviderScreen() {
   const needsDocument = !isPartial || missingFields.includes('document');
 
   const [activeIndex, setActiveIndex] = useState(needsAvailability ? 1 : 2);
-  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
-  const [workingHoursStart, setWorkingHoursStart] = useState('09:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState('06:00 PM');
+  const [workingDays, setWorkingDays] = useState<WorkingDaysOption>(WORKING_DAYS_OPTIONS.SundayFriday);
+  const [workingHoursStart, setWorkingHoursStart] = useState(DEFAULT_WORKING_HOURS_START);
+  const [workingHoursEnd, setWorkingHoursEnd] = useState(DEFAULT_WORKING_HOURS_END);
   const [documentImage, setDocumentImage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -72,7 +83,7 @@ export default function BecomeProviderScreen() {
       const mapped = WORKING_DAYS_MAPPING[workingDays];
 
       await switchRoleWithDetails({
-        target_role: 'provider',
+        target_role: USER_ROLES.Provider,
         availability: mapped.availability,
         availability_days: [...mapped.days],
         start_time: convertTimeTo24h(workingHoursStart),
@@ -82,10 +93,12 @@ export default function BecomeProviderScreen() {
 
       showSnackbar({ message: 'Welcome to the partner network!', type: 'success' });
       router.replace(ROUTES.provider.home);
-    } catch (err: any) {
-      const responseData = err?.response?.data;
-      if (responseData?.missing_fields && Array.isArray(responseData.missing_fields)) {
-        const missing = responseData.missing_fields as string[];
+    } catch (err) {
+      const apiError = err as ApiError;
+      const details = apiError?.details as MissingFieldsResponse | undefined;
+
+      if (details?.missing_fields && Array.isArray(details.missing_fields)) {
+        const missing = details.missing_fields;
         const missingAvailability = ['availability', 'availability_days', 'start_time', 'end_time'].some((f) =>
           missing.includes(f),
         );
@@ -99,7 +112,7 @@ export default function BecomeProviderScreen() {
 
         showSnackbar({ message: `Missing: ${missing.join(', ')}`, type: 'error' });
       } else {
-        const errMsg = err?.message || 'Failed to switch role.';
+        const errMsg = apiError?.message || 'Failed to switch role.';
         showSnackbar({ message: errMsg, type: 'error' });
       }
     } finally {
