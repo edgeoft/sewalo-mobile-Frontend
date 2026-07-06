@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { UserProfile } from '@/types';
@@ -33,8 +32,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
           <Image
             source={avatarSource}
             className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
-            contentFit="cover"
-            transition={200}
+            resizeMode="cover"
           />
           {isProvider ? (
             isVerified && (

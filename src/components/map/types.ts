@@ -16,3 +16,11 @@ export interface MapProviderProps {
   onSelectLocation: (data: LocationData) => Promise<void>;
   onCancel: () => Promise<void>;
 }
+
+export interface SearchResult {
+  description: string;
+  place_id?: string;
+  display_name?: string;
+  lat?: string;
+  lon?: string;
+}

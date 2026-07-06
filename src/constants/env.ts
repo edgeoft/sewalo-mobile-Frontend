@@ -33,4 +33,9 @@ export const ENV = {
    * PostHog Host Instance URL.
    */
   POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+
+  /**
+   * Application environment (development, staging, production).
+   */
+  APP_ENV: process.env.EXPO_PUBLIC_ENV || 'development',
 };
