@@ -140,7 +140,7 @@ export default function BecomeProviderScreen() {
         showBackButton
         variant="language"
         onBackPress={() => {
-          if (activeIndex === 2) {
+          if (activeIndex === 2 && needsAvailability) {
             setActiveIndex(1);
           } else {
             router.back();

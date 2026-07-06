@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSwitchRole } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { USER_ROLES } from '@/types';
 
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import { Feather } from '@expo/vector-icons';
@@ -39,7 +40,7 @@ export default function ProviderAccountScreen() {
 
   const handleSwitchRole = () => {
     switchRole(
-      { target_role: 'customer' },
+      { target_role: USER_ROLES.Customer },
       {
         onSuccess: () => {
           showSnackbar({ message: 'Switched to customer account', type: 'success' });

@@ -11,6 +11,7 @@ import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
+import { USER_ROLES } from '@/types';
 
 import { getImageUrl } from '../../auth/utils/image';
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
@@ -38,33 +39,28 @@ export default function CustomerAccountScreen() {
   };
 
   const handleSwitchRole = () => {
-    const hasProviderRole = user?.available_roles?.includes('provider');
-    if (hasProviderRole) {
-      switchRole(
-        { target_role: 'provider' },
-        {
-          onSuccess: () => {
-            showSnackbar({ message: 'Switched to provider account', type: 'success' });
-            router.replace(ROUTES.provider.home);
-          },
-          onError: (err) => {
-            if ((err as ApiError)?.status === 422) {
-              const missing = (err as any)?.details?.missing_fields;
-              const params: Record<string, string> = {};
-              if (missing?.length) {
-                params.missingFields = JSON.stringify(missing);
-              }
-              router.push({ pathname: ROUTES.customer.becomeProvider, params } as Href);
-              return;
-            }
-            const errMsg = err?.message || 'Failed to switch role.';
-            showSnackbar({ message: errMsg, type: 'error' });
-          },
+    switchRole(
+      { target_role: USER_ROLES.Provider },
+      {
+        onSuccess: () => {
+          showSnackbar({ message: 'Switched to provider account', type: 'success' });
+          router.replace(ROUTES.provider.home);
         },
-      );
-    } else {
-      router.push(ROUTES.customer.becomeProvider as Href);
-    }
+        onError: (err) => {
+          if ((err as ApiError)?.status === 422) {
+            const missing = (err as any)?.details?.missing_fields;
+            const params: Record<string, string> = {};
+            if (missing?.length) {
+              params.missingFields = JSON.stringify(missing);
+            }
+            router.push({ pathname: ROUTES.customer.becomeProvider, params } as Href);
+            return;
+          }
+          const errMsg = err?.message || 'Failed to switch role.';
+          showSnackbar({ message: errMsg, type: 'error' });
+        },
+      },
+    );
   };
 
   const handleItemPress = (itemId: string) => {
