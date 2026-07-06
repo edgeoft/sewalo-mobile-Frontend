@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Image,
@@ -12,15 +14,13 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 
-import Input from '@/components/ui/Input';
-import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import LocationSelector from '@/components/ui/LocationSelector';
+import SelectionOption from '@/components/ui/SelectionOption';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
-import LocationSelector from '@/components/ui/LocationSelector';
 
 export interface BasicInfoFormData {
   fullName: string;
@@ -275,23 +275,31 @@ export default function BasicInfoSection({
           <Controller
             control={control}
             name="location"
-            render={({ field: { onChange, value } }) => (
-              <LocationSelector
-                value={value}
-                lat={watchLat}
-                lng={watchLng}
-                placeholder={t('components.locationPlaceholder')}
-                onChange={(data) => {
-                  onChange(data.address);
-                  setValue('lat', data.lat, { shouldValidate: true });
-                  setValue('lng', data.lng, { shouldValidate: true });
-                  setValue('city', data.city, { shouldValidate: true });
-                  setValue('state', data.state, { shouldValidate: true });
-                  setValue('country', data.country, { shouldValidate: true });
-                }}
-                error={errors.location?.message as string}
-              />
-            )}
+            render={({ field: { onChange, value } }) => {
+              const formValues = control._formValues;
+              return (
+                <LocationSelector
+                  value={value}
+                  coordinates={
+                    formValues.lat !== undefined && formValues.lng !== undefined
+                      ? { lat: Number(formValues.lat), lng: Number(formValues.lng) }
+                      : null
+                  }
+                  lat={formValues.lat}
+                  lng={formValues.lng}
+                  placeholder={t('components.locationPlaceholder')}
+                  onChange={(data) => {
+                    onChange(data.address);
+                    setValue('lat', data.lat, { shouldValidate: true });
+                    setValue('lng', data.lng, { shouldValidate: true });
+                    setValue('city', data.city, { shouldValidate: true });
+                    setValue('state', data.state, { shouldValidate: true });
+                    setValue('country', data.country, { shouldValidate: true });
+                  }}
+                  error={errors.location?.message as string}
+                />
+              );
+            }}
           />
         </View>
 

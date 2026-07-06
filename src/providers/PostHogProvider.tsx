@@ -1,13 +1,12 @@
-import React from 'react';
-import { PostHogProvider as PHProvider } from 'posthog-react-native';
 import { ENV } from '@/constants/env';
+import { PostHogProvider as PHProvider } from 'posthog-react-native';
+import React from 'react';
 
 interface PostHogProviderProps {
   children: React.ReactNode;
 }
 
 export function PostHogProvider({ children }: PostHogProviderProps) {
-  const isProduction = ENV.APP_ENV === 'production';
   const apiKey = ENV.POSTHOG_PROJECT_TOKEN || 'disabled-key-placeholder';
 
   return (
@@ -15,7 +14,7 @@ export function PostHogProvider({ children }: PostHogProviderProps) {
       apiKey={apiKey}
       options={{
         host: ENV.POSTHOG_HOST || 'https://us.i.posthog.com',
-        disabled: !isProduction || !ENV.POSTHOG_PROJECT_TOKEN,
+        disabled: !ENV.POSTHOG_PROJECT_TOKEN,
       }}
     >
       {children}
