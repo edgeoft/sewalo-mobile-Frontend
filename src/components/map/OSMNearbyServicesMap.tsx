@@ -1,6 +1,6 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import { Service } from '@/types/services';
+import { NearbyProvider } from '@/types';
 import { getImageUrl } from '@/utils/image';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
@@ -8,13 +8,14 @@ import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE, safeJsonS
 export interface NearbyServicesMapProps {
   userLat: number;
   userLng: number;
-  services: Service[];
-  selectedServiceId: string | null;
-  onSelectService: (serviceId: string | null) => void;
+  providers: NearbyProvider[];
+  selectedProviderId: string | null;
+  onSelectProvider: (providerId: string | null) => void;
+  onMapCenterChange?: (lat: number, lng: number) => void;
 }
 
-function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData: any[]) {
-  const safeJson = safeJsonStringify(servicesData);
+function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersData: any[]) {
+  const safeJson = safeJsonStringify(providersData);
 
   return `<!DOCTYPE html>
 <html>
@@ -53,6 +54,12 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
   });
   L.marker([${userLat}, ${userLng}], { icon: userIcon }).addTo(map);
 
+  // Post messages when map dragging/zooming completes
+  map.on('moveend', function() {
+    var center = map.getCenter();
+    sendMessage('mapMoved', { lat: center.lat, lng: center.lng });
+  });
+
   var markers = {};
   var markersData = ${safeJson};
 
@@ -62,8 +69,8 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
     }
   }
 
-  // Custom provider icon with round avatar and starting price
-  function createProviderIcon(avatarUrl, price, isSelected) {
+  // Custom provider icon with round avatar and rating badge
+  function createProviderIcon(avatarUrl, rating, isSelected) {
     var color = isSelected ? '#ef4444' : '#485aff';
     var shadow = isSelected ? '0 4px 10px rgba(239,68,68,0.5)' : '0 2px 6px rgba(0,0,0,0.3)';
     var size = isSelected ? '46px' : '40px';
@@ -77,9 +84,9 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
               '<div style="width: ' + size + '; height: ' + size + '; border-radius: 50%; border: ' + borderSize + ' solid ' + color + '; overflow: hidden; background-color: white; box-shadow: ' + shadow + '; display: flex; align-items: center; justify-content: center;">' +
                 '<img src="' + avatarUrl + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\\'https://avatar.iran.liara.run/public\\\';"/>' +
               '</div>' +
-              '<!-- Price Badge -->' +
+              '<!-- Rating Badge -->' +
               '<div style="background-color: ' + color + '; color: white; padding: 2px 6px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; margin-top: ' + marginOffset + '; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); white-space: nowrap;">' +
-                'Rs. ' + price +
+                '★ ' + rating +
               '</div>' +
             '</div>',
       className: 'provider-pin-icon-' + (isSelected ? 'selected' : 'normal'),
@@ -100,10 +107,10 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
 
     markersData.forEach(function(p) {
       if (typeof p.lat !== 'number' || isNaN(p.lat) || typeof p.lng !== 'number' || isNaN(p.lng)) {
-        return; // Skip invalid coordinates to prevent Leaflet crash!
+        return; // Skip invalid coordinates
       }
       var isSelected = p.id === selectedId;
-      var icon = createProviderIcon(p.avatar, p.price, isSelected);
+      var icon = createProviderIcon(p.avatar, p.rating, isSelected);
       var m = L.marker([p.lat, p.lng], { icon: icon }).addTo(map);
       
       m.on('click', function() {
@@ -121,7 +128,7 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
   // Render markers initially
   renderMarkers(null);
 
-  // Force map reflow/invalidation to handle layout sizing issues in webviews
+  // Force map reflow/invalidation
   setTimeout(function() {
     if (map) {
       map.invalidateSize();
@@ -135,7 +142,7 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
       if (msg.type === 'setSelected') {
         renderMarkers(msg.id);
       } else if (msg.type === 'updateData') {
-        markersData = msg.services;
+        markersData = msg.providers;
         renderMarkers(msg.selectedId);
       }
     } catch(err) {
@@ -149,7 +156,7 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
       if (msg.type === 'setSelected') {
         renderMarkers(msg.id);
       } else if (msg.type === 'updateData') {
-        markersData = msg.services;
+        markersData = msg.providers;
         renderMarkers(msg.selectedId);
       }
     } catch(err) {
@@ -164,53 +171,48 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, servicesData
 export default function OSMNearbyServicesMap({
   userLat,
   userLng,
-  services,
-  selectedServiceId,
-  onSelectService,
+  providers,
+  selectedProviderId,
+  onSelectProvider,
+  onMapCenterChange,
 }: NearbyServicesMapProps) {
   const webViewRef = useRef<WebView>(null);
 
   const safeLat = typeof userLat === 'number' && !isNaN(userLat) ? userLat : 27.700769;
   const safeLng = typeof userLng === 'number' && !isNaN(userLng) ? userLng : 85.30014;
 
-  const getStartingPriceVal = (serviceOfferings: any[]) => {
-    if (!serviceOfferings || serviceOfferings.length === 0) return '0';
-    const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-    if (prices.length === 0) return '0';
-    const minP = Math.min(...prices);
-    return minP.toLocaleString('en-NP', { maximumFractionDigits: 0 });
-  };
-
   const markersPayload = useMemo(() => {
-    return services.map((s) => {
-      const lat = s.provider?.coordinates?.lat ?? safeLat;
-      const lng = s.provider?.coordinates?.lng ?? safeLng;
+    return providers.map((p) => {
+      const lat = p.coordinates?.lat ?? safeLat;
+      const lng = p.coordinates?.lng ?? safeLng;
       return {
-        id: s.id,
-        name: s.provider?.name || 'Provider',
-        avatar: getImageUrl(s.provider?.avatar) || 'https://avatar.iran.liara.run/public',
-        price: getStartingPriceVal(s.service_offerings),
+        id: p.id,
+        name: p.name,
+        avatar: getImageUrl(p.avatar) || 'https://avatar.iran.liara.run/public',
+        rating: typeof p.avg_rating === 'number' ? p.avg_rating.toFixed(1) : '0.0',
         lat,
         lng,
       };
     });
-  }, [services, safeLat, safeLng]);
+  }, [providers, safeLat, safeLng]);
 
   useEffect(() => {
     webViewRef.current?.postMessage(
       JSON.stringify({
         type: 'updateData',
-        services: markersPayload,
-        selectedId: selectedServiceId,
+        providers: markersPayload,
+        selectedId: selectedProviderId,
       }),
     );
-  }, [markersPayload, selectedServiceId]);
+  }, [markersPayload, selectedProviderId]);
 
   const onMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
       if (data.type === 'providerSelected') {
-        onSelectService(data.id);
+        onSelectProvider(data.id);
+      } else if (data.type === 'mapMoved') {
+        onMapCenterChange?.(data.lat, data.lng);
       }
     } catch (err) {
       console.warn('Failed to parse message from OSMWebView:', err);

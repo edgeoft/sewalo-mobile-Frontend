@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useGetCategoriesQuery, useGetServicesQuery } from '@/api';
+import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
 import NearbyServicesMap from '@/components/map/NearbyServicesMap';
 import Header from '@/components/navigation/Header';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
@@ -15,127 +15,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
-
-import { Service } from '@/types/services';
-
-const MOCK_PROVIDERS_DATA = [
-  {
-    id: 'mock-provider-1',
-    name: 'John Smith',
-    categoryName: 'Beauty & Wellness',
-    categorySlug: 'beauty-wellness',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80',
-    rating: '4.8',
-    totalRatings: 24,
-    startingPrice: '1500',
-    offset: { lat: 0.005, lng: -0.004 },
-  },
-  {
-    id: 'mock-provider-2',
-    name: 'Sarah Connor',
-    categoryName: 'Cleaning',
-    categorySlug: 'cleaning',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&h=200&q=80',
-    rating: '4.9',
-    totalRatings: 42,
-    startingPrice: '800',
-    offset: { lat: -0.003, lng: 0.006 },
-  },
-  {
-    id: 'mock-provider-3',
-    name: 'David Miller',
-    categoryName: 'Plumbing',
-    categorySlug: 'plumbing',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&h=200&q=80',
-    rating: '4.7',
-    totalRatings: 18,
-    startingPrice: '1200',
-    offset: { lat: 0.002, lng: 0.003 },
-  },
-];
-
-const generateMockServices = (centerLat: number, centerLng: number, categories: any[]): Service[] => {
-  return MOCK_PROVIDERS_DATA.map((p, idx) => {
-    const category = categories?.find((c) => c.slug === p.categorySlug) || {
-      id: `cat-${idx}`,
-      name: p.categoryName,
-      slug: p.categorySlug,
-      icon: null,
-    };
-
-    return {
-      id: p.id,
-      name: `${category.name} Service by ${p.name}`,
-      description: `Professional ${category.name.toLowerCase()} service details and portfolio.`,
-      category_id: category.id,
-      provider_id: `prov-${p.id}`,
-      category: category,
-      provider: {
-        id: `prov-${p.id}`,
-        name: p.name,
-        email: `${p.name.toLowerCase().replace(' ', '')}@example.com`,
-        phone: '9800000000',
-        slug: p.name.toLowerCase().replace(' ', '-'),
-        role: 'provider',
-        status: 'verified',
-        avatar: p.avatar,
-        city: 'Kathmandu',
-        state: 'Bagmati',
-        country: 'Nepal',
-        address: 'Baneshwor',
-        dob: '1990-01-01',
-        loyalty_points: 100,
-        phone_verified_at: new Date().toISOString(),
-        email_verified_at: new Date().toISOString(),
-        description: 'Experienced service professional.',
-        education: null,
-        experience: null,
-        document: null,
-        coordinates: {
-          lat: centerLat + p.offset.lat,
-          lng: centerLng + p.offset.lng,
-        },
-        availability: 'always',
-        availability_days: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
-        start_time: '09:00',
-        end_time: '18:00',
-        profile_views: 120,
-        avg_rating: Number(p.rating),
-        average_rating: p.rating,
-        total_ratings: p.totalRatings,
-        profile_verified_at: new Date().toISOString(),
-        last_login_at: new Date().toISOString(),
-        certificates: null,
-        language: ['English', 'Nepali'],
-      },
-      currency: 'NPR',
-      average_rating: p.rating,
-      total_ratings: p.totalRatings,
-      portfolio: [],
-      portfolio_url: '',
-      service_location: ['fixed_location', 'customer_location'],
-      tags: [category.slug],
-      has_service_packages: false,
-      service_offerings: [
-        {
-          id: `offering-${p.id}`,
-          service_id: p.id,
-          sub_category_id: 'subcat-1',
-          price: p.startingPrice,
-          duration: 60,
-          duration_unit: 'minutes',
-          sub_category: {
-            id: 'subcat-1',
-            category_id: category.id,
-            name: category.name,
-            slug: category.slug,
-          },
-        },
-      ],
-      service_packages: [],
-    };
-  });
-};
 
 export default function MapServicesScreen() {
   const { t } = useTranslation();
@@ -192,7 +71,35 @@ export default function MapServicesScreen() {
     serviceLocation: serviceLocationParam || '',
   });
 
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
+
+  // Panned map center coordinates state (defaults to userLocation)
+  const [mapCenter, setMapCenter] = useState({
+    lat: userLocation.lat,
+    lng: userLocation.lng,
+  });
+
+  // Debounced map center to optimize API requests during panning
+  const [debouncedCenter, setDebouncedCenter] = useState({
+    lat: userLocation.lat,
+    lng: userLocation.lng,
+  });
+
+  // Synchronize map center when userLocation changes on load (during render to avoid cascading renders warning)
+  const [prevUserLocation, setPrevUserLocation] = useState(userLocation);
+
+  if (userLocation.lat !== prevUserLocation.lat || userLocation.lng !== prevUserLocation.lng) {
+    setPrevUserLocation(userLocation);
+    setMapCenter({ lat: userLocation.lat, lng: userLocation.lng });
+    setDebouncedCenter({ lat: userLocation.lat, lng: userLocation.lng });
+  }
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCenter(mapCenter);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [mapCenter]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -204,94 +111,40 @@ export default function MapServicesScreen() {
   // Fetch Categories
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
 
-  // Fetch Services
-  const { isLoading: isLoadingServices } = useGetServicesQuery({
-    search: debouncedSearch || undefined,
+  // Fetch Nearby Providers
+  const { data: providersData, isLoading: isLoadingProviders } = useGetNearbyProvidersQuery({
+    lat: debouncedCenter.lat,
+    lng: debouncedCenter.lng,
+    radius: 25, // default 25km radius
+    limit: 50,
     category: selectedCategorySlug || undefined,
+    min_rating: appliedFilters.minRating ? Number(appliedFilters.minRating) : undefined,
     min_price: appliedFilters.minPrice ? Number(appliedFilters.minPrice) : undefined,
     max_price: appliedFilters.maxPrice ? Number(appliedFilters.maxPrice) : undefined,
-    min_rating: appliedFilters.minRating ? Number(appliedFilters.minRating) : undefined,
     service_location: appliedFilters.serviceLocation || undefined,
-    limit: 50,
+    search: debouncedSearch || undefined,
   });
 
-  // Filter & Mock Coordinates if they are null, and inject mock data
-  const servicesWithCoordinates = useMemo(() => {
-    const mockServices = generateMockServices(userLocation.lat, userLocation.lng, categoriesData?.data || []);
+  const providers = useMemo(() => {
+    return providersData?.data || [];
+  }, [providersData]);
 
-    const allServices = mockServices;
-
-    let filteredServices = allServices;
-
-    if (selectedCategorySlug) {
-      filteredServices = filteredServices.filter((s) => s.category?.slug === selectedCategorySlug);
-    }
-
-    if (debouncedSearch) {
-      const q = debouncedSearch.toLowerCase();
-      filteredServices = filteredServices.filter(
-        (s) =>
-          s.provider?.name?.toLowerCase().includes(q) ||
-          s.category?.name?.toLowerCase().includes(q) ||
-          s.name?.toLowerCase().includes(q),
-      );
-    }
-
-    if (appliedFilters.minPrice) {
-      const min = Number(appliedFilters.minPrice);
-      filteredServices = filteredServices.filter((s) => {
-        const prices = s.service_offerings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-        return prices.length > 0 && Math.min(...prices) >= min;
-      });
-    }
-
-    if (appliedFilters.maxPrice) {
-      const max = Number(appliedFilters.maxPrice);
-      filteredServices = filteredServices.filter((s) => {
-        const prices = s.service_offerings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-        return prices.length > 0 && Math.min(...prices) <= max;
-      });
-    }
-
-    if (appliedFilters.minRating) {
-      const rating = Number(appliedFilters.minRating);
-      filteredServices = filteredServices.filter((s) => Number(s.average_rating || 0) >= rating);
-    }
-
-    return filteredServices;
-  }, [userLocation, categoriesData, selectedCategorySlug, debouncedSearch, appliedFilters]);
-
-  const selectedService = useMemo(() => {
-    if (!selectedServiceId) return null;
-    return servicesWithCoordinates.find((s) => s.id === selectedServiceId) || null;
-  }, [selectedServiceId, servicesWithCoordinates]);
+  const selectedProvider = useMemo(() => {
+    if (!selectedProviderId) return null;
+    return providers.find((p) => p.id === selectedProviderId) || null;
+  }, [selectedProviderId, providers]);
 
   const [hasAutoselected, setHasAutoselected] = useState(false);
 
   useEffect(() => {
-    if (servicesWithCoordinates.length > 0 && !selectedServiceId && !hasAutoselected) {
-      const firstId = servicesWithCoordinates[0].id;
+    if (providers.length > 0 && !selectedProviderId && !hasAutoselected) {
+      const firstId = providers[0].id;
       setTimeout(() => {
-        setSelectedServiceId(firstId);
+        setSelectedProviderId(firstId);
         setHasAutoselected(true);
       }, 0);
     }
-  }, [servicesWithCoordinates, selectedServiceId, hasAutoselected]);
-
-  const formatPriceInNepali = (price: number) => {
-    return `Rs. ${Number(price).toLocaleString('en-NP', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })}`;
-  };
-
-  const getStartingPrice = (serviceOfferings: any[]) => {
-    if (!serviceOfferings || serviceOfferings.length === 0) return 'N/A';
-    const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-    if (prices.length === 0) return 'N/A';
-    const minP = Math.min(...prices);
-    return formatPriceInNepali(minP);
-  };
+  }, [providers, selectedProviderId, hasAutoselected]);
 
   const handleProviderPress = (providerSlugOrId: string) => {
     if (isGuest) {
@@ -426,7 +279,7 @@ export default function MapServicesScreen() {
 
         {/* Map Area */}
         <View className="flex-1 relative">
-          {isLoadingServices ? (
+          {isLoadingProviders ? (
             <View className="flex-1 items-center justify-center bg-gray-150">
               <ActivityIndicator size="large" color="#485aff" />
             </View>
@@ -434,16 +287,19 @@ export default function MapServicesScreen() {
             <NearbyServicesMap
               userLat={userLocation.lat}
               userLng={userLocation.lng}
-              services={servicesWithCoordinates}
-              selectedServiceId={selectedServiceId}
-              onSelectService={setSelectedServiceId}
+              providers={providers}
+              selectedProviderId={selectedProviderId}
+              onSelectProvider={setSelectedProviderId}
+              onMapCenterChange={(lat, lng) => {
+                setMapCenter({ lat, lng });
+              }}
             />
           )}
 
           {/* Floating Details Preview Card */}
-          {selectedService && (
+          {selectedProvider && (
             <Pressable
-              onPress={() => handleProviderPress(selectedService.provider?.slug || selectedService.provider?.id || '')}
+              onPress={() => handleProviderPress(selectedProvider.slug || selectedProvider.id)}
               style={{
                 position: 'absolute',
                 bottom: Math.max(insets.bottom, 12),
@@ -470,7 +326,7 @@ export default function MapServicesScreen() {
               <Pressable
                 onPress={(e) => {
                   e.stopPropagation();
-                  setSelectedServiceId(null);
+                  setSelectedProviderId(null);
                 }}
                 style={{
                   position: 'absolute',
@@ -509,7 +365,7 @@ export default function MapServicesScreen() {
                 }}
               >
                 <Image
-                  source={{ uri: getImageUrl(selectedService.provider?.avatar) || FALLBACKS.avatar }}
+                  source={{ uri: getImageUrl(selectedProvider.avatar) || FALLBACKS.avatar }}
                   style={{ width: '100%', height: '100%', borderRadius: 20 }}
                   className="bg-gray-100"
                   resizeMode="cover"
@@ -518,7 +374,7 @@ export default function MapServicesScreen() {
 
               {/* Info section */}
               <View className="flex-1" style={{ minWidth: 0 }}>
-                {/* Name + category inline */}
+                {/* Name + city inline */}
                 <View className="flex-row items-center" style={{ gap: 5 }}>
                   <Feather name="user" size={11} color="#485aff" />
                   <Text
@@ -526,31 +382,27 @@ export default function MapServicesScreen() {
                     numberOfLines={1}
                     style={{ flexShrink: 1 }}
                   >
-                    {selectedService.provider?.name || 'Provider'}
+                    {selectedProvider.name}
                   </Text>
                   <View className="bg-primary/10 px-1.5 py-px rounded">
                     <Text className="text-[9px] font-sans-bold text-primary uppercase tracking-wide">
-                      {selectedService.category?.name || 'Service'}
+                      {selectedProvider.city || 'Provider'}
                     </Text>
                   </View>
                 </View>
 
-                {/* Rating + Price row */}
+                {/* Rating + Distance row */}
                 <View className="flex-row items-center mt-1.5" style={{ gap: 8 }}>
                   <View className="flex-row items-center" style={{ gap: 2 }}>
                     <Feather name="star" size={10} color="#f59e0b" />
                     <Text className="text-[11px] font-sans-extrabold text-gray-800">
-                      {isNaN(Number(selectedService.average_rating))
-                        ? '0.0'
-                        : Number(selectedService.average_rating).toFixed(1)}
-                    </Text>
-                    <Text className="text-[10px] font-sans-medium text-gray-400">
-                      ({selectedService.total_ratings || 0})
+                      {typeof selectedProvider.avg_rating === 'number' ? selectedProvider.avg_rating.toFixed(1) : '0.0'}
                     </Text>
                   </View>
                   <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>
+                  <Feather name="map-pin" size={10} color="#64748b" />
                   <Text className="text-[11px] font-sans-bold text-gray-700">
-                    Starting: {getStartingPrice(selectedService.service_offerings)}
+                    {selectedProvider.distance_km.toFixed(2)} km away
                   </Text>
                 </View>
               </View>

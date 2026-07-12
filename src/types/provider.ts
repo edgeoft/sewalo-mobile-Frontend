@@ -211,3 +211,45 @@ export interface ProviderDashboardResponse {
   };
   recentBookings: ProviderBookingItem[];
 }
+
+// Nearby Providers API Types
+export interface NearbyProvider {
+  id: string;
+  name: string;
+  slug: string;
+  avatar: string | null;
+  avg_rating: number;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  city: string;
+  state: string;
+  distance_km: number;
+}
+
+export interface GetNearbyProvidersParams {
+  lat: number;
+  lng: number;
+  radius?: number;
+  limit?: number;
+  category?: string;
+  sub_category?: string;
+  min_rating?: number;
+  max_rating?: number;
+  min_price?: number;
+  max_price?: number;
+  min_duration?: number;
+  max_duration?: number;
+  languages?: string;
+  service_location?: string;
+  search?: string;
+}
+
+export interface GetNearbyProvidersResponse {
+  data: NearbyProvider[];
+  meta: {
+    total: number;
+    radius_km: number;
+  };
+}

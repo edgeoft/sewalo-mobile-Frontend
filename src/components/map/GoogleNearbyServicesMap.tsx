@@ -6,8 +6,8 @@ import { getImageUrl } from '@/utils/image';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
 
-function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesData: any[], apiKey: string) {
-  const safeJson = safeJsonStringify(servicesData);
+function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providersData: any[], apiKey: string) {
+  const safeJson = safeJsonStringify(providersData);
 
   return `
 <!DOCTYPE html>
@@ -91,9 +91,9 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
       '<div style="width: ' + size + '; height: ' + size + '; border-radius: 50%; border: ' + borderSize + ' solid ' + color + '; overflow: hidden; background-color: white; box-shadow: ' + shadow + '; display: flex; align-items: center; justify-content: center;">' +
         '<img src="' + p.avatar + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\\'https://avatar.iran.liara.run/public\\\';"/>' +
       '</div>' +
-      '<!-- Price Badge -->' +
+      '<!-- Rating Badge -->' +
       '<div style="background-color: ' + color + '; color: #ffffff; padding: 2px 6px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; margin-top: ' + marginOffset + '; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); white-space: nowrap;">' +
-        'Rs. ' + p.price +
+        '★ ' + p.rating +
       '</div>';
 
     div.addEventListener('click', function() {
@@ -127,6 +127,12 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
       }
     });
 
+    // Listen to map changes when user stops dragging/zooming (idle event)
+    map.addListener('idle', function() {
+      var center = map.getCenter();
+      sendMessage('mapMoved', { lat: center.lat(), lng: center.lng() });
+    });
+
     renderMarkers();
   }
 
@@ -141,7 +147,7 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
 
     markersData.forEach(function(p) {
       if (typeof p.lat !== 'number' || isNaN(p.lat) || typeof p.lng !== 'number' || isNaN(p.lng)) {
-        return; // Skip invalid coordinates to prevent Google Maps crash!
+        return; // Skip invalid coordinates
       }
       var isSelected = p.id === selectedId;
       var latlng = new google.maps.LatLng(p.lat, p.lng);
@@ -167,7 +173,7 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
         selectedId = msg.id;
         renderMarkers();
       } else if (msg.type === 'updateData') {
-        markersData = msg.services;
+        markersData = msg.providers;
         selectedId = msg.selectedId;
         renderMarkers();
       }
@@ -183,7 +189,7 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
         selectedId = msg.id;
         renderMarkers();
       } else if (msg.type === 'updateData') {
-        markersData = msg.services;
+        markersData = msg.providers;
         selectedId = msg.selectedId;
         renderMarkers();
       }
@@ -200,9 +206,10 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, servicesD
 export default function GoogleNearbyServicesMap({
   userLat,
   userLng,
-  services,
-  selectedServiceId,
-  onSelectService,
+  providers,
+  selectedProviderId,
+  onSelectProvider,
+  onMapCenterChange,
 }: NearbyServicesMapProps) {
   const webViewRef = useRef<WebView>(null);
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
@@ -210,44 +217,38 @@ export default function GoogleNearbyServicesMap({
   const safeLat = typeof userLat === 'number' && !isNaN(userLat) ? userLat : 27.700769;
   const safeLng = typeof userLng === 'number' && !isNaN(userLng) ? userLng : 85.30014;
 
-  const getStartingPriceVal = (serviceOfferings: any[]) => {
-    if (!serviceOfferings || serviceOfferings.length === 0) return '0';
-    const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
-    if (prices.length === 0) return '0';
-    const minP = Math.min(...prices);
-    return minP.toLocaleString('en-NP', { maximumFractionDigits: 0 });
-  };
-
   const markersPayload = useMemo(() => {
-    return services.map((s) => {
-      const lat = s.provider?.coordinates?.lat ?? safeLat;
-      const lng = s.provider?.coordinates?.lng ?? safeLng;
+    return providers.map((p) => {
+      const lat = p.coordinates?.lat ?? safeLat;
+      const lng = p.coordinates?.lng ?? safeLng;
       return {
-        id: s.id,
-        name: s.provider?.name || 'Provider',
-        avatar: getImageUrl(s.provider?.avatar) || 'https://avatar.iran.liara.run/public',
-        price: getStartingPriceVal(s.service_offerings),
+        id: p.id,
+        name: p.name,
+        avatar: getImageUrl(p.avatar) || 'https://avatar.iran.liara.run/public',
+        rating: typeof p.avg_rating === 'number' ? p.avg_rating.toFixed(1) : '0.0',
         lat,
         lng,
       };
     });
-  }, [services, safeLat, safeLng]);
+  }, [providers, safeLat, safeLng]);
 
   useEffect(() => {
     webViewRef.current?.postMessage(
       JSON.stringify({
         type: 'updateData',
-        services: markersPayload,
-        selectedId: selectedServiceId,
+        providers: markersPayload,
+        selectedId: selectedProviderId,
       }),
     );
-  }, [markersPayload, selectedServiceId]);
+  }, [markersPayload, selectedProviderId]);
 
   const onMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
       if (data.type === 'providerSelected') {
-        onSelectService(data.id);
+        onSelectProvider(data.id);
+      } else if (data.type === 'mapMoved') {
+        onMapCenterChange?.(data.lat, data.lng);
       }
     } catch (err) {
       console.warn('Failed to parse message from GoogleWebView:', err);

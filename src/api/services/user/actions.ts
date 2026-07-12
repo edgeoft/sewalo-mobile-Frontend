@@ -15,6 +15,8 @@ import {
   SwitchRoleResponse,
   SwitchRoleWithDetailsPayload,
   SwitchRoleWithDetailsResponse,
+  GetNearbyProvidersParams,
+  GetNearbyProvidersResponse,
 } from '@/types';
 
 // Favourite Actions
@@ -58,6 +60,15 @@ export const getServiceListAction = async (params: GetServiceListParams): Promis
       limit: params.limit || 15,
       ...params,
     },
+  });
+};
+
+// Nearby Providers Action
+export const getNearbyProvidersAction = async (
+  params: GetNearbyProvidersParams,
+): Promise<GetNearbyProvidersResponse> => {
+  return internalClient.get<GetNearbyProvidersResponse>(API_ENDPOINTS.PROVIDER.NEARBY, {
+    params,
   });
 };
 

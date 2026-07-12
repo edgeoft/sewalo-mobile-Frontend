@@ -52,4 +52,8 @@ export const QUERY_KEYS = {
     ALL: ['provider-details'],
     DETAIL: (id: string) => ['provider-details', id] as const,
   },
+  PROVIDERS_NEARBY: {
+    ALL: ['providers-nearby'],
+    LIST: (params?: QueryParams) => ['providers-nearby', params] as const,
+  },
 } as const;

@@ -10,6 +10,7 @@ import {
   getServiceListAction,
   switchRoleAction,
   switchRoleWithDetailsAction,
+  getNearbyProvidersAction,
 } from './actions';
 import { getProfileAction } from '../auth/actions';
 import {
@@ -28,6 +29,8 @@ import {
   SwitchRoleResponse,
   SwitchRoleWithDetailsPayload,
   SwitchRoleWithDetailsResponse,
+  GetNearbyProvidersParams,
+  GetNearbyProvidersResponse,
 } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -138,6 +141,20 @@ export const useGetServicesQuery = (
   return useQuery<GetServiceListResponse, Error>({
     queryKey: QUERY_KEYS.SERVICE_LIST.LIST(params),
     queryFn: () => getServiceListAction(params),
+    retry: false,
+    refetchOnWindowFocus: false,
+    ...options,
+  });
+};
+
+// Nearby Providers Hooks
+export const useGetNearbyProvidersQuery = (
+  params: GetNearbyProvidersParams,
+  options?: Omit<UseQueryOptions<GetNearbyProvidersResponse, Error>, 'queryKey' | 'queryFn'>,
+) => {
+  return useQuery<GetNearbyProvidersResponse, Error>({
+    queryKey: QUERY_KEYS.PROVIDERS_NEARBY.LIST(params),
+    queryFn: () => getNearbyProvidersAction(params),
     retry: false,
     refetchOnWindowFocus: false,
     ...options,

@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
   PROVIDER: {
     DETAILS: (id: string) => `/user/providers/${id}` as const,
     DASHBOARD_STATS: '/provider/dashboard/stats',
+    NEARBY: '/user/providers/nearby',
   },
   BOOKINGS: {
     BASE: '/bookings',
