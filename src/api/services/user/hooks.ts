@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getFavoritesAction,
   addRemoveFavoriteAction,
@@ -38,7 +39,7 @@ export const useGetFavoritesQuery = (
   const page = params.page || 1;
   const limit = params.limit || 10;
   return useQuery<GetFavoritesResponse, Error>({
-    queryKey: ['favourites-list', page, limit],
+    queryKey: QUERY_KEYS.FAVOURITES_LIST.LIST(page, limit),
     queryFn: () => getFavoritesAction(page, limit),
     retry: false,
     refetchOnWindowFocus: false,
@@ -48,19 +49,22 @@ export const useGetFavoritesQuery = (
 
 export const useAddRemoveFavorite = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, AddRemoveFavoritePayload, { previousServices?: [any, any][] }>({
+  return useMutation<void, Error, AddRemoveFavoritePayload, { previousServices?: [readonly unknown[], unknown][] }>({
     mutationFn: addRemoveFavoriteAction,
     onMutate: async ({ service_id }) => {
-      await queryClient.cancelQueries({ queryKey: ['service-list'] });
-      const previousServices = queryClient.getQueriesData({ queryKey: ['service-list'] });
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
+      const previousServices = queryClient.getQueriesData({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
 
-      queryClient.setQueriesData({ queryKey: ['service-list'] }, (old: any) => {
-        if (!old?.data) return old;
-        return {
-          ...old,
-          data: old.data.map((s: any) => (s.id === service_id ? { ...s, is_favourite: !s.is_favourite } : s)),
-        };
-      });
+      queryClient.setQueriesData(
+        { queryKey: QUERY_KEYS.SERVICE_LIST.ALL },
+        (old: GetServiceListResponse | undefined) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: old.data.map((s) => (s.id === service_id ? { ...s, is_favourite: !s.is_favourite } : s)),
+          };
+        },
+      );
 
       return { previousServices };
     },
@@ -72,9 +76,9 @@ export const useAddRemoveFavorite = () => {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['favourites-list'] });
-      queryClient.invalidateQueries({ queryKey: ['service-list'] });
-      queryClient.invalidateQueries({ queryKey: ['provider-details'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FAVOURITES_LIST.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL });
     },
   });
 };
@@ -99,7 +103,7 @@ export const useChangePassword = () => {
 // Profile Hooks
 export const useGetProfileQuery = () => {
   return useQuery<GetProfileResponse, Error>({
-    queryKey: ['profile'],
+    queryKey: QUERY_KEYS.PROFILE,
     queryFn: getProfileAction,
   });
 };
@@ -118,7 +122,7 @@ export const useGetProviderDetailsQuery = (
   options?: Omit<UseQueryOptions<ProviderDetailsResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<ProviderDetailsResponse, Error>({
-    queryKey: ['provider-details', id],
+    queryKey: QUERY_KEYS.PROVIDER_DETAILS.DETAIL(id),
     queryFn: () => getProviderDetailsAction(id),
     retry: false,
     refetchOnWindowFocus: false,
@@ -132,7 +136,7 @@ export const useGetServicesQuery = (
   options?: Omit<UseQueryOptions<GetServiceListResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<GetServiceListResponse, Error>({
-    queryKey: ['service-list', params],
+    queryKey: QUERY_KEYS.SERVICE_LIST.LIST(params),
     queryFn: () => getServiceListAction(params),
     retry: false,
     refetchOnWindowFocus: false,

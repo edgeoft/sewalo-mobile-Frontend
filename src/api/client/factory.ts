@@ -26,20 +26,20 @@ export const generateUUID = (): string => {
   });
 };
 
-// ponytail: S3 parameter cleaning helper
-const cleanPayloadInPlace = (data: any): any => {
-  if (!data || typeof data !== 'object') return data;
+// ponytail: S3 parameter cleaning helper - recursively strips S3 signed query params
+const cleanPayloadInPlace = (data: unknown): unknown => {
   if (typeof data === 'string') {
     return data.includes('?X-Amz-') || data.includes('?X-Amz-Algorithm') ? data.split('?')[0] : data;
   }
+  if (!data || typeof data !== 'object') return data;
   if (Array.isArray(data)) {
     return data.map(cleanPayloadInPlace);
   }
-  if (data.constructor && data.constructor.name === 'FormData') {
+  if (data instanceof FormData) {
     return data;
   }
-  for (const key of Object.keys(data)) {
-    data[key] = cleanPayloadInPlace(data[key]);
+  for (const key of Object.keys(data as Record<string, unknown>)) {
+    (data as Record<string, unknown>)[key] = cleanPayloadInPlace((data as Record<string, unknown>)[key]);
   }
   return data;
 };
@@ -55,12 +55,12 @@ const isCrossOrigin = (url: string, baseURL: string): boolean => {
 };
 
 // ponytail: sensitive data redaction helper
-const redact = (obj: any): any => {
+const redact = (obj: unknown): unknown => {
   if (!obj || typeof obj !== 'object') return obj;
   if (Array.isArray(obj)) return obj.map(redact);
-  const result: any = {};
-  for (const key of Object.keys(obj)) {
-    const val = obj[key];
+  const result: Record<string, unknown> = {};
+  for (const key of Object.keys(obj as Record<string, unknown>)) {
+    const val = (obj as Record<string, unknown>)[key];
     const lowKey = key.toLowerCase();
     if (
       lowKey.includes('password') ||
@@ -211,7 +211,7 @@ export const createApiClient = (
     },
   );
 
-  const request = async <T = any>(reqCtx: RequestCtx): Promise<T> => {
+  const request = async <T>(reqCtx: RequestCtx): Promise<T> => {
     const res = await axiosInstance.request({
       url: reqCtx.url,
       method: reqCtx.method,
@@ -224,23 +224,23 @@ export const createApiClient = (
   };
 
   return {
-    get: async <T = any>(url: string, reqConfig?: any) => {
+    get: async <T>(url: string, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => {
       const res = await axiosInstance.get(url, reqConfig);
       return res.data as T;
     },
-    post: async <T = any>(url: string, data?: any, reqConfig?: any) => {
+    post: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
       const res = await axiosInstance.post(url, data, reqConfig);
       return res.data as T;
     },
-    put: async <T = any>(url: string, data?: any, reqConfig?: any) => {
+    put: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
       const res = await axiosInstance.put(url, data, reqConfig);
       return res.data as T;
     },
-    patch: async <T = any>(url: string, data?: any, reqConfig?: any) => {
+    patch: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
       const res = await axiosInstance.patch(url, data, reqConfig);
       return res.data as T;
     },
-    delete: async <T = any>(url: string, reqConfig?: any) => {
+    delete: async <T>(url: string, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => {
       const res = await axiosInstance.delete(url, reqConfig);
       return res.data as T;
     },

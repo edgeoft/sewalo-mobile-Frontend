@@ -7,9 +7,11 @@ import { useAuth } from '@/providers/AuthProvider';
 import {
   ForgotPasswordInput,
   LoginInput,
+  LoginResponse,
   ResendOtpInput,
   ResetPasswordInput,
   SignupInput,
+  SignupResponse,
   USER_ROLES,
   VerifyOtpInput,
 } from '@/types';
@@ -29,8 +31,8 @@ export const useSignup = () => {
   const router = useRouter();
   const { showError } = useErrorDialog();
   const { showSnackbar } = useSnackbar();
-  return useMutation({
-    mutationFn: (variables: SignupInput) =>
+  return useMutation<SignupResponse, Error, SignupInput>({
+    mutationFn: (variables) =>
       signupAction({
         ...variables,
         phone: formatPhone(variables.phone),
@@ -63,8 +65,8 @@ export const useLogin = () => {
   const router = useRouter();
   const { showError } = useErrorDialog();
   const { showSnackbar } = useSnackbar();
-  return useMutation({
-    mutationFn: (variables: LoginInput) =>
+  return useMutation<LoginResponse, Error, LoginInput>({
+    mutationFn: (variables) =>
       loginAction({
         ...variables,
         phone: formatPhone(variables.phone),
@@ -90,14 +92,15 @@ export const useLogin = () => {
     },
     onError: (err: unknown, variables) => {
       const apiError = err as ApiError;
+      const details = apiError.details as { user?: { role?: string }; otp?: string } | undefined;
       if (apiError.status === 403) {
         router.push({
           pathname: ROUTES.auth.otpVerification,
           params: {
             phone: formatPhone(variables.phone),
             flow: 'login',
-            role: apiError.details?.user?.role || 'customer',
-            otp: apiError.details?.otp,
+            role: details?.user?.role || 'customer',
+            otp: details?.otp,
           },
         });
         return;

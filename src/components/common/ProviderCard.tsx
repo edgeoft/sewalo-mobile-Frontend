@@ -1,6 +1,6 @@
+import { memo, useState, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import { useState, type ComponentProps } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
@@ -27,7 +27,7 @@ export interface ProviderCardProps {
   isGuest?: boolean;
 }
 
-export default function ProviderCard({
+function ProviderCard({
   avatarUri,
   name,
   serviceLabel,
@@ -165,3 +165,5 @@ export default function ProviderCard({
     </Pressable>
   );
 }
+
+export default memo(ProviderCard);

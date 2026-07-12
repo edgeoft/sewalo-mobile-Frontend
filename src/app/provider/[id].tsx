@@ -7,7 +7,14 @@ import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsSc
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { useGetProviderDetailsQuery, useGetProviderRatingsQuery } from '@/api';
-import { type ProviderDetail, type ProviderDetailsResponse, type ReviewItem, type Rating } from '@/types';
+import {
+  type ProviderDetail,
+  type ProviderDetailsResponse,
+  type ReviewItem,
+  type Rating,
+  type ServiceOffering,
+  type UserProfile,
+} from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROUTES } from '@/constants/routes';
@@ -68,7 +75,7 @@ export default function DynamicProviderDetailRoute() {
       })}`;
     };
 
-    const getStartingPrice = (serviceOfferings: any[]) => {
+    const getStartingPrice = (serviceOfferings: ServiceOffering[] | undefined) => {
       if (!serviceOfferings || serviceOfferings.length === 0) return t('home.na');
       const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
       if (prices.length === 0) return t('home.na');
@@ -76,7 +83,7 @@ export default function DynamicProviderDetailRoute() {
       return formatPriceInNepali(minPrice);
     };
 
-    const formatLocation = (prov: any) => {
+    const formatLocation = (prov: UserProfile | null | undefined) => {
       if (!prov) return t('home.nepal');
       const city = prov.city;
       const address = prov.address;
@@ -96,7 +103,7 @@ export default function DynamicProviderDetailRoute() {
       : null;
 
     const individualServices =
-      firstService?.service_offerings?.map((o: any) => ({
+      firstService?.service_offerings?.map((o: ServiceOffering) => ({
         id: o.id,
         title: o.sub_category?.name || t('services.serviceOffering'),
         category: firstService?.category?.name || t('services.services'),

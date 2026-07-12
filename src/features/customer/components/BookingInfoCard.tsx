@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { View, Text } from 'react-native';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ interface BookingInfoCardProps {
   booking: CustomerBookingItem;
 }
 
-export default function BookingInfoCard({ booking }: BookingInfoCardProps) {
+function BookingInfoCard({ booking }: BookingInfoCardProps) {
   const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
@@ -43,3 +43,5 @@ export default function BookingInfoCard({ booking }: BookingInfoCardProps) {
     </View>
   );
 }
+
+export default memo(BookingInfoCard);

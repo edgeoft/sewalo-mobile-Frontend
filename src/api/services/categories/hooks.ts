@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import { getCategoriesAction } from './actions';
 import type { CategoryResponse } from '@/types';
 
@@ -7,7 +8,7 @@ export const useGetCategoriesQuery = (
   options?: Omit<UseQueryOptions<CategoryResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<CategoryResponse, Error>({
-    queryKey: ['categories', show],
+    queryKey: QUERY_KEYS.CATEGORIES.ALL(show),
     queryFn: () => getCategoriesAction(show),
     retry: false,
     refetchOnWindowFocus: false,

@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ interface BookingProviderCardProps {
   booking: CustomerBookingItem;
 }
 
-export default function BookingProviderCard({ booking }: BookingProviderCardProps) {
+function BookingProviderCard({ booking }: BookingProviderCardProps) {
   const { t } = useTranslation();
   const cardShadow = {
     shadowColor: '#0f172a',
@@ -90,3 +90,5 @@ export default function BookingProviderCard({ booking }: BookingProviderCardProp
     </View>
   );
 }
+
+export default memo(BookingProviderCard);

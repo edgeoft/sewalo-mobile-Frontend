@@ -1,4 +1,5 @@
 import { internalClient } from '@/api/client/instances/internal';
+import { API_ENDPOINTS } from '@/constants/api';
 import type {
   GetBlogsResponse,
   GetFeaturedBlogResponse,
@@ -15,17 +16,17 @@ export const getBlogsAction = async (
     show?: string;
   } = {},
 ): Promise<GetBlogsResponse> => {
-  return internalClient.get('/blog', { params });
+  return internalClient.get(API_ENDPOINTS.BLOG.LIST, { params });
 };
 
 export const getFeaturedBlogAction = async (): Promise<GetFeaturedBlogResponse> => {
-  return internalClient.get('/blog/featured');
+  return internalClient.get(API_ENDPOINTS.BLOG.FEATURED);
 };
 
 export const getBlogBySlugAction = async (slug: string): Promise<GetBlogBySlugResponse> => {
-  return internalClient.get(`/blog/${slug}`);
+  return internalClient.get(API_ENDPOINTS.BLOG.DETAIL(slug));
 };
 
 export const getBlogCategoriesAction = async (): Promise<GetBlogCategoriesResponse> => {
-  return internalClient.get('/blog/categories');
+  return internalClient.get(API_ENDPOINTS.BLOG.CATEGORIES);
 };

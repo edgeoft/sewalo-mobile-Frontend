@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui';
 import SelectSheet, { SelectOptionItem } from '@/components/ui/SelectSheet';
 
-import { FinanceAccountType } from '@/types';
+import { FINANCE_ACCOUNT_TYPE, FinanceAccountType } from '@/types';
 import { NEPAL_BANKS, DIGITAL_WALLETS } from '../constants/finance';
 import { FinanceAccountFormValues } from '@/schemas/provider';
 
@@ -28,8 +28,8 @@ const WALLET_OPTIONS: SelectOptionItem[] = DIGITAL_WALLETS.map((wallet) => ({
 export default function FinancialAccountForm({ control, errors }: FinancialAccountFormProps) {
   const { t } = useTranslation();
   const TYPE_OPTIONS: SelectOptionItem[] = [
-    { value: FinanceAccountType.BANK, label: t('provider.bankAccount') },
-    { value: FinanceAccountType.DIGITAL_WALLET, label: t('provider.digitalWallet') },
+    { value: FINANCE_ACCOUNT_TYPE.Bank, label: t('provider.bankAccount') },
+    { value: FINANCE_ACCOUNT_TYPE.DigitalWallet, label: t('provider.digitalWallet') },
   ];
   return (
     <View className="gap-y-4">
@@ -55,7 +55,7 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
         control={control}
         name="type"
         render={({ field: { value: currentType } }) => {
-          const isWallet = currentType === FinanceAccountType.DIGITAL_WALLET;
+          const isWallet = currentType === FINANCE_ACCOUNT_TYPE.DigitalWallet;
           const nameOptions = isWallet ? WALLET_OPTIONS : BANK_OPTIONS;
           const nameLabel = isWallet ? 'Wallet Name *' : 'Bank Name *';
           const namePlaceholder = isWallet ? 'Select Digital Wallet' : 'Select Bank';

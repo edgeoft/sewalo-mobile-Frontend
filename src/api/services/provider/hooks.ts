@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getCommissionSummaryAction,
   getCommissionsAction,
@@ -40,7 +41,7 @@ export const useCommissionSummaryQuery = (
   options?: Omit<UseQueryOptions<GetCommissionSummaryResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<GetCommissionSummaryResponse, Error>({
-    queryKey: ['commission-summary'],
+    queryKey: QUERY_KEYS.COMMISSION_SUMMARY,
     queryFn: getCommissionSummaryAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -53,7 +54,7 @@ export const useCommissionsQuery = (
   options?: Omit<UseQueryOptions<GetCommissionsResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<GetCommissionsResponse, Error>({
-    queryKey: ['commissions', params],
+    queryKey: QUERY_KEYS.COMMISSIONS(params),
     queryFn: () => getCommissionsAction(params),
     retry: false,
     refetchOnWindowFocus: false,
@@ -66,7 +67,7 @@ export const useProviderDashboardQuery = (
   options?: Omit<UseQueryOptions<ProviderDashboardResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<ProviderDashboardResponse, Error>({
-    queryKey: ['provider-dashboard-stats'],
+    queryKey: QUERY_KEYS.PROVIDER_DASHBOARD_STATS,
     queryFn: getProviderDashboardStatsAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -79,7 +80,7 @@ export const useEarningSummaryQuery = (
   options?: Omit<UseQueryOptions<GetEarningSummaryResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery<GetEarningSummaryResponse, Error>({
-    queryKey: ['earning-summary'],
+    queryKey: QUERY_KEYS.EARNING_SUMMARY,
     queryFn: getEarningSummaryAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -94,7 +95,7 @@ export const useMyTransactionsQuery = (
   const page = params.page || 1;
   const limit = params.limit || 10;
   return useQuery<GetMyTransactionsResponse, Error>({
-    queryKey: ['my-transactions', page, limit],
+    queryKey: QUERY_KEYS.MY_TRANSACTIONS(page, limit),
     queryFn: () => getMyTransactionsAction({ page, limit }),
     retry: false,
     refetchOnWindowFocus: false,
@@ -105,7 +106,7 @@ export const useMyTransactionsQuery = (
 // Finance Accounts
 export const useGetFinanceAccountsQuery = (enabled: boolean = true) => {
   return useQuery<GetFinanceAccountsResponse, Error>({
-    queryKey: ['financeAccounts'],
+    queryKey: QUERY_KEYS.FINANCE_ACCOUNTS,
     queryFn: getFinanceAccountsAction,
     enabled,
   });
@@ -132,7 +133,7 @@ export const useDeleteFinanceAccount = () => {
 // Services
 export const useGetProviderCategoriesQuery = () => {
   return useQuery<CategoryListResponse, Error>({
-    queryKey: ['categories'],
+    queryKey: QUERY_KEYS.PROVIDER_CATEGORIES,
     queryFn: getProviderCategoriesAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -141,7 +142,7 @@ export const useGetProviderCategoriesQuery = () => {
 
 export const useGetProviderSubCategoriesQuery = (slug: string, enabled: boolean = true) => {
   return useQuery<SubCategoryListResponse, Error>({
-    queryKey: ['subcategories', slug],
+    queryKey: QUERY_KEYS.PROVIDER_SUBCATEGORIES(slug),
     queryFn: () => getProviderSubCategoriesAction(slug),
     enabled: enabled && !!slug,
     retry: false,
@@ -151,7 +152,7 @@ export const useGetProviderSubCategoriesQuery = (slug: string, enabled: boolean 
 
 export const useGetMyServicesQuery = (options: { enabled?: boolean } = {}) => {
   return useQuery<GetMyServicesResponse, Error>({
-    queryKey: ['my-services'],
+    queryKey: QUERY_KEYS.MY_SERVICES,
     queryFn: getMyServicesAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -164,7 +165,7 @@ export const useCreateServiceMutation = () => {
   return useMutation<Service, Error, CreateServiceParams>({
     mutationFn: createServiceAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-services'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
     },
   });
 };
@@ -174,7 +175,7 @@ export const useDeleteServiceMutation = () => {
   return useMutation<void, Error, string>({
     mutationFn: deleteServiceAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-services'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
     },
   });
 };
@@ -184,7 +185,7 @@ export const useUpdateServiceMutation = () => {
   return useMutation<Service, Error, UpdateServiceParams>({
     mutationFn: updateServiceAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-services'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
     },
   });
 };

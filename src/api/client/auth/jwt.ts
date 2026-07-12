@@ -1,4 +1,4 @@
-export const decodeJwt = (token: string): any => {
+export const decodeJwt = (token: string): Record<string, unknown> | null => {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
@@ -38,6 +38,7 @@ export const decodeJwt = (token: string): any => {
 export const isExpiring = (token: string, proactiveRefreshSeconds: number = 60): boolean => {
   const decoded = decodeJwt(token);
   if (!decoded || !decoded.exp) return true;
+  const exp = decoded.exp as number;
   const nowSecs = Math.floor(Date.now() / 1000);
-  return decoded.exp - nowSecs < proactiveRefreshSeconds;
+  return exp - nowSecs < proactiveRefreshSeconds;
 };

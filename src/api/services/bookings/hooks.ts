@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   createBookingAction,
   getBookingsAction,
@@ -42,7 +43,7 @@ export const useCreateBooking = () => {
   return useMutation<Booking, Error, BookServiceFormData>({
     mutationFn: createBookingAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
   });
@@ -50,7 +51,7 @@ export const useCreateBooking = () => {
 
 export const useGetBookingsQuery = (params: GetBookingsParams = {}) => {
   return useQuery<GetBookingsResponse, Error>({
-    queryKey: ['bookings', params],
+    queryKey: QUERY_KEYS.BOOKINGS.LIST(params),
     queryFn: () => getBookingsAction(params),
     retry: false,
     refetchOnWindowFocus: true,
@@ -61,7 +62,7 @@ export const useGetBookingsQuery = (params: GetBookingsParams = {}) => {
 
 export const useGetMyBookingsQuery = (params: GetBookingsParams = {}) => {
   return useQuery<GetBookingsResponse, Error>({
-    queryKey: ['my-bookings', params],
+    queryKey: QUERY_KEYS.BOOKINGS.MY(params),
     queryFn: () => getMyBookingsAction(params),
     retry: false,
     refetchOnWindowFocus: true,
@@ -72,7 +73,7 @@ export const useGetMyBookingsQuery = (params: GetBookingsParams = {}) => {
 
 export const useGetBookingByIdQuery = (id: string) => {
   return useQuery<Booking, Error>({
-    queryKey: ['booking', id],
+    queryKey: QUERY_KEYS.BOOKINGS.DETAIL(id),
     queryFn: () => getBookingByIdAction(id),
     retry: false,
     refetchOnWindowFocus: true,
@@ -87,9 +88,9 @@ export const useUpdateBooking = () => {
   return useMutation<Booking, Error, { id: string; data: UpdateBookingPayload }>({
     mutationFn: ({ id, data }) => updateBookingAction(id, data),
     onSuccess: (result) => {
-      queryClient.setQueryData(['booking', result.id], result);
-      queryClient.invalidateQueries({ queryKey: ['booking', result.id], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(result.id), result);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(result.id), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
   });
@@ -100,9 +101,9 @@ export const useCancelBooking = () => {
   return useMutation<{ message: string; booking: Booking }, Error, { id: string; reason?: string }>({
     mutationFn: ({ id, reason }) => cancelBookingAction(id, reason),
     onSuccess: (result) => {
-      queryClient.setQueryData(['booking', result.booking.id], result.booking);
-      queryClient.invalidateQueries({ queryKey: ['booking', result.booking.id], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), result.booking);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
   });
@@ -111,7 +112,7 @@ export const useCancelBooking = () => {
 // Coupon Hooks
 export const useGetApplicableCoupons = () => {
   return useQuery<GetApplicableCouponsResponse, Error>({
-    queryKey: ['applicable-coupons'],
+    queryKey: QUERY_KEYS.APPLICABLE_COUPONS,
     queryFn: getApplicableCouponsAction,
     retry: false,
     refetchOnWindowFocus: false,
@@ -131,7 +132,7 @@ export const useUpdateInvoiceItems = () => {
   return useMutation<void, Error, UpdateInvoiceItemsPayload>({
     mutationFn: updateInvoiceItemsAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['booking'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.BASE });
     },
   });
 };
@@ -143,12 +144,15 @@ export const useProcessPayment = () => {
     mutationFn: ({ bookingId, payload }) => processPaymentAction(bookingId, payload),
     onSuccess: (result, variables) => {
       if (result.type === 'cash' && result.booking) {
-        queryClient.setQueryData(['booking', result.booking.id], result.booking);
-        queryClient.invalidateQueries({ queryKey: ['booking', result.booking.id], refetchType: 'all' });
+        queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), result.booking);
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), refetchType: 'all' });
       } else {
-        queryClient.invalidateQueries({ queryKey: ['booking', variables.bookingId], refetchType: 'all' });
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.BOOKINGS.DETAIL(variables.bookingId),
+          refetchType: 'all',
+        });
       }
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
   });
@@ -159,9 +163,9 @@ export const useConfirmPayment = () => {
   return useMutation<Booking, Error, { bookingId: string; payload: ConfirmPaymentPayload }>({
     mutationFn: ({ bookingId, payload }) => confirmPaymentAction(bookingId, payload),
     onSuccess: (result) => {
-      queryClient.setQueryData(['booking', result.id], result);
-      queryClient.invalidateQueries({ queryKey: ['booking', result.id], refetchType: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(result.id), result);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(result.id), refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
   });
@@ -173,7 +177,7 @@ export const useCreateRating = () => {
   return useMutation<Rating, Error, CreateRatingPayload>({
     mutationFn: createRatingAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['booking'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.BASE });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['my-ratings'] });
     },
@@ -182,7 +186,7 @@ export const useCreateRating = () => {
 
 export const useGetProviderRatingsQuery = (providerId: string, options?: { enabled?: boolean }) => {
   return useQuery<GetProviderRatingResponse, Error>({
-    queryKey: ['provider-ratings', providerId],
+    queryKey: QUERY_KEYS.PROVIDER_RATINGS(providerId),
     queryFn: () => getProviderRatingsAction(providerId),
     retry: false,
     refetchOnWindowFocus: false,
@@ -193,7 +197,7 @@ export const useGetProviderRatingsQuery = (providerId: string, options?: { enabl
 
 export const useGetMyRatingsQuery = (params: GetMyRatingsParams = {}) => {
   return useQuery<GetMyRatingsResponse, Error>({
-    queryKey: ['my-ratings', params],
+    queryKey: QUERY_KEYS.MY_RATINGS.LIST(params),
     queryFn: () => getMyRatingsAction(params),
     retry: false,
   });
@@ -204,7 +208,7 @@ export const useUpdateRating = () => {
   return useMutation<Rating, Error, UpdateRatingPayload>({
     mutationFn: updateRatingAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-ratings'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_RATINGS.ALL });
     },
   });
 };
@@ -214,7 +218,7 @@ export const useDeleteRating = () => {
   return useMutation<void, Error, string>({
     mutationFn: deleteRatingAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-ratings'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_RATINGS.ALL });
     },
   });
 };

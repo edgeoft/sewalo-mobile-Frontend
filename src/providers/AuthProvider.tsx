@@ -1,19 +1,23 @@
 import { UserProfile, UserRole } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-interface AuthContextType {
+interface AuthStateContextType {
   role: UserRole;
-  setRole: (role: UserRole) => void;
   isLoggedIn: boolean;
   user: UserProfile | null;
   isLoading: boolean;
+}
+
+interface AuthActionsContextType {
+  setRole: (role: UserRole) => void;
   login: (user: UserProfile, accessToken: string, refreshToken?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthStateContext = createContext<AuthStateContextType | undefined>(undefined);
+const AuthActionsContext = createContext<AuthActionsContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const role = useAuthStore((state) => state.role);
@@ -29,6 +33,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initialize();
   }, [initialize]);
 
+  const stateValue = useMemo(() => ({ role, isLoggedIn, user, isLoading }), [role, isLoggedIn, user, isLoading]);
+  const actionsValue = useMemo(() => ({ setRole, login, logout }), [setRole, login, logout]);
+
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
@@ -38,16 +45,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ role, setRole, isLoggedIn, user, isLoading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthStateContext.Provider value={stateValue}>
+      <AuthActionsContext.Provider value={actionsValue}>{children}</AuthActionsContext.Provider>
+    </AuthStateContext.Provider>
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
+export function useAuthState() {
+  const context = useContext(AuthStateContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuthState must be used within an AuthProvider');
   }
   return context;
+}
+
+export function useAuthActions() {
+  const context = useContext(AuthActionsContext);
+  if (!context) {
+    throw new Error('useAuthActions must be used within an AuthProvider');
+  }
+  return context;
+}
+
+export function useAuth(): AuthStateContextType & AuthActionsContextType {
+  const state = useAuthState();
+  const actions = useAuthActions();
+  return { ...state, ...actions };
 }

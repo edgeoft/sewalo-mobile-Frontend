@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { View, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
@@ -10,7 +10,7 @@ interface CompletedBookingSummaryCardProps {
   onRateProvider?: () => void;
 }
 
-export default function CompletedBookingSummaryCard({
+function CompletedBookingSummaryCard({
   totalPayableValue,
   onDownloadInvoice,
   onRateProvider,
@@ -53,3 +53,5 @@ export default function CompletedBookingSummaryCard({
     </View>
   );
 }
+
+export default memo(CompletedBookingSummaryCard);

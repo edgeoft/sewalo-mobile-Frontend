@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
 
@@ -11,7 +12,7 @@ interface SectionHeaderProps {
   titleClassName?: string;
 }
 
-export default function SectionHeader({
+function SectionHeader({
   eyebrow,
   title,
   description,
@@ -48,3 +49,5 @@ export default function SectionHeader({
     </View>
   );
 }
+
+export default memo(SectionHeader);

@@ -1,5 +1,5 @@
+import { memo, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -53,7 +53,7 @@ interface NotificationCardProps {
   onPress?: (item: Notification) => void;
 }
 
-export default function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationCardProps) {
+function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationCardProps) {
   const { t } = useTranslation();
   const [showActions, setShowActions] = useState(false);
   const isUnread = !item.read_at;
@@ -153,3 +153,5 @@ export default function NotificationCard({ item, onMarkRead, onDelete, onPress }
     </View>
   );
 }
+
+export default memo(NotificationCard);

@@ -1,5 +1,5 @@
+import { memo, ReactNode } from 'react';
 import { useRefreshControl } from '@/hooks/useRefreshControl';
-import { ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
 
 interface ContentLayoutProps {
@@ -14,7 +14,7 @@ interface ContentLayoutProps {
   enableRefresh?: boolean;
 }
 
-export default function ContentLayout({
+function ContentLayout({
   children,
   scrollable = false,
   className = '',
@@ -62,3 +62,5 @@ export default function ContentLayout({
     </View>
   );
 }
+
+export default memo(ContentLayout);

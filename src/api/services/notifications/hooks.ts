@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getNotificationsAction,
   getUnreadCountAction,
@@ -11,7 +12,7 @@ import type { GetNotificationsParams, GetNotificationsResponse, UnreadCountRespo
 
 export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) => {
   return useQuery<GetNotificationsResponse, Error>({
-    queryKey: ['notifications', params],
+    queryKey: QUERY_KEYS.NOTIFICATIONS.LIST(params),
     queryFn: () => getNotificationsAction(params),
     retry: false,
   });
@@ -19,7 +20,7 @@ export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) =>
 
 export const useUnreadCountQuery = ({ enabled }: { enabled?: boolean } = {}) => {
   return useQuery<UnreadCountResponse, Error>({
-    queryKey: ['notification-unread-count'],
+    queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT,
     queryFn: getUnreadCountAction,
     refetchInterval: 5000,
     retry: false,
@@ -32,8 +33,8 @@ export const useMarkNotificationRead = () => {
   return useMutation<void, Error, string>({
     mutationFn: markNotificationReadAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['notification-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
     },
   });
 };
@@ -43,8 +44,8 @@ export const useMarkAllNotificationsRead = () => {
   return useMutation<void, Error, void>({
     mutationFn: markAllNotificationsReadAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['notification-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
     },
   });
 };
@@ -54,8 +55,8 @@ export const useDeleteNotification = () => {
   return useMutation<void, Error, string>({
     mutationFn: deleteNotificationAction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['notification-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
     },
   });
 };

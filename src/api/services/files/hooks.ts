@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
+import type { UploadFileResponse, UploadFilePayload } from '@/types';
 
-import { uploadFileAction, deleteFileAction, UploadFileResponse, UploadFilePayload } from './actions';
+import { uploadFileAction, deleteFileAction } from './actions';
 
 /**
  * Hook to execute file upload mutation.

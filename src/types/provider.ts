@@ -74,16 +74,20 @@ export interface GetMyTransactionsParams {
 export type GetMyTransactionsResponse = PaginatedResponse<Transaction>;
 
 // Commission Types
-export enum COMMISSION_TYPE {
-  MY_EARNINGS = 'owned',
-  COMMISSION_DUE = 'payable_to_admin',
-}
+export const COMMISSION_TYPE = {
+  MyEarnings: 'owned',
+  CommissionDue: 'payable_to_admin',
+} as const;
 
-export enum EARNINGS_FILTER_STATUS {
-  ALL = 'all',
-  PAID = 'paid',
-  UNPAID = 'unpaid',
-}
+export type CommissionType = (typeof COMMISSION_TYPE)[keyof typeof COMMISSION_TYPE];
+
+export const EARNINGS_FILTER_STATUS = {
+  All: 'all',
+  Paid: 'paid',
+  Unpaid: 'unpaid',
+} as const;
+
+export type EarningsFilterStatus = (typeof EARNINGS_FILTER_STATUS)[keyof typeof EARNINGS_FILTER_STATUS];
 
 export interface Commission {
   id: string;
@@ -91,7 +95,7 @@ export interface Commission {
   booking_id: string;
   amount: number;
   total_earned_after_commission: number;
-  type: COMMISSION_TYPE;
+  type: CommissionType;
   has_paid: boolean;
   created_at: string;
   updated_at: string;
@@ -108,7 +112,7 @@ export interface CommissionSummary {
 export interface GetCommissionsParams {
   page?: number;
   limit?: number;
-  type?: COMMISSION_TYPE;
+  type?: CommissionType;
   has_paid?: boolean;
 }
 
@@ -117,10 +121,12 @@ export type GetCommissionsResponse = PaginatedResponse<Commission>;
 export type GetCommissionSummaryResponse = CommissionSummary;
 
 // Finance Types
-export enum FinanceAccountType {
-  BANK = 'bank',
-  DIGITAL_WALLET = 'wallet',
-}
+export const FINANCE_ACCOUNT_TYPE = {
+  Bank: 'bank',
+  DigitalWallet: 'wallet',
+} as const;
+
+export type FinanceAccountType = (typeof FINANCE_ACCOUNT_TYPE)[keyof typeof FINANCE_ACCOUNT_TYPE];
 
 export interface FinanceAccount {
   id: number;

@@ -47,6 +47,6 @@ export const MAP_CONSOLE_BRIDGE = `
  * Escapes backticks and template string markers inside a stringified JSON
  * to prevent breaking the ES6 template literal.
  */
-export function safeJsonStringify(data: any): string {
+export function safeJsonStringify(data: unknown): string {
   return JSON.stringify(data).replace(/`/g, '\\`').replace(/\${/g, '\\${');
 }

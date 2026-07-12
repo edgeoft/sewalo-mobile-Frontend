@@ -1,10 +1,16 @@
+import { useCallback } from 'react';
 import { Tabs } from 'expo-router';
-import BottomNavigationBar from '@/components/navigation/BottomNavigationBar';
+import BottomNavigationBar, { type BottomTabBarProps } from '@/components/navigation/BottomNavigationBar';
+
+function GuestTabBar(props: BottomTabBarProps) {
+  return <BottomNavigationBar {...props} />;
+}
 
 export default function GuestLayout() {
+  const renderTabBar = useCallback((props: BottomTabBarProps) => <GuestTabBar {...props} />, []);
   return (
     <Tabs
-      tabBar={(props) => <BottomNavigationBar {...props} />}
+      tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
       }}

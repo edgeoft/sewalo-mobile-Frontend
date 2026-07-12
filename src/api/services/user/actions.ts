@@ -1,4 +1,5 @@
 import { internalClient } from '@/api/client/instances/internal';
+import { API_ENDPOINTS } from '@/constants/api';
 import {
   AddRemoveFavoritePayload,
   GetFavoritesResponse,
@@ -18,7 +19,7 @@ import {
 
 // Favourite Actions
 export const getFavoritesAction = async (page: number = 1, limit: number = 10): Promise<GetFavoritesResponse> => {
-  return internalClient.get<GetFavoritesResponse>('/favourites', {
+  return internalClient.get<GetFavoritesResponse>(API_ENDPOINTS.FAVOURITES.LIST, {
     params: {
       page,
       limit,
@@ -27,31 +28,31 @@ export const getFavoritesAction = async (page: number = 1, limit: number = 10): 
 };
 
 export const addRemoveFavoriteAction = async (data: AddRemoveFavoritePayload): Promise<void> => {
-  return internalClient.post<void>('/favourites', data);
+  return internalClient.post<void>(API_ENDPOINTS.FAVOURITES.TOGGLE, data);
 };
 
 // Onboarding Actions
 export const completeProfileAction = async (data: CompleteProfilePayload): Promise<UpdateProfileResponse> => {
-  return internalClient.post<UpdateProfileResponse>('/user/complete', data);
+  return internalClient.post<UpdateProfileResponse>(API_ENDPOINTS.USER.COMPLETE_PROFILE, data);
 };
 
 // Password Actions
 export const changePasswordAction = async (data: ChangePasswordPayload): Promise<ChangePasswordResponse> => {
-  return internalClient.post<ChangePasswordResponse>('/user/change-password', data);
+  return internalClient.post<ChangePasswordResponse>(API_ENDPOINTS.USER.CHANGE_PASSWORD, data);
 };
 
 // Profile Actions
 export const updateProfileAction = async (data: UpdateProfilePayload): Promise<UpdateProfileResponse> => {
-  return internalClient.put<UpdateProfileResponse>('/user', data);
+  return internalClient.put<UpdateProfileResponse>(API_ENDPOINTS.USER.UPDATE_PROFILE, data);
 };
 
 export const getProviderDetailsAction = async (id: string): Promise<ProviderDetailsResponse> => {
-  return internalClient.get<ProviderDetailsResponse>(`/user/providers/${id}`);
+  return internalClient.get<ProviderDetailsResponse>(API_ENDPOINTS.PROVIDER.DETAILS(id));
 };
 
 // Service Actions
 export const getServiceListAction = async (params: GetServiceListParams): Promise<GetServiceListResponse> => {
-  return internalClient.get<GetServiceListResponse>('/services', {
+  return internalClient.get<GetServiceListResponse>(API_ENDPOINTS.SERVICES.LIST, {
     params: {
       page: params.page || 1,
       limit: params.limit || 15,
@@ -66,7 +67,7 @@ export const switchRoleAction = async (data: SwitchRolePayload): Promise<SwitchR
   if (data.target_role !== 'customer' && data.target_role !== 'provider') {
     throw new Error('Invalid target role. Only customer and provider roles are allowed.');
   }
-  return internalClient.post<SwitchRoleResponse>('/user/switch-role', data);
+  return internalClient.post<SwitchRoleResponse>(API_ENDPOINTS.USER.SWITCH_ROLE, data);
 };
 
 export const switchRoleWithDetailsAction = async (
@@ -76,5 +77,5 @@ export const switchRoleWithDetailsAction = async (
   if (data.target_role !== 'provider') {
     throw new Error('Invalid target role. Only switching to provider is allowed with details.');
   }
-  return internalClient.post<SwitchRoleWithDetailsResponse>('/user/switch-role-with-details', data);
+  return internalClient.post<SwitchRoleWithDetailsResponse>(API_ENDPOINTS.USER.SWITCH_ROLE_WITH_DETAILS, data);
 };

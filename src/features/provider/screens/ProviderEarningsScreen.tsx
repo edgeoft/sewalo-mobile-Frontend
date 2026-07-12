@@ -12,19 +12,19 @@ import { ROUTES } from '@/constants/routes';
 
 import Button from '@/components/ui/Button';
 import { useCommissionSummaryQuery, useCommissionsQuery } from '@/api';
-import { Commission, COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '@/types';
+import { Commission, COMMISSION_TYPE, CommissionType, EARNINGS_FILTER_STATUS, EarningsFilterStatus } from '@/types';
 import { formatDate } from '@/utils/time';
 
-type EarningsTab = COMMISSION_TYPE;
-type EarningsFilter = EARNINGS_FILTER_STATUS;
+type EarningsTab = CommissionType;
+type EarningsFilter = EarningsFilterStatus;
 
 export default function ProviderEarningsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
-  const [activeTab, setActiveTab] = useState<EarningsTab>(COMMISSION_TYPE.MY_EARNINGS);
-  const [filterStatus, setFilterStatus] = useState<EarningsFilter>(EARNINGS_FILTER_STATUS.ALL);
+  const [activeTab, setActiveTab] = useState<EarningsTab>(COMMISSION_TYPE.MyEarnings);
+  const [filterStatus, setFilterStatus] = useState<EarningsFilter>(EARNINGS_FILTER_STATUS.All);
 
   // Fetch real summary from /commissions/summary
   const {
@@ -42,7 +42,7 @@ export default function ProviderEarningsScreen() {
     refetch: refetchCommissions,
   } = useCommissionsQuery({
     type: activeTab,
-    has_paid: filterStatus === EARNINGS_FILTER_STATUS.ALL ? undefined : filterStatus === EARNINGS_FILTER_STATUS.PAID,
+    has_paid: filterStatus === EARNINGS_FILTER_STATUS.All ? undefined : filterStatus === EARNINGS_FILTER_STATUS.Paid,
     limit: 100,
   });
 
@@ -218,30 +218,30 @@ export default function ProviderEarningsScreen() {
               <View className="flex-row rounded-lg bg-gray-100 p-0.5">
                 <Pressable
                   onPress={() => {
-                    setActiveTab(COMMISSION_TYPE.MY_EARNINGS);
-                    setFilterStatus(EARNINGS_FILTER_STATUS.ALL);
+                    setActiveTab(COMMISSION_TYPE.MyEarnings);
+                    setFilterStatus(EARNINGS_FILTER_STATUS.All);
                   }}
                   className={`flex-1 py-2.5 rounded-md items-center ${
-                    activeTab === COMMISSION_TYPE.MY_EARNINGS ? 'bg-white shadow-xs' : 'bg-transparent'
+                    activeTab === COMMISSION_TYPE.MyEarnings ? 'bg-white shadow-xs' : 'bg-transparent'
                   }`}
                 >
                   <Text
-                    className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.MY_EARNINGS ? 'text-gray-900' : 'text-gray-500'}`}
+                    className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.MyEarnings ? 'text-gray-900' : 'text-gray-500'}`}
                   >
                     {t('provider.receivableEarnings')}
                   </Text>
                 </Pressable>
                 <Pressable
                   onPress={() => {
-                    setActiveTab(COMMISSION_TYPE.COMMISSION_DUE);
-                    setFilterStatus(EARNINGS_FILTER_STATUS.ALL);
+                    setActiveTab(COMMISSION_TYPE.CommissionDue);
+                    setFilterStatus(EARNINGS_FILTER_STATUS.All);
                   }}
                   className={`flex-1 py-2.5 rounded-md items-center ${
-                    activeTab === COMMISSION_TYPE.COMMISSION_DUE ? 'bg-white shadow-xs' : 'bg-transparent'
+                    activeTab === COMMISSION_TYPE.CommissionDue ? 'bg-white shadow-xs' : 'bg-transparent'
                   }`}
                 >
                   <Text
-                    className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.COMMISSION_DUE ? 'text-gray-900' : 'text-gray-500'}`}
+                    className={`text-xs font-sans-bold ${activeTab === COMMISSION_TYPE.CommissionDue ? 'text-gray-900' : 'text-gray-500'}`}
                   >
                     {t('provider.commissionsDue')}
                   </Text>
@@ -251,14 +251,14 @@ export default function ProviderEarningsScreen() {
 
             {/* Horizontal Status Filter Pills */}
             <View className="flex-row gap-2 mb-5">
-              {([EARNINGS_FILTER_STATUS.ALL, EARNINGS_FILTER_STATUS.PAID, EARNINGS_FILTER_STATUS.UNPAID] as const).map(
+              {([EARNINGS_FILTER_STATUS.All, EARNINGS_FILTER_STATUS.Paid, EARNINGS_FILTER_STATUS.Unpaid] as const).map(
                 (status) => {
                   const isActive = filterStatus === status;
                   const label =
-                    status === EARNINGS_FILTER_STATUS.ALL
+                    status === EARNINGS_FILTER_STATUS.All
                       ? t('provider.all')
-                      : status === EARNINGS_FILTER_STATUS.PAID
-                        ? activeTab === COMMISSION_TYPE.MY_EARNINGS
+                      : status === EARNINGS_FILTER_STATUS.Paid
+                        ? activeTab === COMMISSION_TYPE.MyEarnings
                           ? t('provider.received')
                           : t('provider.paid')
                         : t('provider.unpaid');
@@ -286,7 +286,7 @@ export default function ProviderEarningsScreen() {
                 <View className="flex-1 items-center justify-center py-12">
                   <ActivityIndicator size="large" color="#485aff" />
                 </View>
-              ) : activeTab === COMMISSION_TYPE.MY_EARNINGS ? (
+              ) : activeTab === COMMISSION_TYPE.MyEarnings ? (
                 <PaginationList
                   data={commissionsData?.data || []}
                   keyExtractor={(item: Commission) => item.id}

@@ -1,4 +1,5 @@
 import { internalClient } from '@/api/client/instances/internal';
+import { API_ENDPOINTS } from '@/constants/api';
 import {
   GetCommissionsParams,
   GetCommissionsResponse,
@@ -21,30 +22,30 @@ import {
 
 // Commissions
 export const getCommissionSummaryAction = async (): Promise<GetCommissionSummaryResponse> => {
-  return internalClient.get<GetCommissionSummaryResponse>('/commissions/summary');
+  return internalClient.get<GetCommissionSummaryResponse>(API_ENDPOINTS.COMMISSIONS.SUMMARY);
 };
 
 export const getCommissionsAction = async (params: GetCommissionsParams): Promise<GetCommissionsResponse> => {
-  return internalClient.get<GetCommissionsResponse>('/commissions', {
+  return internalClient.get<GetCommissionsResponse>(API_ENDPOINTS.COMMISSIONS.LIST, {
     params,
   });
 };
 
 // Dashboard
 export const getProviderDashboardStatsAction = async (): Promise<ProviderDashboardResponse> => {
-  return internalClient.get<ProviderDashboardResponse>('/provider/dashboard/stats');
+  return internalClient.get<ProviderDashboardResponse>(API_ENDPOINTS.PROVIDER.DASHBOARD_STATS);
 };
 
 // Earnings
 export const getEarningSummaryAction = async (): Promise<GetEarningSummaryResponse> => {
-  return internalClient.get<GetEarningSummaryResponse>('/transactions/earnings/summary');
+  return internalClient.get<GetEarningSummaryResponse>(API_ENDPOINTS.TRANSACTIONS.EARNINGS_SUMMARY);
 };
 
 export const getMyTransactionsAction = async ({
   page = 1,
   limit = 10,
 }: GetMyTransactionsParams): Promise<GetMyTransactionsResponse> => {
-  return internalClient.get<GetMyTransactionsResponse>('/transactions', {
+  return internalClient.get<GetMyTransactionsResponse>(API_ENDPOINTS.TRANSACTIONS.LIST, {
     params: {
       page,
       limit,
@@ -54,44 +55,44 @@ export const getMyTransactionsAction = async ({
 
 // Finance Accounts
 export const getFinanceAccountsAction = async (): Promise<GetFinanceAccountsResponse> => {
-  return internalClient.get<GetFinanceAccountsResponse>('/finance-accounts');
+  return internalClient.get<GetFinanceAccountsResponse>(API_ENDPOINTS.FINANCE_ACCOUNTS.LIST);
 };
 
 export const createFinanceAccountAction = async (data: CreateFinanceAccountPayload): Promise<FinanceAccount> => {
-  return internalClient.post<FinanceAccount>('/finance-accounts', data);
+  return internalClient.post<FinanceAccount>(API_ENDPOINTS.FINANCE_ACCOUNTS.CREATE, data);
 };
 
 export const updateFinanceAccountAction = async (data: UpdateFinanceAccountPayload): Promise<FinanceAccount> => {
   const { id, ...body } = data;
-  return internalClient.put<FinanceAccount>(`/finance-accounts/${id}`, body);
+  return internalClient.put<FinanceAccount>(API_ENDPOINTS.FINANCE_ACCOUNTS.UPDATE(id), body);
 };
 
 export const deleteFinanceAccountAction = async (id: number): Promise<void> => {
-  return internalClient.delete<void>(`/finance-accounts/${id}`);
+  return internalClient.delete<void>(API_ENDPOINTS.FINANCE_ACCOUNTS.DELETE(id));
 };
 
 // Services
 export const getProviderCategoriesAction = async (): Promise<CategoryListResponse> => {
-  return internalClient.get<CategoryListResponse>('/categories');
+  return internalClient.get<CategoryListResponse>(API_ENDPOINTS.CATEGORIES.LIST);
 };
 
 export const getProviderSubCategoriesAction = async (slug: string): Promise<SubCategoryListResponse> => {
-  return internalClient.get<SubCategoryListResponse>(`/categories/${slug}/sub-categories`);
+  return internalClient.get<SubCategoryListResponse>(API_ENDPOINTS.CATEGORIES.SUB_CATEGORIES(slug));
 };
 
 export const getMyServicesAction = async (): Promise<GetMyServicesResponse> => {
-  return internalClient.get<GetMyServicesResponse>('/services/my-services');
+  return internalClient.get<GetMyServicesResponse>(API_ENDPOINTS.SERVICES.MY_SERVICES);
 };
 
 export const createServiceAction = async (payload: CreateServiceParams): Promise<Service> => {
-  return internalClient.post<Service>('/services', payload);
+  return internalClient.post<Service>(API_ENDPOINTS.SERVICES.CREATE, payload);
 };
 
 export const updateServiceAction = async (payload: UpdateServiceParams): Promise<Service> => {
   const { id, ...rest } = payload;
-  return internalClient.put<Service>(`/services/${id}`, rest);
+  return internalClient.put<Service>(API_ENDPOINTS.SERVICES.UPDATE(id), rest);
 };
 
 export const deleteServiceAction = async (id: string): Promise<void> => {
-  return internalClient.delete<void>(`/services/${id}`);
+  return internalClient.delete<void>(API_ENDPOINTS.SERVICES.DELETE(id));
 };

@@ -1,11 +1,16 @@
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
+// Params are passed through to axios which accepts any value.
+// Response types are strictly typed via generics on ApiClient methods.
+
+export type RequestParams = any;
+
 export interface RequestCtx {
   url: string;
   method: ApiMethod;
   headers?: Record<string, string>;
-  params?: any;
-  data?: any;
+  params?: RequestParams;
+  data?: unknown;
   timeout?: number;
   signal?: AbortSignal;
   tokenSlot?: string;
@@ -22,7 +27,7 @@ export interface ResponseCtx {
   status: number;
   statusText: string;
   headers: Record<string, string>;
-  data: any;
+  data: unknown;
   request: RequestCtx;
   durationMs: number;
 }
@@ -35,7 +40,7 @@ export interface ApiError extends Error {
   name: 'ApiError';
   status?: number;
   code?: string;
-  details?: any;
+  details?: unknown;
   request?: RequestCtx;
   response?: ResponseCtx;
 }
@@ -45,7 +50,7 @@ export const createApiError = (
   params: {
     status?: number;
     code?: string;
-    details?: any;
+    details?: unknown;
     request?: RequestCtx;
     response?: ResponseCtx;
   },
@@ -121,7 +126,7 @@ export type TelemetryHooks = {
 
 export type MockConfig = {
   enabled: boolean;
-  fixtures?: Record<string, any>;
+  fixtures?: Record<string, unknown>;
 };
 
 export type ApiClientConfig = {
@@ -151,14 +156,10 @@ export interface TokenManager {
 }
 
 export type ApiClient = {
-  get: <T = any>(url: string, config?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => Promise<T>;
-  post: <T = any>(url: string, data?: any, config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => Promise<T>;
-  put: <T = any>(url: string, data?: any, config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => Promise<T>;
-  patch: <T = any>(
-    url: string,
-    data?: any,
-    config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>,
-  ) => Promise<T>;
-  delete: <T = any>(url: string, config?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => Promise<T>;
-  request: <T = any>(config: RequestCtx) => Promise<T>;
+  get: <T>(url: string, config?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => Promise<T>;
+  post: <T>(url: string, data?: unknown, config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => Promise<T>;
+  put: <T>(url: string, data?: unknown, config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => Promise<T>;
+  patch: <T>(url: string, data?: unknown, config?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => Promise<T>;
+  delete: <T>(url: string, config?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => Promise<T>;
+  request: <T>(config: RequestCtx) => Promise<T>;
 };

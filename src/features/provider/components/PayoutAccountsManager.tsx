@@ -13,7 +13,7 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import FinancialAccountForm from './FinancialAccountForm';
 import { financeAccountSchema, FinanceAccountFormValues } from '@/schemas/provider';
-import { FinanceAccountType, FinanceAccount } from '@/types';
+import { FINANCE_ACCOUNT_TYPE, FinanceAccount } from '@/types';
 import {
   useCreateFinanceAccount,
   useDeleteFinanceAccount,
@@ -49,8 +49,8 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
   const { showError } = useErrorDialog();
 
   const accounts: FinanceAccount[] = accountsResponse?.data || [];
-  const banks = accounts.filter((a: FinanceAccount) => a.type === FinanceAccountType.BANK);
-  const wallets = accounts.filter((a: FinanceAccount) => a.type === FinanceAccountType.DIGITAL_WALLET);
+  const banks = accounts.filter((a: FinanceAccount) => a.type === FINANCE_ACCOUNT_TYPE.Bank);
+  const wallets = accounts.filter((a: FinanceAccount) => a.type === FINANCE_ACCOUNT_TYPE.DigitalWallet);
 
   const {
     control,
@@ -60,7 +60,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
   } = useForm<FinanceAccountFormValues>({
     resolver: zodResolver(financeAccountSchema),
     defaultValues: {
-      type: FinanceAccountType.BANK,
+      type: FINANCE_ACCOUNT_TYPE.Bank,
       name: '',
       account_holder_name: '',
       account_no: '',

@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { FinanceAccountType } from '@/types';
+import { FINANCE_ACCOUNT_TYPE } from '@/types';
 
 export const financeAccountSchema = z.object({
-  type: z.nativeEnum(FinanceAccountType),
+  type: z.nativeEnum(FINANCE_ACCOUNT_TYPE),
   name: z.string().min(1, { message: 'Bank or Wallet name is required' }),
   account_holder_name: z.string().min(1, { message: 'Account holder name is required' }),
   account_no: z.string().min(4, { message: 'Account number/Mobile number is required' }),
