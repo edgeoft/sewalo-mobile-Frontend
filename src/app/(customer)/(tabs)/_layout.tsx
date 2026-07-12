@@ -12,6 +12,7 @@ export default function CustomerLayout() {
       <Tabs.Screen name="home" />
       <Tabs.Screen name="bookings" />
       <Tabs.Screen name="find-services" />
+      <Tabs.Screen name="map-services" />
       <Tabs.Screen name="favourites" />
       <Tabs.Screen name="account" />
     </Tabs>

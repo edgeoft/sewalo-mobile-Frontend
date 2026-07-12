@@ -65,63 +65,66 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
       }}
       className="flex-row bg-white border-t border-gray-100/50 w-full"
     >
-      {state.routes.map((route, index: number) => {
-        const { options } = descriptors[route.key];
-        const isFocused = state.index === index;
-        const config: TabConfig = BOTTOM_TAB_CONFIGS[route.name] || {
-          label: TAB_TRANSLATION_KEYS[route.name] || route.name,
-          icon: (focused) => (
-            <Feather name="help-circle" size={22} className={focused ? 'text-primary' : 'text-gray-900'} />
-          ),
-        };
-        const translationKey = TAB_TRANSLATION_KEYS[route.name];
-        const translatedLabel = translationKey ? t(translationKey) : config.label;
+      {state.routes
+        .filter((route) => route.name !== 'map-services')
+        .map((route, index: number) => {
+          const { options } = descriptors[route.key];
+          const currentRouteName = state.routes[state.index]?.name;
+          const isFocused =
+            state.routes[state.index]?.key === route.key ||
+            (route.name === 'find-services' && currentRouteName === 'map-services');
+          const config: TabConfig = BOTTOM_TAB_CONFIGS[route.name] || {
+            label: TAB_TRANSLATION_KEYS[route.name] || route.name,
+            icon: (focused) => <Feather name="help-circle" size={22} color={focused ? '#485aff' : '#111827'} />,
+          };
+          const translationKey = TAB_TRANSLATION_KEYS[route.name];
+          const translatedLabel = translationKey ? t(translationKey) : config.label;
 
-        const onPress = () => {
-          if (config.action) {
-            config.action();
-            return;
-          }
+          const onPress = () => {
+            if (config.action) {
+              config.action();
+              return;
+            }
 
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
+          const onLongPress = () => {
+            navigation.emit({
+              type: 'tabLongPress',
+              target: route.key,
+            });
+          };
 
-        return (
-          <Pressable
-            key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            className="flex-1 items-center justify-center pt-2 pb-0.5"
-          >
-            <View className="items-center justify-center mb-1.5">{config.icon(isFocused)}</View>
-            <Text
-              style={{ fontSize: 11 }}
-              className={`font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}
+          return (
+            <Pressable
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              className="flex-1 items-center justify-center pt-2 pb-0.5"
             >
-              {translatedLabel}
-            </Text>
-          </Pressable>
-        );
-      })}
+              <View className="items-center justify-center mb-1.5">{config.icon(isFocused)}</View>
+              <Text
+                style={{ fontSize: 11 }}
+                className={`font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}
+              >
+                {translatedLabel}
+              </Text>
+            </Pressable>
+          );
+        })}
     </View>
   );
 }

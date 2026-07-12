@@ -2,11 +2,10 @@ import { usePostHog } from 'posthog-react-native';
 import React from 'react';
 import { ENV } from '@/constants/env';
 import { FEATURE_FLAGS } from '@/constants/featureFlags';
-import type { MapProviderProps } from './types';
-import GoogleMapsSelector from './GoogleMapsSelector';
-import OpenStreetMapSelector from './OpenStreetMapSelector';
+import GoogleNearbyServicesMap from './GoogleNearbyServicesMap';
+import OSMNearbyServicesMap, { NearbyServicesMapProps } from './OSMNearbyServicesMap';
 
-export default function NativeMapProvider(props: MapProviderProps) {
+export default function NearbyServicesMap(props: NearbyServicesMapProps) {
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
   const posthog = usePostHog();
 
@@ -16,8 +15,8 @@ export default function NativeMapProvider(props: MapProviderProps) {
   const useGoogleMaps = isGoogleMapsFlagEnabled && !!apiKey;
 
   if (useGoogleMaps) {
-    return <GoogleMapsSelector {...props} />;
+    return <GoogleNearbyServicesMap {...props} />;
   }
 
-  return <OpenStreetMapSelector {...props} />;
+  return <OSMNearbyServicesMap {...props} />;
 }

@@ -130,7 +130,7 @@ export default function HelpFaqScreen() {
             placeholder={t('settings.searchQuestions')}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            leftIcon={<Feather name="search" size={16} color="#94a3b8" />}
+            leftIcon={<Feather name="search" size={16} color="var(--muted-foreground)" />}
             className="h-12"
             inputClassName="text-sm font-sans-medium"
             containerStyle={{
@@ -181,7 +181,7 @@ export default function HelpFaqScreen() {
             ListEmptyComponent={
               <View className="items-center justify-center py-12 px-6">
                 <View className="h-12 w-12 bg-gray-100 rounded-full items-center justify-center mb-3">
-                  <Feather name="help-circle" size={20} color="#94a3b8" />
+                  <Feather name="help-circle" size={20} color="var(--muted-foreground)" />
                 </View>
                 <Text className="text-sm font-sans-bold text-gray-900 mb-1 text-center">
                   {t('settings.noResultsFound')}
@@ -200,7 +200,11 @@ export default function HelpFaqScreen() {
                     className="flex-row justify-between items-center p-4 active:bg-gray-50/50"
                   >
                     <Text className="text-xs font-sans-bold text-gray-900 flex-1 mr-4">{item.question}</Text>
-                    <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={16} color="#64748b" />
+                    <Feather
+                      name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={16}
+                      color="var(--muted-foreground)"
+                    />
                   </Pressable>
 
                   {isExpanded && (

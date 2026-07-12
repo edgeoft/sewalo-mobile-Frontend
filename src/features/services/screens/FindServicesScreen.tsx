@@ -1,20 +1,21 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
-import { Pressable, Text, View, ScrollView, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
+import ServiceFilterModal from '../components/ServiceFilterModal';
+import CategoryScrollSelector from '../components/CategoryScrollSelector';
 
 export default function FindServicesScreen() {
   const { t } = useTranslation();
@@ -23,25 +24,39 @@ export default function FindServicesScreen() {
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
   const { showError } = useErrorDialog();
-  const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
+  const {
+    category: categoryParam,
+    search: searchParam,
+    minPrice: minPriceParam,
+    maxPrice: maxPriceParam,
+    minRating: minRatingParam,
+    serviceLocation: serviceLocationParam,
+  } = useLocalSearchParams<{
+    category?: string;
+    search?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    minRating?: string;
+    serviceLocation?: string;
+  }>();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParam || '');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParam || '');
   const selectedCategorySlug = categoryParam || undefined;
 
   // Filters Modal State
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [minRating, setMinRating] = useState('');
-  const [serviceLocation, setServiceLocation] = useState('');
+  const [minPrice, setMinPrice] = useState(minPriceParam || '');
+  const [maxPrice, setMaxPrice] = useState(maxPriceParam || '');
+  const [minRating, setMinRating] = useState(minRatingParam || '');
+  const [serviceLocation, setServiceLocation] = useState(serviceLocationParam || '');
 
   // Active filters applied to query
   const [appliedFilters, setAppliedFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    minRating: '',
-    serviceLocation: '',
+    minPrice: minPriceParam || '',
+    maxPrice: maxPriceParam || '',
+    minRating: minRatingParam || '',
+    serviceLocation: serviceLocationParam || '',
   });
 
   useEffect(() => {
@@ -50,6 +65,19 @@ export default function FindServicesScreen() {
     }, 400);
     return () => clearTimeout(handler);
   }, [searchQuery]);
+
+  const handleSwitchToMap = () => {
+    const searchParams = new URLSearchParams();
+    if (selectedCategorySlug) searchParams.append('category', selectedCategorySlug);
+    if (debouncedSearch) searchParams.append('search', debouncedSearch);
+    if (appliedFilters.minPrice) searchParams.append('minPrice', appliedFilters.minPrice);
+    if (appliedFilters.maxPrice) searchParams.append('maxPrice', appliedFilters.maxPrice);
+    if (appliedFilters.minRating) searchParams.append('minRating', appliedFilters.minRating);
+    if (appliedFilters.serviceLocation) searchParams.append('serviceLocation', appliedFilters.serviceLocation);
+
+    const url = `${isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices}?${searchParams.toString()}`;
+    router.replace(url as any);
+  };
 
   // Fetch Categories
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
@@ -226,74 +254,26 @@ export default function FindServicesScreen() {
               </View>
             )}
           </Pressable>
+          <Pressable
+            onPress={handleSwitchToMap}
+            className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
+          >
+            <Feather name="map" size={18} color="#485aff" />
+          </Pressable>
         </View>
 
         {/* Categories Horizontal Scroll */}
-        <View className="mb-6">
-          <Text className="text-lg font-sans-bold text-gray-950 mb-3 tracking-tight">
-            {t('services.browseByCategory')}
-          </Text>
-
-          {isLoadingCategories ? (
-            <View className="items-center justify-center py-8">
-              <ActivityIndicator size="large" color="#485aff" />
-            </View>
-          ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 4, gap: 10 }}
-            >
-              <Pressable
-                onPress={() => router.replace(isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices)}
-                className={`px-4 py-2.5 rounded-full flex-row items-center border ${
-                  selectedCategorySlug === undefined ? 'bg-primary border-primary' : 'bg-white border-gray-200'
-                }`}
-              >
-                <Text
-                  className={`text-xs font-sans-semibold ${
-                    selectedCategorySlug === undefined ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  {t('services.allServices')}
-                </Text>
-              </Pressable>
-
-              {categoriesData?.data.map((category) => {
-                const isSelected = selectedCategorySlug === category.slug;
-                const iconUri = getImageUrl(category.icon);
-
-                return (
-                  <Pressable
-                    key={category.id}
-                    onPress={() =>
-                      router.replace(
-                        `${isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices}?category=${isSelected ? '' : category.slug}`,
-                      )
-                    }
-                    className={`px-4 py-2.5 rounded-full flex-row items-center border ${
-                      isSelected ? 'bg-primary border-primary' : 'bg-white border-gray-200'
-                    }`}
-                  >
-                    {iconUri ? (
-                      <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" resizeMode="contain" />
-                    ) : (
-                      <Feather
-                        name="tag"
-                        size={12}
-                        color={isSelected ? '#ffffff' : '#485aff'}
-                        style={{ marginRight: 6 }}
-                      />
-                    )}
-                    <Text className={`text-xs font-sans-semibold ${isSelected ? 'text-white' : 'text-gray-700'}`}>
-                      {category.name}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          )}
-        </View>
+        <CategoryScrollSelector
+          selectedCategorySlug={selectedCategorySlug}
+          onSelectCategory={(slug) => {
+            router.replace(
+              `${isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices}?category=${slug || ''}`,
+            );
+          }}
+          categories={categoriesData?.data}
+          isLoading={isLoadingCategories}
+          horizontalPaddingClass="px-0"
+        />
 
         {/* Service Providers Listing */}
         <View className="flex-1">
@@ -307,7 +287,7 @@ export default function FindServicesScreen() {
             </View>
           ) : verifiedServices.length === 0 ? (
             <View className="py-12 items-center justify-center">
-              <Feather name="search" size={40} color="#94a3b8" />
+              <Feather name="search" size={40} color="#64748b" />
               <Text className="text-sm font-sans-semibold text-gray-900 mt-4">{t('services.noProvidersFound')}</Text>
               <Text className="text-xs font-sans-medium text-gray-400 mt-1 text-center px-6">
                 {t('services.noProvidersFoundDesc')}
@@ -336,107 +316,21 @@ export default function FindServicesScreen() {
         </View>
       </ContentLayout>
 
-      {/* Filters slide-up Modal */}
-      <Modal visible={isFilterModalOpen} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl p-6 gap-6 max-h-[85%]">
-            <View className="flex-row justify-between items-center pb-2 border-b border-gray-100">
-              <Text className="text-lg font-sans-bold text-gray-900">{t('services.filterTitle')}</Text>
-              <Pressable onPress={() => setIsFilterModalOpen(false)} className="p-1">
-                <Feather name="x" size={20} color="#475569" />
-              </Pressable>
-            </View>
-
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18 }}>
-              {/* Price Range */}
-              <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">{t('services.priceRange')}</Text>
-                <View className="flex-row items-center gap-3">
-                  <TextInput
-                    placeholder={t('services.minPrice')}
-                    keyboardType="numeric"
-                    value={minPrice}
-                    onChangeText={setMinPrice}
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50/50"
-                  />
-                  <Text className="text-gray-400 font-sans-medium">{t('services.to')}</Text>
-                  <TextInput
-                    placeholder={t('services.maxPrice')}
-                    keyboardType="numeric"
-                    value={maxPrice}
-                    onChangeText={setMaxPrice}
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50/50"
-                  />
-                </View>
-              </View>
-
-              {/* Minimum Rating */}
-              <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">{t('services.minimumRating')}</Text>
-                <View className="flex-row gap-2">
-                  {['1', '2', '3', '4', '5'].map((star) => (
-                    <Pressable
-                      key={star}
-                      onPress={() => setMinRating(minRating === star ? '' : star)}
-                      className={`flex-1 py-2.5 rounded-xl border items-center justify-center flex-row gap-1 ${
-                        minRating === star ? 'bg-amber-50 border-amber-400' : 'bg-white border-gray-200'
-                      }`}
-                    >
-                      <Text
-                        className={`text-xs font-sans-semibold ${
-                          minRating === star ? 'text-amber-700' : 'text-gray-600'
-                        }`}
-                      >
-                        {star}
-                      </Text>
-                      <Feather name="star" size={11} color={minRating === star ? '#eab308' : '#94a3b8'} />
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-
-              {/* Service Location */}
-              <View className="gap-2">
-                <Text className="text-sm font-sans-bold text-gray-800">{t('services.serviceLocationFilter')}</Text>
-                <View className="gap-2">
-                  {[
-                    { label: t('services.fixedStudio'), value: 'fixed_location' },
-                    { label: t('services.atCustomerLocation'), value: 'customer_location' },
-                    { label: t('services.remoteOnlineCall'), value: 'remote_location' },
-                  ].map((loc) => (
-                    <Pressable
-                      key={loc.value}
-                      onPress={() => setServiceLocation(serviceLocation === loc.value ? '' : loc.value)}
-                      className={`p-3 rounded-xl border flex-row justify-between items-center ${
-                        serviceLocation === loc.value ? 'bg-blue-50/50 border-primary' : 'bg-white border-gray-200'
-                      }`}
-                    >
-                      <Text
-                        className={`text-sm font-sans-medium ${
-                          serviceLocation === loc.value ? 'text-primary' : 'text-gray-700'
-                        }`}
-                      >
-                        {loc.label}
-                      </Text>
-                      {serviceLocation === loc.value ? <Feather name="check" size={16} color="#485aff" /> : null}
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            </ScrollView>
-
-            <View className="flex-row items-center gap-3 pt-3 border-t border-gray-100">
-              <Button title={t('services.reset')} variant="outline" onPress={handleResetFilters} className="flex-1" />
-              <Button
-                title={t('services.applyFilters')}
-                variant="primary"
-                onPress={handleApplyFilters}
-                className="flex-1"
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* Reusable Filters Modal */}
+      <ServiceFilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+        minRating={minRating}
+        setMinRating={setMinRating}
+        serviceLocation={serviceLocation}
+        setServiceLocation={setServiceLocation}
+        onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+      />
     </View>
   );
 }

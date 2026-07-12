@@ -8,6 +8,8 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import type { MapProviderProps, SearchResult } from './types';
+import { SharedWebViewMap } from './SharedWebViewMap';
+import { MAP_CONSOLE_BRIDGE } from './mapShared';
 
 function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
   return `
@@ -23,6 +25,9 @@ function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
 <body>
 <div id="map"></div>
 <script>
+  ${MAP_CONSOLE_BRIDGE}
+</script>
+<script>
   var map;
   var marker;
 
@@ -31,23 +36,6 @@ function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, ...data }));
     }
   }
-
-  // Redirect console logs to React Native WebView
-  (function() {
-    var originalLog = console.log;
-    console.log = function() {
-      originalLog.apply(console, arguments);
-      sendMessage('log', { message: Array.prototype.slice.call(arguments).join(' ') });
-    };
-    var originalError = console.error;
-    console.error = function() {
-      originalError.apply(console, arguments);
-      sendMessage('log', { message: 'ERROR: ' + Array.prototype.slice.call(arguments).join(' ') });
-    };
-    window.addEventListener('error', function(e) {
-      sendMessage('log', { message: 'UNCAUGHT ERROR: ' + e.message + ' at ' + e.filename + ':' + e.lineno });
-    });
-  })();
 
   function initMap() {
     var initialPos = { lat: ${lat}, lng: ${lng} };
@@ -84,7 +72,9 @@ function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
         marker.setPosition(pos);
         map.setCenter(pos);
       }
-    } catch(err) {}
+    } catch(err) {
+      console.error("Error processing window message:", err);
+    }
   });
 
   document.addEventListener('message', function(e) {
@@ -95,7 +85,9 @@ function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
         marker.setPosition(pos);
         map.setCenter(pos);
       }
-    } catch(err) {}
+    } catch(err) {
+      console.error("Error processing window message:", err);
+    }
   });
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap" async defer></script>
@@ -370,9 +362,9 @@ export default function GoogleMapsSelector({
   const renderSearchResult = ({ item }: { item: SearchResult }) => (
     <Pressable
       onPress={() => handleSelectResult(item)}
-      className="flex-row items-center px-4 py-3 border-b border-gray-100 active:bg-gray-50"
+      className="flex-row items-center px-4 py-3 border-b border-gray-200 active:bg-gray-50"
     >
-      <Feather name="map-pin" size={14} color="#94a3b8" />
+      <Feather name="map-pin" size={14} color="#64748b" />
       <Text className="text-sm text-gray-700 flex-1 ml-2" numberOfLines={1}>
         {item.description}
       </Text>
@@ -394,7 +386,7 @@ export default function GoogleMapsSelector({
               isSearching ? (
                 <ActivityIndicator size="small" color="#485aff" />
               ) : (
-                <Feather name="search" size={16} color="#94a3b8" />
+                <Feather name="search" size={16} color="#64748b" />
               )
             }
             inputClassName="text-sm pr-10"
@@ -412,12 +404,9 @@ export default function GoogleMapsSelector({
       </View>
 
       <View className="flex-1 relative">
-        <WebView
+        <SharedWebViewMap
           ref={webViewRef}
-          source={{
-            html: generateGoogleMapHTML(initialLat, initialLng, apiKey),
-          }}
-          style={styles.map}
+          html={generateGoogleMapHTML(initialLat, initialLng, apiKey)}
           onMessage={handleMessage}
           onLoadEnd={() => {
             webViewRef.current?.postMessage(
@@ -428,8 +417,6 @@ export default function GoogleMapsSelector({
               }),
             );
           }}
-          javaScriptEnabled
-          domStorageEnabled
           scrollEnabled={false}
           bounces={false}
           overScrollMode="never"

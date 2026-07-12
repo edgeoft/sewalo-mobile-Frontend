@@ -156,5 +156,8 @@
   "durationUnitMinutes": "Minutes",
   "durationUnitHours": "Hours",
   "durationUnitDays": "Days",
-  "durationUnitWeeks": "Weeks"
+  "durationUnitWeeks": "Weeks",
+  "mapView": "Map View",
+  "listView": "List View",
+  "viewProfile": "View Profile"
 }

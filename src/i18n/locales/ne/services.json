@@ -156,5 +156,8 @@
   "durationUnitMinutes": "मिनेट",
   "durationUnitHours": "घन्टा",
   "durationUnitDays": "दिन",
-  "durationUnitWeeks": "हप्ता"
+  "durationUnitWeeks": "हप्ता",
+  "mapView": "नक्सा हेर्नुहोस्",
+  "listView": "सूची हेर्नुहोस्",
+  "viewProfile": "प्रोफाइल हेर्नुहोस्"
 }

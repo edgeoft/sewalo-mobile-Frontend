@@ -12,6 +12,7 @@ export const ROUTES = {
   guest: {
     home: '/(guest)/(tabs)/home',
     findServices: '/(guest)/(tabs)/find-services',
+    mapServices: '/(guest)/(tabs)/map-services',
     beProvider: '/(guest)/(tabs)/be-provider',
     getStarted: '/(guest)/(tabs)/get-started',
     rateApp: '/guest/rate-app',
@@ -25,6 +26,7 @@ export const ROUTES = {
     home: '/(customer)/(tabs)/home',
     bookings: '/(customer)/(tabs)/bookings',
     findServices: '/(customer)/(tabs)/find-services',
+    mapServices: '/(customer)/(tabs)/map-services',
     favourites: '/(customer)/(tabs)/favourites',
     account: '/(customer)/(tabs)/account',
     editProfile: '/customer/edit-profile',

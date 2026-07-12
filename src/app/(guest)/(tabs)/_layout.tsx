@@ -11,6 +11,7 @@ export default function GuestLayout() {
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="find-services" />
+      <Tabs.Screen name="map-services" />
       <Tabs.Screen name="be-provider" />
       <Tabs.Screen name="get-started" />
     </Tabs>
