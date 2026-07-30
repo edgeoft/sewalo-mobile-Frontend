@@ -16,6 +16,7 @@ import { useAccountActions } from '@/hooks/useAccountActions';
 
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import AccountProfileCard from '@/features/customer/components/AccountProfileCard';
+import ProfileCompletionCard from '@/components/common/ProfileCompletionCard';
 import { getProviderAccountMenu } from '../constants/accountMenu';
 
 export default function ProviderAccountScreen() {
@@ -67,6 +68,9 @@ export default function ProviderAccountScreen() {
 
         {/* 1. Partner Profile Card */}
         <AccountProfileCard user={user} role={USER_ROLES.Provider} />
+
+        {/* 2. Profile Completion Tracker Card */}
+        <ProfileCompletionCard />
 
         {/* 2. Settings Categories (Config Driven) */}
         <View className="gap-y-5">

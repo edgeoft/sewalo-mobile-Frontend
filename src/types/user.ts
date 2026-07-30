@@ -144,7 +144,7 @@ export interface CompleteProfilePayload {
 
 export interface PersonalInfoData {
   fullName?: string;
-  email: string;
+  email?: string;
   mobileNumber?: string;
   location: string;
   lat?: number;
@@ -153,8 +153,8 @@ export interface PersonalInfoData {
   state?: string;
   country?: string;
   dateOfBirth: string;
-  languages: string[];
-  avatar?: string;
+  languages?: string[];
+  avatar: string;
 }
 
 // Password types

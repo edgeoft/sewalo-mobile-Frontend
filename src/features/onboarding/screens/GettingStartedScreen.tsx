@@ -14,9 +14,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 // Step components
 import OnboardingIllustration from '../components/OnboardingIllustration';
 import PersonalInfoStep from '../components/PersonalInfoStep';
-import SkillsExperienceStep from '../components/SkillsExperienceStep';
 import AvailabilityStep from '../components/AvailabilityStep';
-import FinancialDetailsStep from '../components/FinancialDetailsStep';
 import IdentityVerificationStep from '../components/IdentityVerificationStep';
 import FinishOnboardingStep from '../components/FinishOnboardingStep';
 
@@ -36,13 +34,8 @@ export default function GettingStartedScreen() {
     personalInfoControl,
     personalInfoErrors,
     setPersonalInfoValue,
-    watchLanguages,
     watchDateOfBirth,
     watchAvatar,
-    education,
-    setEducation,
-    experience,
-    setExperience,
     workingDays,
     setWorkingDays,
     workingHoursStart,
@@ -144,24 +137,10 @@ export default function GettingStartedScreen() {
             control={personalInfoControl}
             errors={personalInfoErrors}
             setValue={setPersonalInfoValue}
-            watchLanguages={watchLanguages}
             watchDateOfBirth={watchDateOfBirth}
             watchAvatar={watchAvatar}
             onNext={handleNext}
             loading={loading}
-            stepper={stepper}
-          />
-        );
-
-      case 'skills_experience':
-        return (
-          <SkillsExperienceStep
-            education={education}
-            setEducation={setEducation}
-            experience={experience}
-            setExperience={setExperience}
-            onNext={handleNext}
-            onSkip={handleSkip}
             stepper={stepper}
           />
         );
@@ -178,9 +157,6 @@ export default function GettingStartedScreen() {
             stepper={stepper}
           />
         );
-
-      case 'financial_details':
-        return <FinancialDetailsStep onNext={handleNext} onSkip={handleSkip} stepper={stepper} />;
 
       case 'identity_verification':
         return (

@@ -12,6 +12,8 @@ import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '@/features/customer/components/BasicInfoSection';
 import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../components/SkillsExperienceSection';
 import AvailabilitySection from '../components/AvailabilitySection';
+import IdentityVerificationSection from '../components/IdentityVerificationSection';
+import ProfileCompletionCard from '@/components/common/ProfileCompletionCard';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
@@ -220,9 +222,12 @@ export default function ProviderEditProfileScreen() {
           <SectionHeader
             title={t('provider.editPartnerProfile')}
             description={t('provider.editProfileDesc')}
-            className="mb-6"
+            className="mb-4"
             titleClassName="text-2xl text-gray-950 font-sans-extrabold"
           />
+
+          {/* Profile Completion Tracker Card */}
+          <ProfileCompletionCard />
 
           {/* Basic Info Block */}
           <BasicInfoSection
@@ -261,6 +266,9 @@ export default function ProviderEditProfileScreen() {
             onSave={handleSaveAvailability}
             loading={isUpdating}
           />
+
+          {/* Identity Verification Block */}
+          <IdentityVerificationSection />
         </ContentLayout>
       )}
     </View>

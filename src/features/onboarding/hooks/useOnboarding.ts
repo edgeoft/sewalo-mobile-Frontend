@@ -24,8 +24,6 @@ import { useCompleteProfile, useGetProfileQuery, useUpdateProfile, useUploadFile
 
 import { convertTimeTo24h, parseTime12h } from '@/utils/time';
 
-import { EducationItem, ExperienceItem } from '../components/SkillsExperienceStep';
-
 export interface StepInfo {
   key: string;
   label: string;
@@ -64,20 +62,14 @@ export function useOnboarding() {
       email: '',
       mobileNumber: phone || user?.phone || '',
       location: '',
-      languages: [],
       avatar: '',
       dateOfBirth: '',
     },
     mode: 'onBlur',
   });
 
-  const watchLanguages = useWatch({ control: personalInfoControl, name: 'languages' }) || [];
   const watchDateOfBirth = useWatch({ control: personalInfoControl, name: 'dateOfBirth' }) || '';
   const watchAvatar = useWatch({ control: personalInfoControl, name: 'avatar' }) || '';
-
-  // --- Step 2: Skills & Experience Form State (Provider Only) ---
-  const [education, setEducation] = useState<EducationItem[]>([]);
-  const [experience, setExperience] = useState<ExperienceItem[]>([]);
 
   // --- Step 3: Availability Form State (Provider Only) ---
   const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
@@ -101,24 +93,12 @@ export function useOnboarding() {
     role === 'provider'
       ? [
           { key: 'welcome', label: 'Welcome' },
-          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 5: Personal Details', icon: 'user' },
-          {
-            key: 'skills_experience',
-            label: 'Skills & Experience',
-            subtitle: 'Step 2 of 5: Skills & Experience',
-            icon: 'briefcase',
-          },
-          { key: 'availability', label: 'Availability', subtitle: 'Step 3 of 5: Weekly Schedule', icon: 'calendar' },
-          {
-            key: 'financial_details',
-            label: 'Financial Details',
-            subtitle: 'Step 4 of 5: Bank Details',
-            icon: 'dollar-sign',
-          },
+          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 3: Personal Details', icon: 'user' },
+          { key: 'availability', label: 'Availability', subtitle: 'Step 2 of 3: Weekly Schedule', icon: 'calendar' },
           {
             key: 'identity_verification',
             label: 'Identity Verification',
-            subtitle: 'Step 5 of 5: ID Document',
+            subtitle: 'Step 3 of 3: ID Document',
             icon: 'shield',
           },
           { key: 'finish', label: 'Finish' },
@@ -160,29 +140,6 @@ export function useOnboarding() {
 
     // Prepopulate Skills & Experience
     if (role === 'provider') {
-      if (profile.education && profile.education.length > 0) {
-        setEducation(
-          profile.education.map((e: EducationItemPayload) => ({
-            id: String(e.id),
-            degree: e.degree || '',
-            institute: e.institute || '',
-            startDate: e.start_date ? e.start_date.split('-')[0] : '',
-            endDate: e.end_date ? e.end_date.split('-')[0] : '',
-          })),
-        );
-      }
-      if (profile.experience && profile.experience.length > 0) {
-        setExperience(
-          profile.experience.map((e: ExperienceItemPayload) => ({
-            id: String(e.id),
-            title: e.title || '',
-            companyName: e.company_name || '',
-            startDate: e.start_date ? e.start_date.split('-')[0] : '',
-            endDate: e.end_date ? e.end_date.split('-')[0] : '',
-          })),
-        );
-      }
-
       // Prepopulate Availability
       if (profile.availability) {
         if (profile.availability === 'always') setWorkingDays('everyday');
@@ -211,19 +168,14 @@ export function useOnboarding() {
           email: profile.email || '',
           location: fullLocation || '',
           dateOfBirth: profile.dob || '',
-          languages: profile.language || [],
+          avatar: profile.avatar || '',
         }).success;
 
         if (!personalInfoValid) return 1;
 
         if (role === 'provider') {
-          const hasEducation = profile.education && profile.education.length > 0;
-          const hasExperience = profile.experience && profile.experience.length > 0;
-          if (!hasEducation && !hasExperience) return 2;
-
-          if (!profile.start_time || !profile.end_time) return 3;
-
-          if (!profile.document) return 5;
+          if (!profile.start_time || !profile.end_time) return 2;
+          if (!profile.document) return 3;
         } else {
           if (!profile.document) return 2;
         }
@@ -298,7 +250,6 @@ export function useOnboarding() {
             country,
             dob: data.dateOfBirth,
             coordinates: { lat, lng },
-            language: data.languages,
           };
           if (avatarPath) {
             payload.avatar = avatarPath;
@@ -314,47 +265,6 @@ export function useOnboarding() {
           setLoading(false);
         }
       })();
-      return;
-    }
-
-    if (currentStepKey === 'skills_experience') {
-      setLoading(true);
-      try {
-        const educationPayload: EducationItemPayload[] = education
-          .filter((e) => e.degree && e.institute && e.startDate)
-          .map((e) => ({
-            id: Number(e.id),
-            degree: e.degree,
-            institute: e.institute,
-            start_date: `${e.startDate}-01-01`,
-            end_date: e.endDate ? `${e.endDate}-01-01` : null,
-          }));
-
-        const experiencePayload: ExperienceItemPayload[] = experience
-          .filter((e) => e.title && e.companyName && e.startDate)
-          .map((e) => ({
-            id: Number(e.id),
-            title: e.title,
-            company_name: e.companyName,
-            start_date: e.startDate ? `${e.startDate}-01-01` : '',
-            end_date: e.endDate ? `${e.endDate}-01-01` : null,
-          }));
-
-        const payload: UpdateProfilePayload = {};
-        if (educationPayload.length > 0) payload.education = educationPayload;
-        if (experiencePayload.length > 0) payload.experience = experiencePayload;
-
-        if (Object.keys(payload).length > 0) {
-          await updateProfile(payload);
-          await refetchProfile();
-        }
-        setActiveIndex(activeIndex + 1);
-      } catch (err) {
-        const errMsg = err instanceof Error ? err.message : 'Failed to save skills and experience.';
-        showSnackbar({ message: errMsg, type: 'error' });
-      } finally {
-        setLoading(false);
-      }
       return;
     }
 
@@ -380,11 +290,6 @@ export function useOnboarding() {
       } finally {
         setLoading(false);
       }
-      return;
-    }
-
-    if (currentStepKey === 'financial_details') {
-      setActiveIndex(activeIndex + 1);
       return;
     }
 
@@ -512,13 +417,8 @@ export function useOnboarding() {
     personalInfoControl,
     personalInfoErrors,
     setPersonalInfoValue,
-    watchLanguages,
     watchDateOfBirth,
     watchAvatar,
-    education,
-    setEducation,
-    experience,
-    setExperience,
     workingDays,
     setWorkingDays,
     workingHoursStart,

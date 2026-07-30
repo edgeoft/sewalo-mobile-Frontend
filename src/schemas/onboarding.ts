@@ -13,7 +13,7 @@ export const validateAge18Plus = (dateString: string): boolean => {
 
 export const personalInfoSchema = z.object({
   fullName: z.string().optional(),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  email: z.string().email({ message: 'Please enter a valid email address' }).optional().or(z.literal('')),
   location: z.string().min(1, { message: 'Location is required' }),
   lat: z.number().optional(),
   lng: z.number().optional(),
@@ -23,8 +23,7 @@ export const personalInfoSchema = z.object({
   dateOfBirth: z.string().min(1, { message: 'Date of birth is required' }).refine(validateAge18Plus, {
     message: 'You must be 18 years or older',
   }),
-  languages: z.array(z.string()).min(1, { message: 'Please select at least one language' }),
-  avatar: z.string().optional(),
+  avatar: z.string().min(1, { message: 'Profile photo is required' }),
   mobileNumber: z.string().optional(),
 });
 

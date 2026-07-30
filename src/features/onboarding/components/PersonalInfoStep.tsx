@@ -29,7 +29,6 @@ interface PersonalInfoStepProps {
   control: Control<PersonalInfoData>;
   errors: FieldErrors<PersonalInfoData>;
   setValue: UseFormSetValue<PersonalInfoData>;
-  watchLanguages: string[];
   watchDateOfBirth: string;
   watchAvatar: string;
   onNext: () => void;
@@ -74,7 +73,6 @@ export default function PersonalInfoStep({
   control,
   errors,
   setValue,
-  watchLanguages = [],
   watchDateOfBirth = '',
   watchAvatar = '',
   onNext,
@@ -85,7 +83,6 @@ export default function PersonalInfoStep({
   const { showSnackbar } = useSnackbar();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
   const watchLat = useWatch({ control, name: 'lat' }) || 27.700769;
@@ -116,21 +113,6 @@ export default function PersonalInfoStep({
     } catch {
       showSnackbar({ message: t('onboarding.photoPickerError'), type: 'error' });
     }
-  };
-
-  const handleLanguageToggle = (langId: string) => {
-    const currentSelected = [...watchLanguages];
-    const index = currentSelected.findIndex((l) => l.toLowerCase() === langId.toLowerCase());
-    if (index > -1) {
-      currentSelected.splice(index, 1);
-    } else {
-      currentSelected.push(langId);
-    }
-    setValue('languages', currentSelected, { shouldValidate: true });
-  };
-
-  const handleOpenLangModal = () => {
-    setLangModalVisible(true);
   };
 
   const handleConfirmDate = () => {
@@ -208,6 +190,11 @@ export default function PersonalInfoStep({
                   <Feather name="camera" size={14} color="#ffffff" />
                 </View>
               </Pressable>
+              {errors.avatar && (
+                <Text className="text-xs font-sans-medium text-destructive mt-1.5 text-center">
+                  {errors.avatar.message as string}
+                </Text>
+              )}
             </View>
 
             {/* Email Address */}
@@ -287,50 +274,6 @@ export default function PersonalInfoStep({
                 </Text>
               )}
             </View>
-
-            {/* Languages */}
-            <View>
-              <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
-                {t('onboarding.languages')}
-              </Text>
-              <Pressable
-                onPress={handleOpenLangModal}
-                className={`form-input-container form-input-container-single justify-between ${
-                  errors.languages ? 'border-destructive' : 'border-gray-200'
-                }`}
-                style={{
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.015,
-                  shadowRadius: 2,
-                  elevation: 0,
-                  paddingHorizontal: 14,
-                }}
-              >
-                <Text
-                  numberOfLines={1}
-                  className={`text-sm flex-1 ${watchLanguages.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
-                >
-                  {watchLanguages.length > 0
-                    ? watchLanguages
-                        .map((val) => {
-                          const found = AVAILABLE_LANGUAGES.find(
-                            (l) =>
-                              l.id.toLowerCase() === val.toLowerCase() || l.name.toLowerCase() === val.toLowerCase(),
-                          );
-                          return found ? found.name : val;
-                        })
-                        .join(', ')
-                    : t('onboarding.selectLanguages')}
-                </Text>
-                <Feather name="chevron-down" size={16} color="#898f8f" />
-              </Pressable>
-              {errors.languages && (
-                <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
-                  {errors.languages.message as string}
-                </Text>
-              )}
-            </View>
           </View>
         </View>
       </ContentLayout>
@@ -356,56 +299,6 @@ export default function PersonalInfoStep({
           className="w-full bg-primary"
         />
       </View>
-
-      {/* Languages Drawer Selector Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={langModalVisible}
-        onRequestClose={() => setLangModalVisible(false)}
-      >
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setLangModalVisible(false)}>
-            <View style={styles.backdrop} />
-          </TouchableWithoutFeedback>
-
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.65 }]} className="bg-white px-5 pb-7 pt-4">
-            <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
-
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('onboarding.languagesModalTitle')}</Text>
-              <Pressable
-                onPress={() => setLangModalVisible(false)}
-                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
-              >
-                <Feather name="x" size={16} color="#64748b" />
-              </Pressable>
-            </View>
-
-            <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('onboarding.chooseLanguages')}</Text>
-
-            <ScrollView showsVerticalScrollIndicator={false} className="mb-4">
-              <View className="gap-y-2.5 pb-4">
-                {AVAILABLE_LANGUAGES.map((lang) => {
-                  const isSelected = watchLanguages.some(
-                    (l) => l.toLowerCase() === lang.id.toLowerCase() || l.toLowerCase() === lang.name.toLowerCase(),
-                  );
-                  return (
-                    <SelectionOption
-                      key={lang.id}
-                      onPress={() => handleLanguageToggle(lang.id)}
-                      title={lang.name}
-                      selected={isSelected}
-                      indicatorType="checkbox"
-                      gradientColors={['#eef0ff', '#f8fafc']}
-                    />
-                  );
-                })}
-              </View>
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
 
       {/* Custom DOB Selector Modal */}
       <Modal
