@@ -46,68 +46,69 @@ export function useProfileCompletion(): ProfileCompletionResult {
           key: 'avatar',
           label: 'Profile Photo',
           isComplete: Boolean(user.avatar),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Upload a profile photo to build trust with customers.',
+          actionRoute: '/provider/edit-profile?section=avatar',
+          promptMessage: 'Your profile is missing a photo. Upload one to build trust with potential clients.',
         },
         {
           key: 'contact',
           label: 'Contact Information',
           isComplete: Boolean(user.phone && user.email),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Provide your email address and mobile number.',
+          actionRoute: '/provider/edit-profile?section=contact',
+          promptMessage: 'Your profile is missing contact info to receive direct booking updates and client calls.',
         },
         {
           key: 'address',
           label: 'Location / Address',
           isComplete: Boolean(user.address || user.city),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Set your primary service area to receive local requests.',
+          actionRoute: '/provider/edit-profile?section=address',
+          promptMessage: 'Your profile is missing a service area. Set your location to receive local job requests.',
         },
         {
           key: 'availability',
           label: 'Availability Schedule',
           isComplete: Boolean(user.availability || (user.start_time && user.end_time)),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Set your working hours so customers know when to book.',
+          actionRoute: '/provider/edit-profile?section=availability',
+          promptMessage: 'Your profile is missing working hours. Set your schedule so clients know when to book you.',
         },
         {
           key: 'education',
           label: 'Skills & Education',
           isComplete: Boolean(user.education && user.education.length > 0),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Add your education & credentials to showcase your expertise.',
+          actionRoute: '/provider/edit-profile?section=skills',
+          promptMessage: 'Your profile is missing credentials. Add skills & education to highlight your expertise.',
         },
         {
           key: 'experience',
           label: 'Work Experience',
           isComplete: Boolean(user.experience && user.experience.length > 0),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Add your experience to attract more bookings.',
+          actionRoute: '/provider/edit-profile?section=skills',
+          promptMessage: 'Your profile is missing work history. Add your experience to attract more bookings.',
         },
         {
           key: 'finance',
           label: 'Financial Details',
           isComplete: hasPayoutAccounts,
           actionRoute: '/provider/payout-accounts',
-          promptMessage: 'Complete your financial details to receive payouts.',
+          promptMessage:
+            'Your profile is missing payout account details. Set up your bank account to receive earnings.',
         },
         {
           key: 'document',
           label: 'Identity Verification',
           isComplete: Boolean(user.document),
-          actionRoute: '/provider/edit-profile',
-          promptMessage: 'Verify your identity to earn a trusted provider badge.',
+          actionRoute: '/provider/verification-documents',
+          promptMessage: 'Your profile is missing identity verification. Submit your ID for a verified partner badge.',
         },
       ];
 
       const completedCount = items.filter((item) => item.isComplete).length;
       const totalCount = items.length;
       const percentage = Math.round((completedCount / totalCount) * 100);
-      const incompleteItem = items.find((item) => !item.isComplete);
 
-      const topPrompt = incompleteItem
-        ? incompleteItem.promptMessage
-        : 'Your profile is 100% complete! Great job building trust with customers.';
+      const topPrompt =
+        percentage === 100
+          ? 'Your profile is 100% complete! You are fully eligible to receive client requests.'
+          : 'Your profile is missing some details. Complete them to increase your visibility and customer trust.';
 
       return {
         percentage,
@@ -124,40 +125,40 @@ export function useProfileCompletion(): ProfileCompletionResult {
           key: 'avatar',
           label: 'Profile Photo',
           isComplete: Boolean(user.avatar),
-          actionRoute: '/customer/edit-profile',
-          promptMessage: 'Add a profile photo so service providers recognize you.',
+          actionRoute: '/customer/edit-profile?section=avatar',
+          promptMessage: 'Your profile is missing a photo. Upload one so service professionals recognize you.',
         },
         {
           key: 'contact',
           label: 'Contact Information',
           isComplete: Boolean(user.phone && user.email),
-          actionRoute: '/customer/edit-profile',
-          promptMessage: 'Complete your contact details for booking notifications.',
+          actionRoute: '/customer/edit-profile?section=contact',
+          promptMessage: 'Your profile is missing contact details to receive instant booking notifications.',
         },
         {
           key: 'address',
           label: 'Primary Address',
           isComplete: Boolean(user.address || user.city),
-          actionRoute: '/customer/edit-profile',
-          promptMessage: 'Set your primary address for faster service bookings.',
+          actionRoute: '/customer/edit-profile?section=address',
+          promptMessage: 'Your profile is missing a primary address. Set it to request services faster.',
         },
         {
           key: 'document',
           label: 'Identity Verification',
           isComplete: Boolean(user.document),
-          actionRoute: '/customer/edit-profile',
-          promptMessage: 'Verify your identity to earn trusted customer status.',
+          actionRoute: '/customer/identity-verification',
+          promptMessage: 'Your profile is missing identity verification. Submit your ID for trusted status.',
         },
       ];
 
       const completedCount = items.filter((item) => item.isComplete).length;
       const totalCount = items.length;
       const percentage = Math.round((completedCount / totalCount) * 100);
-      const incompleteItem = items.find((item) => !item.isComplete);
 
-      const topPrompt = incompleteItem
-        ? incompleteItem.promptMessage
-        : 'Your profile is 100% complete! You are ready to book any service.';
+      const topPrompt =
+        percentage === 100
+          ? 'Your profile is 100% complete! You are ready to book any service.'
+          : 'Your profile is missing some details. Complete them for faster service bookings.';
 
       return {
         percentage,

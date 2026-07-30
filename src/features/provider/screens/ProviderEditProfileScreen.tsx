@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useLocalSearchParams } from 'expo-router';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Header from '@/components/navigation/Header';
@@ -12,8 +13,6 @@ import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '@/features/customer/components/BasicInfoSection';
 import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../components/SkillsExperienceSection';
 import AvailabilitySection from '../components/AvailabilitySection';
-import IdentityVerificationSection from '../components/IdentityVerificationSection';
-import ProfileCompletionCard from '@/components/common/ProfileCompletionCard';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
@@ -24,10 +23,39 @@ export default function ProviderEditProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user, isLoading } = useAuth();
+  const { section } = useLocalSearchParams<{ section?: string }>();
+
+  const scrollRef = useRef<ScrollView>(null);
+  const [sectionLayouts, setSectionLayouts] = useState<Record<string, number>>({});
 
   const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
+
+  const handleSectionLayout = (key: string, y: number) => {
+    setSectionLayouts((prev) => ({ ...prev, [key]: y }));
+  };
+
+  useEffect(() => {
+    if (!section) return;
+
+    // Map section search param to section layout keys
+    let targetKey = section;
+    if (section === 'avatar' || section === 'contact' || section === 'address') {
+      targetKey = 'basic';
+    } else if (section === 'education' || section === 'experience') {
+      targetKey = 'skills';
+    } else if (section === 'document') {
+      targetKey = 'identity';
+    }
+
+    const targetY = sectionLayouts[targetKey];
+    if (targetY !== undefined) {
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({ y: Math.max(0, targetY - 12), animated: true });
+      }, 100);
+    }
+  }, [section, sectionLayouts]);
 
   const {
     control,
@@ -213,6 +241,7 @@ export default function ProviderEditProfileScreen() {
       ) : (
         <ContentLayout
           scrollable
+          scrollRef={scrollRef}
           className="flex-1"
           contentContainerStyle={{
             paddingTop: 20,
@@ -222,53 +251,53 @@ export default function ProviderEditProfileScreen() {
           <SectionHeader
             title={t('provider.editPartnerProfile')}
             description={t('provider.editProfileDesc')}
-            className="mb-4"
+            className="mb-6"
             titleClassName="text-2xl text-gray-950 font-sans-extrabold"
           />
 
-          {/* Profile Completion Tracker Card */}
-          <ProfileCompletionCard />
-
           {/* Basic Info Block */}
-          <BasicInfoSection
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            watchLanguages={watchLanguages}
-            watchDateOfBirth={watchDateOfBirth}
-            watchAvatar={watchAvatar}
-            onSave={handleSubmit(handleSaveBasicInfo)}
-            loading={isUpdating || isUploading}
-          />
+          <View onLayout={(e) => handleSectionLayout('basic', e.nativeEvent.layout.y)}>
+            <BasicInfoSection
+              control={control}
+              errors={errors}
+              setValue={setValue}
+              watchLanguages={watchLanguages}
+              watchDateOfBirth={watchDateOfBirth}
+              watchAvatar={watchAvatar}
+              onSave={handleSubmit(handleSaveBasicInfo)}
+              loading={isUpdating || isUploading}
+            />
+          </View>
 
           {/* Skills & Experience Block */}
-          <SkillsExperienceSection
-            educationList={educationList}
-            experienceList={experienceList}
-            onAddEducation={handleAddEducation}
-            onRemoveEducation={handleRemoveEducation}
-            onAddExperience={handleAddExperience}
-            onRemoveExperience={handleRemoveExperience}
-            onSave={handleSaveSkills}
-            loading={isUpdating}
-          />
+          <View onLayout={(e) => handleSectionLayout('skills', e.nativeEvent.layout.y)}>
+            <SkillsExperienceSection
+              educationList={educationList}
+              experienceList={experienceList}
+              onAddEducation={handleAddEducation}
+              onRemoveEducation={handleRemoveEducation}
+              onAddExperience={handleAddExperience}
+              onRemoveExperience={handleRemoveExperience}
+              onSave={handleSaveSkills}
+              loading={isUpdating}
+            />
+          </View>
 
           {/* Availability Block */}
-          <AvailabilitySection
-            workingDays={workingDays}
-            onChangeWorkingDays={setWorkingDays}
-            workingHoursStart={workingHoursStart}
-            workingHoursEnd={workingHoursEnd}
-            onChangeHours={(start, end) => {
-              setWorkingHoursStart(start);
-              setWorkingHoursEnd(end);
-            }}
-            onSave={handleSaveAvailability}
-            loading={isUpdating}
-          />
-
-          {/* Identity Verification Block */}
-          <IdentityVerificationSection />
+          <View onLayout={(e) => handleSectionLayout('availability', e.nativeEvent.layout.y)}>
+            <AvailabilitySection
+              workingDays={workingDays}
+              onChangeWorkingDays={setWorkingDays}
+              workingHoursStart={workingHoursStart}
+              workingHoursEnd={workingHoursEnd}
+              onChangeHours={(start, end) => {
+                setWorkingHoursStart(start);
+                setWorkingHoursEnd(end);
+              }}
+              onSave={handleSaveAvailability}
+              loading={isUpdating}
+            />
+          </View>
         </ContentLayout>
       )}
     </View>

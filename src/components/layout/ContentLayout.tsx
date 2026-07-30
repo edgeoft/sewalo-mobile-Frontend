@@ -12,6 +12,7 @@ interface ContentLayoutProps {
   onRefresh?: () => Promise<void> | void;
   refreshing?: boolean;
   enableRefresh?: boolean;
+  scrollRef?: React.Ref<ScrollView>;
 }
 
 function ContentLayout({
@@ -24,6 +25,7 @@ function ContentLayout({
   onRefresh,
   refreshing,
   enableRefresh = false,
+  scrollRef,
 }: ContentLayoutProps) {
   const { refreshing: hookRefreshing, onRefresh: hookOnRefresh } = useRefreshControl();
 
@@ -36,6 +38,7 @@ function ContentLayout({
   if (scrollable) {
     return (
       <ScrollView
+        ref={scrollRef}
         style={style}
         className={layoutClassName}
         contentContainerStyle={contentContainerStyle}

@@ -46,6 +46,7 @@ export default function ProfileCompletionCard({
   }));
 
   const progressColor = isFullyComplete ? '#10b981' : '#485aff';
+  const incompleteItems = items.filter((item) => !item.isComplete);
 
   return (
     <View
@@ -72,8 +73,9 @@ export default function ProfileCompletionCard({
               r={radius}
               stroke={progressColor}
               strokeWidth={strokeWidth}
-              strokeDasharray={circumference}
+              strokeDasharray={[circumference, circumference]}
               animatedProps={animatedProps}
+              strokeDashoffset={targetOffset}
               strokeLinecap="round"
               fill="none"
             />
@@ -119,42 +121,37 @@ export default function ProfileCompletionCard({
         <Text className="text-xs font-sans-medium text-gray-700 flex-1 leading-snug">{topPrompt}</Text>
       </View>
 
-      {/* Expandable Section Checklist */}
+      {/* Expandable Section Checklist - ONLY Incomplete Items */}
       {!hideChecklist && expanded && (
         <View className="mt-3.5 pt-3 border-t border-gray-100 gap-y-2">
-          {items.map((item) => (
-            <View key={item.key} className="flex-row items-center justify-between py-1 px-1">
-              <View className="flex-row items-center gap-x-2.5 flex-1 mr-2">
-                <View
-                  className={`h-5 w-5 rounded-full items-center justify-center ${
-                    item.isComplete ? 'bg-emerald-500' : 'bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  <Feather
-                    name={item.isComplete ? 'check' : 'circle'}
-                    size={12}
-                    color={item.isComplete ? '#ffffff' : '#94a3b8'}
-                  />
+          {incompleteItems.length > 0 ? (
+            incompleteItems.map((item) => (
+              <View key={item.key} className="flex-row items-center justify-between py-1 px-1">
+                <View className="flex-row items-center gap-x-2.5 flex-1 mr-2">
+                  <View className="h-5 w-5 rounded-full items-center justify-center bg-gray-100 border border-gray-200">
+                    <Feather name="circle" size={12} color="#94a3b8" />
+                  </View>
+                  <Text className="text-xs font-sans-semibold text-gray-900">{item.label}</Text>
                 </View>
-                <Text
-                  className={`text-xs font-sans-medium ${
-                    item.isComplete ? 'text-gray-800 line-through opacity-75' : 'text-gray-900 font-sans-semibold'
-                  }`}
-                >
-                  {item.label}
-                </Text>
-              </View>
 
-              {!item.isComplete && item.actionRoute && (
-                <Pressable
-                  onPress={() => router.push(item.actionRoute as any)}
-                  className="bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md active:bg-primary/20"
-                >
-                  <Text className="text-[11px] font-sans-bold text-primary">Complete</Text>
-                </Pressable>
-              )}
+                {item.actionRoute && (
+                  <Pressable
+                    onPress={() => router.push(item.actionRoute as any)}
+                    className="bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md active:bg-primary/20"
+                  >
+                    <Text className="text-[11px] font-sans-bold text-primary">Complete</Text>
+                  </Pressable>
+                )}
+              </View>
+            ))
+          ) : (
+            <View className="flex-row items-center justify-center py-2 bg-emerald-50/50 rounded-lg">
+              <Feather name="check-circle" size={14} color="#10b981" />
+              <Text className="text-xs font-sans-semibold text-emerald-700 ml-1.5">
+                All profile sections completed!
+              </Text>
             </View>
-          ))}
+          )}
         </View>
       )}
     </View>

@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -20,9 +20,36 @@ export default function CustomerEditProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user, isLoading } = useAuth();
+  const { section } = useLocalSearchParams<{ section?: string }>();
+
+  const scrollRef = useRef<ScrollView>(null);
+  const [sectionLayouts, setSectionLayouts] = useState<Record<string, number>>({});
+
   const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
+
+  const handleSectionLayout = (key: string, y: number) => {
+    setSectionLayouts((prev) => ({ ...prev, [key]: y }));
+  };
+
+  useEffect(() => {
+    if (!section) return;
+
+    let targetKey = section;
+    if (section === 'avatar' || section === 'contact' || section === 'address') {
+      targetKey = 'basic';
+    } else if (section === 'document') {
+      targetKey = 'identity';
+    }
+
+    const targetY = sectionLayouts[targetKey];
+    if (targetY !== undefined) {
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({ y: Math.max(0, targetY - 12), animated: true });
+      }, 100);
+    }
+  }, [section, sectionLayouts]);
 
   const {
     control,
@@ -126,6 +153,7 @@ export default function CustomerEditProfileScreen() {
       ) : (
         <ContentLayout
           scrollable
+          scrollRef={scrollRef}
           className="flex-1"
           contentContainerStyle={{
             paddingTop: 20,
@@ -139,16 +167,18 @@ export default function CustomerEditProfileScreen() {
             titleClassName="text-2xl text-gray-950 font-sans-extrabold"
           />
 
-          <BasicInfoSection
-            control={control}
-            errors={errors}
-            setValue={setValue}
-            watchLanguages={watchLanguages}
-            watchDateOfBirth={watchDateOfBirth}
-            watchAvatar={watchAvatar}
-            onSave={handleSubmit(handleSaveProfile)}
-            loading={isUpdating || isUploading}
-          />
+          <View onLayout={(e) => handleSectionLayout('basic', e.nativeEvent.layout.y)}>
+            <BasicInfoSection
+              control={control}
+              errors={errors}
+              setValue={setValue}
+              watchLanguages={watchLanguages}
+              watchDateOfBirth={watchDateOfBirth}
+              watchAvatar={watchAvatar}
+              onSave={handleSubmit(handleSaveProfile)}
+              loading={isUpdating || isUploading}
+            />
+          </View>
         </ContentLayout>
       )}
     </View>
