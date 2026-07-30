@@ -88,10 +88,12 @@ export const useAddRemoveFavorite = () => {
 
 // Onboarding Hooks
 export const useCompleteProfile = () => {
+  const queryClient = useQueryClient();
   return useMutation<UpdateProfileResponse, Error, CompleteProfilePayload>({
     mutationFn: completeProfileAction,
     onSuccess: (response) => {
       useAuthStore.getState().updateUser(response.user);
+      queryClient.setQueryData(QUERY_KEYS.PROFILE, { user: response.user });
     },
   });
 };
@@ -112,10 +114,12 @@ export const useGetProfileQuery = () => {
 };
 
 export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
   return useMutation<UpdateProfileResponse, Error, UpdateProfilePayload>({
     mutationFn: updateProfileAction,
     onSuccess: (response) => {
       useAuthStore.getState().updateUser(response.user);
+      queryClient.setQueryData(QUERY_KEYS.PROFILE, { user: response.user });
     },
   });
 };

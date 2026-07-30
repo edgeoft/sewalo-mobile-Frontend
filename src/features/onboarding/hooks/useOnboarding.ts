@@ -1,13 +1,20 @@
 import { Feather } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSnackbar } from '@/components/ui/Snackbar';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAuthStore } from '@/store/useAuthStore';
+import {
+  AVAILABILITY_TYPES,
+  DEFAULT_WORKING_HOURS_START,
+  DEFAULT_WORKING_HOURS_END,
+  WORKING_DAYS_OPTIONS,
+  WorkingDaysOption,
+} from '@/constants/availability';
 import {
   Availability,
   CompleteProfilePayload,
@@ -16,6 +23,7 @@ import {
   PersonalInfoData,
   UpdateProfilePayload,
   UserRole,
+  USER_ROLES,
 } from '@/types';
 
 import { personalInfoSchema } from '@/schemas/onboarding';
@@ -37,19 +45,41 @@ export function useOnboarding() {
   const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
   const { showSnackbar } = useSnackbar();
 
-  // Determine user role
-  const role: 'customer' | 'provider' = rawRole === 'provider' ? 'provider' : 'customer';
+  const role: typeof USER_ROLES.Customer | typeof USER_ROLES.Provider =
+    rawRole === USER_ROLES.Provider || user?.role === USER_ROLES.Provider ? USER_ROLES.Provider : USER_ROLES.Customer;
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const { data: profileResponse } = useGetProfileQuery();
+  const profile = profileResponse?.user;
 
-  // React Query API hooks
-  const { data: profileResponse, refetch: refetchProfile } = useGetProfileQuery();
   const { mutateAsync: updateProfile } = useUpdateProfile();
   const { mutateAsync: completeProfile } = useCompleteProfile();
   const { mutateAsync: uploadFile } = useUploadFile();
 
-  // --- Step 1: Personal Info Form State ---
+  const [loading, setLoading] = useState(false);
+
+  const fullLocation = useMemo(
+    () => (profile ? [profile.address, profile.city, profile.state, profile.country].filter(Boolean).join(', ') : ''),
+    [profile],
+  );
+
+  const formValues = useMemo(
+    () => ({
+      fullName: user?.name || profile?.name || '',
+      email: profile?.email || '',
+      mobileNumber: phone || user?.phone || profile?.phone || '',
+      location: fullLocation,
+      lat: profile?.coordinates?.lat,
+      lng: profile?.coordinates?.lng,
+      city: profile?.city || '',
+      state: profile?.state || '',
+      country: profile?.country || '',
+      dateOfBirth: profile?.dob || '',
+      languages: profile?.language || [],
+      avatar: profile?.avatar || '',
+    }),
+    [user, profile, phone, fullLocation],
+  );
+
   const {
     control: personalInfoControl,
     handleSubmit: handlePersonalInfoSubmit,
@@ -57,141 +87,126 @@ export function useOnboarding() {
     formState: { errors: personalInfoErrors },
   } = useForm<PersonalInfoData>({
     resolver: zodResolver(personalInfoSchema),
-    defaultValues: {
-      fullName: user?.name || '',
-      email: '',
-      mobileNumber: phone || user?.phone || '',
-      location: '',
-      avatar: '',
-      dateOfBirth: '',
-    },
+    values: formValues,
     mode: 'onBlur',
   });
 
   const watchDateOfBirth = useWatch({ control: personalInfoControl, name: 'dateOfBirth' }) || '';
   const watchAvatar = useWatch({ control: personalInfoControl, name: 'avatar' }) || '';
 
-  // --- Step 3: Availability Form State (Provider Only) ---
-  const [workingDays, setWorkingDays] = useState<'everyday' | 'sunday_friday' | 'weekend'>('sunday_friday');
-  const [workingHoursStart, setWorkingHoursStart] = useState('10:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState('06:00 PM');
+  const [userWorkingDays, setUserWorkingDays] = useState<WorkingDaysOption | null>(null);
+  const workingDays: WorkingDaysOption = useMemo(() => {
+    if (userWorkingDays !== null) return userWorkingDays;
+    if (profile?.availability === AVAILABILITY_TYPES.Always) return WORKING_DAYS_OPTIONS.Everyday;
+    if (profile?.availability === AVAILABILITY_TYPES.Weekdays) return WORKING_DAYS_OPTIONS.SundayFriday;
+    if (profile?.availability === AVAILABILITY_TYPES.Weekends) return WORKING_DAYS_OPTIONS.Weekend;
+    return WORKING_DAYS_OPTIONS.SundayFriday;
+  }, [userWorkingDays, profile?.availability]);
+
+  const [userWorkingHoursStart, setUserWorkingHoursStart] = useState<string | null>(null);
+  const workingHoursStart = useMemo(() => {
+    if (userWorkingHoursStart !== null) return userWorkingHoursStart;
+    const start12h = parseTime12h(profile?.start_time);
+    return start12h || DEFAULT_WORKING_HOURS_START;
+  }, [userWorkingHoursStart, profile?.start_time]);
+
+  const [userWorkingHoursEnd, setUserWorkingHoursEnd] = useState<string | null>(null);
+  const workingHoursEnd = useMemo(() => {
+    if (userWorkingHoursEnd !== null) return userWorkingHoursEnd;
+    const end12h = parseTime12h(profile?.end_time);
+    return end12h || DEFAULT_WORKING_HOURS_END;
+  }, [userWorkingHoursEnd, profile?.end_time]);
 
   const handleHoursChange = (start: string, end: string) => {
-    setWorkingHoursStart(start);
-    setWorkingHoursEnd(end);
+    setUserWorkingHoursStart(start);
+    setUserWorkingHoursEnd(end);
   };
 
-  // --- Step 4: Financial Details Form State (Provider Only) ---
-  // Financial Details are now fully managed directly by PayoutAccountsManager
-  // so no local react-hook-form state is needed here anymore.
+  const [userDocumentImage, setUserDocumentImage] = useState<string | null | undefined>(undefined);
+  const documentImage = useMemo(() => {
+    if (userDocumentImage !== undefined) return userDocumentImage;
+    return profile?.document || null;
+  }, [userDocumentImage, profile?.document]);
 
-  // --- Step 5: Identity Verification Form State ---
-  const [documentImage, setDocumentImage] = useState<string | null>(null);
-
-  // --- Configuration of form steps based on Role ---
-  const steps: StepInfo[] =
-    role === 'provider'
-      ? [
-          { key: 'welcome', label: 'Welcome' },
-          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 3: Personal Details', icon: 'user' },
-          { key: 'availability', label: 'Availability', subtitle: 'Step 2 of 3: Weekly Schedule', icon: 'calendar' },
-          {
-            key: 'identity_verification',
-            label: 'Identity Verification',
-            subtitle: 'Step 3 of 3: ID Document',
-            icon: 'shield',
-          },
-          { key: 'finish', label: 'Finish' },
-        ]
-      : [
-          { key: 'welcome', label: 'Welcome' },
-          { key: 'personal_info', label: 'Personal Details', subtitle: 'Step 1 of 2: Personal Details', icon: 'user' },
-          {
-            key: 'identity_verification',
-            label: 'Identity Verification',
-            subtitle: 'Step 2 of 2: ID Document',
-            icon: 'shield',
-          },
-          { key: 'finish', label: 'Finish' },
-        ];
+  const steps: StepInfo[] = useMemo(
+    () =>
+      role === USER_ROLES.Provider
+        ? [
+            { key: 'welcome', label: 'Welcome' },
+            {
+              key: 'personal_info',
+              label: 'Personal Details',
+              subtitle: 'Step 1 of 3: Personal Details',
+              icon: 'user',
+            },
+            { key: 'availability', label: 'Availability', subtitle: 'Step 2 of 3: Weekly Schedule', icon: 'calendar' },
+            {
+              key: 'identity_verification',
+              label: 'Identity Verification',
+              subtitle: 'Step 3 of 3: ID Document',
+              icon: 'shield',
+            },
+            { key: 'finish', label: 'Finish' },
+          ]
+        : [
+            { key: 'welcome', label: 'Welcome' },
+            {
+              key: 'personal_info',
+              label: 'Personal Details',
+              subtitle: 'Step 1 of 2: Personal Details',
+              icon: 'user',
+            },
+            {
+              key: 'identity_verification',
+              label: 'Identity Verification',
+              subtitle: 'Step 2 of 2: ID Document',
+              icon: 'shield',
+            },
+            { key: 'finish', label: 'Finish' },
+          ],
+    [role],
+  );
 
   const totalFormSteps = steps.length - 2;
 
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    if (!profileResponse?.user) return;
-    const profile = profileResponse.user;
+  const initialStepIndex = useMemo(() => {
+    if (!profile || !profile.email) return 0;
 
-    // Sync Zustand store
-    useAuthStore.getState().updateUser(profile);
+    const personalInfoValid = personalInfoSchema.safeParse({
+      email: profile.email || '',
+      location: fullLocation || '',
+      dateOfBirth: profile.dob || '',
+      avatar: profile.avatar || '',
+    }).success;
 
-    // Prepopulate Personal Info values
-    const fullLocation = [profile.address, profile.city, profile.state, profile.country].filter(Boolean).join(', ');
-    setPersonalInfoValue('email', profile.email || '');
-    setPersonalInfoValue('location', fullLocation || '');
-    setPersonalInfoValue('lat', profile.coordinates?.lat);
-    setPersonalInfoValue('lng', profile.coordinates?.lng);
-    setPersonalInfoValue('city', profile.city || '');
-    setPersonalInfoValue('state', profile.state || '');
-    setPersonalInfoValue('country', profile.country || '');
-    setPersonalInfoValue('dateOfBirth', profile.dob || '');
-    setPersonalInfoValue('languages', profile.language || []);
-    setPersonalInfoValue('avatar', profile.avatar || '');
+    if (!personalInfoValid) return 1;
 
-    // Prepopulate Skills & Experience
-    if (role === 'provider') {
-      // Prepopulate Availability
-      if (profile.availability) {
-        if (profile.availability === 'always') setWorkingDays('everyday');
-        else if (profile.availability === 'weekdays') setWorkingDays('sunday_friday');
-        else if (profile.availability === 'weekends') setWorkingDays('weekend');
-      }
-
-      // Prepopulate Hours
-      const start12h = parseTime12h(profile.start_time);
-      if (start12h) setWorkingHoursStart(start12h);
-
-      const end12h = parseTime12h(profile.end_time);
-      if (end12h) setWorkingHoursEnd(end12h);
+    if (role === USER_ROLES.Provider) {
+      if (!profile.start_time || !profile.end_time) return 2;
+      if (!profile.document) return 3;
+    } else {
+      if (!profile.document) return 2;
     }
 
-    // Prepopulate ID Document
-    if (profile.document) {
-      setDocumentImage(profile.document);
-    }
+    return steps.length - 1;
+  }, [profile, fullLocation, role, steps.length]);
 
-    // Resume onboarding at the first incomplete step
-    // Only runs on initial mount (activeIndex === 0) to prevent refetches from resetting progress.
-    if (profile.email && activeIndex === 0) {
-      const getInitialStepIndex = () => {
-        const personalInfoValid = personalInfoSchema.safeParse({
-          email: profile.email || '',
-          location: fullLocation || '',
-          dateOfBirth: profile.dob || '',
-          avatar: profile.avatar || '',
-        }).success;
+  const [userActiveIndex, setUserActiveIndex] = useState<number | null>(null);
+  const activeIndex = userActiveIndex !== null ? userActiveIndex : initialStepIndex;
 
-        if (!personalInfoValid) return 1;
-
-        if (role === 'provider') {
-          if (!profile.start_time || !profile.end_time) return 2;
-          if (!profile.document) return 3;
-        } else {
-          if (!profile.document) return 2;
-        }
-
-        return steps.length - 1;
-      };
-      setActiveIndex(getInitialStepIndex());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileResponse, role]);
-  /* eslint-enable react-hooks/set-state-in-effect */
-
-  // --- Prepopulate Finance Accounts when Query Returns ---
-  // Handled entirely by PayoutAccountsManager using its own query hook
+  const setActiveIndex = useCallback(
+    (action: number | ((prev: number) => number)) => {
+      setUserActiveIndex((current) => {
+        const prev = current !== null ? current : initialStepIndex;
+        return typeof action === 'function' ? action(prev) : action;
+      });
+    },
+    [initialStepIndex],
+  );
 
   const handleNext = async () => {
+    if (loading) return;
+
     const currentStepKey = steps[activeIndex].key;
 
     if (currentStepKey === 'welcome') {
@@ -205,7 +220,6 @@ export function useOnboarding() {
         try {
           let avatarPath = data.avatar || '';
 
-          // Upload profile photo if it is a new local URI
           if (
             data.avatar &&
             (data.avatar.startsWith('file://') ||
@@ -256,8 +270,7 @@ export function useOnboarding() {
           }
 
           await updateProfile(payload);
-          await refetchProfile();
-          setActiveIndex(activeIndex + 1);
+          setActiveIndex((prev) => prev + 1);
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : 'Failed to save personal details.';
           showSnackbar({ message: errMsg, type: 'error' });
@@ -271,9 +284,12 @@ export function useOnboarding() {
     if (currentStepKey === 'availability') {
       setLoading(true);
       try {
-        let availability: Availability = 'always';
-        if (workingDays === 'sunday_friday') availability = 'weekdays';
-        else if (workingDays === 'weekend') availability = 'weekends';
+        let availability: Availability = AVAILABILITY_TYPES.Always;
+        if (workingDays === WORKING_DAYS_OPTIONS.SundayFriday) {
+          availability = AVAILABILITY_TYPES.Weekdays;
+        } else if (workingDays === WORKING_DAYS_OPTIONS.Weekend) {
+          availability = AVAILABILITY_TYPES.Weekends;
+        }
 
         const payload: UpdateProfilePayload = {
           availability,
@@ -282,8 +298,7 @@ export function useOnboarding() {
         };
 
         await updateProfile(payload);
-        await refetchProfile();
-        setActiveIndex(activeIndex + 1);
+        setActiveIndex((prev) => prev + 1);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : 'Failed to save availability settings.';
         showSnackbar({ message: errMsg, type: 'error' });
@@ -298,7 +313,6 @@ export function useOnboarding() {
       try {
         let documentPath = documentImage || '';
 
-        // Upload ID Image if it is a new local URI
         if (
           documentImage &&
           (documentImage.startsWith('file://') ||
@@ -311,9 +325,8 @@ export function useOnboarding() {
 
         if (documentPath) {
           await updateProfile({ document: documentPath });
-          await refetchProfile();
         }
-        setActiveIndex(activeIndex + 1);
+        setActiveIndex((prev) => prev + 1);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : 'Failed to save identity documents.';
         showSnackbar({ message: errMsg, type: 'error' });
@@ -323,29 +336,30 @@ export function useOnboarding() {
       return;
     }
 
-    // Default increment
-    setActiveIndex(activeIndex + 1);
+    setActiveIndex((prev) => prev + 1);
   };
 
   const handleSkip = () => {
-    setActiveIndex(activeIndex + 1);
+    if (loading) return;
+    setActiveIndex((prev) => prev + 1);
   };
 
   const handleBack = () => {
+    if (loading) return;
     if (activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
+      setActiveIndex((prev) => prev - 1);
     } else {
       router.back();
     }
   };
 
   const handleFinish = async () => {
+    if (loading) return;
     setLoading(true);
     try {
       const currentUser = useAuthStore.getState().user;
       if (!currentUser) throw new Error('User session not found.');
 
-      // Format payloads to execute POST complete profile endpoint
       const payload: CompleteProfilePayload = {
         email: currentUser.email || '',
         address: currentUser.address || 'Kathmandu',
@@ -364,7 +378,7 @@ export function useOnboarding() {
         payload.document = currentUser.document;
       }
 
-      if (role === 'provider') {
+      if (role === USER_ROLES.Provider) {
         payload.education =
           currentUser.education?.map((e: EducationItemPayload) => ({
             id: e.id,
@@ -381,7 +395,7 @@ export function useOnboarding() {
             start_date: e.start_date,
             end_date: e.end_date,
           })) || [];
-        payload.availability = currentUser.availability || 'always';
+        payload.availability = currentUser.availability || AVAILABILITY_TYPES.Always;
         payload.start_time = currentUser.start_time || undefined;
         payload.end_time = currentUser.end_time || undefined;
       }
@@ -389,7 +403,7 @@ export function useOnboarding() {
       await completeProfile(payload);
       setRole(role as UserRole);
 
-      if (role === 'provider') {
+      if (role === USER_ROLES.Provider) {
         router.replace(ROUTES.provider.home);
       } else {
         router.replace(ROUTES.customer.home);
@@ -420,12 +434,12 @@ export function useOnboarding() {
     watchDateOfBirth,
     watchAvatar,
     workingDays,
-    setWorkingDays,
+    setWorkingDays: setUserWorkingDays,
     workingHoursStart,
     workingHoursEnd,
     handleHoursChange,
     documentImage,
-    setDocumentImage,
+    setDocumentImage: setUserDocumentImage,
     handleNext,
     handleSkip,
     handleBack,

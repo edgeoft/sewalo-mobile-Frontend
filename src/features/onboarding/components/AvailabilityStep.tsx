@@ -6,12 +6,13 @@ import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import { WORKING_DAYS_OPTIONS, WorkingDaysOption } from '@/constants/availability';
 
 interface AvailabilityStepProps {
-  workingDays: 'everyday' | 'sunday_friday' | 'weekend';
-  setWorkingDays: (days: 'everyday' | 'sunday_friday' | 'weekend') => void;
-  workingHoursStart: string; // e.g. "10:00 AM"
-  workingHoursEnd: string; // e.g. "06:00 PM"
+  workingDays: WorkingDaysOption;
+  setWorkingDays: (days: WorkingDaysOption) => void;
+  workingHoursStart: string;
+  workingHoursEnd: string;
   onChangeHours: (start: string, end: string) => void;
   onNext: () => void;
   stepper?: React.ReactNode;
@@ -97,25 +98,23 @@ export default function AvailabilityStep({
                 {t('onboarding.selectWorkingDays')}
               </Text>
               <View className="gap-y-2">
-                {(
-                  [
-                    {
-                      id: 'everyday' as const,
-                      label: t('onboarding.everyday'),
-                      description: t('onboarding.everydayDesc'),
-                    },
-                    {
-                      id: 'sunday_friday' as const,
-                      label: t('onboarding.sundayFriday'),
-                      description: t('onboarding.sundayFridayDesc'),
-                    },
-                    {
-                      id: 'weekend' as const,
-                      label: t('onboarding.weekend'),
-                      description: t('onboarding.weekendDesc'),
-                    },
-                  ] as const
-                ).map((day) => {
+                {[
+                  {
+                    id: WORKING_DAYS_OPTIONS.Everyday,
+                    label: t('onboarding.everyday'),
+                    description: t('onboarding.everydayDesc'),
+                  },
+                  {
+                    id: WORKING_DAYS_OPTIONS.SundayFriday,
+                    label: t('onboarding.sundayFriday'),
+                    description: t('onboarding.sundayFridayDesc'),
+                  },
+                  {
+                    id: WORKING_DAYS_OPTIONS.Weekend,
+                    label: t('onboarding.weekend'),
+                    description: t('onboarding.weekendDesc'),
+                  },
+                ].map((day) => {
                   const isSelected = workingDays === day.id;
                   return (
                     <Pressable
