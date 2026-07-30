@@ -12,6 +12,7 @@ import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import Input from '@/components/ui/Input';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
+import { MapViewport } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
@@ -73,50 +74,71 @@ export default function MapServicesScreen() {
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
 
-  // Panned map center coordinates state (defaults to userLocation)
-  const [mapCenter, setMapCenter] = useState({
-    lat: userLocation.lat,
-    lng: userLocation.lng,
+  // Panned map viewport state (defaults to userLocation)
+  const [viewport, setViewport] = useState<MapViewport>({
+    center: { lat: userLocation.lat, lng: userLocation.lng },
+    zoom: 14,
   });
 
-  // Debounced map center to optimize API requests during panning
-  const [debouncedCenter, setDebouncedCenter] = useState({
-    lat: userLocation.lat,
-    lng: userLocation.lng,
+  // Debounced map viewport to optimize API requests during panning
+  const [debouncedViewport, setDebouncedViewport] = useState<MapViewport>({
+    center: { lat: userLocation.lat, lng: userLocation.lng },
+    zoom: 14,
   });
 
-  // Synchronize map center when userLocation changes on load (during render to avoid cascading renders warning)
+  // Synchronize map center when userLocation changes on load
   const [prevUserLocation, setPrevUserLocation] = useState(userLocation);
 
   if (userLocation.lat !== prevUserLocation.lat || userLocation.lng !== prevUserLocation.lng) {
     setPrevUserLocation(userLocation);
-    setMapCenter({ lat: userLocation.lat, lng: userLocation.lng });
-    setDebouncedCenter({ lat: userLocation.lat, lng: userLocation.lng });
+    const initialViewport = { center: { lat: userLocation.lat, lng: userLocation.lng }, zoom: 14 };
+    setViewport(initialViewport);
+    setDebouncedViewport(initialViewport);
   }
 
+  // High-performance 300ms debounce with micro-movement jitter threshold check
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedCenter(mapCenter);
-    }, 400);
+      setDebouncedViewport((prev) => {
+        if (!prev) return viewport;
+        const isSameZoom = prev.zoom === viewport.zoom;
+        const latDiff = Math.abs(prev.center.lat - viewport.center.lat);
+        const lngDiff = Math.abs(prev.center.lng - viewport.center.lng);
+
+        if (isSameZoom && latDiff < 0.002 && lngDiff < 0.002) {
+          return prev;
+        }
+        return viewport;
+      });
+    }, 300);
     return () => clearTimeout(handler);
-  }, [mapCenter]);
+  }, [viewport]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-    }, 400);
+    }, 300);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
   // Fetch Categories
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
 
-  // Fetch Nearby Providers
+  // Fetch Nearby Providers with bounds
   const { data: providersData, isLoading: isLoadingProviders } = useGetNearbyProvidersQuery({
-    lat: debouncedCenter.lat,
-    lng: debouncedCenter.lng,
-    radius: 25, // default 25km radius
-    limit: 50,
+    lat: debouncedViewport.center.lat,
+    lng: debouncedViewport.center.lng,
+    ...(debouncedViewport.bounds
+      ? {
+          sw_lat: debouncedViewport.bounds.sw.lat,
+          sw_lng: debouncedViewport.bounds.sw.lng,
+          ne_lat: debouncedViewport.bounds.ne.lat,
+          ne_lng: debouncedViewport.bounds.ne.lng,
+        }
+      : {}),
+    zoom: debouncedViewport.zoom,
+    radius: 25,
+    limit: 100,
     category: selectedCategorySlug || undefined,
     min_rating: appliedFilters.minRating ? Number(appliedFilters.minRating) : undefined,
     min_price: appliedFilters.minPrice ? Number(appliedFilters.minPrice) : undefined,
@@ -291,7 +313,10 @@ export default function MapServicesScreen() {
               selectedProviderId={selectedProviderId}
               onSelectProvider={setSelectedProviderId}
               onMapCenterChange={(lat, lng) => {
-                setMapCenter({ lat, lng });
+                setViewport((prev) => ({ ...prev, center: { lat, lng } }));
+              }}
+              onMapViewportChange={(newViewport) => {
+                setViewport(newViewport);
               }}
             />
           )}

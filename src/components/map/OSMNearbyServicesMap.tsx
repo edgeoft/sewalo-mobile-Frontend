@@ -1,6 +1,6 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import { NearbyProvider } from '@/types';
+import { NearbyProvider, MapViewport } from '@/types';
 import { getImageUrl } from '@/utils/image';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
@@ -12,6 +12,7 @@ export interface NearbyServicesMapProps {
   selectedProviderId: string | null;
   onSelectProvider: (providerId: string | null) => void;
   onMapCenterChange?: (lat: number, lng: number) => void;
+  onMapViewportChange?: (viewport: MapViewport) => void;
 }
 
 function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersData: any[]) {
@@ -22,10 +23,22 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body, #map { width: 100%; height: 100%; }
+  .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+    background-color: rgba(72, 90, 255, 0.6) !important;
+  }
+  .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+    background-color: rgba(72, 90, 255, 0.9) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+  }
 </style>
 </head>
 <body>
@@ -57,8 +70,28 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
   // Post messages when map dragging/zooming completes
   map.on('moveend', function() {
     var center = map.getCenter();
-    sendMessage('mapMoved', { lat: center.lat, lng: center.lng });
+    var bounds = map.getBounds();
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+    var zoom = map.getZoom();
+
+    sendMessage('mapMoved', {
+      center: { lat: center.lat, lng: center.lng },
+      bounds: {
+        sw: { lat: sw.lat, lng: sw.lng },
+        ne: { lat: ne.lat, lng: ne.lng }
+      },
+      zoom: zoom
+    });
   });
+
+  var markerClusterGroup = L.markerClusterGroup({
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    zoomToBoundsOnClick: true,
+    maxClusterRadius: 50
+  });
+  map.addLayer(markerClusterGroup);
 
   var markers = {};
   var markersData = ${safeJson};
@@ -99,10 +132,7 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
     if (typeof map === 'undefined' || !map) return;
     map.invalidateSize();
     
-    // Clear existing
-    for (var id in markers) {
-      map.removeLayer(markers[id]);
-    }
+    markerClusterGroup.clearLayers();
     markers = {};
 
     markersData.forEach(function(p) {
@@ -111,13 +141,14 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
       }
       var isSelected = p.id === selectedId;
       var icon = createProviderIcon(p.avatar, p.rating, isSelected);
-      var m = L.marker([p.lat, p.lng], { icon: icon }).addTo(map);
+      var m = L.marker([p.lat, p.lng], { icon: icon });
       
       m.on('click', function() {
         sendMessage('providerSelected', { id: p.id });
       });
       
       markers[p.id] = m;
+      markerClusterGroup.addLayer(m);
       
       if (isSelected) {
         map.panTo([p.lat, p.lng]);
@@ -175,6 +206,7 @@ export default function OSMNearbyServicesMap({
   selectedProviderId,
   onSelectProvider,
   onMapCenterChange,
+  onMapViewportChange,
 }: NearbyServicesMapProps) {
   const webViewRef = useRef<WebView>(null);
 
@@ -212,7 +244,19 @@ export default function OSMNearbyServicesMap({
       if (data.type === 'providerSelected') {
         onSelectProvider(data.id);
       } else if (data.type === 'mapMoved') {
-        onMapCenterChange?.(data.lat, data.lng);
+        if (data.center) {
+          onMapCenterChange?.(data.center.lat, data.center.lng);
+          onMapViewportChange?.({
+            center: data.center,
+            bounds: data.bounds,
+            zoom: data.zoom,
+          });
+        } else if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+          onMapCenterChange?.(data.lat, data.lng);
+          onMapViewportChange?.({
+            center: { lat: data.lat, lng: data.lng },
+          });
+        }
       }
     } catch (err) {
       console.warn('Failed to parse message from OSMWebView:', err);

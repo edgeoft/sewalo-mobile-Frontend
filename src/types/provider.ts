@@ -213,6 +213,15 @@ export interface ProviderDashboardResponse {
 }
 
 // Nearby Providers API Types
+export interface MapViewport {
+  center: { lat: number; lng: number };
+  bounds?: {
+    sw: { lat: number; lng: number };
+    ne: { lat: number; lng: number };
+  };
+  zoom?: number;
+}
+
 export interface NearbyProvider {
   id: string;
   name: string;
@@ -229,8 +238,13 @@ export interface NearbyProvider {
 }
 
 export interface GetNearbyProvidersParams {
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
+  sw_lat?: number;
+  sw_lng?: number;
+  ne_lat?: number;
+  ne_lng?: number;
+  zoom?: number;
   radius?: number;
   limit?: number;
   category?: string;

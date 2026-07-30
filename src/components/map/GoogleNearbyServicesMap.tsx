@@ -130,7 +130,19 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providers
     // Listen to map changes when user stops dragging/zooming (idle event)
     map.addListener('idle', function() {
       var center = map.getCenter();
-      sendMessage('mapMoved', { lat: center.lat(), lng: center.lng() });
+      var bounds = map.getBounds();
+      var zoom = map.getZoom();
+      var sw = bounds ? bounds.getSouthWest() : null;
+      var ne = bounds ? bounds.getNorthEast() : null;
+
+      sendMessage('mapMoved', {
+        center: { lat: center.lat(), lng: center.lng() },
+        bounds: sw && ne ? {
+          sw: { lat: sw.lat(), lng: sw.lng() },
+          ne: { lat: ne.lat(), lng: ne.lng() }
+        } : null,
+        zoom: zoom
+      });
     });
 
     renderMarkers();
@@ -210,6 +222,7 @@ export default function GoogleNearbyServicesMap({
   selectedProviderId,
   onSelectProvider,
   onMapCenterChange,
+  onMapViewportChange,
 }: NearbyServicesMapProps) {
   const webViewRef = useRef<WebView>(null);
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
@@ -248,7 +261,19 @@ export default function GoogleNearbyServicesMap({
       if (data.type === 'providerSelected') {
         onSelectProvider(data.id);
       } else if (data.type === 'mapMoved') {
-        onMapCenterChange?.(data.lat, data.lng);
+        if (data.center) {
+          onMapCenterChange?.(data.center.lat, data.center.lng);
+          onMapViewportChange?.({
+            center: data.center,
+            bounds: data.bounds,
+            zoom: data.zoom,
+          });
+        } else if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+          onMapCenterChange?.(data.lat, data.lng);
+          onMapViewportChange?.({
+            center: { lat: data.lat, lng: data.lng },
+          });
+        }
       }
     } catch (err) {
       console.warn('Failed to parse message from GoogleWebView:', err);
