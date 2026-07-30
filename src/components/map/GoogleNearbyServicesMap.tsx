@@ -210,6 +210,7 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providers
     }
   });
 </script>
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap" async defer></script>
 </body>
 </html>`;
