@@ -128,9 +128,10 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
         <View className="flex-1">{header}</View>
         <Pressable
           onPress={() => setShowAddForm(true)}
+          accessibilityRole="button"
           className="flex-row items-center active:opacity-60 bg-primary/10 px-3 py-2 rounded-xl mt-1"
         >
-          <Feather name="plus" size={16} color="#485aff" />
+          <Feather name="plus" size={16} color="#485aff" accessible={false} />
           <Text className="text-sm font-sans-bold text-primary ml-1.5">{t('provider.addAccount')}</Text>
         </Pressable>
       </View>
@@ -148,6 +149,8 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' }}>
           <Pressable
             style={{ flex: 1 }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
             onPress={() => {
               if (!isCreating) {
                 setShowAddForm(false);
@@ -170,6 +173,10 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                   setShowAddForm(false);
                   reset();
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                accessibilityState={{ disabled: isCreating }}
+                hitSlop={8}
                 className="p-2 bg-gray-50 rounded-full"
               >
                 <Feather name="x" size={20} color="#64748b" />
@@ -243,6 +250,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                 <View className="flex-row justify-end gap-x-2 border-t border-gray-50 mt-4 pt-3">
                   <Pressable
                     onPress={() => handleRemove(wallet.id)}
+                    accessibilityRole="button"
                     className="px-3 py-1.5 rounded-lg active:bg-red-50"
                   >
                     <Text className="text-xs font-sans-bold text-red-500">{t('common.remove')}</Text>
@@ -251,6 +259,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                   {!wallet.is_default && (
                     <Pressable
                       onPress={() => handleSetPrimary(wallet.id)}
+                      accessibilityRole="button"
                       className="border border-primary/20 px-3 py-1.5 rounded-lg active:bg-primary/5"
                     >
                       <Text className="text-xs font-sans-bold text-primary">{t('components.setPrimary')}</Text>
@@ -302,13 +311,18 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
               </View>
 
               <View className="flex-row justify-end gap-x-2 border-t border-gray-50 mt-4 pt-3">
-                <Pressable onPress={() => handleRemove(bank.id)} className="px-3 py-1.5 rounded-lg active:bg-red-50">
+                <Pressable
+                  onPress={() => handleRemove(bank.id)}
+                  accessibilityRole="button"
+                  className="px-3 py-1.5 rounded-lg active:bg-red-50"
+                >
                   <Text className="text-xs font-sans-bold text-red-500">{t('common.remove')}</Text>
                 </Pressable>
 
                 {!bank.is_default && (
                   <Pressable
                     onPress={() => handleSetPrimary(bank.id)}
+                    accessibilityRole="button"
                     className="border border-primary/20 px-3 py-1.5 rounded-lg active:bg-primary/5"
                   >
                     <Text className="text-xs font-sans-bold text-primary">{t('components.setPrimary')}</Text>

@@ -267,11 +267,18 @@ export default function MapServicesScreen() {
           </View>
           <Pressable
             onPress={() => setIsFilterModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.filterTitle')}
             className={`h-12 w-12 rounded-xl border items-center justify-center relative active:opacity-85 ${
               activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
           >
-            <Feather name="sliders" size={18} color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'} />
+            <Feather
+              name="sliders"
+              size={18}
+              color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'}
+              accessible={false}
+            />
             {activeFiltersCount > 0 && (
               <View className="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full h-5 w-5 items-center justify-center border border-white">
                 <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
@@ -280,9 +287,11 @@ export default function MapServicesScreen() {
           </Pressable>
           <Pressable
             onPress={handleSwitchToList}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.listView')}
             className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
           >
-            <Feather name="list" size={18} color="#485aff" />
+            <Feather name="list" size={18} color="#485aff" accessible={false} />
           </Pressable>
         </View>
 
@@ -301,30 +310,33 @@ export default function MapServicesScreen() {
 
         {/* Map Area */}
         <View className="flex-1 relative">
-          {isLoadingProviders ? (
-            <View className="flex-1 items-center justify-center bg-gray-150">
-              <ActivityIndicator size="large" color="#485aff" />
-            </View>
-          ) : (
-            <NearbyServicesMap
-              userLat={userLocation.lat}
-              userLng={userLocation.lng}
-              providers={providers}
-              selectedProviderId={selectedProviderId}
-              onSelectProvider={setSelectedProviderId}
-              onMapCenterChange={(lat, lng) => {
-                setViewport((prev) => ({ ...prev, center: { lat, lng } }));
-              }}
-              onMapViewportChange={(newViewport) => {
-                setViewport(newViewport);
-              }}
-            />
-          )}
+          <View className="flex-1" importantForAccessibility="no">
+            {isLoadingProviders ? (
+              <View className="flex-1 items-center justify-center bg-gray-150">
+                <ActivityIndicator size="large" color="#485aff" />
+              </View>
+            ) : (
+              <NearbyServicesMap
+                userLat={userLocation.lat}
+                userLng={userLocation.lng}
+                providers={providers}
+                selectedProviderId={selectedProviderId}
+                onSelectProvider={setSelectedProviderId}
+                onMapCenterChange={(lat, lng) => {
+                  setViewport((prev) => ({ ...prev, center: { lat, lng } }));
+                }}
+                onMapViewportChange={(newViewport) => {
+                  setViewport(newViewport);
+                }}
+              />
+            )}
+          </View>
 
           {/* Floating Details Preview Card */}
           {selectedProvider && (
             <Pressable
               onPress={() => handleProviderPress(selectedProvider.slug || selectedProvider.id)}
+              accessibilityRole="button"
               style={{
                 position: 'absolute',
                 bottom: Math.max(insets.bottom, 12),
@@ -353,6 +365,9 @@ export default function MapServicesScreen() {
                   e.stopPropagation();
                   setSelectedProviderId(null);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 style={{
                   position: 'absolute',
                   top: -8,
@@ -374,7 +389,7 @@ export default function MapServicesScreen() {
                 }}
                 className="active:opacity-60"
               >
-                <Feather name="x" size={10} color="#94a3b8" />
+                <Feather name="x" size={10} color="#94a3b8" accessible={false} />
               </Pressable>
 
               {/* Avatar with accent ring */}

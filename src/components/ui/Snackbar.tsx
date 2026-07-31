@@ -1,6 +1,8 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Animated, Pressable, Text } from 'react-native';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
+import { announceForAccessibility, useAppReducedMotion } from '@/utils/accessibility';
 
 export type SnackbarType = 'success' | 'error' | 'info';
 
@@ -41,29 +43,46 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<SnackbarConfig | null>(null);
   const opacity = useMemo(() => new Animated.Value(0), []);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const reducesMotion = useAppReducedMotion();
 
   const hideSnackbar = useCallback(() => {
+    if (reducesMotion) {
+      setConfig(null);
+      return;
+    }
     Animated.timing(opacity, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => setConfig(null));
-  }, [opacity]);
+  }, [opacity, reducesMotion]);
 
   const showSnackbar = useCallback(
     (c: SnackbarConfig) => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      setConfig({ type: 'info', duration: 3000, ...c });
-      opacity.setValue(0);
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
+      const resolved = { type: 'info' as SnackbarType, duration: 3000, ...c };
+      setConfig(resolved);
+      announceForAccessibility(resolved.message);
+      if (reducesMotion) {
+        opacity.setValue(1);
+      } else {
+        opacity.setValue(0);
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }).start();
+      }
       timerRef.current = setTimeout(hideSnackbar, c.duration ?? 3000);
     },
-    [opacity, hideSnackbar],
+    [opacity, hideSnackbar, reducesMotion],
   );
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const type = config?.type ?? 'info';
   const position = config?.position ?? 'top';
@@ -75,15 +94,24 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
         <Animated.View
           className={`absolute ${position === 'top' ? 'top-12' : 'bottom-8'} left-4 right-4 z-50`}
           style={{ opacity }}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
         >
           <Pressable
             onPress={hideSnackbar}
             className={`flex-row items-center px-4 py-3 rounded-lg ${BG_MAP[type]} shadow-lg`}
           >
-            <Feather name={ICON_MAP[type]} size={18} color="#fff" />
+            <View importantForAccessibility="no" accessibilityElementsHidden>
+              <Feather name={ICON_MAP[type]} size={18} color="#fff" />
+            </View>
             <Text className="flex-1 text-white font-sans-medium text-sm ml-2.5">{config.message}</Text>
             {config.action ? (
-              <Pressable onPress={config.action.onPress} className="ml-2">
+              <Pressable
+                onPress={config.action.onPress}
+                className="ml-2"
+                accessibilityRole="button"
+                accessibilityLabel={config.action.label}
+              >
                 <Text className="text-white font-sans-bold text-sm underline">{config.action.label}</Text>
               </Pressable>
             ) : null}

@@ -15,6 +15,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
+import { BOOKING_STATUSES } from '@/types';
 import { useScroll } from '@/hooks/useScroll';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useMemo } from 'react';
@@ -37,7 +38,7 @@ export default function ProviderHomeScreen() {
 
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
-      { id, data: { status: 'confirmed' } },
+      { id, data: { status: BOOKING_STATUSES.Confirmed } },
       {
         onSuccess: () => {
           showSnackbar({ message: t('home.bookingAccepted'), type: 'success' });
@@ -51,7 +52,7 @@ export default function ProviderHomeScreen() {
     updateBooking.mutate(
       {
         id,
-        data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
+        data: { status: BOOKING_STATUSES.Rejected, cancellation_reason: 'Provider declined the booking request.' },
       },
       {
         onSuccess: () => {

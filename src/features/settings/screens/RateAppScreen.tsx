@@ -91,7 +91,14 @@ export default function RateAppScreen() {
           {/* Star Selection Row */}
           <View className="flex-row items-center gap-x-3 mb-6">
             {[1, 2, 3, 4, 5].map((star) => (
-              <Pressable key={star} onPress={() => setRating(star)} className="p-1 active:scale-110">
+              <Pressable
+                key={star}
+                onPress={() => setRating(star)}
+                accessibilityRole="button"
+                accessibilityLabel={`Rate ${star} ${star === 1 ? 'star' : 'stars'}`}
+                accessibilityState={{ selected: star <= rating }}
+                className="p-1 active:scale-110"
+              >
                 <Feather
                   name="star"
                   size={32}

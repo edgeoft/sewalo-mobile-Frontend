@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
+import { USER_ROLES } from '@/types';
 
 import GuestFeatureCard from '../components/GuestFeatureCard';
 import GuestRoleActionCard from '../components/GuestRoleActionCard';
@@ -75,14 +76,14 @@ export default function GuestGetStartedScreen() {
             variant="primary"
             title={t('auth.getStarted.needServiceTitle')}
             description={t('auth.getStarted.needServiceDesc')}
-            onPress={() => handleJoinRole('customer')}
+            onPress={() => handleJoinRole(USER_ROLES.Customer)}
           />
 
           <GuestRoleActionCard
             variant="outline"
             title={t('auth.getStarted.wantEarnTitle')}
             description={t('auth.getStarted.wantEarnDesc')}
-            onPress={() => handleJoinRole('provider')}
+            onPress={() => handleJoinRole(USER_ROLES.Provider)}
           />
 
           <GuestRoleActionCard

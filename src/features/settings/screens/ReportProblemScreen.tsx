@@ -126,6 +126,8 @@ export default function ReportProblemScreen() {
                       <Pressable
                         key={cat.value}
                         onPress={() => onChange(cat.value)}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: active }}
                         className={`px-3 py-2 rounded-lg border ${
                           active ? 'bg-primary/5 border-primary' : 'bg-white border-gray-200'
                         }`}
@@ -208,6 +210,7 @@ export default function ReportProblemScreen() {
           </Text>
           <Pressable
             onPress={handleUploadScreenshot}
+            accessibilityRole="button"
             className={`border border-dashed rounded-lg py-3.5 mb-5 items-center justify-center flex-row ${
               screenshotUploaded ? 'border-emerald-300 bg-emerald-50/20' : 'border-gray-300 bg-white'
             }`}
@@ -216,6 +219,7 @@ export default function ReportProblemScreen() {
               name={screenshotUploaded ? 'check-circle' : 'image'}
               size={16}
               color={screenshotUploaded ? '#10b981' : '#64748b'}
+              accessible={false}
             />
             <Text
               className={`text-xs font-sans-semibold ml-2 ${screenshotUploaded ? 'text-emerald-700' : 'text-gray-500'}`}

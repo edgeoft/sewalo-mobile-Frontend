@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -27,7 +26,6 @@ interface MissingFieldsResponse {
 
 export default function BecomeProviderScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
   const { missingFields: missingFieldsRaw } = useLocalSearchParams<{ missingFields?: string }>();
 
@@ -197,5 +195,3 @@ export default function BecomeProviderScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

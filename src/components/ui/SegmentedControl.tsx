@@ -19,15 +19,19 @@ export default function SegmentedControl<T extends string>({
   containerClassName = '',
 }: SegmentedControlProps<T>) {
   return (
-    <View className={`p-1 bg-gray-200/50 rounded-lg flex-row self-start ${containerClassName}`}>
+    <View
+      className={`p-1 bg-gray-200/50 rounded-lg flex-row self-start ${containerClassName}`}
+      accessibilityRole="radiogroup"
+    >
       {options.map((option) => {
         const isActive = selectedValue === option.value;
         return (
           <Pressable
             key={option.value}
             onPress={() => onValueChange(option.value)}
-            accessibilityRole="button"
-            accessibilityLabel={`Select ${option.label}`}
+            accessibilityRole="radio"
+            accessibilityLabel={option.label}
+            accessibilityState={{ checked: isActive }}
             className={`px-6 py-1.5 rounded-lg items-center justify-center flex-row ${
               isActive ? 'bg-white' : 'bg-transparent'
             }`}

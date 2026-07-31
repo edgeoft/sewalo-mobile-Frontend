@@ -37,7 +37,7 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
             selected ? 'bg-primary/10' : 'bg-gray-50'
           }`}
         >
-          <Feather name={iconName} size={14} color={selected ? '#485aff' : '#64748b'} />
+          <Feather name={iconName} size={14} color={selected ? '#485aff' : '#64748b'} accessible={false} />
         </View>
         <View className="flex-1">
           <Text className="text-xs font-sans-bold text-gray-950">{label}</Text>
@@ -49,7 +49,7 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
           selected ? 'border-primary bg-primary' : 'border-gray-300 bg-white'
         }`}
       >
-        {selected && <Feather name="check" size={9} color="white" />}
+        {selected && <Feather name="check" size={9} color="white" accessible={false} />}
       </View>
     </Pressable>
   );

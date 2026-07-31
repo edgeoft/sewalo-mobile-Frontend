@@ -8,7 +8,7 @@ import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import { ROUTES } from '@/constants/routes';
-import { UserRole } from '@/types';
+import { UserRole, USER_ROLES } from '@/types';
 import AuthFooterLink from '../components/AuthFooterLink';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 import PasswordField from '../components/PasswordField';
@@ -24,7 +24,7 @@ export default function SignupScreen() {
   const { role } = useLocalSearchParams<{ role: UserRole }>();
 
   const { showSnackbar } = useSnackbar();
-  const selectedRole = role || 'customer';
+  const selectedRole = role || USER_ROLES.Customer;
   const signupMutation = useSignup();
 
   const {
@@ -57,7 +57,9 @@ export default function SignupScreen() {
   return (
     <AuthScreenLayout
       title={t('auth.joinSewalo')}
-      subtitle={selectedRole === 'provider' ? t('auth.signUpSubtitleProvider') : t('auth.signUpSubtitleCustomer')}
+      subtitle={
+        selectedRole === USER_ROLES.Provider ? t('auth.signUpSubtitleProvider') : t('auth.signUpSubtitleCustomer')
+      }
       showBackButton
     >
       <View className="gap-y-2.5">

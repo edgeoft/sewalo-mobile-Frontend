@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
-import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { BOOKING_STATUSES, type BookingStatus, USER_ROLES } from '@/types';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -161,7 +161,7 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
 
 export default function RadialStepper({
   status,
-  role = 'customer',
+  role = USER_ROLES.Customer,
   size = 64,
   strokeWidth = 4,
   currentStep,

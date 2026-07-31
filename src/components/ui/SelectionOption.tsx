@@ -3,6 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 export interface SelectionOptionProps {
   title: string;
   subtitle?: string;
@@ -27,18 +29,28 @@ export default function SelectionOption({
   className = '',
 }: SelectionOptionProps) {
   const [opacityAnim] = useState(() => new Animated.Value(selected ? 1 : 0));
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
+    if (reducesMotion) {
+      opacityAnim.setValue(selected ? 1 : 0);
+      return;
+    }
     Animated.timing(opacityAnim, {
       toValue: selected ? 1 : 0,
       duration: 250,
       useNativeDriver: true,
     }).start();
-  }, [selected, opacityAnim]);
+  }, [selected, opacityAnim, reducesMotion]);
+
+  const role = indicatorType === 'none' ? ('button' as const) : ('radio' as const);
 
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole={role}
+      accessibilityLabel={title}
+      accessibilityState={role === 'radio' ? { checked: selected } : undefined}
       className={`rounded-lg border overflow-hidden relative ${
         selected ? 'border-primary bg-transparent' : 'border-gray-200 bg-white'
       } ${className}`}

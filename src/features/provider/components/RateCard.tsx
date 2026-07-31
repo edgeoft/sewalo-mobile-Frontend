@@ -104,6 +104,7 @@ export default function RateCard({
             <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('services.billingBasis')}</Text>
             <Pressable
               onPress={() => setBasisModalVisible(true)}
+              accessibilityRole="button"
               className={`form-input-container form-input-container-single justify-between ${
                 billingBasisError ? 'border-destructive' : 'border-gray-200'
               }`}
@@ -117,7 +118,7 @@ export default function RateCard({
               }}
             >
               <Text className="text-sm text-gray-900">{t(selectedBasis.labelKey)}</Text>
-              <Feather name="chevron-down" size={15} color="#898f8f" />
+              <Feather name="chevron-down" size={15} color="#898f8f" accessible={false} />
             </Pressable>
             {billingBasisError && (
               <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{billingBasisError}</Text>
@@ -146,6 +147,7 @@ export default function RateCard({
             <Text className="text-xs font-sans-semibold text-transparent mb-1.5 ml-0.5">Duration Unit Spacer</Text>
             <Pressable
               onPress={() => setUnitModalVisible(true)}
+              accessibilityRole="button"
               className="form-input-container form-input-container-single justify-between"
               style={{
                 shadowColor: '#000',
@@ -157,7 +159,7 @@ export default function RateCard({
               }}
             >
               <Text className="text-sm text-gray-900">{t(selectedUnit.labelKey)}</Text>
-              <Feather name="chevron-down" size={15} color="#898f8f" />
+              <Feather name="chevron-down" size={15} color="#898f8f" accessible={false} />
             </Pressable>
           </View>
         </View>
@@ -182,6 +184,9 @@ export default function RateCard({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.billingBasis')}</Text>
               <Pressable
                 onPress={() => setBasisModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -228,6 +233,9 @@ export default function RateCard({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.durationUnit')}</Text>
               <Pressable
                 onPress={() => setUnitModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />

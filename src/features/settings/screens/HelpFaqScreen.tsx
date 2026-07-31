@@ -156,6 +156,8 @@ export default function HelpFaqScreen() {
               return (
                 <Pressable
                   onPress={() => setSelectedCategory(item.key)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
                   className={`px-4 py-2 rounded-full mr-2 border ${
                     active ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                   }`}
@@ -197,6 +199,8 @@ export default function HelpFaqScreen() {
                 <View style={cardShadow} className="bg-white rounded-xl mb-3 overflow-hidden">
                   <Pressable
                     onPress={() => toggleExpand(item.id)}
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: isExpanded }}
                     className="flex-row justify-between items-center p-4 active:bg-gray-50/50"
                   >
                     <Text className="text-xs font-sans-bold text-gray-900 flex-1 mr-4">{item.question}</Text>
@@ -204,6 +208,7 @@ export default function HelpFaqScreen() {
                       name={isExpanded ? 'chevron-up' : 'chevron-down'}
                       size={16}
                       color="var(--muted-foreground)"
+                      accessible={false}
                     />
                   </Pressable>
 

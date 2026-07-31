@@ -14,6 +14,7 @@ import {
   type Rating,
   type ServiceOffering,
   type UserProfile,
+  USER_STATUSES,
 } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -128,7 +129,7 @@ export default function DynamicProviderDetailRoute() {
       isFavourite: firstService?.is_favourite || false,
       name: provider.name,
       avatarUri: getAvatarUri(provider.avatar),
-      isVerified: provider.status === 'verified',
+      isVerified: provider.status === USER_STATUSES.Verified,
       serviceLabel: firstService?.category?.name || t('services.services'),
       location: formatLocation(provider),
       fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || t('home.nepal'),

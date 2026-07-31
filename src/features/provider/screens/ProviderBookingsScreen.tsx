@@ -61,7 +61,7 @@ export default function ProviderBookingsScreen() {
 
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
-      { id, data: { status: 'confirmed' } },
+      { id, data: { status: BOOKING_STATUSES.Confirmed } },
       { onSuccess: () => showSnackbar({ message: t('provider.bookingAccepted'), type: 'success' }) },
     );
   };
@@ -70,7 +70,7 @@ export default function ProviderBookingsScreen() {
     updateBooking.mutate(
       {
         id,
-        data: { status: 'rejected', cancellation_reason: 'Provider declined the booking request.' },
+        data: { status: BOOKING_STATUSES.Rejected, cancellation_reason: 'Provider declined the booking request.' },
       },
       { onSuccess: () => showSnackbar({ message: t('provider.bookingDeclined'), type: 'success' }) },
     );

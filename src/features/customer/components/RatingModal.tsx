@@ -109,6 +109,9 @@ export default function RatingModal({
               </Text>
               <Pressable
                 onPress={handleClose}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={20} color="#64748b" />
@@ -136,6 +139,9 @@ export default function RatingModal({
                     onPress={() => setRating(star)}
                     onPressIn={() => setHoveredRating(star)}
                     onPressOut={() => setHoveredRating(0)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Rate ${star} ${star === 1 ? 'star' : 'stars'}`}
+                    accessibilityState={{ selected: (hoveredRating || rating) >= star }}
                     className="p-1"
                   >
                     <Feather name="star" size={32} color={(hoveredRating || rating) >= star ? '#f59e0b' : '#d1d5db'} />
@@ -168,6 +174,7 @@ export default function RatingModal({
               <View className="flex-row gap-3 mt-6">
                 <Pressable
                   onPress={handleClose}
+                  accessibilityRole="button"
                   className="flex-1 py-3.5 rounded-lg border border-gray-300 items-center active:opacity-70"
                 >
                   <Text className="text-sm font-sans-semibold text-gray-700">{t('common.cancel')}</Text>
@@ -175,6 +182,10 @@ export default function RatingModal({
                 <Pressable
                   onPress={handleSubmit}
                   disabled={isPending || rating === 0 || review.trim().length < 10}
+                  accessibilityRole="button"
+                  accessibilityState={{
+                    disabled: isPending || rating === 0 || review.trim().length < 10,
+                  }}
                   className="flex-1 py-3.5 rounded-lg bg-primary items-center active:opacity-90 disabled:opacity-50"
                 >
                   {isPending ? (

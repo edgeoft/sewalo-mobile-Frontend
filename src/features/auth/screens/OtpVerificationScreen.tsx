@@ -159,7 +159,7 @@ export default function OtpVerificationScreen() {
           {timer > 0 ? (
             <Text className="text-gray-500 font-sans-medium text-sm">{t('auth.resendCodeIn', { seconds: timer })}</Text>
           ) : (
-            <Pressable onPress={handleResend} className="active:opacity-60">
+            <Pressable onPress={handleResend} className="active:opacity-60" accessibilityRole="button">
               <Text className="text-primary font-sans-bold text-sm">{t('auth.resendCode')}</Text>
             </Pressable>
           )}

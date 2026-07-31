@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, G, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import { USER_ROLES } from '@/types';
 
 interface OnboardingIllustrationProps {
   role: 'customer' | 'provider';
@@ -10,7 +11,7 @@ export default function OnboardingIllustration({ role }: OnboardingIllustrationP
   const { width } = useWindowDimensions();
   const size = Math.min(width - 64, 280);
 
-  if (role === 'customer') {
+  if (role === USER_ROLES.Customer) {
     return (
       <View className="items-center justify-center py-4 bg-transparent">
         <Svg width={size} height={size} viewBox="0 0 280 280">

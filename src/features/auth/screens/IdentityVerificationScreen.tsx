@@ -13,6 +13,7 @@ import Button from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { useUploadFile, useUpdateProfile } from '@/api';
+import { USER_ROLES, USER_STATUSES } from '@/types';
 import { getImageUrl } from '@/features/auth/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
@@ -28,7 +29,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
 
-  const isProvider = role === 'provider';
+  const isProvider = role === USER_ROLES.Provider;
   const pageTitle = isProvider ? t('components.verificationDocuments') : t('components.identityVerification');
   const pageDescription = isProvider ? t('components.verificationDocsDesc') : t('components.identityVerificationDesc');
 
@@ -46,7 +47,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
   const loading = isUploading || isUpdatingProfile;
 
   // The UI renders 'empty' mode if the user doesn't have a document or their status is 'pending'
-  const isFormEmptyMode = hasMissingId || status === 'pending' || status === null;
+  const isFormEmptyMode = hasMissingId || status === USER_STATUSES.Pending || status === null;
 
   const handlePickImage = async () => {
     try {
@@ -95,7 +96,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
   const handleRequestChange = () => {
     const confirmMessage =
-      status === 'verified'
+      status === USER_STATUSES.Verified
         ? 'Changing your verification document will temporarily revoke your Verified Badge until the new document is reviewed and approved. Do you want to proceed?'
         : 'Are you sure you want to cancel this verification request and upload a new document?';
 
@@ -229,15 +230,19 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                     <TouchableOpacity
                       onPress={handleRemoveImage}
                       className="absolute top-2.5 right-2.5 h-8 w-8 bg-black/60 rounded-full items-center justify-center active:opacity-75"
+                      accessibilityRole="button"
+                      accessibilityLabel={t('common.remove')}
+                      hitSlop={8}
                     >
-                      <Feather name="trash-2" size={16} color="#ffffff" />
+                      <Feather name="trash-2" size={16} color="#ffffff" accessible={false} />
                     </TouchableOpacity>
                   )}
                   <Pressable
                     onPress={() => setPreviewImage(documentImage)}
                     className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
+                    accessibilityRole="button"
                   >
-                    <Feather name="eye" size={12} color="#ffffff" />
+                    <Feather name="eye" size={12} color="#ffffff" accessible={false} />
                     <Text className="text-[10px] font-sans-bold text-white ml-1">{t('services.viewImage')}</Text>
                   </Pressable>
                   {isVerified && (
@@ -261,8 +266,13 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                 <Pressable
                   onPress={handlePickImage}
                   className="h-56 w-full rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 items-center justify-center active:bg-gray-100"
+                  accessibilityRole="button"
                 >
-                  <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2">
+                  <View
+                    className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2"
+                    importantForAccessibility="no"
+                    accessibilityElementsHidden
+                  >
                     <Feather name="camera" size={20} color="#485aff" />
                   </View>
                   <Text className="text-sm font-sans-semibold text-gray-800">{t('services.uploadIdImage')}</Text>
@@ -304,14 +314,21 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         onRequestClose={() => setPreviewImage(null)}
       >
         <View style={styles.modalBackground}>
-          <Pressable onPress={() => setPreviewImage(null)} style={StyleSheet.absoluteFill} />
+          <Pressable
+            onPress={() => setPreviewImage(null)}
+            style={StyleSheet.absoluteFill}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          />
           <View className="relative w-full max-w-[90%] aspect-[4/3] rounded-2xl bg-white overflow-hidden shadow-2xl">
             {previewImage && <Image source={{ uri: previewImage }} className="w-full h-full" resizeMode="contain" />}
             <Pressable
               onPress={() => setPreviewImage(null)}
               className="absolute top-4 right-4 h-10 w-10 bg-black/60 rounded-full items-center justify-center active:opacity-75"
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
             >
-              <Feather name="x" size={20} color="#ffffff" />
+              <Feather name="x" size={20} color="#ffffff" accessible={false} />
             </Pressable>
           </View>
         </View>

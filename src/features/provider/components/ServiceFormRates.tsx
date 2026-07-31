@@ -175,7 +175,11 @@ export default function ServiceFormRates({
         <Text className="text-base font-sans-bold text-gray-950 mb-1">Your Services & Rates</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
           List the specific tasks you perform and how much you charge for them. Refer to the{' '}
-          <Text onPress={() => setShowGuideModal(true)} className="text-primary underline font-sans-semibold">
+          <Text
+            onPress={() => setShowGuideModal(true)}
+            accessibilityRole="link"
+            className="text-primary underline font-sans-semibold"
+          >
             guideline
           </Text>
         </Text>
@@ -246,6 +250,9 @@ export default function ServiceFormRates({
                     </View>
                     <Pressable
                       onPress={() => handleRemovePackage(idx)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Remove package"
+                      hitSlop={8}
                       className="absolute top-3.5 right-3.5 h-6 w-6 rounded-full bg-red-50/80 border border-red-100/50 items-center justify-center active:bg-red-100"
                     >
                       <Feather name="trash-2" size={12} color="#ef4444" />
@@ -292,11 +299,16 @@ export default function ServiceFormRates({
                 <View className="flex-row justify-end gap-x-2 mt-4">
                   <Pressable
                     onPress={handleCancelCreate}
+                    accessibilityRole="button"
                     className="px-4 py-2 rounded-lg border border-gray-200 bg-white active:bg-gray-50"
                   >
                     <Text className="text-xs font-sans-semibold text-gray-600">Cancel</Text>
                   </Pressable>
-                  <Pressable onPress={handleAddPackage} className="px-4 py-2 rounded-lg bg-primary active:opacity-90">
+                  <Pressable
+                    onPress={handleAddPackage}
+                    accessibilityRole="button"
+                    className="px-4 py-2 rounded-lg bg-primary active:opacity-90"
+                  >
                     <Text className="text-xs font-sans-semibold text-white">Add Package</Text>
                   </Pressable>
                 </View>
@@ -304,9 +316,10 @@ export default function ServiceFormRates({
             ) : (
               <Pressable
                 onPress={() => setShowPkgForm(true)}
+                accessibilityRole="button"
                 className="py-3 border border-dashed border-gray-300 rounded-lg bg-gray-50/50 flex-row items-center justify-center active:bg-gray-100"
               >
-                <Feather name="plus" size={12} color="#485aff" className="mr-1.5" />
+                <Feather name="plus" size={12} color="#485aff" className="mr-1.5" accessible={false} />
                 <Text className="text-xs font-sans-semibold text-primary">Create a Package</Text>
               </Pressable>
             )}

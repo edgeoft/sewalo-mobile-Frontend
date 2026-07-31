@@ -63,8 +63,12 @@ export default function ProviderHeaderCard({
                 <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
               </View>
 
-              <Pressable className="flex-row items-center gap-1.5 active:opacity-60" onPress={onReviewPress}>
-                <Feather name="star" size={12} color="#fbbf24" fill="#fbbf24" />
+              <Pressable
+                className="flex-row items-center gap-1.5 active:opacity-60"
+                onPress={onReviewPress}
+                accessibilityRole="button"
+              >
+                <Feather name="star" size={12} color="#fbbf24" fill="#fbbf24" accessible={false} />
                 <Text className="text-[11px] font-sans-bold text-gray-900">
                   {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
                 </Text>
@@ -80,16 +84,23 @@ export default function ProviderHeaderCard({
           <View className="flex-row items-center gap-x-2">
             <Pressable
               onPress={onSharePress}
+              accessibilityRole="button"
+              accessibilityLabel="Share"
+              hitSlop={8}
               className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
             >
-              <Feather name="share-2" size={14} color="#64748b" />
+              <Feather name="share-2" size={14} color="#64748b" accessible={false} />
             </Pressable>
             {!isGuest && (
               <Pressable
                 onPress={onFavoritePress}
+                accessibilityRole="button"
+                accessibilityLabel={isSaved ? 'Remove from favourites' : 'Save to favourites'}
+                accessibilityState={{ selected: isSaved }}
+                hitSlop={8}
                 className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
               >
-                <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} />
+                <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} accessible={false} />
               </Pressable>
             )}
           </View>

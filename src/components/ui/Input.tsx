@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
 export interface InputProps extends TextInputProps {
@@ -26,6 +26,7 @@ export default function Input({
   ...props
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const labelId = useId();
 
   const handleFocus = (e: any) => {
     setIsFocused(true);
@@ -39,7 +40,11 @@ export default function Input({
 
   return (
     <View style={containerStyle} className={`w-full ${className}`}>
-      {label && <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{label}</Text>}
+      {label && (
+        <Text nativeID={labelId} className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+          {label}
+        </Text>
+      )}
 
       <View
         className={`form-input-container ${
@@ -53,7 +58,11 @@ export default function Input({
           elevation: isFocused ? 2 : 0,
         }}
       >
-        {leftIcon && <View className="mr-3">{leftIcon}</View>}
+        {leftIcon && (
+          <View className="mr-3" importantForAccessibility="no" accessibilityElementsHidden>
+            {leftIcon}
+          </View>
+        )}
 
         <TextInput
           onFocus={handleFocus}
@@ -61,13 +70,25 @@ export default function Input({
           placeholderTextColor="#898f8f"
           style={[{ includeFontPadding: false, textAlignVertical: 'center' }, inputStyle]}
           className={`form-input-text ${inputClassName}`}
+          accessibilityLabel={label}
+          accessibilityLabelledBy={label ? labelId : undefined}
+          accessibilityState={{ disabled: props.editable === false }}
+          accessibilityHint={error}
           {...props}
         />
 
-        {rightIcon && <View className="ml-3">{rightIcon}</View>}
+        {rightIcon && (
+          <View className="ml-3" importantForAccessibility="no" accessibilityElementsHidden>
+            {rightIcon}
+          </View>
+        )}
       </View>
 
-      {error && <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{error}</Text>}
+      {error && (
+        <Text accessibilityLiveRegion="polite" className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
+          {error}
+        </Text>
+      )}
     </View>
   );
 }

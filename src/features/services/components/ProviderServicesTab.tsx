@@ -96,6 +96,8 @@ export default function ProviderServicesTab({
             <Pressable
               key={service.id}
               onPress={() => onServiceToggle(service.id)}
+              accessibilityRole="button"
+              accessibilityState={{ checked: isChecked }}
               className={`bg-white border rounded-lg p-3.5 flex-row items-center justify-between ${
                 isChecked ? 'border-primary' : 'border-gray-200'
               }`}

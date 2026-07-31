@@ -75,13 +75,19 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
           if (isUnread) onMarkRead(item.id);
           onPress?.(item);
         }}
+        accessibilityRole="button"
         className="flex-row items-start"
       >
         <View
           className="h-10 w-10 rounded-lg items-center justify-center mr-3"
           style={{ backgroundColor: getTypeBgColor(item.notification_type) }}
         >
-          <Feather name={getTypeIcon(item.notification_type)} size={18} color={getTypeColor(item.notification_type)} />
+          <Feather
+            name={getTypeIcon(item.notification_type)}
+            size={18}
+            color={getTypeColor(item.notification_type)}
+            accessible={false}
+          />
         </View>
 
         <View className="flex-1">
@@ -112,9 +118,16 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
               onPress={() => setShowActions(!showActions)}
               accessibilityRole="button"
               accessibilityLabel="Show actions"
+              accessibilityState={{ expanded: showActions }}
+              hitSlop={8}
               className="h-7 w-7 rounded-lg items-center justify-center active:opacity-60 bg-gray-50 border border-gray-100"
             >
-              <Feather name={showActions ? 'chevron-up' : 'more-horizontal'} size={14} color="#6b7280" />
+              <Feather
+                name={showActions ? 'chevron-up' : 'more-horizontal'}
+                size={14}
+                color="#6b7280"
+                accessible={false}
+              />
             </Pressable>
           </View>
         </View>
@@ -132,7 +145,7 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
               accessibilityLabel="Mark as read"
               className="flex-row items-center rounded-lg bg-blue-50 border border-blue-100 px-3 py-1.5 active:opacity-80"
             >
-              <Feather name="check" size={13} color="#485aff" />
+              <Feather name="check" size={13} color="#485aff" accessible={false} />
               <Text className="text-[11px] font-sans-semibold text-primary ml-1.5">{t('notifications.markRead')}</Text>
             </Pressable>
           )}
@@ -145,7 +158,7 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
             accessibilityLabel="Delete notification"
             className="flex-row items-center rounded-lg bg-red-50 border border-red-100 px-3 py-1.5 active:opacity-80"
           >
-            <Feather name="trash-2" size={13} color="#ef4444" />
+            <Feather name="trash-2" size={13} color="#ef4444" accessible={false} />
             <Text className="text-[11px] font-sans-semibold text-red-500 ml-1.5">{t('notifications.delete')}</Text>
           </Pressable>
         </View>

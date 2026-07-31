@@ -1,6 +1,6 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { UploadFileResponse, UploadFilePayload } from '@/types';
+import type { UploadFileResponse } from '@/types';
 
 /**
  * Uploads a file (image/doc) to the backend storage.

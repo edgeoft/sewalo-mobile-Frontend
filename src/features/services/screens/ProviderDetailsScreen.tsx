@@ -9,7 +9,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
-import { BookServiceFormData, ProviderDetail } from '@/types';
+import { BookServiceFormData, ProviderDetail, USER_ROLES } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 
@@ -48,7 +48,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
   const [bookingModalType, setBookingModalType] = useState<'services' | 'package'>('services');
 
-  const isGuest = role === 'guest';
+  const isGuest = role === USER_ROLES.Guest;
 
   // Toggle saving to favorites
   const handleToggleSave = () => {
@@ -309,6 +309,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
                 <Pressable
                   key={tab.id}
                   onPress={() => setActiveTab(tab.id)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                   className={`px-4 py-2 rounded-xl mr-2.5 border ${
                     isSelected ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                   }`}
@@ -375,9 +377,11 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
         <View className="flex-1 bg-black/90 items-center justify-center px-4">
           <Pressable
             onPress={() => setZoomedImage(null)}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
             className="absolute top-12 right-6 h-10 w-10 bg-white/10 rounded-full items-center justify-center z-50 active:bg-white/20"
           >
-            <Feather name="x" size={24} color="#ffffff" />
+            <Feather name="x" size={24} color="#ffffff" accessible={false} />
           </Pressable>
 
           {zoomedImage && (

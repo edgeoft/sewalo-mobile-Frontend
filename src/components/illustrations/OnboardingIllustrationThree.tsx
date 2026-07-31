@@ -10,6 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle, G, Path, Polygon, Rect } from 'react-native-svg';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 const AnimatedG = Animated.createAnimatedComponent(G);
 
 export default function OnboardingIllustrationThree({ isActive }: { isActive?: boolean }) {
@@ -19,9 +21,19 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
   const lineDash = useSharedValue(0);
   const rippleScale = useSharedValue(0.2);
   const rippleOpacity = useSharedValue(0);
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
     if (isActive) {
+      if (reducesMotion) {
+        handX.value = 60;
+        handY.value = 60;
+        starFillScale.value = 1;
+        lineDash.value = 15;
+        rippleScale.value = 0.2;
+        rippleOpacity.value = 0;
+        return;
+      }
       // Hand cursor moving up to click the 5th star (plays once)
       handX.value = withSequence(
         withTiming(60, { duration: 0 }), // Start away
@@ -72,7 +84,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
       rippleScale.value = 0.2;
       rippleOpacity.value = 0;
     }
-  }, [isActive, handX, handY, lineDash, rippleOpacity, rippleScale, starFillScale]);
+  }, [isActive, handX, handY, lineDash, rippleOpacity, rippleScale, starFillScale, reducesMotion]);
 
   const handStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: handX.value }, { translateY: handY.value }],

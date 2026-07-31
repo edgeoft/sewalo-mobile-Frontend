@@ -56,6 +56,8 @@ export default function SelectSheet({
     setModalVisible(false);
   };
 
+  const triggerLabel = label ? `${label}: ${selectedOption ? selectedOption.label : resolvedPlaceholder}` : undefined;
+
   return (
     <View className="mb-4">
       {label && (
@@ -73,6 +75,9 @@ export default function SelectSheet({
           elevation: 0,
         }}
         accessibilityRole="button"
+        accessibilityLabel={triggerLabel}
+        accessibilityState={{ disabled, expanded: modalVisible }}
+        accessibilityHint={error}
       >
         <Text
           className={`form-input-text flex-1 ${selectedOption ? '' : 'text-[#898f8f]'}`}
@@ -105,7 +110,9 @@ export default function SelectSheet({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{resolvedTitle}</Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
-                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                className="w-11 h-11 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
               >
                 <Feather name="x" size={16} color="#64748b" />
               </Pressable>

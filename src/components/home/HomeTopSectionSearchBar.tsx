@@ -9,7 +9,7 @@ interface HomeTopSectionSearchBarProps {
 
 export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTopSectionSearchBarProps) {
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} accessibilityRole="button">
       <View
         pointerEvents="none"
         style={{

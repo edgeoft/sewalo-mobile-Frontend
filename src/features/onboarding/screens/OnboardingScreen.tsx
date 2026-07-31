@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
-import { USER_ROLES } from '@/types';
+import { USER_ROLES, USER_STATUSES } from '@/types';
+import { useAppReducedMotion } from '@/utils/accessibility';
 import OnboardingFooter from '../components/OnboardingFooter';
 import OnboardingHeader from '../components/OnboardingHeader';
 import OnboardingPage from '../components/OnboardingPage';
@@ -33,7 +34,7 @@ export default function OnboardingScreen() {
     const checkStatus = async () => {
       // 1. If user is logged in, redirect to dashboard
       if (isLoggedIn && user) {
-        if (user.status === 'pending') {
+        if (user.status === USER_STATUSES.Pending) {
           router.replace({
             pathname: ROUTES.auth.gettingStarted,
             params: { role, phone: user.phone },
@@ -69,6 +70,7 @@ export default function OnboardingScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const isAutoScrolling = useRef(false);
+  const reducesMotion = useAppReducedMotion();
 
   const pages = useMemo(
     () => [
@@ -106,7 +108,7 @@ export default function OnboardingScreen() {
     if (!isLastPage) {
       isAutoScrolling.current = true;
       const nextIndex = activeIndex + 1;
-      scrollViewRef.current?.scrollTo({ x: nextIndex * width, animated: true });
+      scrollViewRef.current?.scrollTo({ x: nextIndex * width, animated: !reducesMotion });
       setActiveIndex(nextIndex);
 
       setTimeout(() => {
@@ -115,7 +117,7 @@ export default function OnboardingScreen() {
     } else {
       handleFinish();
     }
-  }, [activeIndex, isLastPage, width, handleFinish]);
+  }, [activeIndex, isLastPage, width, handleFinish, reducesMotion]);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {

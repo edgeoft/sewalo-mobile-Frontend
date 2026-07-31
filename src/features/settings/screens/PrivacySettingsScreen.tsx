@@ -169,11 +169,12 @@ export default function PrivacySettingsScreen() {
           {/* Download Data */}
           <Pressable
             onPress={handleDownloadData}
+            accessibilityRole="button"
             className="flex-row items-center justify-between py-3.5 border-b border-gray-50 active:opacity-60"
           >
             <View className="flex-row items-center flex-1">
               <View className="h-8 w-8 rounded-full bg-blue-50 items-center justify-center mr-3">
-                <Feather name="download" size={15} color="#1d4ed8" />
+                <Feather name="download" size={15} color="#1d4ed8" accessible={false} />
               </View>
               <View>
                 <Text className="text-sm font-sans-bold text-gray-900">{t('settings.downloadData')}</Text>
@@ -182,17 +183,18 @@ export default function PrivacySettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={16} color="#94a3b8" />
+            <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />
           </Pressable>
 
           {/* Delete Account */}
           <Pressable
             onPress={handleDeleteAccount}
+            accessibilityRole="button"
             className="flex-row items-center justify-between py-3.5 active:opacity-60"
           >
             <View className="flex-row items-center flex-1">
               <View className="h-8 w-8 rounded-full bg-red-50 items-center justify-center mr-3">
-                <Feather name="trash-2" size={15} color="#ef4444" />
+                <Feather name="trash-2" size={15} color="#ef4444" accessible={false} />
               </View>
               <View>
                 <Text className="text-sm font-sans-bold text-red-500">{t('settings.deleteAccount')}</Text>
@@ -201,7 +203,7 @@ export default function PrivacySettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={16} color="#94a3b8" />
+            <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />
           </Pressable>
         </View>
       </ContentLayout>

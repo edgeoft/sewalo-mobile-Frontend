@@ -10,6 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle, Path } from 'react-native-svg';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -18,8 +20,17 @@ export default function BookingAnimatedCheckmark() {
   const scale = useSharedValue(1);
   const ringScale = useSharedValue(0.8);
   const ringOpacity = useSharedValue(0);
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
+    if (reducesMotion) {
+      checkProgress.value = 0;
+      scale.value = 1;
+      ringScale.value = 1;
+      ringOpacity.value = 0;
+      return;
+    }
+
     checkProgress.value = withDelay(600, withTiming(0, { duration: 450 }));
 
     scale.value = withSequence(
@@ -34,7 +45,7 @@ export default function BookingAnimatedCheckmark() {
       withTiming(0.5, { duration: 150 }),
       withTiming(0, { duration: 400 }),
     );
-  }, [checkProgress, scale, ringOpacity, ringScale]);
+  }, [checkProgress, scale, ringOpacity, ringScale, reducesMotion]);
 
   const checkAnimatedProps = useAnimatedProps(() => ({
     strokeDashoffset: checkProgress.value * 40,

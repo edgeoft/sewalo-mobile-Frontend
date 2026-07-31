@@ -14,6 +14,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 export type SideDrawerActionItem = {
   type: 'action';
   id: string;
@@ -64,10 +66,17 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
   const [translateX] = useState(() => new Animated.Value(drawerWidth));
   const [backdropOpacity] = useState(() => new Animated.Value(0));
   const [modalVisible, setModalVisible] = useState(visible);
+  const reducesMotion = useAppReducedMotion();
 
   const animateIn = useCallback(() => {
     translateX.setValue(drawerWidth);
     backdropOpacity.setValue(0);
+
+    if (reducesMotion) {
+      translateX.setValue(0);
+      backdropOpacity.setValue(1);
+      return;
+    }
 
     Animated.parallel([
       Animated.timing(translateX, {
@@ -83,19 +92,22 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
         useNativeDriver: true,
       }),
     ]).start();
-  }, [backdropOpacity, drawerWidth, translateX]);
+  }, [backdropOpacity, drawerWidth, translateX, reducesMotion]);
 
   const animateOut = useCallback(() => {
+    const duration = reducesMotion ? 0 : 180;
+    const backdropDuration = reducesMotion ? 0 : 140;
+
     Animated.parallel([
       Animated.timing(translateX, {
         toValue: drawerWidth,
-        duration: 180,
+        duration,
         easing: Easing.in(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(backdropOpacity, {
         toValue: 0,
-        duration: 140,
+        duration: backdropDuration,
         easing: Easing.in(Easing.quad),
         useNativeDriver: true,
       }),
@@ -104,7 +116,7 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
         setModalVisible(false);
       }
     });
-  }, [backdropOpacity, drawerWidth, translateX]);
+  }, [backdropOpacity, drawerWidth, translateX, reducesMotion]);
 
   useEffect(() => {
     if (visible) {
@@ -149,6 +161,7 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
             },
           ]}
           className="bg-[#f7f9ff]"
+          accessibilityViewIsModal
         >
           <View className="mx-4 mb-4 rounded-xl bg-white px-5 pb-4 pt-4 flex-row items-start justify-between border border-gray-100/80">
             <View className="flex-1 pr-3">
@@ -184,6 +197,8 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
                             onClose();
                           }}
                           className="rounded-xl bg-white px-4 py-3.5 active:opacity-80 border border-gray-100/80"
+                          accessibilityRole="button"
+                          accessibilityLabel={`${item.title}${item.subtitle ? `, ${item.subtitle}` : ''}`}
                         >
                           <View className="flex-row items-center">
                             <View className="w-10 h-10 rounded-lg bg-[#eef0ff] items-center justify-center mr-3 border border-primary/10">
@@ -237,6 +252,8 @@ export default function SideDrawer({ visible, onClose, title, sections, footerAc
                 className={`flex-row items-center justify-center rounded-xl px-4 py-3.5 active:opacity-80 border ${
                   footerAction.destructive ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100/80'
                 }`}
+                accessibilityRole="button"
+                accessibilityLabel={footerAction.label}
               >
                 {footerAction.icon ? <View className="mr-2">{footerAction.icon}</View> : null}
                 <Text

@@ -8,6 +8,7 @@ import HeaderIconButton from '@/components/ui/HeaderIconButton';
 import TopBar from './TopBar';
 import { useAuth } from '@/providers/AuthProvider';
 import { useUnreadCountQuery } from '@/api';
+import { USER_ROLES } from '@/types';
 
 interface HeaderBaseProps {
   showBackButton?: boolean;
@@ -43,7 +44,7 @@ export default function Header(props: HeaderProps) {
   const { role } = useAuth();
   const { showBackButton = false, leadingContent, containerClassName, contentClassName, includeBottomBorder } = props;
 
-  const isGuest = role === 'guest';
+  const isGuest = role === USER_ROLES.Guest;
   const { data: unreadData } = useUnreadCountQuery({
     enabled: !isGuest && props.variant === 'menu' && !!props.showNotificationBadge,
   });

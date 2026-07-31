@@ -36,8 +36,14 @@ export default function PasswordField<TFieldValues extends FieldValues>({
           secureTextEntry={!isVisible}
           error={error}
           rightIcon={
-            <Pressable onPress={() => setIsVisible((current) => !current)} hitSlop={8} className="active:opacity-60">
-              <Feather name={isVisible ? 'eye' : 'eye-off'} size={18} color="#898f8f" />
+            <Pressable
+              onPress={() => setIsVisible((current) => !current)}
+              hitSlop={8}
+              className="active:opacity-60"
+              accessibilityRole="button"
+              accessibilityLabel={isVisible ? 'Hide password' : 'Show password'}
+            >
+              <Feather name={isVisible ? 'eye' : 'eye-off'} size={18} color="#898f8f" accessible={false} />
             </Pressable>
           }
         />

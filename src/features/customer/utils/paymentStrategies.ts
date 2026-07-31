@@ -1,5 +1,5 @@
 import { Platform, Linking } from 'react-native';
-import type { MakePaymentResponse } from '@/types';
+import { PAYMENT_METHODS, type MakePaymentResponse } from '@/types';
 import type { SnackbarConfig } from '@/components/ui/Snackbar';
 
 export interface PaymentStrategy {
@@ -16,7 +16,7 @@ export class CashPaymentStrategy implements PaymentStrategy {
     showSnackbar: (config: SnackbarConfig) => void,
     t: (key: string) => string,
   ): void {
-    if (response.type !== 'cash') return;
+    if (response.type !== PAYMENT_METHODS.Cash) return;
     showSnackbar({ message: t('customer.paymentCompleted'), type: 'success' });
   }
 }
@@ -27,7 +27,7 @@ export class EsewaPaymentStrategy implements PaymentStrategy {
     showSnackbar: (config: SnackbarConfig) => void,
     t: (key: string) => string,
   ): void {
-    if (response.type !== 'esewa') return;
+    if (response.type !== PAYMENT_METHODS.Esewa) return;
     const { payment } = response;
     const fields = {
       amount: payment.amount.toString(),
@@ -75,9 +75,9 @@ export class EsewaPaymentStrategy implements PaymentStrategy {
 export class PaymentFactory {
   static get(type: 'cash' | 'esewa'): PaymentStrategy {
     switch (type) {
-      case 'cash':
+      case PAYMENT_METHODS.Cash:
         return new CashPaymentStrategy();
-      case 'esewa':
+      case PAYMENT_METHODS.Esewa:
         return new EsewaPaymentStrategy();
       default:
         throw new Error(`Unsupported payment method: ${type}`);

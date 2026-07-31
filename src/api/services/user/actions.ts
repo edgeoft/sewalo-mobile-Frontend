@@ -17,6 +17,7 @@ import {
   SwitchRoleWithDetailsResponse,
   GetNearbyProvidersParams,
   GetNearbyProvidersResponse,
+  USER_ROLES,
 } from '@/types';
 
 // Favourite Actions
@@ -75,7 +76,7 @@ export const getNearbyProvidersAction = async (
 // Role Switching Actions
 export const switchRoleAction = async (data: SwitchRolePayload): Promise<SwitchRoleResponse> => {
   // ponytail: Keep roles strictly restricted to customer & provider
-  if (data.target_role !== 'customer' && data.target_role !== 'provider') {
+  if (data.target_role !== USER_ROLES.Customer && data.target_role !== USER_ROLES.Provider) {
     throw new Error('Invalid target role. Only customer and provider roles are allowed.');
   }
   return internalClient.post<SwitchRoleResponse>(API_ENDPOINTS.USER.SWITCH_ROLE, data);
@@ -85,7 +86,7 @@ export const switchRoleWithDetailsAction = async (
   data: SwitchRoleWithDetailsPayload,
 ): Promise<SwitchRoleWithDetailsResponse> => {
   // ponytail: Keep roles strictly restricted to provider for detail changes
-  if (data.target_role !== 'provider') {
+  if (data.target_role !== USER_ROLES.Provider) {
     throw new Error('Invalid target role. Only switching to provider is allowed with details.');
   }
   return internalClient.post<SwitchRoleWithDetailsResponse>(API_ENDPOINTS.USER.SWITCH_ROLE_WITH_DETAILS, data);

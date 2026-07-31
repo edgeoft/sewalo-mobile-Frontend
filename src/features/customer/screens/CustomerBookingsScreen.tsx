@@ -112,6 +112,7 @@ export default function CustomerBookingsScreen() {
             onPress={() => setSearchExpanded((prev) => !prev)}
             accessibilityRole="button"
             accessibilityLabel={searchExpanded ? t('common.close') : t('common.search')}
+            accessibilityState={{ expanded: searchExpanded }}
             className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-80"
             style={{
               shadowColor: '#0f172a',

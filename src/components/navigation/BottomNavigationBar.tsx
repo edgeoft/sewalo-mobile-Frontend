@@ -1,5 +1,5 @@
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ export interface BottomTabBarProps {
     {
       options: {
         tabBarAccessibilityLabel?: string;
+        tabBarAccessibilityHint?: string;
         tabBarTestID?: string;
       };
       route: any;
@@ -48,9 +49,27 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
 export default function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const bottomPadding = insets.bottom > 0 ? insets.bottom - 12 : 0;
+  useEffect(() => {
+    const showEvents: ('keyboardWillShow' | 'keyboardDidShow')[] = ['keyboardWillShow', 'keyboardDidShow'];
+    const hideEvents: ('keyboardWillHide' | 'keyboardDidHide')[] = ['keyboardWillHide', 'keyboardDidHide'];
+
+    const showSubs = showEvents.map((event) => Keyboard.addListener(event, () => setIsKeyboardVisible(true)));
+    const hideSubs = hideEvents.map((event) => Keyboard.addListener(event, () => setIsKeyboardVisible(false)));
+
+    return () => {
+      showSubs.forEach((sub) => sub.remove());
+      hideSubs.forEach((sub) => sub.remove());
+    };
+  }, []);
+
+  const bottomPadding = insets.bottom;
   const barHeight = 56 + bottomPadding;
+
+  if (isKeyboardVisible) {
+    return null;
+  }
 
   return (
     <View
@@ -107,15 +126,22 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
           return (
             <Pressable
               key={route.key}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
+              accessibilityLabel={options.tabBarAccessibilityLabel ?? translatedLabel}
+              accessibilityHint={options.tabBarAccessibilityHint}
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
               className="flex-1 items-center justify-center pt-2 pb-0.5"
             >
-              <View className="items-center justify-center mb-1.5">{config.icon(isFocused)}</View>
+              <View
+                className="items-center justify-center mb-1.5"
+                importantForAccessibility="no"
+                accessibilityElementsHidden
+              >
+                {config.icon(isFocused)}
+              </View>
               <Text
                 style={{ fontSize: 11 }}
                 className={`font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}

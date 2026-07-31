@@ -41,7 +41,7 @@ export default function OnboardingFooter({
             />
             <View className="flex-row items-center justify-center mt-3">
               <Text className="text-white/80 text-sm font-sans-medium">{t('onboarding.alreadyHaveAccount')} </Text>
-              <Pressable onPress={onFinish} hitSlop={8}>
+              <Pressable onPress={onFinish} hitSlop={8} accessibilityRole="button">
                 <Text className="text-white text-sm font-sans-bold">{t('onboarding.login')}</Text>
               </Pressable>
             </View>

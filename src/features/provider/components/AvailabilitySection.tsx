@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 
 import { Availability } from '@/types';
+import { AVAILABILITY_TYPES } from '@/constants/availability';
 
 interface AvailabilitySectionProps {
   workingDays: Availability;
@@ -85,15 +86,21 @@ export default function AvailabilitySection({
           </Text>
           <View className="gap-y-2">
             {[
-              { id: 'always', label: t('provider.everyday'), description: t('provider.everydayDesc') },
-              { id: 'weekdays', label: t('provider.sundayToFriday'), description: t('provider.sundayToFridayDesc') },
-              { id: 'weekends', label: t('provider.weekend'), description: t('provider.weekendDesc') },
+              { id: AVAILABILITY_TYPES.Always, label: t('provider.everyday'), description: t('provider.everydayDesc') },
+              {
+                id: AVAILABILITY_TYPES.Weekdays,
+                label: t('provider.sundayToFriday'),
+                description: t('provider.sundayToFridayDesc'),
+              },
+              { id: AVAILABILITY_TYPES.Weekends, label: t('provider.weekend'), description: t('provider.weekendDesc') },
             ].map((day) => {
               const isSelected = workingDays === day.id;
               return (
                 <Pressable
                   key={day.id}
                   onPress={() => onChangeWorkingDays(day.id as Availability)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected }}
                   className={`form-input-container justify-between py-2.5 ${
                     isSelected ? 'border-primary bg-primary/5' : 'border-gray-200'
                   }`}
@@ -107,7 +114,7 @@ export default function AvailabilitySection({
                   }}
                 >
                   <View className="flex-row items-center gap-x-3 bg-transparent">
-                    <Feather name="calendar" size={16} color={isSelected ? '#485aff' : '#898f8f'} />
+                    <Feather name="calendar" size={16} color={isSelected ? '#485aff' : '#898f8f'} accessible={false} />
                     <View>
                       <Text
                         className={`text-sm font-sans-semibold ${
@@ -141,6 +148,7 @@ export default function AvailabilitySection({
             {/* Start Time button */}
             <Pressable
               onPress={() => openTimePicker('start')}
+              accessibilityRole="button"
               className="flex-1 flex-row items-center justify-between form-input-container form-input-container-single border-gray-200"
               style={{
                 shadowColor: '#000',
@@ -152,7 +160,7 @@ export default function AvailabilitySection({
               }}
             >
               <Text className="text-sm font-sans-medium text-gray-800">{workingHoursStart}</Text>
-              <Feather name="clock" size={14} color="#898f8f" />
+              <Feather name="clock" size={14} color="#898f8f" accessible={false} />
             </Pressable>
 
             <Text className="text-gray-400 font-sans-medium">—</Text>
@@ -160,6 +168,7 @@ export default function AvailabilitySection({
             {/* End Time button */}
             <Pressable
               onPress={() => openTimePicker('end')}
+              accessibilityRole="button"
               className="flex-1 flex-row items-center justify-between form-input-container form-input-container-single border-gray-200"
               style={{
                 shadowColor: '#000',
@@ -171,7 +180,7 @@ export default function AvailabilitySection({
               }}
             >
               <Text className="text-sm font-sans-medium text-gray-800">{workingHoursEnd}</Text>
-              <Feather name="clock" size={14} color="#898f8f" />
+              <Feather name="clock" size={14} color="#898f8f" accessible={false} />
             </Pressable>
           </View>
         </View>
@@ -207,6 +216,9 @@ export default function AvailabilitySection({
               </Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -226,6 +238,8 @@ export default function AvailabilitySection({
                     <Pressable
                       key={h}
                       onPress={() => setTempHour(h)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempHour === h }}
                       className={`py-2 items-center ${tempHour === h ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -252,6 +266,8 @@ export default function AvailabilitySection({
                     <Pressable
                       key={m}
                       onPress={() => setTempMinute(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMinute === m }}
                       className={`py-2 items-center ${tempMinute === m ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -274,6 +290,8 @@ export default function AvailabilitySection({
                     <Pressable
                       key={p}
                       onPress={() => setTempPeriod(p)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempPeriod === p }}
                       className={`py-3 items-center ${tempPeriod === p ? 'bg-primary/10' : ''}`}
                     >
                       <Text

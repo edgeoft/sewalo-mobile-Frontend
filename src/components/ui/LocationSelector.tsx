@@ -50,6 +50,10 @@ export default function LocationSelector({
           shadowRadius: 2,
           elevation: 0,
         }}
+        accessibilityRole="button"
+        accessibilityLabel={value ? value : resolvedPlaceholder}
+        accessibilityState={{ expanded: modalVisible }}
+        accessibilityHint={error}
       >
         <View className="flex-row items-center gap-x-2 flex-1 mr-2 bg-transparent">
           <Feather name="map-pin" size={16} color="#898f8f" />

@@ -49,6 +49,8 @@ export default function CategoryScrollSelector({
         >
           <Pressable
             onPress={() => onSelectCategory(undefined)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: selectedCategorySlug === undefined }}
             className={`px-4 py-2.5 rounded-full flex-row items-center border ${
               selectedCategorySlug === undefined ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
@@ -70,18 +72,21 @@ export default function CategoryScrollSelector({
               <Pressable
                 key={category.id}
                 onPress={() => onSelectCategory(isSelected ? undefined : category.slug)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
                 className={`px-4 py-2.5 rounded-full flex-row items-center border ${
                   isSelected ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                 }`}
               >
                 {iconUri ? (
-                  <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" resizeMode="contain" />
+                  <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" resizeMode="contain" accessible={false} />
                 ) : (
                   <Feather
                     name="tag"
                     size={12}
                     color={isSelected ? 'var(--primary-foreground)' : 'var(--primary)'}
                     style={{ marginRight: 6 }}
+                    accessible={false}
                   />
                 )}
                 <Text className={`text-xs font-sans-semibold ${isSelected ? 'text-white' : 'text-gray-700'}`}>

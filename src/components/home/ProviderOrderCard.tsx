@@ -95,6 +95,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <View className="flex-row gap-2">
             <Pressable
               onPress={() => onDecline?.(order.id)}
+              accessibilityRole="button"
               className="rounded-xl border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
             >
               <Text className="text-xs font-sans-bold text-red-600">{t('home.decline')}</Text>
@@ -102,13 +103,18 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
 
             <Pressable
               onPress={() => onAccept?.(order.id)}
+              accessibilityRole="button"
               className="rounded-xl bg-primary px-4 py-2 active:opacity-90"
             >
               <Text className="text-xs font-sans-bold text-white">{t('home.accept')}</Text>
             </Pressable>
           </View>
         ) : (
-          <Pressable onPress={onPress} className="rounded-xl bg-[#eef1ff] px-4 py-2 active:opacity-90">
+          <Pressable
+            onPress={onPress}
+            accessibilityRole="button"
+            className="rounded-xl bg-[#eef1ff] px-4 py-2 active:opacity-90"
+          >
             <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
           </Pressable>
         )}

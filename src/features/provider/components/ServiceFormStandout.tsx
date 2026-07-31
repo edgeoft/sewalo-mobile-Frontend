@@ -156,6 +156,9 @@ export default function ServiceFormStandout({
                 {/* Remove button */}
                 <Pressable
                   onPress={() => handleRemoveImage(index)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('common.remove')}
+                  hitSlop={8}
                   className="absolute top-1 right-1 h-6 w-6 rounded-full bg-black/50 flex items-center justify-center active:bg-black/75"
                 >
                   <Feather name="trash-2" size={11} color="white" />
@@ -168,9 +171,14 @@ export default function ServiceFormStandout({
           {watchWorkSamples.length < 5 && (
             <Pressable
               onPress={handlePickImage}
+              accessibilityRole="button"
               className="w-32 h-24 rounded-lg border border-dashed border-gray-300 bg-gray-50/50 flex flex-col items-center justify-center active:bg-gray-50"
             >
-              <View className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+              <View
+                className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mb-1"
+                importantForAccessibility="no"
+                accessibilityElementsHidden
+              >
                 <Feather name="plus" size={15} color="#485aff" />
               </View>
               <Text className="text-[10px] font-sans-semibold text-gray-400">{t('common.addPhoto')}</Text>
@@ -191,7 +199,12 @@ export default function ServiceFormStandout({
               className="bg-indigo-50/80 border border-indigo-100 rounded-full px-2.5 py-1 flex-row items-center"
             >
               <Text className="text-xs font-sans-semibold text-primary mr-1">#{tag}</Text>
-              <Pressable hitSlop={6} onPress={() => handleRemoveTag(tag)}>
+              <Pressable
+                hitSlop={8}
+                onPress={() => handleRemoveTag(tag)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.remove')}
+              >
                 <Feather name="x" size={10} color="#485aff" />
               </Pressable>
             </View>
@@ -230,16 +243,22 @@ export default function ServiceFormStandout({
                   textAlignVertical: 'center',
                 }}
               />
-              <Pressable onPress={handleAddTag} className="pl-3 active:opacity-70">
+              <Pressable
+                onPress={handleAddTag}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.addTag')}
+                className="pl-3 active:opacity-70"
+              >
                 <Feather name="plus" size={16} color="#485aff" />
               </Pressable>
             </View>
           ) : (
             <Pressable
               onPress={() => setShowTagInput(true)}
+              accessibilityRole="button"
               className="border border-dashed border-gray-300 bg-gray-50/50 rounded-full px-3 py-1 flex-row items-center active:bg-gray-100"
             >
-              <Feather name="plus" size={11} color="#485aff" className="mr-1" />
+              <Feather name="plus" size={11} color="#485aff" className="mr-1" accessible={false} />
               <Text className="text-xs font-sans-semibold text-primary">{t('common.addTag')}</Text>
             </Pressable>
           )}

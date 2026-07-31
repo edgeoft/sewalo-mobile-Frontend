@@ -28,14 +28,13 @@ export default function AccountMenuItem({
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${title}${subtitle ? `, ${subtitle}` : ''}`}
       className="flex-row items-center justify-between py-3.5 px-4 bg-white border-b border-gray-100 last:border-b-0 active:bg-gray-50"
     >
       <View className="flex-row items-center flex-1 mr-3">
         <View
           className={`h-9 w-9 rounded-xl items-center justify-center ${destructive ? 'bg-red-50' : 'bg-indigo-50/50'}`}
         >
-          <Feather name={icon} size={16} color={iconColor} />
+          <Feather name={icon} size={16} color={iconColor} accessible={false} />
         </View>
 
         <View className="ml-3.5 flex-1">
@@ -50,7 +49,7 @@ export default function AccountMenuItem({
 
       <View className="flex-row items-center gap-x-2">
         {rightContent}
-        {showChevron && <Feather name="chevron-right" size={16} color="#94a3b8" />}
+        {showChevron && <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />}
       </View>
     </Pressable>
   );

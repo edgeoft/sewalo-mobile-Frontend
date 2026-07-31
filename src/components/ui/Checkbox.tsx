@@ -2,6 +2,8 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 export interface CheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
@@ -22,15 +24,20 @@ export default function Checkbox({
   size = 'md',
 }: CheckboxProps) {
   const [scaleAnim] = useState(() => new Animated.Value(checked ? 1 : 0));
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
+    if (reducesMotion) {
+      scaleAnim.setValue(checked ? 1 : 0);
+      return;
+    }
     Animated.spring(scaleAnim, {
       toValue: checked ? 1 : 0,
       useNativeDriver: true,
       tension: 50,
       friction: 7,
     }).start();
-  }, [checked, scaleAnim]);
+  }, [checked, scaleAnim, reducesMotion]);
 
   const handlePress = () => {
     if (!disabled) {
@@ -42,10 +49,15 @@ export default function Checkbox({
   const iconSize = size === 'sm' ? 12 : 14;
   const borderRadius = size === 'sm' ? 5 : 6;
 
+  const resolvedLabel = typeof label === 'string' ? label : undefined;
+
   return (
     <Pressable
       onPress={handlePress}
       disabled={disabled}
+      accessibilityRole="checkbox"
+      accessibilityLabel={resolvedLabel}
+      accessibilityState={{ checked, disabled }}
       className={`flex-row items-center active:opacity-80 ${disabled ? 'opacity-50' : ''} ${className}`}
     >
       <View
@@ -53,6 +65,8 @@ export default function Checkbox({
         className={`border items-center justify-center ${
           checked ? 'border-primary bg-primary' : 'border-gray-300 bg-white'
         }`}
+        importantForAccessibility="no"
+        accessibilityElementsHidden
       >
         <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
           <Feather name="check" size={iconSize} color="white" />

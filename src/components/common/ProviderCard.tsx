@@ -88,9 +88,16 @@ function ProviderCard({
                 onPress={onFavouritePress}
                 accessibilityRole="button"
                 accessibilityLabel={`Save ${name}`}
+                accessibilityState={{ selected: isFavourite }}
+                hitSlop={8}
                 className="ml-2 h-7 w-7 items-center justify-center rounded-xl bg-gray-50"
               >
-                <MaterialIcons name="favorite" size={14} color={isFavourite ? '#ef4444' : '#94a3b8'} />
+                <MaterialIcons
+                  name="favorite"
+                  size={14}
+                  color={isFavourite ? '#ef4444' : '#94a3b8'}
+                  accessible={false}
+                />
               </Pressable>
             )}
           </View>

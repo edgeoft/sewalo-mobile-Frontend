@@ -2,15 +2,25 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 const AnimatedG = Animated.createAnimatedComponent(G);
 
 export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boolean }) {
   const progress = useSharedValue(0);
   const planeOpacity = useSharedValue(0);
   const successOpacity = useSharedValue(0);
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
     if (isActive) {
+      if (reducesMotion) {
+        progress.value = 1;
+        planeOpacity.value = 0;
+        successOpacity.value = 1;
+        return;
+      }
       // Play once! Total duration 3000ms
       progress.value = withSequence(
         withTiming(0, { duration: 0 }),
@@ -37,7 +47,7 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
       planeOpacity.value = 0;
       successOpacity.value = 0;
     }
-  }, [isActive, planeOpacity, progress, successOpacity]);
+  }, [isActive, planeOpacity, progress, successOpacity, reducesMotion]);
 
   const planeProps = useAnimatedProps(() => {
     const t = progress.value;

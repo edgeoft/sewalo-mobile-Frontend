@@ -10,6 +10,7 @@ import LanguageSelector from '@/components/ui/LanguageSelector';
 import RadialStepper from '@/components/common/RadialStepper';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import { USER_ROLES } from '@/types';
 
 // Step components
 import OnboardingIllustration from '../components/OnboardingIllustration';
@@ -77,7 +78,9 @@ export default function GettingStartedScreen() {
                       {t('onboarding.welcomeGreeting', { name: user?.name || 'User' })}
                     </Text>
                     <Text className="text-sm font-sans-semibold text-gray-500 mt-1">
-                      {role === 'provider' ? t('onboarding.welcomeProviderMsg') : t('onboarding.welcomeCustomerMsg')}
+                      {role === USER_ROLES.Provider
+                        ? t('onboarding.welcomeProviderMsg')
+                        : t('onboarding.welcomeCustomerMsg')}
                     </Text>
                   </View>
 
@@ -85,7 +88,9 @@ export default function GettingStartedScreen() {
                   <View className="bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-full flex-row items-center flex-shrink-0">
                     <Feather name="clock" size={12} color="#485aff" />
                     <Text className="text-[10px] font-sans-bold text-primary ml-1">
-                      {role === 'provider' ? t('onboarding.takesProviderTime') : t('onboarding.takesCustomerTime')}
+                      {role === USER_ROLES.Provider
+                        ? t('onboarding.takesProviderTime')
+                        : t('onboarding.takesCustomerTime')}
                     </Text>
                   </View>
                 </View>

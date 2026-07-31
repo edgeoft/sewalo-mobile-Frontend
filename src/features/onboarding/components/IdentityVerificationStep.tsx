@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { USER_ROLES } from '@/types';
 
 interface IdentityVerificationStepProps {
   documentImage: string | null;
@@ -30,7 +31,7 @@ export default function IdentityVerificationStep({
   const { showSnackbar } = useSnackbar();
   const [previewVisible, setPreviewVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const isProvider = role === 'provider';
+  const isProvider = role === USER_ROLES.Provider;
 
   const handlePickImage = async () => {
     try {
@@ -98,14 +99,18 @@ export default function IdentityVerificationStep({
                 <TouchableOpacity
                   onPress={handleRemoveImage}
                   className="absolute top-2.5 right-2.5 h-8 w-8 bg-black/60 rounded-full items-center justify-center active:opacity-75"
+                  accessibilityRole="button"
+                  accessibilityLabel={t('common.remove')}
+                  hitSlop={8}
                 >
-                  <Feather name="trash-2" size={16} color="#ffffff" />
+                  <Feather name="trash-2" size={16} color="#ffffff" accessible={false} />
                 </TouchableOpacity>
                 <Pressable
                   onPress={() => setPreviewVisible(true)}
                   className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
+                  accessibilityRole="button"
                 >
-                  <Feather name="eye" size={12} color="#ffffff" />
+                  <Feather name="eye" size={12} color="#ffffff" accessible={false} />
                   <Text className="text-[10px] font-sans-bold text-white ml-1">{t('onboarding.viewImage')}</Text>
                 </Pressable>
               </View>
@@ -113,8 +118,13 @@ export default function IdentityVerificationStep({
               <Pressable
                 onPress={handlePickImage}
                 className="h-52 w-full rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 items-center justify-center active:bg-gray-100"
+                accessibilityRole="button"
               >
-                <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2">
+                <View
+                  className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center mb-2"
+                  importantForAccessibility="no"
+                  accessibilityElementsHidden
+                >
                   <Feather name="camera" size={20} color="#485aff" />
                 </View>
                 <Text className="text-sm font-sans-semibold text-gray-800">{t('onboarding.uploadIdImage')}</Text>
@@ -165,14 +175,21 @@ export default function IdentityVerificationStep({
         onRequestClose={() => setPreviewVisible(false)}
       >
         <View style={styles.modalBackground}>
-          <Pressable onPress={() => setPreviewVisible(false)} style={StyleSheet.absoluteFill} />
+          <Pressable
+            onPress={() => setPreviewVisible(false)}
+            style={StyleSheet.absoluteFill}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          />
           <View className="relative w-full max-w-[90%] aspect-[4/3] rounded-2xl bg-white overflow-hidden shadow-2xl">
             {documentImage && <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="contain" />}
             <Pressable
               onPress={() => setPreviewVisible(false)}
               className="absolute top-4 right-4 h-10 w-10 bg-black/60 rounded-full items-center justify-center active:opacity-75"
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
             >
-              <Feather name="x" size={20} color="#ffffff" />
+              <Feather name="x" size={20} color="#ffffff" accessible={false} />
             </Pressable>
           </View>
         </View>

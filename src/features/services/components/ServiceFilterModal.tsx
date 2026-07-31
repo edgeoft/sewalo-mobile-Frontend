@@ -3,6 +3,7 @@ import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-nativ
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
+import { SERVICE_LOCATIONS } from '@/types';
 
 export interface ServiceFilterModalProps {
   isOpen: boolean;
@@ -41,8 +42,14 @@ export default function ServiceFilterModal({
         <View className="bg-white rounded-t-3xl p-6 gap-6 max-h-[85%]">
           <View className="flex-row justify-between items-center pb-2 border-b border-gray-100">
             <Text className="text-lg font-sans-bold text-gray-900">{t('services.filterTitle')}</Text>
-            <Pressable onPress={onClose} className="p-1">
-              <Feather name="x" size={20} color="#475569" />
+            <Pressable
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+              hitSlop={8}
+              className="p-1"
+            >
+              <Feather name="x" size={20} color="#475569" accessible={false} />
             </Pressable>
           </View>
 
@@ -77,6 +84,8 @@ export default function ServiceFilterModal({
                   <Pressable
                     key={star}
                     onPress={() => setMinRating(minRating === star ? '' : star)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: minRating === star }}
                     className={`flex-1 py-2.5 rounded-xl border items-center justify-center flex-row gap-1 ${
                       minRating === star ? 'bg-amber-50 border-amber-400' : 'bg-white border-gray-200'
                     }`}
@@ -88,7 +97,12 @@ export default function ServiceFilterModal({
                     >
                       {star}
                     </Text>
-                    <Feather name="star" size={11} color={minRating === star ? '#eab308' : '#94a3b8'} />
+                    <Feather
+                      name="star"
+                      size={11}
+                      color={minRating === star ? '#eab308' : '#94a3b8'}
+                      accessible={false}
+                    />
                   </Pressable>
                 ))}
               </View>
@@ -99,13 +113,15 @@ export default function ServiceFilterModal({
               <Text className="text-sm font-sans-bold text-gray-800">{t('services.serviceLocationFilter')}</Text>
               <View className="gap-2">
                 {[
-                  { label: t('services.fixedStudio'), value: 'fixed_location' },
-                  { label: t('services.atCustomerLocation'), value: 'customer_location' },
-                  { label: t('services.remoteOnlineCall'), value: 'remote_location' },
+                  { label: t('services.fixedStudio'), value: SERVICE_LOCATIONS.Fixed },
+                  { label: t('services.atCustomerLocation'), value: SERVICE_LOCATIONS.Customer },
+                  { label: t('services.remoteOnlineCall'), value: SERVICE_LOCATIONS.Remote },
                 ].map((loc) => (
                   <Pressable
                     key={loc.value}
                     onPress={() => setServiceLocation(serviceLocation === loc.value ? '' : loc.value)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: serviceLocation === loc.value }}
                     className={`p-3 rounded-xl border flex-row justify-between items-center ${
                       serviceLocation === loc.value ? 'bg-blue-50/50 border-primary' : 'bg-white border-gray-200'
                     }`}
@@ -117,7 +133,9 @@ export default function ServiceFilterModal({
                     >
                       {loc.label}
                     </Text>
-                    {serviceLocation === loc.value ? <Feather name="check" size={16} color="var(--primary)" /> : null}
+                    {serviceLocation === loc.value ? (
+                      <Feather name="check" size={16} color="var(--primary)" accessible={false} />
+                    ) : null}
                   </Pressable>
                 ))}
               </View>

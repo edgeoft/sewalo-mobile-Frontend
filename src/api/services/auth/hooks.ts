@@ -13,6 +13,7 @@ import {
   SignupInput,
   SignupResponse,
   USER_ROLES,
+  USER_STATUSES,
   VerifyOtpInput,
 } from '@/types';
 import { useMutation } from '@tanstack/react-query';
@@ -76,7 +77,7 @@ export const useLogin = () => {
       await login(res.user, res.access_token);
       const role = res.user.role;
       setTimeout(() => {
-        if (res.user.status === 'pending') {
+        if (res.user.status === USER_STATUSES.Pending) {
           router.replace({
             pathname: ROUTES.auth.gettingStarted,
             params: { role, phone: formatPhone(res.user.phone) },
@@ -99,7 +100,7 @@ export const useLogin = () => {
           params: {
             phone: formatPhone(variables.phone),
             flow: 'login',
-            role: details?.user?.role || 'customer',
+            role: details?.user?.role || USER_ROLES.Customer,
             otp: details?.otp,
           },
         });
@@ -134,8 +135,8 @@ export const useVerifyOtp = () => {
           if (res.user && res.access_token) {
             await login(res.user, res.access_token);
           }
-          const userRole = res.user?.role || 'customer';
-          if (res.user && (res.user.status === 'completed' || res.user.status === 'verified')) {
+          const userRole = res.user?.role || USER_ROLES.Customer;
+          if (res.user && (res.user.status === USER_STATUSES.Completed || res.user.status === USER_STATUSES.Verified)) {
             if (userRole === USER_ROLES.Provider) {
               router.replace(ROUTES.provider.home);
             } else {

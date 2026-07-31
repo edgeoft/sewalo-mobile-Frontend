@@ -87,7 +87,11 @@ export default function AboutAppScreen() {
 
             <View className="flex-row justify-between items-center">
               <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.website')}</Text>
-              <Pressable onPress={() => handleOpenLink('https://sewalo.com')} className="active:opacity-50">
+              <Pressable
+                onPress={() => handleOpenLink('https://sewalo.com')}
+                accessibilityRole="button"
+                className="active:opacity-50"
+              >
                 <Text className="text-xs font-sans-bold text-primary underline">www.sewalo.com</Text>
               </Pressable>
             </View>

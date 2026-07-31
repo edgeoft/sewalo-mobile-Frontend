@@ -16,7 +16,7 @@ import PhoneNumberField from '../components/PhoneNumberField';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAuthStore } from '@/store/useAuthStore';
-import { USER_ROLES } from '@/types';
+import { USER_ROLES, USER_STATUSES } from '@/types';
 
 import { useLogin } from '@/api';
 
@@ -31,7 +31,7 @@ export default function SigninScreen() {
 
   useEffect(() => {
     if (isLoggedIn && user) {
-      if (user.status === 'pending') {
+      if (user.status === USER_STATUSES.Pending) {
         router.replace({
           pathname: ROUTES.auth.gettingStarted,
           params: { role, phone: user.phone },
@@ -105,6 +105,7 @@ export default function SigninScreen() {
           <Pressable
             onPress={() => router.push(ROUTES.auth.forgotPassword)}
             className="flex-shrink-0 active:opacity-60"
+            accessibilityRole="button"
           >
             <Text className="text-primary font-sans-semibold text-sm">{t('auth.forgetPassword')}</Text>
           </Pressable>

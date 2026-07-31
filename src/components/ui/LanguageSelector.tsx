@@ -54,7 +54,9 @@ export default function LanguageSelector() {
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('common.changeLanguage')}</Text>
               <Pressable
                 onPress={() => setModalVisible(false)}
-                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                className="w-11 h-11 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
               >
                 <Feather name="x" size={16} color="#64748b" />
               </Pressable>

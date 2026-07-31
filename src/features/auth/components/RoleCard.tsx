@@ -23,7 +23,12 @@ export default function RoleCard({ title, subtitle, description, selected, onPre
   }, [selected, selectionOpacity]);
 
   return (
-    <Pressable onPress={onPress} style={[styles.card, selected ? styles.cardSelected : styles.cardDefault]}>
+    <Pressable
+      onPress={onPress}
+      style={[styles.card, selected ? styles.cardSelected : styles.cardDefault]}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+    >
       <Animated.View
         pointerEvents="none"
         style={[StyleSheet.absoluteFill, styles.selectionOverlay, { opacity: selectionOpacity }]}

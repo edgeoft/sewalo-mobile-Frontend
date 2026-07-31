@@ -1,4 +1,5 @@
 import { useAuth } from '@/providers/AuthProvider';
+import { USER_ROLES, USER_STATUSES } from '@/types';
 
 export type UserStatus = 'pending' | 'completed' | 'verified' | 'rejected' | 'suspended';
 
@@ -27,14 +28,14 @@ export const useVerificationStatus = (): VerificationStatusResult => {
   const { user } = useAuth();
   const status = (user?.status as UserStatus) ?? null;
 
-  const isProvider = user?.role === 'provider';
-  const isCustomer = user?.role === 'customer';
+  const isProvider = user?.role === USER_ROLES.Provider;
+  const isCustomer = user?.role === USER_ROLES.Customer;
   const hasMissingId = isProvider && !!user && !user.document;
 
   const getMessage = (): string => {
     if (!user) return 'Not logged in';
     // If customer and no specific status message, don't show generic status messages unless rejected/suspended
-    if (isCustomer && !user.status_message && status !== 'rejected' && status !== 'suspended') {
+    if (isCustomer && !user.status_message && status !== USER_STATUSES.Rejected && status !== USER_STATUSES.Suspended) {
       return '';
     }
 
@@ -45,18 +46,18 @@ export const useVerificationStatus = (): VerificationStatusResult => {
     return 'Please complete your profile.';
   };
 
-  const isVerified = status === 'verified';
-  const isCompleted = status === 'completed';
+  const isVerified = status === USER_STATUSES.Verified;
+  const isCompleted = status === USER_STATUSES.Completed;
   const canPerformActions = isCustomer ? isVerified || isCompleted : isVerified;
 
   return {
     isVerified,
-    isPending: status === 'pending',
+    isPending: status === USER_STATUSES.Pending,
     isCompleted,
-    isRejected: status === 'rejected',
-    isSuspended: status === 'suspended',
+    isRejected: status === USER_STATUSES.Rejected,
+    isSuspended: status === USER_STATUSES.Suspended,
     hasMissingId,
-    isProfileCompleted: !!user && status !== 'pending' && status !== null,
+    isProfileCompleted: !!user && status !== USER_STATUSES.Pending && status !== null,
     status,
     canPerformActions,
     getMessage,

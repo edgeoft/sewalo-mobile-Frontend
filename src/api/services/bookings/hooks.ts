@@ -18,9 +18,10 @@ import {
   updateRatingAction,
   deleteRatingAction,
 } from './actions';
-import type {
-  Booking,
-  BookServiceFormData,
+import {
+  PAYMENT_METHODS,
+  type Booking,
+  type BookServiceFormData,
   GetBookingsResponse,
   GetBookingsParams,
   UpdateBookingPayload,
@@ -143,7 +144,7 @@ export const useProcessPayment = () => {
   return useMutation<MakePaymentResponse, Error, { bookingId: string; payload: MakePaymentPayload }>({
     mutationFn: ({ bookingId, payload }) => processPaymentAction(bookingId, payload),
     onSuccess: (result, variables) => {
-      if (result.type === 'cash' && result.booking) {
+      if (result.type === PAYMENT_METHODS.Cash && result.booking) {
         queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), result.booking);
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(result.booking.id), refetchType: 'all' });
       } else {

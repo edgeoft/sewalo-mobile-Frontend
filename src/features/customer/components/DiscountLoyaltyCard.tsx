@@ -57,6 +57,8 @@ export default function DiscountLoyaltyCard({
         </Text>
         <Pressable
           onPress={() => setDropdownOpen(true)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: dropdownOpen }}
           className="form-input-container form-input-container-single"
           style={{
             shadowColor: '#000',
@@ -79,12 +81,16 @@ export default function DiscountLoyaltyCard({
             <Text className="form-input-text flex-1 text-[#898f8f]">{t('components.selectCoupon')}</Text>
           )}
           <View className="ml-3">
-            <Feather name="chevron-down" size={16} color="#9ca3af" />
+            <Feather name="chevron-down" size={16} color="#9ca3af" accessible={false} />
           </View>
         </Pressable>
         {selectedCoupon && (
-          <Pressable onPress={() => onSelectCoupon(null)} className="flex-row items-center mt-2">
-            <Feather name="x" size={12} color="#ef4444" />
+          <Pressable
+            onPress={() => onSelectCoupon(null)}
+            accessibilityRole="button"
+            className="flex-row items-center mt-2"
+          >
+            <Feather name="x" size={12} color="#ef4444" accessible={false} />
             <Text className="text-xs font-sans-medium text-red-500 ml-1">{t('components.removeCoupon')}</Text>
           </Pressable>
         )}
@@ -108,6 +114,9 @@ export default function DiscountLoyaltyCard({
                 <Text className="text-gray-900 text-xl font-sans-extrabold">{t('components.availableCoupons')}</Text>
                 <Pressable
                   onPress={() => setDropdownOpen(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('common.close')}
+                  hitSlop={8}
                   className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
                 >
                   <Feather name="x" size={16} color="#64748b" />
@@ -123,6 +132,8 @@ export default function DiscountLoyaltyCard({
                         onSelectCoupon(selectedCoupon?.code === coupon.code ? null : coupon);
                         setDropdownOpen(false);
                       }}
+                      accessibilityRole="button"
+                      accessibilityState={{ checked: selectedCoupon?.code === coupon.code }}
                       className={`px-4 py-3.5 border rounded-xl ${
                         selectedCoupon?.code === coupon.code
                           ? 'border-primary bg-[#eef0ff]'
@@ -144,7 +155,7 @@ export default function DiscountLoyaltyCard({
                         </View>
                         {selectedCoupon?.code === coupon.code && (
                           <View className="h-6 w-6 rounded-full bg-primary items-center justify-center mt-0.5">
-                            <Feather name="check" size={12} color="#fff" />
+                            <Feather name="check" size={12} color="#fff" accessible={false} />
                           </View>
                         )}
                       </View>

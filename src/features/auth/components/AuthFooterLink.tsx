@@ -13,7 +13,7 @@ export default function AuthFooterLink({ prompt, actionLabel, onPress, size = 's
   return (
     <View className="flex-row items-center justify-center">
       <Text className={`text-gray-500 font-sans-regular ${textSizeClassName}`}>{prompt} </Text>
-      <Pressable onPress={onPress}>
+      <Pressable onPress={onPress} accessibilityRole="button">
         <Text className={`text-primary font-sans-bold ${textSizeClassName}`}>{actionLabel}</Text>
       </Pressable>
     </View>

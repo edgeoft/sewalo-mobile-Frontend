@@ -39,6 +39,8 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
         <Pressable
           key={item.id}
           onPress={() => onImagePress(item.uri)}
+          accessibilityRole="button"
+          accessibilityLabel={item.title ? undefined : t('services.workSamples')}
           className="w-[48%] bg-white border border-gray-200 rounded-lg overflow-hidden active:opacity-90"
           style={styles.shadowMin}
         >
@@ -47,6 +49,7 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
             onError={() => handleImageError(item.id)}
             style={{ height: 110, width: '100%' }}
             resizeMode="cover"
+            accessible={false}
           />
           {item.title && (
             <View className="p-2">

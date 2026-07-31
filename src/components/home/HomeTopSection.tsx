@@ -6,7 +6,7 @@ import { useTranslation, Trans } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
-import type { Category } from '@/types';
+import { USER_ROLES, type Category } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 import HomeTopSectionServiceChip from './HomeTopSectionServiceChip';
@@ -61,7 +61,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
   };
 
   const handleSearchPress = () => {
-    router.push(variant === 'customer' ? ROUTES.customer.findServices : ROUTES.guest.findServices);
+    router.push(variant === USER_ROLES.Customer ? ROUTES.customer.findServices : ROUTES.guest.findServices);
   };
 
   const heroCopy = heroCopyByVariant[variant];
@@ -97,7 +97,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
           </Text>
         </View>
 
-        {variant === 'provider' ? (
+        {variant === USER_ROLES.Provider ? (
           <View className="flex-row flex-wrap justify-between gap-3 mt-2">
             {/* Pending Orders */}
             <View
@@ -167,7 +167,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
                     label={cat.name}
                     onPress={() =>
                       router.push(
-                        `${variant === 'customer' ? ROUTES.customer.findServices : ROUTES.guest.findServices}?category=${cat.slug}`,
+                        `${variant === USER_ROLES.Customer ? ROUTES.customer.findServices : ROUTES.guest.findServices}?category=${cat.slug}`,
                       )
                     }
                   />

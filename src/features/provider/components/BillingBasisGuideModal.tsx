@@ -68,6 +68,8 @@ export default function BillingBasisGuideModal({ visible, onClose }: BillingBasi
             </View>
             <Pressable
               onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
               hitSlop={8}
               className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
             >

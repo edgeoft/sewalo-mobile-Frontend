@@ -10,6 +10,8 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import { useAppReducedMotion } from '@/utils/accessibility';
+
 export interface CarouselProps<T> {
   data: T[];
   renderItem: (info: { item: T; index: number; cardWidth: number }) => React.ReactElement;
@@ -44,6 +46,7 @@ export default function Carousel<T>({
 
   const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInteractingRef = useRef(false);
+  const reducesMotion = useAppReducedMotion();
 
   const cardWidth = containerWidth > 0 ? containerWidth : windowWidth - 48; // default to screen width minus horizontal layout padding
 
@@ -76,9 +79,13 @@ export default function Carousel<T>({
   }, [autoplay, autoplayInterval, hasMultipleItems, cardWidth, gap, stopAutoplay]);
 
   useEffect(() => {
+    if (reducesMotion) {
+      stopAutoplay();
+      return;
+    }
     startAutoplay();
     return () => stopAutoplay();
-  }, [startAutoplay, stopAutoplay]);
+  }, [startAutoplay, stopAutoplay, reducesMotion]);
 
   // Adjust scroll position after layout to align with item at index 1 if infinite looping is on
   const handleLayout = (e: LayoutChangeEvent) => {

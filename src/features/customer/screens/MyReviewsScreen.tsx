@@ -70,16 +70,18 @@ function ReviewCard({
       <View className="flex-row justify-end border-t border-gray-50 mt-3 pt-3 gap-2">
         <Pressable
           onPress={() => onEdit(rating)}
+          accessibilityRole="button"
           className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-indigo-50"
         >
-          <Feather name="edit-2" size={13} color="#485aff" />
+          <Feather name="edit-2" size={13} color="#485aff" accessible={false} />
           <Text className="text-xs font-sans-semibold text-primary ml-1.5">{t('customer.edit')}</Text>
         </Pressable>
         <Pressable
           onPress={() => onDelete(rating)}
+          accessibilityRole="button"
           className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-red-50"
         >
-          <Feather name="trash-2" size={13} color="#ef4444" />
+          <Feather name="trash-2" size={13} color="#ef4444" accessible={false} />
           <Text className="text-xs font-sans-semibold text-red-500 ml-1.5">{t('customer.delete')}</Text>
         </Pressable>
       </View>

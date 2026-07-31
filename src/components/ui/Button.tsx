@@ -73,6 +73,12 @@ export default function Button({
     <Pressable
       style={style}
       disabled={isDisabled}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityState={{
+        disabled: isDisabled,
+        busy: loading,
+      }}
       className={`flex-row items-center justify-center border ${
         variantStyles[variant]
       } ${sizeStyles[size]} ${isDisabled ? 'opacity-50' : ''} ${className}`}

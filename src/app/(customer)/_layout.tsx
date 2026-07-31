@@ -1,6 +1,6 @@
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
-import { USER_ROLES } from '@/types';
+import { USER_ROLES, USER_STATUSES } from '@/types';
 import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -22,7 +22,7 @@ export default function CustomerLayout() {
     return <Redirect href={ROUTES.auth.signin} />;
   }
 
-  if (user?.status === 'pending') {
+  if (user?.status === USER_STATUSES.Pending) {
     return <Redirect href={{ pathname: ROUTES.auth.gettingStarted, params: { role, phone: user.phone } }} />;
   }
 

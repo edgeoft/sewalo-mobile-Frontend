@@ -243,11 +243,18 @@ export default function FindServicesScreen() {
           </View>
           <Pressable
             onPress={() => setIsFilterModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.filterTitle')}
             className={`h-12 w-12 rounded-xl border items-center justify-center relative active:opacity-85 ${
               activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
           >
-            <Feather name="sliders" size={18} color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'} />
+            <Feather
+              name="sliders"
+              size={18}
+              color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'}
+              accessible={false}
+            />
             {activeFiltersCount > 0 && (
               <View className="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full h-5 w-5 items-center justify-center border border-white">
                 <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
@@ -256,9 +263,11 @@ export default function FindServicesScreen() {
           </Pressable>
           <Pressable
             onPress={handleSwitchToMap}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.mapView')}
             className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
           >
-            <Feather name="map" size={18} color="#485aff" />
+            <Feather name="map" size={18} color="#485aff" accessible={false} />
           </Pressable>
         </View>
 

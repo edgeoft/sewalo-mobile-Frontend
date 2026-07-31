@@ -18,6 +18,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { Availability } from '@/types';
+import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END } from '@/constants/availability';
 
 export default function ProviderEditProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -213,9 +214,11 @@ export default function ProviderEditProfileScreen() {
   };
 
   // 3. Availability State
-  const [workingDays, setWorkingDays] = useState<Availability>((user?.availability as Availability) || 'weekdays');
+  const [workingDays, setWorkingDays] = useState<Availability>(
+    (user?.availability as Availability) || AVAILABILITY_TYPES.Weekdays,
+  );
   const [workingHoursStart, setWorkingHoursStart] = useState(user?.start_time || '10:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState(user?.end_time || '06:00 PM');
+  const [workingHoursEnd, setWorkingHoursEnd] = useState(user?.end_time || DEFAULT_WORKING_HOURS_END);
 
   const handleSaveAvailability = () => {
     updateProfile(

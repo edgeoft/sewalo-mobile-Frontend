@@ -38,6 +38,9 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
             </View>
             <Pressable
               onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+              hitSlop={8}
               className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
             >
               <Feather name="x" size={18} color="#64748b" />
@@ -47,6 +50,8 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
           <View className="px-6 py-6 gap-y-4">
             <Pressable
               onPress={() => setSelectedOption(PAYMENT_METHODS.Cash)}
+              accessibilityRole="button"
+              accessibilityState={{ checked: selectedOption === PAYMENT_METHODS.Cash }}
               className={`flex-row items-center p-4 border rounded-xl ${
                 selectedOption === PAYMENT_METHODS.Cash ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
               }`}
@@ -63,6 +68,7 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
                 size={20}
                 color={selectedOption === PAYMENT_METHODS.Cash ? '#0f172a' : '#64748b'}
                 className="mr-3"
+                accessible={false}
               />
               <Text
                 className={`text-base font-sans-semibold ${selectedOption === PAYMENT_METHODS.Cash ? 'text-gray-950' : 'text-gray-600'}`}
@@ -73,6 +79,8 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
 
             <Pressable
               onPress={() => setSelectedOption(PAYMENT_METHODS.Esewa)}
+              accessibilityRole="button"
+              accessibilityState={{ checked: selectedOption === PAYMENT_METHODS.Esewa }}
               className={`flex-row items-center p-4 border rounded-xl ${
                 selectedOption === PAYMENT_METHODS.Esewa ? 'border-primary bg-blue-50/30' : 'border-gray-200 bg-white'
               }`}
@@ -89,6 +97,7 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
                 size={20}
                 color={selectedOption === PAYMENT_METHODS.Esewa ? '#0f172a' : '#64748b'}
                 className="mr-3"
+                accessible={false}
               />
               <Text
                 className={`text-base font-sans-semibold ${selectedOption === PAYMENT_METHODS.Esewa ? 'text-gray-950' : 'text-gray-600'}`}

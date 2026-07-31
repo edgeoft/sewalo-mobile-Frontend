@@ -1,4 +1,5 @@
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+import { USER_ROLES } from '@/types';
 
 export interface RoleIllustrationIconProps {
   variant: 'customer' | 'provider';
@@ -11,7 +12,7 @@ export default function RoleIllustrationIcon({ variant, active }: RoleIllustrati
   const accent = active ? '#8b97ff' : '#b0bec5';
   const bg = active ? '#e8eaff' : '#f1f5f9';
 
-  if (variant === 'customer') {
+  if (variant === USER_ROLES.Customer) {
     return (
       <Svg width={52} height={52} viewBox="0 0 52 52">
         <Rect x="10" y="6" width="32" height="42" rx="6" fill={soft} />

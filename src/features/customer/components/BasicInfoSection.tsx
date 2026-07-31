@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import {
   Image,
   Modal,
@@ -97,9 +97,6 @@ export default function BasicInfoSection({
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
-  const watchLat = useWatch({ control, name: 'lat' }) || 27.700769;
-  const watchLng = useWatch({ control, name: 'lng' }) || 85.30014;
-
   const handlePickAvatar = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -187,7 +184,12 @@ export default function BasicInfoSection({
       <View className="gap-y-4">
         {/* Profile Avatar Selection Section */}
         <View className="items-center mb-2">
-          <Pressable onPress={handlePickAvatar} className="relative active:opacity-90">
+          <Pressable
+            onPress={handlePickAvatar}
+            accessibilityRole="button"
+            accessibilityLabel="Change profile picture"
+            className="relative active:opacity-90"
+          >
             {watchAvatar ? (
               <Image
                 source={{ uri: watchAvatar }}
@@ -201,7 +203,11 @@ export default function BasicInfoSection({
                 resizeMode="cover"
               />
             )}
-            <View className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm">
+            <View
+              className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm"
+              importantForAccessibility="no"
+              accessibilityElementsHidden
+            >
               <Feather name="camera" size={14} color="#ffffff" />
             </View>
           </Pressable>
@@ -308,6 +314,7 @@ export default function BasicInfoSection({
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Date of Birth (Optional)</Text>
           <Pressable
             onPress={openDatePicker}
+            accessibilityRole="button"
             className="form-input-container form-input-container-single justify-between border-gray-200"
             style={{
               shadowColor: '#000',
@@ -321,7 +328,7 @@ export default function BasicInfoSection({
             <Text className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-[#898f8f]'}`}>
               {watchDateOfBirth ? watchDateOfBirth : t('components.selectBirthdayPlaceholder')}
             </Text>
-            <Feather name="calendar" size={16} color="#898f8f" />
+            <Feather name="calendar" size={16} color="#898f8f" accessible={false} />
           </Pressable>
         </View>
 
@@ -330,6 +337,7 @@ export default function BasicInfoSection({
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('components.languages')}</Text>
           <Pressable
             onPress={handleOpenLangModal}
+            accessibilityRole="button"
             className="form-input-container form-input-container-single justify-between border-gray-200"
             style={{
               shadowColor: '#000',
@@ -355,7 +363,7 @@ export default function BasicInfoSection({
                     .join(', ')
                 : t('components.selectLanguagesPlaceholder')}
             </Text>
-            <Feather name="chevron-down" size={16} color="#898f8f" />
+            <Feather name="chevron-down" size={16} color="#898f8f" accessible={false} />
           </Pressable>
         </View>
 
@@ -407,6 +415,9 @@ export default function BasicInfoSection({
               <Text className="text-gray-900 text-xl font-sans-extrabold">Languages</Text>
               <Pressable
                 onPress={() => setLangModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -457,6 +468,9 @@ export default function BasicInfoSection({
               <Text className="text-gray-900 text-xl font-sans-extrabold">Select Birthday</Text>
               <Pressable
                 onPress={() => setDobModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -477,6 +491,8 @@ export default function BasicInfoSection({
                     <Pressable
                       key={d}
                       onPress={() => setTempDay(d)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempDay === d }}
                       className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -501,6 +517,8 @@ export default function BasicInfoSection({
                     <Pressable
                       key={m}
                       onPress={() => setTempMonth(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMonth === m }}
                       className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -525,6 +543,8 @@ export default function BasicInfoSection({
                     <Pressable
                       key={y}
                       onPress={() => setTempYear(y)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempYear === y }}
                       className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
                     >
                       <Text

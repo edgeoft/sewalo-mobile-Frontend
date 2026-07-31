@@ -66,7 +66,7 @@ export default function StatusReasonCard({ booking }: StatusReasonCardProps) {
 
       <View className="border-t border-gray-100 mt-3 pt-3 flex-row justify-between items-center">
         <Text className="text-[11px] font-sans-medium text-gray-400">{t('customer.needAssistance')}</Text>
-        <Pressable onPress={handleContactSupport} className="active:opacity-75">
+        <Pressable onPress={handleContactSupport} accessibilityRole="button" className="active:opacity-75">
           <Text className="text-[11px] font-sans-semibold text-blue-600">{t('customer.contactSupportBtn')}</Text>
         </Pressable>
       </View>

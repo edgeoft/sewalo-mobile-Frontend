@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useGetFinanceAccountsQuery } from '@/api';
+import { USER_ROLES } from '@/types';
 
 export interface CompletionItem {
   key: string;
@@ -21,7 +22,7 @@ export interface ProfileCompletionResult {
 
 export function useProfileCompletion(): ProfileCompletionResult {
   const { user } = useAuth();
-  const role = user?.role || 'customer';
+  const role = user?.role || USER_ROLES.Customer;
 
   // Fetch payout accounts to evaluate financial details
   const { data: accountsResponse } = useGetFinanceAccountsQuery();
@@ -40,7 +41,7 @@ export function useProfileCompletion(): ProfileCompletionResult {
       };
     }
 
-    if (role === 'provider') {
+    if (role === USER_ROLES.Provider) {
       const items: CompletionItem[] = [
         {
           key: 'avatar',

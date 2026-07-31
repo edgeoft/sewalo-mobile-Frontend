@@ -147,11 +147,12 @@ export default function ContactSupportScreen() {
           {/* Live Chat */}
           <Pressable
             onPress={handleLiveChat}
+            accessibilityRole="button"
             style={cardShadow}
             className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
           >
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="message-circle" size={20} color="#485aff" />
+              <Feather name="message-circle" size={20} color="#485aff" accessible={false} />
             </View>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.liveChat')}</Text>
             <Text className="text-[10px] font-sans-medium text-emerald-500 text-center mt-1">
@@ -162,11 +163,12 @@ export default function ContactSupportScreen() {
           {/* Hotline */}
           <Pressable
             onPress={handleCallSupport}
+            accessibilityRole="button"
             style={cardShadow}
             className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
           >
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="phone-call" size={18} color="#485aff" />
+              <Feather name="phone-call" size={18} color="#485aff" accessible={false} />
             </View>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.callSupport')}</Text>
             <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">9744985161 / 9713969243</Text>

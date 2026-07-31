@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Tabs } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BottomNavigationBar, { type BottomTabBarProps } from '@/components/navigation/BottomNavigationBar';
 
 function GuestTabBar(props: BottomTabBarProps) {
@@ -7,12 +8,16 @@ function GuestTabBar(props: BottomTabBarProps) {
 }
 
 export default function GuestLayout() {
+  const insets = useSafeAreaInsets();
   const renderTabBar = useCallback((props: BottomTabBarProps) => <GuestTabBar {...props} />, []);
   return (
     <Tabs
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          height: 56 + insets.bottom,
+        },
       }}
     >
       <Tabs.Screen name="home" />

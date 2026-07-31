@@ -221,6 +221,8 @@ export default function ProviderEarningsScreen() {
                     setActiveTab(COMMISSION_TYPE.MyEarnings);
                     setFilterStatus(EARNINGS_FILTER_STATUS.All);
                   }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: activeTab === COMMISSION_TYPE.MyEarnings }}
                   className={`flex-1 py-2.5 rounded-md items-center ${
                     activeTab === COMMISSION_TYPE.MyEarnings ? 'bg-white shadow-xs' : 'bg-transparent'
                   }`}
@@ -236,6 +238,8 @@ export default function ProviderEarningsScreen() {
                     setActiveTab(COMMISSION_TYPE.CommissionDue);
                     setFilterStatus(EARNINGS_FILTER_STATUS.All);
                   }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: activeTab === COMMISSION_TYPE.CommissionDue }}
                   className={`flex-1 py-2.5 rounded-md items-center ${
                     activeTab === COMMISSION_TYPE.CommissionDue ? 'bg-white shadow-xs' : 'bg-transparent'
                   }`}
@@ -267,6 +271,8 @@ export default function ProviderEarningsScreen() {
                     <Pressable
                       key={status}
                       onPress={() => setFilterStatus(status)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isActive }}
                       className={`rounded-full px-4 py-1.5 border ${
                         isActive ? 'bg-primary border-primary' : 'bg-white border-gray-200'
                       }`}

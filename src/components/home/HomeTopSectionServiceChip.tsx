@@ -9,6 +9,7 @@ export default function HomeTopSectionServiceChip({ label, onPress }: HomeTopSec
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole={onPress ? 'button' : undefined}
       className="rounded-full bg-white px-3 py-1 active:opacity-80"
       style={{
         shadowColor: '#0f172a',

@@ -139,7 +139,13 @@ export default function SkillsExperienceSection({
                       {item.startYear} - {item.endYear}
                     </Text>
                   </View>
-                  <Pressable onPress={() => onRemoveEducation(idx)} className="p-1 active:opacity-75">
+                  <Pressable
+                    onPress={() => onRemoveEducation(idx)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common.remove')}
+                    hitSlop={8}
+                    className="p-1 active:opacity-75"
+                  >
                     <Feather name="trash-2" size={16} color="#ef4444" />
                   </Pressable>
                 </View>
@@ -176,7 +182,13 @@ export default function SkillsExperienceSection({
                       {item.startYear} - {item.endYear}
                     </Text>
                   </View>
-                  <Pressable onPress={() => onRemoveExperience(idx)} className="p-1 active:opacity-75">
+                  <Pressable
+                    onPress={() => onRemoveExperience(idx)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common.remove')}
+                    hitSlop={8}
+                    className="p-1 active:opacity-75"
+                  >
                     <Feather name="trash-2" size={16} color="#ef4444" />
                   </Pressable>
                 </View>
@@ -223,6 +235,9 @@ export default function SkillsExperienceSection({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('provider.addEducation')}</Text>
               <Pressable
                 onPress={() => setEduModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -296,6 +311,9 @@ export default function SkillsExperienceSection({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('provider.addExperience')}</Text>
               <Pressable
                 onPress={() => setExpModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />

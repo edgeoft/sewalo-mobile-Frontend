@@ -17,7 +17,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
-import SelectionOption from '@/components/ui/SelectionOption';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -35,24 +34,6 @@ interface PersonalInfoStepProps {
   loading?: boolean;
   stepper?: React.ReactNode;
 }
-
-const AVAILABLE_LANGUAGES = [
-  { id: 'english', name: 'English' },
-  { id: 'nepali', name: 'Nepali' },
-  { id: 'hindi', name: 'Hindi' },
-  { id: 'newari', name: 'Newari' },
-  { id: 'tamang', name: 'Tamang' },
-  { id: 'maithili', name: 'Maithili' },
-  { id: 'bhojpuri', name: 'Bhojpuri' },
-  { id: 'magar', name: 'Magar' },
-  { id: 'doteli', name: 'Doteli' },
-  { id: 'tharu', name: 'Tharu' },
-  { id: 'rai', name: 'Rai' },
-  { id: 'limbu', name: 'Limbu' },
-  { id: 'gurung', name: 'Gurung' },
-  { id: 'sherpa', name: 'Sherpa' },
-  { id: 'other', name: 'Other' },
-];
 
 const MONTHS = [
   'January',
@@ -172,7 +153,12 @@ export default function PersonalInfoStep({
           <View className="gap-y-4">
             {/* Profile Avatar Selection Section */}
             <View className="items-center mb-2">
-              <Pressable onPress={handlePickAvatar} className="relative active:opacity-90">
+              <Pressable
+                onPress={handlePickAvatar}
+                className="relative active:opacity-90"
+                accessibilityRole="button"
+                accessibilityLabel="Change profile photo"
+              >
                 {watchAvatar ? (
                   <Image
                     source={{ uri: watchAvatar }}
@@ -186,7 +172,11 @@ export default function PersonalInfoStep({
                     resizeMode="cover"
                   />
                 )}
-                <View className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm">
+                <View
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm"
+                  importantForAccessibility="no"
+                  accessibilityElementsHidden
+                >
                   <Feather name="camera" size={14} color="#ffffff" />
                 </View>
               </Pressable>
@@ -254,6 +244,7 @@ export default function PersonalInfoStep({
                 className={`form-input-container form-input-container-single justify-between ${
                   errors.dateOfBirth ? 'border-destructive' : 'border-gray-200'
                 }`}
+                accessibilityRole="button"
                 style={{
                   shadowColor: '#000',
                   shadowOffset: { width: 0, height: 2 },
@@ -266,7 +257,7 @@ export default function PersonalInfoStep({
                 <Text className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-[#898f8f]'}`}>
                   {watchDateOfBirth ? watchDateOfBirth : t('onboarding.selectBirthday')}
                 </Text>
-                <Feather name="calendar" size={16} color="#898f8f" />
+                <Feather name="calendar" size={16} color="#898f8f" accessible={false} />
               </Pressable>
               {errors.dateOfBirth && (
                 <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
@@ -320,8 +311,11 @@ export default function PersonalInfoStep({
               <Pressable
                 onPress={() => setDobModalVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color="#64748b" accessible={false} />
               </Pressable>
             </View>
 
@@ -339,6 +333,8 @@ export default function PersonalInfoStep({
                       key={d}
                       onPress={() => setTempDay(d)}
                       className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempDay === d }}
                     >
                       <Text
                         className={`font-sans-medium ${tempDay === d ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
@@ -365,6 +361,8 @@ export default function PersonalInfoStep({
                       key={m}
                       onPress={() => setTempMonth(m)}
                       className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMonth === m }}
                     >
                       <Text
                         className={`font-sans-medium ${tempMonth === m ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
@@ -391,6 +389,8 @@ export default function PersonalInfoStep({
                       key={y}
                       onPress={() => setTempYear(y)}
                       className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempYear === y }}
                     >
                       <Text
                         className={`font-sans-medium ${tempYear === y ? 'text-primary font-sans-bold' : 'text-gray-700'}`}

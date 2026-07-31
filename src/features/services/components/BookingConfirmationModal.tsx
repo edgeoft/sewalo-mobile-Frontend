@@ -203,6 +203,9 @@ export default function BookingConfirmationModal({
             </View>
             <Pressable
               onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+              hitSlop={8}
               className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
             >
               <Feather name="x" size={18} color="#64748b" />
@@ -224,7 +227,7 @@ export default function BookingConfirmationModal({
             </View>
 
             <View className="gap-y-4 mb-8">
-              <Pressable onPress={openDatePicker}>
+              <Pressable onPress={openDatePicker} accessibilityRole="button">
                 <View pointerEvents="none">
                   <Input
                     label={t('services.serviceDate')}
@@ -237,7 +240,7 @@ export default function BookingConfirmationModal({
                 </View>
               </Pressable>
 
-              <Pressable onPress={openTimePicker}>
+              <Pressable onPress={openTimePicker} accessibilityRole="button">
                 <View pointerEvents="none">
                   <Input
                     label={t('services.startTimeLabel')}
@@ -309,6 +312,9 @@ export default function BookingConfirmationModal({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectServiceDate')}</Text>
               <Pressable
                 onPress={() => setDatePickerVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -327,6 +333,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={y}
                       onPress={() => setTempYear(y)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempYear === y }}
                       className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -350,6 +358,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={m}
                       onPress={() => setTempMonth(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMonth === m }}
                       className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -373,6 +383,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={d}
                       onPress={() => setTempDay(d)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempDay === d }}
                       className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -415,6 +427,9 @@ export default function BookingConfirmationModal({
               <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectStartTime')}</Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -433,6 +448,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={h}
                       onPress={() => setTempHour(h)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempHour === h }}
                       className={`py-2 items-center ${tempHour === h ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -458,6 +475,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={m}
                       onPress={() => setTempMinute(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMinute === m }}
                       className={`py-2 items-center ${tempMinute === m ? 'bg-primary/10' : ''}`}
                     >
                       <Text
@@ -479,6 +498,8 @@ export default function BookingConfirmationModal({
                     <Pressable
                       key={p}
                       onPress={() => setTempPeriod(p)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempPeriod === p }}
                       className={`py-3 items-center ${tempPeriod === p ? 'bg-primary/10' : ''}`}
                     >
                       <Text

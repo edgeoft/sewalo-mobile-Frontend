@@ -98,6 +98,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                         action.onPress?.();
                         hideError();
                       }}
+                      accessibilityRole="button"
                       className={`py-3 rounded-lg items-center ${
                         isCancel ? 'bg-muted' : isDestructive ? 'bg-destructive' : 'bg-primary'
                       }`}
@@ -109,7 +110,11 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                   );
                 })
               ) : (
-                <Pressable onPress={hideError} className="py-3 rounded-lg bg-primary items-center">
+                <Pressable
+                  onPress={hideError}
+                  accessibilityRole="button"
+                  className="py-3 rounded-lg bg-primary items-center"
+                >
                   <Text className="font-sans-bold text-sm text-white">{t('common.ok')}</Text>
                 </Pressable>
               )}

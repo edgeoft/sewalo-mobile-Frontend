@@ -106,9 +106,13 @@ export default function ProfileCompletionCard({
         {!hideChecklist && (
           <Pressable
             onPress={() => setExpanded(!expanded)}
+            accessibilityRole="button"
+            accessibilityLabel="Toggle profile checklist"
+            accessibilityState={{ expanded }}
+            hitSlop={8}
             className="p-2 rounded-full bg-gray-50 active:bg-gray-100 border border-gray-100"
           >
-            <Feather name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color="#64748b" />
+            <Feather name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color="#64748b" accessible={false} />
           </Pressable>
         )}
       </View>
@@ -137,6 +141,7 @@ export default function ProfileCompletionCard({
                 {item.actionRoute && (
                   <Pressable
                     onPress={() => router.push(item.actionRoute as any)}
+                    accessibilityRole="button"
                     className="bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md active:bg-primary/20"
                   >
                     <Text className="text-[11px] font-sans-bold text-primary">Complete</Text>

@@ -8,7 +8,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import type { Booking, PaymentMethod } from '@/types';
-import { BOOKING_STATUSES, PAYMENT_METHODS } from '@/types';
+import { BOOKING_STATUSES } from '@/types';
 import RadialStepper from '@/components/common/RadialStepper';
 import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyCard';
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
@@ -213,9 +213,10 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {canCancel && (
           <Pressable
             onPress={handleCancel}
+            accessibilityRole="button"
             className="flex-row items-center justify-center gap-2 mb-4 py-3 rounded-lg border border-red-200 bg-red-50 active:bg-red-100"
           >
-            <Feather name="x-circle" size={16} color="#ef4444" />
+            <Feather name="x-circle" size={16} color="#ef4444" accessible={false} />
             <Text className="text-sm font-sans-semibold text-red-600">{t('customer.cancelBooking')}</Text>
           </Pressable>
         )}
@@ -250,12 +251,19 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View className="mt-4 gap-y-2.5">
                 <Pressable
                   onPress={() => phoneNumber && Linking.openURL(`tel:${phoneNumber}`)}
+                  accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="phone" size={13} color="#94a3b8" />
+                  <Feather name="phone" size={13} color="#94a3b8" accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{phoneNumber || '-'}</Text>
                   {phoneNumber ? (
-                    <Feather name="external-link" size={10} color="#94a3b8" style={{ marginLeft: 4 }} />
+                    <Feather
+                      name="external-link"
+                      size={10}
+                      color="#94a3b8"
+                      style={{ marginLeft: 4 }}
+                      accessible={false}
+                    />
                   ) : null}
                 </Pressable>
                 <View className="flex-row items-center">
@@ -273,13 +281,20 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                       Linking.openURL(`${scheme}0,0?q=${encodeURIComponent(location)}`);
                     }
                   }}
+                  accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="map-pin" size={13} color="#94a3b8" />
+                  <Feather name="map-pin" size={13} color="#94a3b8" accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2 flex-1" numberOfLines={1}>
                     {location}
                   </Text>
-                  <Feather name="external-link" size={10} color="#94a3b8" style={{ marginLeft: 4 }} />
+                  <Feather
+                    name="external-link"
+                    size={10}
+                    color="#94a3b8"
+                    style={{ marginLeft: 4 }}
+                    accessible={false}
+                  />
                 </Pressable>
               </View>
 
@@ -469,6 +484,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View className="gap-y-2.5">
                 <Pressable
                   onPress={handlePayNow}
+                  accessibilityRole="button"
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
                 >
                   <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
@@ -476,6 +492,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 <Pressable
                   onPress={handleDownloadInvoice}
                   disabled={downloadInvoice.isPending}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: downloadInvoice.isPending }}
                   className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
                 >
                   {downloadInvoice.isPending ? (
@@ -516,6 +534,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <Pressable
                 onPress={handleDownloadInvoice}
                 disabled={downloadInvoice.isPending}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: downloadInvoice.isPending }}
                 className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
               >
                 {downloadInvoice.isPending ? (
@@ -527,6 +547,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {booking.status === BOOKING_STATUSES.Paid && (
                 <Pressable
                   onPress={handleRateProvider}
+                  accessibilityRole="button"
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
                 >
                   <Text className="text-sm font-sans-bold text-white">{t('customer.rateProvider')}</Text>

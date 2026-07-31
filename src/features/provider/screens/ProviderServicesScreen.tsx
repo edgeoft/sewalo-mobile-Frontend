@@ -173,6 +173,9 @@ export default function ProviderServicesScreen() {
                 {/* Edit Button */}
                 <Pressable
                   onPress={() => router.push({ pathname: ROUTES.provider.serviceEdit, params: { mode: 'edit' } })}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('provider.editService')}
+                  hitSlop={8}
                   className="h-8 w-8 rounded-full bg-gray-50 border border-gray-200 items-center justify-center active:bg-gray-150"
                 >
                   <Feather name="edit-2" size={13} color="#485aff" />
@@ -270,9 +273,10 @@ export default function ProviderServicesScreen() {
                   {service.portfolio_url ? (
                     <Pressable
                       onPress={() => handleOpenPortfolio(service.portfolio_url)}
+                      accessibilityRole="button"
                       className="flex-row items-center gap-1"
                     >
-                      <Feather name="link" size={10} color="#485aff" />
+                      <Feather name="link" size={10} color="#485aff" accessible={false} />
                       <Text className="text-[10px] font-sans-bold text-primary underline">{t('provider.website')}</Text>
                     </Pressable>
                   ) : null}

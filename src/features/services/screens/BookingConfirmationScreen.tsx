@@ -10,6 +10,7 @@ import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { useGetBookingByIdQuery } from '@/api';
+import { BOOKING_STATUSES } from '@/types';
 import { getImageUrl } from '@/utils/image';
 import BookingAnimatedCheckmark from '../components/BookingAnimatedCheckmark';
 
@@ -39,14 +40,14 @@ export default function BookingConfirmationScreen() {
   const startTime = formatTime(booking?.start_time || '');
   const location = booking?.address || '';
   const invoice = booking?.invoice;
-  const status = booking?.status || 'pending';
+  const status = booking?.status || BOOKING_STATUSES.Pending;
   const serviceName = booking?.service?.name || '';
 
   const subTotal = invoice?.sub_total ? Number(invoice.sub_total) : 0;
   const vatAmount = invoice?.vat ? Number(invoice.vat) : 0;
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
 
-  const isConfirmed = status !== 'pending' && status !== 'rejected';
+  const isConfirmed = status !== BOOKING_STATUSES.Pending && status !== BOOKING_STATUSES.Rejected;
   const isProviderNotFound = !bookingId;
 
   if (!booking && !isProviderNotFound) {

@@ -123,6 +123,8 @@ export default function AvailabilityStep({
                       className={`form-input-container justify-between py-2.5 ${
                         isSelected ? 'border-primary bg-primary/5' : 'border-gray-200'
                       }`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
                       style={{
                         shadowColor: '#000',
                         shadowOffset: { width: 0, height: 2 },
@@ -133,7 +135,12 @@ export default function AvailabilityStep({
                       }}
                     >
                       <View className="flex-row items-center gap-x-3 bg-transparent">
-                        <Feather name="calendar" size={16} color={isSelected ? '#485aff' : '#898f8f'} />
+                        <Feather
+                          name="calendar"
+                          size={16}
+                          color={isSelected ? '#485aff' : '#898f8f'}
+                          accessible={false}
+                        />
                         <View>
                           <Text
                             className={`text-sm font-sans-semibold ${
@@ -168,6 +175,7 @@ export default function AvailabilityStep({
                 <Pressable
                   onPress={() => openTimePicker('start')}
                   className="flex-1 flex-row items-center justify-between form-input-container form-input-container-single border-gray-200"
+                  accessibilityRole="button"
                   style={{
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2 },
@@ -178,7 +186,7 @@ export default function AvailabilityStep({
                   }}
                 >
                   <Text className="text-sm font-sans-medium text-gray-800">{workingHoursStart}</Text>
-                  <Feather name="clock" size={14} color="#898f8f" />
+                  <Feather name="clock" size={14} color="#898f8f" accessible={false} />
                 </Pressable>
 
                 <Text className="text-gray-400 font-sans-medium">—</Text>
@@ -187,6 +195,7 @@ export default function AvailabilityStep({
                 <Pressable
                   onPress={() => openTimePicker('end')}
                   className="flex-1 flex-row items-center justify-between form-input-container form-input-container-single border-gray-200"
+                  accessibilityRole="button"
                   style={{
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2 },
@@ -197,7 +206,7 @@ export default function AvailabilityStep({
                   }}
                 >
                   <Text className="text-sm font-sans-medium text-gray-800">{workingHoursEnd}</Text>
-                  <Feather name="clock" size={14} color="#898f8f" />
+                  <Feather name="clock" size={14} color="#898f8f" accessible={false} />
                 </Pressable>
               </View>
             </View>
@@ -248,8 +257,11 @@ export default function AvailabilityStep({
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                accessibilityRole="button"
+                accessibilityLabel={t('common.close')}
+                hitSlop={8}
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color="#64748b" accessible={false} />
               </Pressable>
             </View>
 
@@ -267,6 +279,8 @@ export default function AvailabilityStep({
                       key={h}
                       onPress={() => setTempHour(h)}
                       className={`py-2 items-center ${tempHour === h ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempHour === h }}
                     >
                       <Text
                         className={`font-sans-medium ${tempHour === h ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
@@ -293,6 +307,8 @@ export default function AvailabilityStep({
                       key={m}
                       onPress={() => setTempMinute(m)}
                       className={`py-2 items-center ${tempMinute === m ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempMinute === m }}
                     >
                       <Text
                         className={`font-sans-medium ${tempMinute === m ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
@@ -315,6 +331,8 @@ export default function AvailabilityStep({
                       key={p}
                       onPress={() => setTempPeriod(p)}
                       className={`py-3 items-center ${tempPeriod === p ? 'bg-primary/10' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: tempPeriod === p }}
                     >
                       <Text
                         className={`font-sans-medium ${tempPeriod === p ? 'text-primary font-sans-bold' : 'text-gray-700'}`}

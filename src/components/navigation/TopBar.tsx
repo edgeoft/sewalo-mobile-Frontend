@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { Image, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { LOGO } from '@/constants/images';
 
@@ -24,6 +25,7 @@ export default function TopBar({
   onBackPress,
 }: TopBarProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View
@@ -36,11 +38,25 @@ export default function TopBar({
       <View className={`flex-row items-center ${contentClassName}`}>
         {leadingContent}
         {showBackButton && (
-          <Pressable onPress={onBackPress} className="mr-1.5 active:opacity-75" hitSlop={8}>
+          <Pressable
+            onPress={onBackPress}
+            className="mr-1.5 p-1.5 active:opacity-75"
+            hitSlop={6}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.back')}
+          >
             <Feather name="arrow-left" size={20} color="#0f172a" />
           </Pressable>
         )}
-        {!showBackButton && <Image source={LOGO.secondary} className="w-28 h-11" resizeMode="contain" />}
+        {!showBackButton && (
+          <Image
+            source={LOGO.secondary}
+            className="w-28 h-11"
+            resizeMode="contain"
+            accessible={false}
+            importantForAccessibility="no"
+          />
+        )}
       </View>
 
       {rightContent}

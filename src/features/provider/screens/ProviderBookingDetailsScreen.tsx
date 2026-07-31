@@ -91,7 +91,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
       message: t('provider.acceptBookingConfirm'),
       actions: [
         { text: t('common.cancel'), style: 'cancel' },
-        { text: t('provider.accept'), onPress: () => handleStatusUpdate('confirmed') },
+        { text: t('provider.accept'), onPress: () => handleStatusUpdate(BOOKING_STATUSES.Confirmed) },
       ],
     });
   };
@@ -106,7 +106,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           text: t('provider.reject'),
           style: 'destructive',
           onPress: () =>
-            handleStatusUpdate('rejected', {
+            handleStatusUpdate(BOOKING_STATUSES.Rejected, {
               cancellation_reason: 'Provider is not available for this booking.',
             }),
         },
@@ -115,11 +115,11 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   };
 
   const handleJobStarted = () => {
-    handleStatusUpdate('in_progress');
+    handleStatusUpdate(BOOKING_STATUSES.InProgress);
   };
 
   const handleJobCompleted = () => {
-    handleStatusUpdate('completed');
+    handleStatusUpdate(BOOKING_STATUSES.Completed);
   };
 
   const handleSendInvoice = () => {
@@ -132,7 +132,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
       message: t('provider.sendInvoiceConfirm', { amount: invoiceTotal.toFixed(2) }),
       actions: [
         { text: t('common.cancel'), style: 'cancel' },
-        { text: t('provider.send'), onPress: () => handleStatusUpdate('ready_to_pay') },
+        { text: t('provider.send'), onPress: () => handleStatusUpdate(BOOKING_STATUSES.ReadyToPay) },
       ],
     });
   };
@@ -202,12 +202,19 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               <View className="mt-4 gap-y-2.5">
                 <Pressable
                   onPress={() => phoneNumber && Linking.openURL(`tel:${phoneNumber}`)}
+                  accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="phone" size={13} color="#94a3b8" />
+                  <Feather name="phone" size={13} color="#94a3b8" accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{phoneNumber || '-'}</Text>
                   {phoneNumber ? (
-                    <Feather name="external-link" size={10} color="#94a3b8" style={{ marginLeft: 4 }} />
+                    <Feather
+                      name="external-link"
+                      size={10}
+                      color="#94a3b8"
+                      style={{ marginLeft: 4 }}
+                      accessible={false}
+                    />
                   ) : null}
                 </Pressable>
                 <View className="flex-row items-center">

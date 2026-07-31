@@ -121,6 +121,7 @@ export default function ServiceFormBasics({
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">Category *</Text>
           <Pressable
             onPress={() => setCatModalVisible(true)}
+            accessibilityRole="button"
             className={`form-input-container form-input-container-single justify-between ${
               errors.categoryId ? 'border-destructive' : 'border-gray-200'
             }`}
@@ -136,7 +137,7 @@ export default function ServiceFormBasics({
             <Text className={`text-sm flex-1 ${activeCategory ? 'text-gray-900' : 'text-[#898f8f]'}`}>
               {activeCategory ? activeCategory.name : 'Select a Category'}
             </Text>
-            <Feather name="chevron-down" size={16} color="#898f8f" />
+            <Feather name="chevron-down" size={16} color="#898f8f" accessible={false} />
           </Pressable>
           {errors.categoryId && (
             <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{errors.categoryId.message}</Text>
@@ -149,6 +150,7 @@ export default function ServiceFormBasics({
           {watchCategoryId ? (
             <Pressable
               onPress={() => setTypeModalVisible(true)}
+              accessibilityRole="button"
               className={`form-input-container form-input-container-single justify-between ${
                 errors.serviceTypeIds ? 'border-destructive' : 'border-gray-200'
               }`}
@@ -177,7 +179,7 @@ export default function ServiceFormBasics({
                     })()
                   : 'Select Service Types'}
               </Text>
-              <Feather name="chevron-down" size={16} color="#898f8f" />
+              <Feather name="chevron-down" size={16} color="#898f8f" accessible={false} />
             </Pressable>
           ) : (
             <View className="bg-gray-50 border border-gray-200 rounded-lg p-3">
@@ -237,6 +239,9 @@ export default function ServiceFormBasics({
               <Text className="text-gray-900 text-xl font-sans-extrabold">Service Category</Text>
               <Pressable
                 onPress={() => setCatModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />
@@ -283,6 +288,9 @@ export default function ServiceFormBasics({
               <Text className="text-gray-900 text-xl font-sans-extrabold">Service Types</Text>
               <Pressable
                 onPress={() => setTypeModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
                 <Feather name="x" size={16} color="#64748b" />

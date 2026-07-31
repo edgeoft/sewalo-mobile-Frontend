@@ -379,9 +379,10 @@ export default function OpenStreetMapSelector({
   const renderSearchResult = ({ item }: { item: SearchResult }) => (
     <Pressable
       onPress={() => handleSelectResult(item)}
+      accessibilityRole="button"
       className="flex-row items-center px-4 py-3 border-b border-gray-200 active:bg-gray-50"
     >
-      <Feather name="map-pin" size={14} color="#64748b" />
+      <Feather name="map-pin" size={14} color="#64748b" accessible={false} />
       <Text className="text-sm text-gray-700 flex-1 ml-2" numberOfLines={1}>
         {item.description}
       </Text>
@@ -420,23 +421,26 @@ export default function OpenStreetMapSelector({
         </Text>
       </View>
       <View className="flex-1 relative">
-        <SharedWebViewMap
-          ref={webViewRef}
-          html={generateOSMMapHTML(initialLat, initialLng)}
-          onMessage={handleMessage}
-          onLoadEnd={() => {
-            webViewRef.current?.postMessage(
-              JSON.stringify({
-                type: 'setMarker',
-                lat: coordinate.latitude.toString(),
-                lng: coordinate.longitude.toString(),
-              }),
-            );
-          }}
-          scrollEnabled={false}
-          bounces={false}
-          overScrollMode="never"
-        />
+        <View className="flex-1" importantForAccessibility="no">
+          <SharedWebViewMap
+            ref={webViewRef}
+            html={generateOSMMapHTML(initialLat, initialLng)}
+            onMessage={handleMessage}
+            onLoadEnd={() => {
+              webViewRef.current?.postMessage(
+                JSON.stringify({
+                  type: 'setMarker',
+                  lat: coordinate.latitude.toString(),
+                  lng: coordinate.longitude.toString(),
+                }),
+              );
+            }}
+            scrollEnabled={false}
+            bounces={false}
+            overScrollMode="never"
+            accessible={false}
+          />
+        </View>
 
         {searchResults.length > 0 && (
           <View style={styles.dropdown}>
