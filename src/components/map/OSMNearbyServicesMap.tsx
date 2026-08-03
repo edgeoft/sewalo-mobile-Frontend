@@ -31,13 +31,16 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body, #map { width: 100%; height: 100%; }
   .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
-    background-color: rgba(72, 90, 255, 0.6) !important;
+    background-color: rgba(72, 90, 255, 0.25) !important;
+    border-radius: 9999px !important;
   }
   .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
-    background-color: rgba(72, 90, 255, 0.9) !important;
-    color: white !important;
+    background-color: #485aff !important;
+    color: #ffffff !important;
     font-weight: 700 !important;
     font-family: system-ui, -apple-system, sans-serif !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
   }
 </style>
 </head>
@@ -89,7 +92,18 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
     zoomToBoundsOnClick: true,
-    maxClusterRadius: 50
+    maxClusterRadius: 120,
+    iconCreateFunction: function(cluster) {
+      var count = cluster.getChildCount();
+      return L.divIcon({
+        html: '<div style="background-color: #485aff; color: #ffffff; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 14px; border: 2px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.25); white-space: nowrap; display: flex; align-items: center; gap: 4px; font-family: system-ui, sans-serif;">' +
+                '<span>👥 ' + count + '</span>' +
+              '</div>',
+        className: 'custom-pill-cluster',
+        iconSize: [60, 28],
+        iconAnchor: [30, 14]
+      });
+    }
   });
   map.addLayer(markerClusterGroup);
 

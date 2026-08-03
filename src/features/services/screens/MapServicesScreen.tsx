@@ -14,6 +14,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { MapViewport } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { addBoundingBoxBuffer } from '@/utils/geohash';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
 
@@ -96,7 +97,7 @@ export default function MapServicesScreen() {
     setDebouncedViewport(initialViewport);
   }
 
-  // High-performance 300ms debounce with micro-movement jitter threshold check
+  // High-performance 500ms debounce with micro-movement jitter threshold check
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedViewport((prev) => {
@@ -105,12 +106,12 @@ export default function MapServicesScreen() {
         const latDiff = Math.abs(prev.center.lat - viewport.center.lat);
         const lngDiff = Math.abs(prev.center.lng - viewport.center.lng);
 
-        if (isSameZoom && latDiff < 0.002 && lngDiff < 0.002) {
+        if (isSameZoom && latDiff < 0.005 && lngDiff < 0.005) {
           return prev;
         }
         return viewport;
       });
-    }, 300);
+    }, 500);
     return () => clearTimeout(handler);
   }, [viewport]);
 
@@ -121,6 +122,12 @@ export default function MapServicesScreen() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Compute 25% padded bounds for query
+  const bufferedBounds = useMemo(() => {
+    if (!debouncedViewport.bounds) return null;
+    return addBoundingBoxBuffer(debouncedViewport.bounds.sw, debouncedViewport.bounds.ne, 0.25);
+  }, [debouncedViewport.bounds]);
+
   // Fetch Categories
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
 
@@ -128,17 +135,17 @@ export default function MapServicesScreen() {
   const { data: providersData, isLoading: isLoadingProviders } = useGetNearbyProvidersQuery({
     lat: debouncedViewport.center.lat,
     lng: debouncedViewport.center.lng,
-    ...(debouncedViewport.bounds
+    ...(bufferedBounds
       ? {
-          sw_lat: debouncedViewport.bounds.sw.lat,
-          sw_lng: debouncedViewport.bounds.sw.lng,
-          ne_lat: debouncedViewport.bounds.ne.lat,
-          ne_lng: debouncedViewport.bounds.ne.lng,
+          sw_lat: bufferedBounds.sw.lat,
+          sw_lng: bufferedBounds.sw.lng,
+          ne_lat: bufferedBounds.ne.lat,
+          ne_lng: bufferedBounds.ne.lng,
         }
       : {}),
     zoom: debouncedViewport.zoom,
     radius: 25,
-    limit: 100,
+    limit: 150,
     category: selectedCategorySlug || undefined,
     min_rating: appliedFilters.minRating ? Number(appliedFilters.minRating) : undefined,
     min_price: appliedFilters.minPrice ? Number(appliedFilters.minPrice) : undefined,

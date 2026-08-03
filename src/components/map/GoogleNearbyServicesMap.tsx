@@ -145,6 +145,36 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providers
       });
     });
 
+    if (typeof markerClusterer !== 'undefined' && markerClusterer) {
+      markerClusterer.clearMarkers();
+    } else if (typeof markerClusterer !== 'undefined') {
+      markerClusterer = new markerClusterer.MarkerClusterer({
+        map: map,
+        algorithmOptions: {
+          maxZoom: 15,
+          radius: 120,
+        },
+        renderer: {
+          render: function(params) {
+            var count = params.count;
+            var position = params.position;
+            return new google.maps.Marker({
+              position: position,
+              icon: {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="28">' +
+                  '<rect x="1" y="1" width="58" height="26" rx="13" fill="#485aff" stroke="#ffffff" stroke-width="2"/>' +
+                  '<text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">👥 ' + count + '</text>' +
+                  '</svg>'
+                ),
+                anchor: new google.maps.Point(30, 14)
+              }
+            });
+          }
+        }
+      });
+    }
+
     renderMarkers();
   }
 
