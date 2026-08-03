@@ -154,6 +154,9 @@ export const useVerifyOtp = () => {
       showSnackbar({ message: 'OTP verified successfully!', type: 'success' });
       void handleNavigation();
     },
+    onError: (err) => {
+      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
+    },
   });
 };
 
@@ -169,6 +172,9 @@ export const useResendOtp = (onSuccess?: () => void) => {
       const msg = res.otp ? `A new OTP has been sent successfully!` : 'A new OTP has been sent successfully!';
       showSnackbar({ message: msg, type: 'success' });
       onSuccess?.();
+    },
+    onError: (err) => {
+      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
     },
   });
 };

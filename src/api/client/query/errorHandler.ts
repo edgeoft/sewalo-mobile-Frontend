@@ -3,47 +3,72 @@ export const extractErrorMessage = (error: unknown): string => {
 
   if (typeof error === 'string') return error;
 
-  if (typeof error === 'object') {
+  if (typeof error === 'object' && error !== null) {
     const errObj = error as Record<string, unknown>;
     const details = errObj.details;
     const response = errObj.response as Record<string, unknown> | undefined;
     const data = details || response?.data;
+    const status = (errObj.status as number | undefined) || (response?.status as number | undefined);
+
     if (data) {
-      if (typeof data === 'string') return data;
-      if (typeof data === 'object' && data !== null) {
+      if (typeof data === 'string') {
+        if (!data.trim().startsWith('<') && !data.includes('Request failed with status code')) {
+          return data;
+        }
+      } else if (typeof data === 'object' && data !== null) {
         const dataObj = data as Record<string, unknown>;
-        // Laravel validation errors (errors is a key-value object of arrays/strings)
+
+        // 1. Validation error maps (e.g., Laravel errors object)
         if (dataObj.errors && typeof dataObj.errors === 'object' && !Array.isArray(dataObj.errors)) {
-          const laravelErrors: string[] = [];
-          for (const [key, value] of Object.entries(dataObj.errors as Record<string, unknown>)) {
-            if (Array.isArray(value)) {
-              laravelErrors.push(`${key}: ${value.join(', ')}`);
-            } else if (typeof value === 'string') {
-              laravelErrors.push(`${key}: ${value}`);
+          const validationErrors: string[] = [];
+          for (const [, value] of Object.entries(dataObj.errors as Record<string, unknown>)) {
+            if (Array.isArray(value) && value.length > 0) {
+              const msg = String(value[0]);
+              if (msg) validationErrors.push(msg);
+            } else if (typeof value === 'string' && value.trim()) {
+              validationErrors.push(value);
             }
           }
-          if (laravelErrors.length > 0) {
-            return laravelErrors.join('; ');
+          if (validationErrors.length > 0) {
+            return validationErrors.join(' ');
           }
         }
 
-        // Laravel general message
-        if (typeof dataObj.message === 'string') return dataObj.message;
+        // 2. Direct message or error string from backend payload
+        if (typeof dataObj.message === 'string' && dataObj.message.trim()) {
+          return dataObj.message;
+        }
+        if (typeof dataObj.error === 'string' && dataObj.error.trim()) {
+          return dataObj.error;
+        }
       }
     }
 
-    // 2. Handle standard Error.message
-    if (typeof errObj.message === 'string') {
-      return errObj.message;
+    // 3. Handle standard Error.message & Axios defaults
+    if (typeof errObj.message === 'string' && errObj.message.trim()) {
+      const msg = errObj.message;
+      if (msg === 'Network Error' || msg.includes('NETWORK_ERROR') || msg.includes('Failed to fetch')) {
+        return 'Network connection issue. Please check your internet connection.';
+      }
+      if (msg.includes('timeout') || errObj.code === 'ECONNABORTED') {
+        return 'Request timed out. Please try again.';
+      }
+
+      if (msg.includes('Request failed with status code')) {
+        if (status === 422) return 'Invalid input data or verification code. Please check and try again.';
+        if (status === 401) return 'Session expired. Please sign in again.';
+        if (status === 403) return 'Access denied.';
+        if (status === 404) return 'The requested resource was not found.';
+        if (status === 429) return 'Too many requests. Please try again in a moment.';
+        if (status && status >= 500) return 'Server error. Please try again later.';
+        return `Request failed (${status || 'Unknown'}). Please try again.`;
+      }
+
+      return msg;
     }
   }
 
-  // 3. Fallback to serializing the error object itself
-  try {
-    return JSON.stringify(error);
-  } catch {
-    return String(error);
-  }
+  return 'Something went wrong. Please try again.';
 };
 
 export const globalErrorHandler = (error: unknown, type: 'query' | 'mutation', detail: unknown) => {

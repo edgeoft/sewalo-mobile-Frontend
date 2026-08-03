@@ -24,7 +24,6 @@ export default function OtpVerificationScreen() {
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [timer, setTimer] = useState(60);
-  const [localError, setLocalError] = useState<string | null>(null);
 
   const inputRefs = useRef<TextInput[]>([]);
 
@@ -41,7 +40,6 @@ export default function OtpVerificationScreen() {
   const verifyOtpMutation = useVerifyOtp();
   const resendOtpMutation = useResendOtp(() => {
     setTimer(60);
-    setLocalError(null);
   });
 
   // Start resend countdown timer
@@ -61,7 +59,6 @@ export default function OtpVerificationScreen() {
       const char = cleanText[cleanText.length - 1];
       newOtp[index] = char;
       setOtp(newOtp);
-      setLocalError(null);
 
       if (index < 5 && inputRefs.current[index + 1]) {
         inputRefs.current[index + 1].focus();
@@ -94,7 +91,7 @@ export default function OtpVerificationScreen() {
   const handleVerify = () => {
     const code = otp.join('');
     if (code.length < 6) {
-      setLocalError(t('auth.enterOtp'));
+      showSnackbar({ message: t('auth.enterOtp'), type: 'error' });
       return;
     }
 
@@ -104,8 +101,6 @@ export default function OtpVerificationScreen() {
       type: flow === 'forgot-password' ? 'reset_password' : flow === 'login' ? 'login' : 'signup',
     });
   };
-
-  const errorMsg = localError || verifyOtpMutation.error?.message || resendOtpMutation.error?.message;
 
   return (
     <AuthScreenLayout
@@ -144,8 +139,6 @@ export default function OtpVerificationScreen() {
           </View>
         ))}
       </View>
-
-      {errorMsg ? <Text className="text-xs font-sans-medium text-destructive mb-6 ml-1">{errorMsg}</Text> : null}
 
       <View className="gap-y-4">
         <Button

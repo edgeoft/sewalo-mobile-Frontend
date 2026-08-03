@@ -1,5 +1,6 @@
 import { create, InternalAxiosRequestConfig } from 'axios';
 import { ApiClient, ApiClientConfig, RequestCtx, TokenManager, createApiError } from './types';
+import { extractErrorMessage } from './query/errorHandler';
 import { createSingleTokenManager } from './auth/singleTokenManager';
 import { createSlotTokenManager } from './auth/slotManager';
 import { secureStorageAdapter } from './auth/storage';
@@ -199,7 +200,15 @@ export const createApiClient = (
         );
       }
 
-      const apiError = createApiError(error.message, {
+      const extractedMessage = extractErrorMessage({
+        message: error.message,
+        status: error.response?.status,
+        code: error.code,
+        details: error.response?.data,
+        response: error.response,
+      });
+
+      const apiError = createApiError(extractedMessage, {
         status: error.response?.status,
         code: error.code,
         details: error.response?.data,
