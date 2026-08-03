@@ -25,9 +25,10 @@ export function useProfileCompletion(): ProfileCompletionResult {
   const { user, role: authRole } = useAuth();
   const role = authRole || user?.role || USER_ROLES.Customer;
 
-  // Fetch payout accounts to evaluate financial details
-  const { data: accountsResponse } = useGetFinanceAccountsQuery();
-  const payoutAccounts = accountsResponse?.data || [];
+  // Fetch payout accounts to evaluate financial details only for providers
+  const isProvider = role === USER_ROLES.Provider;
+  const { data: accountsResponse } = useGetFinanceAccountsQuery(isProvider);
+  const payoutAccounts = isProvider ? accountsResponse?.data || [] : [];
   const hasPayoutAccounts = payoutAccounts.length > 0;
 
   return useMemo(() => {

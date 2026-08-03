@@ -108,6 +108,8 @@ export const useGetFinanceAccountsQuery = (enabled: boolean = true) => {
   return useQuery<GetFinanceAccountsResponse, Error>({
     queryKey: QUERY_KEYS.FINANCE_ACCOUNTS,
     queryFn: getFinanceAccountsAction,
+    retry: false,
+    refetchOnWindowFocus: false,
     enabled,
   });
 };
