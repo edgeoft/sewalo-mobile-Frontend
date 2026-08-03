@@ -9,3 +9,13 @@ export const formatPhone = (phone: string): string => {
   }
   return `+977${cleaned}`;
 };
+
+// Extracts the 10-digit national mobile number without country code
+export const unformatPhone = (phone?: string | null): string => {
+  if (!phone) return '';
+  const cleaned = phone.replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('977') && cleaned.length >= 13) {
+    return cleaned.slice(3);
+  }
+  return cleaned;
+};

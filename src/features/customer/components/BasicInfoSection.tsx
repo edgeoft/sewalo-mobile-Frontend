@@ -21,6 +21,7 @@ import LocationSelector from '@/components/ui/LocationSelector';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
+import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 
 export interface BasicInfoFormData {
   fullName: string;
@@ -229,51 +230,14 @@ export default function BasicInfoSection({
           )}
         />
 
-        {/* Mobile Number (+977 styled like PhoneNumberField) */}
-        <View className="w-full">
-          <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{`${t('common.mobileNumber')} *`}</Text>
-          <View
-            className={`form-input-container form-input-container-single ${
-              errors.mobileNumber ? 'form-input-container-error' : ''
-            }`}
-          >
-            <View className="flex-row items-center pr-2.5">
-              <Text className="text-base mr-1">🇳🇵</Text>
-              <Text className="text-sm font-sans-semibold text-gray-800">+977</Text>
-              <Feather name="chevron-down" size={14} color="#898f8f" style={{ marginLeft: 4 }} />
-            </View>
-
-            <View className="w-[1px] h-6 bg-gray-200 mr-3.5" />
-
-            <Controller
-              control={control}
-              name="mobileNumber"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  placeholder="98XXXXXXX"
-                  placeholderTextColor="#898f8f"
-                  value={value}
-                  onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ''))}
-                  onBlur={onBlur}
-                  keyboardType="phone-pad"
-                  maxLength={10}
-                  className="form-input-text"
-                  style={{
-                    flex: 1,
-                    includeFontPadding: false,
-                    textAlignVertical: 'center',
-                    padding: 0,
-                  }}
-                />
-              )}
-            />
-          </View>
-          {errors.mobileNumber && (
-            <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
-              {errors.mobileNumber.message as string}
-            </Text>
-          )}
-        </View>
+        {/* Mobile Number */}
+        <PhoneNumberField
+          control={control as any}
+          name="mobileNumber"
+          label={`${t('common.mobileNumber')} *`}
+          placeholder="98XXXXXXX"
+          error={errors.mobileNumber?.message as string}
+        />
 
         {/* Location */}
         <View className="w-full">

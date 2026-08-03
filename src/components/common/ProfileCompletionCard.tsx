@@ -140,7 +140,7 @@ export default function ProfileCompletionCard({
 
                 {item.actionRoute && (
                   <Pressable
-                    onPress={() => router.push(item.actionRoute as any)}
+                    onPress={() => router.push(item.actionRoute!)}
                     accessibilityRole="button"
                     className="bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md active:bg-primary/20"
                   >

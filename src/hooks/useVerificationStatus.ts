@@ -25,11 +25,12 @@ const MESSAGES: Record<UserStatus, string> = {
 };
 
 export const useVerificationStatus = (): VerificationStatusResult => {
-  const { user } = useAuth();
+  const { user, role: authRole } = useAuth();
   const status = (user?.status as UserStatus) ?? null;
 
-  const isProvider = user?.role === USER_ROLES.Provider;
-  const isCustomer = user?.role === USER_ROLES.Customer;
+  const currentRole = authRole || user?.role || USER_ROLES.Customer;
+  const isProvider = currentRole === USER_ROLES.Provider;
+  const isCustomer = !isProvider;
   const hasMissingId = isProvider && !!user && !user.document;
 
   const getMessage = (): string => {

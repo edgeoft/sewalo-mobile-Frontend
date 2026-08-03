@@ -16,6 +16,7 @@ import AvailabilitySection from '../components/AvailabilitySection';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
+import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { Availability } from '@/types';
 import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END } from '@/constants/availability';
@@ -67,7 +68,7 @@ export default function ProviderEditProfileScreen() {
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: user?.name || '',
-      mobileNumber: user?.phone || '',
+      mobileNumber: unformatPhone(user?.phone) || '',
       location: user?.address || '',
       lat: user?.coordinates?.lat || 27.700769,
       lng: user?.coordinates?.lng || 85.30014,
@@ -86,7 +87,7 @@ export default function ProviderEditProfileScreen() {
     if (user) {
       reset({
         fullName: user.name || '',
-        mobileNumber: user.phone || '',
+        mobileNumber: unformatPhone(user.phone) || '',
         location: user.address || '',
         lat: user.coordinates?.lat || 27.700769,
         lng: user.coordinates?.lng || 85.30014,
@@ -109,7 +110,7 @@ export default function ProviderEditProfileScreen() {
     const saveProfileData = (avatarPath: string | null) => {
       const payload: any = {
         name: data.fullName,
-        phone: data.mobileNumber,
+        phone: formatPhone(data.mobileNumber),
         address: data.location,
         city: data.city,
         state: data.state,
