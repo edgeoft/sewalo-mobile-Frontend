@@ -2,6 +2,7 @@
   "name": "sewalo-mobile-frontend",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.9.0",
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.2",
     "@expo/ui": "~56.0.24",
