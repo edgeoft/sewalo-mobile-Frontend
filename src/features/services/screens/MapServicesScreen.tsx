@@ -2,22 +2,19 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
 import NearbyServicesMap from '@/components/map/NearbyServicesMap';
-import Header from '@/components/navigation/Header';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
-import Input from '@/components/ui/Input';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
-import { MapViewport } from '@/types';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
-import { addBoundingBoxBuffer } from '@/utils/geohash';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
+import { MapViewport } from '@/types';
+import { addBoundingBoxBuffer } from '@/utils/geohash';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ServiceFilterModal from '../components/ServiceFilterModal';
-import CategoryScrollSelector from '../components/CategoryScrollSelector';
 
 export default function MapServicesScreen() {
   const { t } = useTranslation();
@@ -28,7 +25,6 @@ export default function MapServicesScreen() {
   const { showError } = useErrorDialog();
   const currentUser = useAuthStore((state) => state.user);
 
-  // Default coordinates to Kathmandu if user coordinates are not set or user is guest
   const userLocation = useMemo(() => {
     if (currentUser?.coordinates) {
       return {
@@ -40,8 +36,8 @@ export default function MapServicesScreen() {
   }, [currentUser]);
 
   const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
-  const setSearchQuery = useServiceFiltersStore((s) => s.setSearchQuery);
   const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
+  const setSelectedCategorySlugStore = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
   const minPriceStore = useServiceFiltersStore((s) => s.minPrice);
   const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
   const minRatingStore = useServiceFiltersStore((s) => s.minRating);
@@ -51,8 +47,8 @@ export default function MapServicesScreen() {
 
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
 
-  // Filters Modal State
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(minPriceStore);
   const [maxPrice, setMaxPrice] = useState(maxPriceStore);
   const [minRating, setMinRating] = useState(minRatingStore);
@@ -60,19 +56,16 @@ export default function MapServicesScreen() {
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
 
-  // Panned map viewport state (defaults to userLocation)
   const [viewport, setViewport] = useState<MapViewport>({
     center: { lat: userLocation.lat, lng: userLocation.lng },
     zoom: 14,
   });
 
-  // Debounced map viewport to optimize API requests during panning
   const [debouncedViewport, setDebouncedViewport] = useState<MapViewport>({
     center: { lat: userLocation.lat, lng: userLocation.lng },
     zoom: 14,
   });
 
-  // Synchronize map center when userLocation changes on load
   const [prevUserLocation, setPrevUserLocation] = useState(userLocation);
 
   if (userLocation.lat !== prevUserLocation.lat || userLocation.lng !== prevUserLocation.lng) {
@@ -82,7 +75,6 @@ export default function MapServicesScreen() {
     setDebouncedViewport(initialViewport);
   }
 
-  // High-performance 500ms debounce with micro-movement jitter threshold check
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedViewport((prev) => {
@@ -107,16 +99,13 @@ export default function MapServicesScreen() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Compute 25% padded bounds for query
   const bufferedBounds = useMemo(() => {
     if (!debouncedViewport.bounds) return null;
     return addBoundingBoxBuffer(debouncedViewport.bounds.sw, debouncedViewport.bounds.ne, 0.25);
   }, [debouncedViewport.bounds]);
 
-  // Fetch Categories
-  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
+  const { data: categoriesData } = useGetCategoriesQuery();
 
-  // Fetch Nearby Providers with bounds
   const { data: providersData, isLoading: isLoadingProviders } = useGetNearbyProvidersQuery({
     lat: debouncedViewport.center.lat,
     lng: debouncedViewport.center.lng,
@@ -206,246 +195,301 @@ export default function MapServicesScreen() {
     Boolean,
   ).length;
 
+  const currentCategoryName = useMemo(() => {
+    if (!selectedCategorySlug) return t('common.all');
+    const matched = categoriesData?.data?.find((c) => c.slug === selectedCategorySlug);
+    return matched?.name || t('common.all');
+  }, [selectedCategorySlug, categoriesData?.data, t]);
+
   return (
-    <View className="flex-1 bg-secondary">
-      <Header
-        variant="menu"
-        showNotifications={!isGuest}
-        showNotificationBadge={!isGuest}
-        onNotificationsPress={() => router.push(ROUTES.notifications)}
-      />
-
-      <View
-        className="flex-1"
-        style={{
-          paddingTop: 20,
-        }}
-      >
-        {/* Page Header (Title + Subtitle) */}
-        <View className="px-4 mb-6">
-          <Text className="text-2xl font-sans-extrabold text-left text-gray-950 mb-1.5 tracking-tight">
-            {t('services.findServicesTitle')}
-          </Text>
-          <Text className="text-sm font-sans-medium text-gray-500 leading-relaxed">
-            {t('services.findServicesSubtitle')}
-          </Text>
-        </View>
-
-        {/* Search Bar & Filters Button */}
-        <View className="flex-row items-center gap-2 mb-6 px-4">
-          <View className="flex-1">
-            <Input
-              placeholder={t('services.searchPlaceholder2')}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              inputClassName="pr-12 text-sm"
-              rightIcon={
-                <View className="h-8 w-8 items-center justify-center rounded-xl bg-blue-50">
-                  <Feather name="search" size={16} color="#485aff" />
-                </View>
-              }
-            />
+    <View className="flex-1 bg-secondary relative">
+      <View className="flex-1" importantForAccessibility="no">
+        {isLoadingProviders ? (
+          <View className="flex-1 items-center justify-center bg-gray-150">
+            <ActivityIndicator size="large" color="#485aff" />
           </View>
+        ) : (
+          <NearbyServicesMap
+            userLat={userLocation.lat}
+            userLng={userLocation.lng}
+            providers={providers}
+            selectedProviderId={selectedProviderId}
+            onSelectProvider={setSelectedProviderId}
+            onMapCenterChange={(lat, lng) => {
+              setViewport((prev) => ({ ...prev, center: { lat, lng } }));
+            }}
+            onMapViewportChange={(newViewport) => {
+              setViewport(newViewport);
+            }}
+          />
+        )}
+      </View>
+
+      {/* Floating Top Controls Overlay (Separated Left & Right Buttons) */}
+      <View
+        style={{
+          position: 'absolute',
+          top: Math.max(insets.top, 12),
+          left: 14,
+          right: 14,
+          zIndex: 20,
+        }}
+        className="flex-row items-center justify-between"
+      >
+        {/* Left Controls: Category Button & Filter Button */}
+        <View className="flex-row items-center gap-2">
+          {/* Category Button */}
+          <Pressable
+            onPress={() => setIsCategoryModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.selectCategory')}
+            className={`h-10 px-3.5 rounded-lg border flex-row items-center gap-1.5 active:opacity-85 ${
+              selectedCategorySlug ? 'bg-primary border-primary' : 'bg-white border-gray-200'
+            }`}
+          >
+            <Feather name="grid" size={14} color={selectedCategorySlug ? '#ffffff' : '#485aff'} accessible={false} />
+            <Text
+              className={`text-xs font-sans-bold ${selectedCategorySlug ? 'text-white' : 'text-gray-800'}`}
+              numberOfLines={1}
+            >
+              {currentCategoryName}
+            </Text>
+            <Feather
+              name="chevron-down"
+              size={12}
+              color={selectedCategorySlug ? '#ffffff' : '#64748b'}
+              accessible={false}
+            />
+          </Pressable>
+
+          {/* Filter Button */}
           <Pressable
             onPress={() => setIsFilterModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel={t('services.filterTitle')}
-            className={`h-12 w-12 rounded-xl border items-center justify-center relative active:opacity-85 ${
+            className={`h-10 w-10 rounded-lg border items-center justify-center relative active:opacity-85 ${
               activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
           >
             <Feather
               name="sliders"
-              size={18}
+              size={14}
               color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'}
               accessible={false}
             />
             {activeFiltersCount > 0 && (
-              <View className="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full h-5 w-5 items-center justify-center border border-white">
-                <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
+              <View className="absolute -top-1 -right-1 bg-red-500 rounded-full h-4 w-4 items-center justify-center border border-white">
+                <Text className="text-[9px] font-sans-bold text-white">{activeFiltersCount}</Text>
               </View>
             )}
-          </Pressable>
-          <Pressable
-            onPress={handleSwitchToList}
-            accessibilityRole="button"
-            accessibilityLabel={t('services.listView')}
-            className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
-          >
-            <Feather name="list" size={18} color="#485aff" accessible={false} />
           </Pressable>
         </View>
 
-        {/* Categories Horizontal Scroll */}
-        <CategoryScrollSelector
-          selectedCategorySlug={selectedCategorySlug}
-          onSelectCategory={(slug) => {
-            router.replace(
-              `${isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices}?category=${slug || ''}`,
-            );
-          }}
-          categories={categoriesData?.data}
-          isLoading={isLoadingCategories}
-          horizontalPaddingClass="px-4"
-        />
+        {/* Right Control: List View Toggle Button */}
+        <Pressable
+          onPress={handleSwitchToList}
+          accessibilityRole="button"
+          accessibilityLabel={t('services.listView')}
+          className="h-10 w-10 rounded-lg border border-gray-200 bg-white items-center justify-center active:opacity-85"
+        >
+          <Feather name="list" size={15} color="#485aff" accessible={false} />
+        </Pressable>
+      </View>
 
-        {/* Map Area */}
-        <View className="flex-1 relative">
-          <View className="flex-1" importantForAccessibility="no">
-            {isLoadingProviders ? (
-              <View className="flex-1 items-center justify-center bg-gray-150">
-                <ActivityIndicator size="large" color="#485aff" />
-              </View>
-            ) : (
-              <NearbyServicesMap
-                userLat={userLocation.lat}
-                userLng={userLocation.lng}
-                providers={providers}
-                selectedProviderId={selectedProviderId}
-                onSelectProvider={setSelectedProviderId}
-                onMapCenterChange={(lat, lng) => {
-                  setViewport((prev) => ({ ...prev, center: { lat, lng } }));
-                }}
-                onMapViewportChange={(newViewport) => {
-                  setViewport(newViewport);
-                }}
-              />
-            )}
+      {selectedProvider && (
+        <Pressable
+          onPress={() => handleProviderPress(selectedProvider.slug || selectedProvider.id)}
+          accessibilityRole="button"
+          style={{
+            position: 'absolute',
+            bottom: Math.max(insets.bottom, 12),
+            left: 14,
+            right: 14,
+            backgroundColor: '#ffffff',
+            borderRadius: 12,
+            paddingVertical: 12,
+            paddingLeft: 12,
+            paddingRight: 14,
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: '#e2e8f0',
+            zIndex: 30,
+          }}
+          className="active:opacity-95"
+        >
+          <Pressable
+            onPress={(e) => {
+              e.stopPropagation();
+              setSelectedProviderId(null);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+            hitSlop={8}
+            style={{
+              position: 'absolute',
+              top: -8,
+              right: -4,
+              zIndex: 10,
+              backgroundColor: '#ffffff',
+              width: 22,
+              height: 22,
+              borderRadius: 11,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: '#cbd5e1',
+            }}
+            className="active:opacity-60"
+          >
+            <Feather name="x" size={10} color="#64748b" accessible={false} />
+          </Pressable>
+
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              borderWidth: 2,
+              borderColor: '#485aff',
+              padding: 1.5,
+              marginRight: 12,
+            }}
+          >
+            <Image
+              source={{ uri: getImageUrl(selectedProvider.avatar) || FALLBACKS.avatar }}
+              style={{ width: '100%', height: '100%', borderRadius: 20 }}
+              className="bg-gray-100"
+              resizeMode="cover"
+            />
           </View>
 
-          {/* Floating Details Preview Card */}
-          {selectedProvider && (
-            <Pressable
-              onPress={() => handleProviderPress(selectedProvider.slug || selectedProvider.id)}
-              accessibilityRole="button"
-              style={{
-                position: 'absolute',
-                bottom: Math.max(insets.bottom, 12),
-                left: 14,
-                right: 14,
-                backgroundColor: '#ffffff',
-                borderRadius: 10,
-                paddingVertical: 12,
-                paddingLeft: 12,
-                paddingRight: 14,
-                flexDirection: 'row',
-                alignItems: 'center',
-                shadowColor: '#1e293b',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.12,
-                shadowRadius: 16,
-                elevation: 8,
-                borderWidth: 1,
-                borderColor: '#f1f5f9',
-              }}
-              className="active:opacity-95"
-            >
-              {/* Close Button */}
+          <View className="flex-1" style={{ minWidth: 0 }}>
+            <View className="flex-row items-center" style={{ gap: 5 }}>
+              <Feather name="user" size={11} color="#485aff" />
+              <Text
+                className="text-[13px] font-sans-extrabold text-gray-900"
+                numberOfLines={1}
+                style={{ flexShrink: 1 }}
+              >
+                {selectedProvider.name}
+              </Text>
+              <View className="bg-primary/10 px-1.5 py-px rounded">
+                <Text className="text-[9px] font-sans-bold text-primary uppercase tracking-wide">
+                  {selectedProvider.city || 'Provider'}
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex-row items-center mt-1.5" style={{ gap: 8 }}>
+              <View className="flex-row items-center" style={{ gap: 2 }}>
+                <Feather name="star" size={10} color="#f59e0b" />
+                <Text className="text-[11px] font-sans-extrabold text-gray-800">
+                  {typeof selectedProvider.avg_rating === 'number' ? selectedProvider.avg_rating.toFixed(1) : '0.0'}
+                </Text>
+              </View>
+              <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>
+              <Feather name="map-pin" size={10} color="#64748b" />
+              <Text className="text-[11px] font-sans-bold text-gray-700">
+                {selectedProvider.distance_km.toFixed(2)} km away
+              </Text>
+            </View>
+          </View>
+
+          {/* Arrow CTA */}
+          <View
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 15,
+              backgroundColor: '#485aff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 6,
+            }}
+          >
+            <Feather name="chevron-right" size={16} color="#ffffff" />
+          </View>
+        </Pressable>
+      )}
+
+      {/* Category Selection Modal */}
+      <Modal
+        visible={isCategoryModalOpen}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setIsCategoryModalOpen(false)}
+      >
+        <Pressable
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' }}
+          onPress={() => setIsCategoryModalOpen(false)}
+        >
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            className="bg-white rounded-t-2xl p-4 gap-y-3"
+            style={{ paddingBottom: Math.max(insets.bottom, 16), maxHeight: '65%' }}
+          >
+            <View className="flex-row items-center justify-between border-b border-gray-100 pb-3">
+              <Text className="text-base font-sans-extrabold text-gray-900">{t('services.filterByCategory')}</Text>
               <Pressable
-                onPress={(e) => {
-                  e.stopPropagation();
-                  setSelectedProviderId(null);
-                }}
+                onPress={() => setIsCategoryModalOpen(false)}
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
-                style={{
-                  position: 'absolute',
-                  top: -8,
-                  right: -4,
-                  zIndex: 10,
-                  backgroundColor: '#ffffff',
-                  width: 22,
-                  height: 22,
-                  borderRadius: 11,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.12,
-                  shadowRadius: 3,
-                  elevation: 3,
-                  borderWidth: 1,
-                  borderColor: '#f1f5f9',
-                }}
-                className="active:opacity-60"
               >
-                <Feather name="x" size={10} color="#94a3b8" accessible={false} />
+                <Feather name="x" size={18} color="#64748b" />
+              </Pressable>
+            </View>
+
+            <ScrollView className="max-h-[320px]">
+              {/* 'All' Option */}
+              <Pressable
+                onPress={() => {
+                  setSelectedCategorySlugStore(undefined);
+                  setIsCategoryModalOpen(false);
+                }}
+                accessibilityRole="button"
+                className={`flex-row items-center justify-between p-3 rounded-xl mb-1.5 border active:opacity-85 ${
+                  !selectedCategorySlug ? 'bg-primary/5 border-primary' : 'bg-white border-gray-100'
+                }`}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Feather name="grid" size={16} color={!selectedCategorySlug ? '#485aff' : '#64748b'} />
+                  <Text
+                    className={`text-sm font-sans-bold ${!selectedCategorySlug ? 'text-primary' : 'text-gray-800'}`}
+                  >
+                    {t('common.all')}
+                  </Text>
+                </View>
+                {!selectedCategorySlug && <Feather name="check" size={16} color="#485aff" />}
               </Pressable>
 
-              {/* Avatar with accent ring */}
-              <View
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  borderWidth: 2,
-                  borderColor: '#485aff',
-                  padding: 1.5,
-                  marginRight: 12,
-                }}
-              >
-                <Image
-                  source={{ uri: getImageUrl(selectedProvider.avatar) || FALLBACKS.avatar }}
-                  style={{ width: '100%', height: '100%', borderRadius: 20 }}
-                  className="bg-gray-100"
-                  resizeMode="cover"
-                />
-              </View>
-
-              {/* Info section */}
-              <View className="flex-1" style={{ minWidth: 0 }}>
-                {/* Name + city inline */}
-                <View className="flex-row items-center" style={{ gap: 5 }}>
-                  <Feather name="user" size={11} color="#485aff" />
-                  <Text
-                    className="text-[13px] font-sans-extrabold text-gray-900"
-                    numberOfLines={1}
-                    style={{ flexShrink: 1 }}
+              {/* Dynamic Categories */}
+              {categoriesData?.data?.map((cat) => {
+                const isSelected = selectedCategorySlug === cat.slug;
+                return (
+                  <Pressable
+                    key={cat.id}
+                    onPress={() => {
+                      setSelectedCategorySlugStore(isSelected ? undefined : cat.slug);
+                      setIsCategoryModalOpen(false);
+                    }}
+                    accessibilityRole="button"
+                    className={`flex-row items-center justify-between p-3 rounded-xl mb-1.5 border active:opacity-85 ${
+                      isSelected ? 'bg-primary/5 border-primary' : 'bg-white border-gray-100'
+                    }`}
                   >
-                    {selectedProvider.name}
-                  </Text>
-                  <View className="bg-primary/10 px-1.5 py-px rounded">
-                    <Text className="text-[9px] font-sans-bold text-primary uppercase tracking-wide">
-                      {selectedProvider.city || 'Provider'}
+                    <Text className={`text-sm font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-800'}`}>
+                      {cat.name}
                     </Text>
-                  </View>
-                </View>
-
-                {/* Rating + Distance row */}
-                <View className="flex-row items-center mt-1.5" style={{ gap: 8 }}>
-                  <View className="flex-row items-center" style={{ gap: 2 }}>
-                    <Feather name="star" size={10} color="#f59e0b" />
-                    <Text className="text-[11px] font-sans-extrabold text-gray-800">
-                      {typeof selectedProvider.avg_rating === 'number' ? selectedProvider.avg_rating.toFixed(1) : '0.0'}
-                    </Text>
-                  </View>
-                  <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>
-                  <Feather name="map-pin" size={10} color="#64748b" />
-                  <Text className="text-[11px] font-sans-bold text-gray-700">
-                    {selectedProvider.distance_km.toFixed(2)} km away
-                  </Text>
-                </View>
-              </View>
-
-              {/* Arrow CTA */}
-              <View
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 15,
-                  backgroundColor: '#485aff',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginLeft: 6,
-                }}
-              >
-                <Feather name="chevron-right" size={16} color="#ffffff" />
-              </View>
-            </Pressable>
-          )}
-        </View>
-      </View>
+                    {isSelected && <Feather name="check" size={16} color="#485aff" />}
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* Reusable Filters Modal */}
       <ServiceFilterModal
