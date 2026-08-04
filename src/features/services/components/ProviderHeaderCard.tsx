@@ -59,13 +59,13 @@ export default function ProviderHeaderCard({
               )}
             </View>
 
-            <View className="flex-row items-center gap-2 mb-2">
-              <View className="rounded-xl bg-surface-indigo-subtle px-2.5 py-0.5">
+            <View className="flex-row items-center flex-wrap gap-x-2 gap-y-1.5 mb-2">
+              <View className="rounded-xl bg-surface-indigo-subtle px-2.5 py-0.5 shrink-0">
                 <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
               </View>
 
               <Pressable
-                className="flex-row items-center gap-1.5 active:opacity-60"
+                className="flex-row items-center gap-1.5 active:opacity-60 shrink-0"
                 onPress={onReviewPress}
                 accessibilityRole="button"
               >
@@ -79,7 +79,7 @@ export default function ProviderHeaderCard({
                 <Text className="text-[11px] font-sans-bold text-gray-900">
                   {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
                 </Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">
+                <Text className="text-[11px] font-sans-medium text-gray-400" numberOfLines={1}>
                   ({reviewCount > 0 ? t('services.reviewsCount', { count: reviewCount }) : t('services.noReviewsCount')}
                   )
                 </Text>
