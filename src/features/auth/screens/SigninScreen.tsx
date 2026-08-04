@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ import { useLogin } from '@/api';
 export default function SigninScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const { setRole } = useAuth();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -32,10 +33,12 @@ export default function SigninScreen() {
   useEffect(() => {
     if (isLoggedIn && user) {
       if (user.status === USER_STATUSES.Pending) {
-        router.replace({
-          pathname: ROUTES.auth.gettingStarted,
-          params: { role, phone: user.phone },
-        });
+        if (pathname !== ROUTES.auth.gettingStarted) {
+          router.replace({
+            pathname: ROUTES.auth.gettingStarted,
+            params: { role, phone: user.phone },
+          });
+        }
       } else {
         if (role === USER_ROLES.Provider) {
           router.replace(ROUTES.provider.home);
@@ -44,7 +47,7 @@ export default function SigninScreen() {
         }
       }
     }
-  }, [isLoggedIn, role, user, router]);
+  }, [isLoggedIn, role, user, router, pathname]);
 
   const [rememberMe, setRememberMe] = useState(false);
   const loginMutation = useLogin();

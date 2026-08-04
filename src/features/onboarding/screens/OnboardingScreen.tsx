@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View, useWindowDimensions } from 'react-native';
@@ -20,6 +20,7 @@ import * as SecureStore from 'expo-secure-store';
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
@@ -32,13 +33,15 @@ export default function OnboardingScreen() {
 
   useEffect(() => {
     const checkStatus = async () => {
-      // 1. If user is logged in, redirect to dashboard
+      // 1. If user is logged in, redirect to dashboard or gettingStarted
       if (isLoggedIn && user) {
         if (user.status === USER_STATUSES.Pending) {
-          router.replace({
-            pathname: ROUTES.auth.gettingStarted,
-            params: { role, phone: user.phone },
-          });
+          if (pathname !== ROUTES.auth.gettingStarted) {
+            router.replace({
+              pathname: ROUTES.auth.gettingStarted,
+              params: { role, phone: user.phone },
+            });
+          }
         } else {
           if (role === USER_ROLES.Provider) {
             router.replace(ROUTES.provider.home);
@@ -65,7 +68,7 @@ export default function OnboardingScreen() {
     };
 
     checkStatus();
-  }, [isLoggedIn, role, user, isLoading, router]);
+  }, [isLoggedIn, role, user, isLoading, router, pathname]);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);

@@ -169,7 +169,7 @@ export function useOnboarding() {
   const totalFormSteps = steps.length - 2;
 
   const initialStepIndex = useMemo(() => {
-    if (!profile || !profile.email) return 0;
+    if (!profile) return 0;
 
     const personalInfoValid = personalInfoSchema.safeParse({
       email: profile.email || '',
@@ -178,6 +178,9 @@ export function useOnboarding() {
       avatar: profile.avatar || '',
     }).success;
 
+    // If no email, name, or dob has been set yet, start at Welcome step
+    if (!profile.email && !profile.name && !profile.dob) return 0;
+    // If personal details aren't complete yet, start at Personal Details step
     if (!personalInfoValid) return 1;
 
     if (role === USER_ROLES.Provider) {
