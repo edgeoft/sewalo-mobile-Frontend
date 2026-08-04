@@ -45,13 +45,25 @@ export default function ProviderOverviewTab({
   certificates,
 }: ProviderOverviewTabProps) {
   const { t } = useTranslation();
-  const getYear = (dateStr?: string | null) => {
-    if (!dateStr) return t('services.present');
-    return dateStr.split('-')[0];
+
+  const validExperienceList = (experienceList || []).filter(
+    (exp) => (exp.title && exp.title.trim()) || (exp.company_name && exp.company_name.trim()),
+  );
+
+  const validEducation = (education || []).filter(
+    (edu) => (edu.degree && edu.degree.trim()) || (edu.institute && edu.institute.trim()),
+  );
+
+  const formatDateRange = (startDate?: string | null, endDate?: string | null) => {
+    const startYear = startDate && startDate.trim() ? startDate.split('-')[0].trim() : null;
+    const endYear = endDate && endDate.trim() ? endDate.split('-')[0].trim() : null;
+    if (!startYear && !endYear) return null;
+    if (!startYear) return endYear;
+    return `${startYear} – ${endYear || t('services.present')}`;
   };
 
-  const hasExperienceList = experienceList && experienceList.length > 0;
-  const hasEducation = education && education.length > 0;
+  const hasExperienceList = validExperienceList.length > 0;
+  const hasEducation = validEducation.length > 0;
   const hasSkills = skills && skills.length > 0;
   const hasCertificates = certificates && (Array.isArray(certificates) ? certificates.length > 0 : false);
 
@@ -84,54 +96,78 @@ export default function ProviderOverviewTab({
         </View>
 
         {/* Separator and Work Experience */}
-        {hasExperienceList && (
-          <>
-            <View className="h-[1px] bg-slate-100" />
+        <View className="h-[1px] bg-slate-100" />
+        <View className="gap-y-2">
+          <Text className="text-xs font-sans-bold text-gray-900">{t('services.workExperience')}</Text>
+          {hasExperienceList ? (
             <View className="gap-y-2">
-              <Text className="text-xs font-sans-bold text-gray-900">{t('services.workExperience')}</Text>
-              <View className="gap-y-2">
-                {experienceList.map((exp) => (
+              {validExperienceList.map((exp) => {
+                const dateText = formatDateRange(exp.start_date, exp.end_date);
+                return (
                   <View key={exp.id} className="bg-slate-50/50 border border-slate-100 rounded-lg p-3">
                     <View className="flex-row justify-between items-center mb-1">
-                      <Text className="text-xs font-sans-bold text-gray-950 flex-1 pr-2">{exp.title}</Text>
-                      <View className="bg-primary/5 rounded-md px-2 py-0.5">
-                        <Text className="text-[9px] font-sans-bold text-primary">
-                          {getYear(exp.start_date)} – {getYear(exp.end_date)}
-                        </Text>
-                      </View>
+                      <Text className="text-xs font-sans-bold text-gray-950 flex-1 pr-2">
+                        {exp.title || exp.company_name}
+                      </Text>
+                      {dateText && (
+                        <View className="bg-primary/5 rounded-md px-2 py-0.5">
+                          <Text className="text-[9px] font-sans-bold text-primary">{dateText}</Text>
+                        </View>
+                      )}
                     </View>
-                    <Text className="text-[11px] font-sans-medium text-gray-500">{exp.company_name}</Text>
+                    {exp.title && exp.company_name && (
+                      <Text className="text-[11px] font-sans-medium text-gray-500">{exp.company_name}</Text>
+                    )}
                   </View>
-                ))}
-              </View>
+                );
+              })}
             </View>
-          </>
-        )}
+          ) : (
+            <View className="bg-slate-50/50 border border-slate-100 border-dashed rounded-lg p-3.5 flex-row items-center gap-3">
+              <View className="h-8 w-8 rounded-full bg-slate-100 items-center justify-center">
+                <Feather name="briefcase" size={14} color="#64748b" />
+              </View>
+              <Text className="text-xs font-sans-medium text-gray-500 flex-1">{t('services.noExperienceAdded')}</Text>
+            </View>
+          )}
+        </View>
 
         {/* Separator and Education */}
-        {hasEducation && (
-          <>
-            <View className="h-[1px] bg-slate-100" />
+        <View className="h-[1px] bg-slate-100" />
+        <View className="gap-y-2">
+          <Text className="text-xs font-sans-bold text-gray-900">{t('services.education')}</Text>
+          {hasEducation ? (
             <View className="gap-y-2">
-              <Text className="text-xs font-sans-bold text-gray-900">{t('services.education')}</Text>
-              <View className="gap-y-2">
-                {education.map((edu) => (
+              {validEducation.map((edu) => {
+                const dateText = formatDateRange(edu.start_date, edu.end_date);
+                return (
                   <View key={edu.id} className="bg-slate-50/50 border border-slate-100 rounded-lg p-3">
                     <View className="flex-row justify-between items-center mb-1">
-                      <Text className="text-xs font-sans-bold text-gray-950 flex-1 pr-2">{edu.degree}</Text>
-                      <View className="bg-primary/5 rounded-md px-2 py-0.5">
-                        <Text className="text-[9px] font-sans-bold text-primary">
-                          {getYear(edu.start_date)} – {getYear(edu.end_date)}
-                        </Text>
-                      </View>
+                      <Text className="text-xs font-sans-bold text-gray-950 flex-1 pr-2">
+                        {edu.degree || edu.institute}
+                      </Text>
+                      {dateText && (
+                        <View className="bg-primary/5 rounded-md px-2 py-0.5">
+                          <Text className="text-[9px] font-sans-bold text-primary">{dateText}</Text>
+                        </View>
+                      )}
                     </View>
-                    <Text className="text-[11px] font-sans-medium text-gray-500">{edu.institute}</Text>
+                    {edu.degree && edu.institute && (
+                      <Text className="text-[11px] font-sans-medium text-gray-500">{edu.institute}</Text>
+                    )}
                   </View>
-                ))}
-              </View>
+                );
+              })}
             </View>
-          </>
-        )}
+          ) : (
+            <View className="bg-slate-50/50 border border-slate-100 border-dashed rounded-lg p-3.5 flex-row items-center gap-3">
+              <View className="h-8 w-8 rounded-full bg-slate-100 items-center justify-center">
+                <Feather name="book-open" size={14} color="#64748b" />
+              </View>
+              <Text className="text-xs font-sans-medium text-gray-500 flex-1">{t('services.noEducationAdded')}</Text>
+            </View>
+          )}
+        </View>
 
         {/* Separator and Skills & Expertise */}
         {hasSkills && (
