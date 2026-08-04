@@ -1,15 +1,17 @@
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, Pressable, Text, TextInput, TextInputKeyPressEventData, View } from 'react-native';
 
 import { useResendOtp, useVerifyOtp } from '@/api';
 import Button from '@/components/ui/Button';
+import { ROUTES } from '@/constants/routes';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import AuthScreenLayout from '../components/AuthScreenLayout';
 
 export default function OtpVerificationScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { showSnackbar } = useSnackbar();
   const {
     phone,
@@ -95,10 +97,18 @@ export default function OtpVerificationScreen() {
       return;
     }
 
+    if (flow === 'forgot-password') {
+      router.replace({
+        pathname: ROUTES.auth.resetPassword,
+        params: { phone: phone || '', otp: code },
+      });
+      return;
+    }
+
     verifyOtpMutation.mutate({
       phone: phone || '',
       otp: code,
-      type: flow === 'forgot-password' ? 'reset_password' : flow === 'login' ? 'login' : 'signup',
+      type: flow === 'login' ? 'login' : 'signup',
     });
   };
 

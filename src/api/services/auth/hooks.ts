@@ -126,28 +126,21 @@ export const useVerifyOtp = () => {
       }),
     onSuccess: async (res, variables) => {
       const handleNavigation = async () => {
-        if (variables.type === 'reset_password') {
-          router.replace({
-            pathname: ROUTES.auth.resetPassword,
-            params: { phone: formatPhone(variables.phone), otp: variables.otp },
-          });
-        } else {
-          if (res.user && res.access_token) {
-            await login(res.user, res.access_token);
-          }
-          const userRole = res.user?.role || USER_ROLES.Customer;
-          if (res.user && (res.user.status === USER_STATUSES.Completed || res.user.status === USER_STATUSES.Verified)) {
-            if (userRole === USER_ROLES.Provider) {
-              router.replace(ROUTES.provider.home);
-            } else {
-              router.replace(ROUTES.customer.home);
-            }
+        if (res.user && res.access_token) {
+          await login(res.user, res.access_token);
+        }
+        const userRole = res.user?.role || USER_ROLES.Customer;
+        if (res.user && (res.user.status === USER_STATUSES.Completed || res.user.status === USER_STATUSES.Verified)) {
+          if (userRole === USER_ROLES.Provider) {
+            router.replace(ROUTES.provider.home);
           } else {
-            router.replace({
-              pathname: ROUTES.auth.gettingStarted,
-              params: { role: userRole, phone: formatPhone(variables.phone) },
-            });
+            router.replace(ROUTES.customer.home);
           }
+        } else {
+          router.replace({
+            pathname: ROUTES.auth.gettingStarted,
+            params: { role: userRole, phone: formatPhone(variables.phone) },
+          });
         }
       };
 
@@ -214,6 +207,9 @@ export const useResetPassword = () => {
     onSuccess: () => {
       showSnackbar({ message: 'Password reset successfully!', type: 'success' });
       router.replace(ROUTES.auth.signin);
+    },
+    onError: (err) => {
+      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
     },
   });
 };
