@@ -53,13 +53,21 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
     },
     customer: {
       backgroundHeight: 188,
-      title: t('home.customerHeroTitle'),
+      title: (
+        <Trans i18nKey="home.customerHeroTitle">
+          Your <Text className="text-primary">next booking</Text> starts here
+        </Trans>
+      ),
       subtitle: t('home.customerHeroSubtitle'),
       searchPlaceholder: t('home.customerSearchPlaceholder'),
     },
     provider: {
       backgroundHeight: 220,
-      title: t('home.providerHeroTitle'),
+      title: (
+        <Trans i18nKey="home.providerHeroTitle">
+          Grow your <Text className="text-primary">business</Text>
+        </Trans>
+      ),
       subtitle: t('home.providerHeroSubtitle'),
       searchPlaceholder: '',
     },

@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
-import { Tabs } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BottomNavigationBar, { type BottomTabBarProps } from '@/components/navigation/BottomNavigationBar';
+import { Tabs } from 'expo-router';
+import { useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function CustomerTabBar(props: BottomTabBarProps) {
   return <BottomNavigationBar {...props} />;
@@ -15,7 +15,6 @@ export default function CustomerLayout() {
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
-        animation: 'fade',
         tabBarStyle: {
           height: 56 + insets.bottom,
         },
