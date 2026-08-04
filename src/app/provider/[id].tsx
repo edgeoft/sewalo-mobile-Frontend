@@ -92,12 +92,34 @@ export default function DynamicProviderDetailRoute() {
       return city || address || t('home.nepal');
     };
 
+    const offeringsMap = new Map<string, string>();
+    firstService?.service_offerings?.forEach((o: ServiceOffering) => {
+      if (o.sub_category?.name) {
+        if (o.id) offeringsMap.set(o.id, o.sub_category.name);
+        if (o.sub_category_id) offeringsMap.set(o.sub_category_id, o.sub_category.name);
+        if (o.sub_category?.id) offeringsMap.set(o.sub_category.id, o.sub_category.name);
+      }
+    });
+
+    const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
+    const resolveInclusion = (item: string): string => {
+      if (!item) return '';
+      if (offeringsMap.has(item)) {
+        return offeringsMap.get(item)!;
+      }
+      if (isUuid(item)) {
+        return firstService?.category?.name || t('services.service');
+      }
+      return item;
+    };
+
     const pkg = firstService?.service_packages?.[0];
     const specialPackage = pkg
       ? {
           title: pkg.name,
           description: pkg.description || '',
-          inclusions: pkg.services_offered || [],
+          inclusions: pkg.services_offered?.map(resolveInclusion).filter(Boolean) || [],
           price: `Rs. ${pkg.price}`,
           durationLabel: `${pkg.duration} ${pkg.duration_unit || t('services.days')}`,
         }

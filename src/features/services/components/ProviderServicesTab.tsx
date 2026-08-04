@@ -28,34 +28,42 @@ export default function ProviderServicesTab({
     <View className="gap-y-5">
       {/* Special Package Deals (Conditional) */}
       {specialPackage && (
-        <View className="gap-y-3">
+        <View className="gap-y-2">
           <View className="flex-row items-center gap-1.5">
             <Feather name="zap" size={16} color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-extrabold text-gray-950">{t('services.specialPackageDeals')}</Text>
           </View>
 
-          <View className="bg-surface-indigo-subtle border border-blue-100 rounded-lg p-4">
-            <Text className="text-sm font-sans-extrabold text-gray-950 mb-1">{specialPackage.title}</Text>
-            <Text className="text-xs font-sans-medium text-gray-500 leading-4.5 mb-3">
-              {specialPackage.description}
-            </Text>
+          <View className="bg-surface-indigo-subtle border border-blue-100 rounded-lg p-3">
+            <Text className="text-base font-sans-extrabold text-gray-950 mb-1">{specialPackage.title}</Text>
+            {!!specialPackage.description && (
+              <Text className="text-xs font-sans-medium text-gray-500 leading-relaxed mb-2.5">
+                {specialPackage.description}
+              </Text>
+            )}
 
             {/* Package Inclusions Card */}
-            <View className="bg-white rounded-lg p-3.5 mb-4 border border-blue-50/50">
-              <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider mb-2">
-                {t('services.packageIncludes')}
-              </Text>
-              {specialPackage.inclusions.map((item, idx) => (
-                <View key={idx} className="flex-row items-center mb-1.5">
-                  <View className="h-4 w-4 bg-surface-indigo-subtle rounded-full items-center justify-center mr-2">
-                    <Feather name="check" size={10} color={THEME_COLORS.primary} />
-                  </View>
-                  <Text className="text-xs font-sans-medium text-gray-700">{item}</Text>
-                </View>
-              ))}
-            </View>
+            {specialPackage.inclusions && specialPackage.inclusions.length > 0 && (
+              <View className="bg-white rounded-lg p-2.5 mb-2.5 border border-blue-50/50">
+                <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider mb-1.5">
+                  {t('services.packageIncludes')}
+                </Text>
+                {specialPackage.inclusions.map((item, idx) => {
+                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item);
+                  const displayItem = isUuid ? t('services.serviceOffering') : item;
+                  return (
+                    <View key={idx} className="flex-row items-center mb-1">
+                      <View className="h-4 w-4 bg-surface-indigo-subtle rounded-full items-center justify-center mr-2">
+                        <Feather name="check" size={10} color={THEME_COLORS.primary} />
+                      </View>
+                      <Text className="text-xs font-sans-medium text-gray-700">{displayItem}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
 
-            <View className="flex-row items-center justify-between mb-4">
+            <View className="flex-row items-center justify-between mb-2.5">
               <View>
                 <Text className="text-[9px] font-sans-semibold text-gray-400 uppercase">
                   {t('services.packagePrice')}
@@ -73,7 +81,7 @@ export default function ProviderServicesTab({
               title={t('services.bookPackage')}
               variant="primary"
               onPress={onBookPackage}
-              className="py-3 rounded-lg"
+              className="py-2.5 rounded-lg"
               leftIcon={<Feather name="calendar" size={16} color="white" />}
             />
           </View>
@@ -99,8 +107,8 @@ export default function ProviderServicesTab({
               onPress={() => onServiceToggle(service.id)}
               accessibilityRole="button"
               accessibilityState={{ checked: isChecked }}
-              className={`bg-white border rounded-lg p-3.5 flex-row items-center justify-between shadow-sm ${
-                isChecked ? 'border-primary' : 'border-gray-200'
+              className={`bg-white border rounded-xl p-3.5 flex-row items-center justify-between ${
+                isChecked ? 'border-primary bg-primary/[0.02]' : 'border-gray-200'
               }`}
             >
               <View className="flex-row items-center flex-1 pr-4">
@@ -119,7 +127,7 @@ export default function ProviderServicesTab({
                 </View>
               </View>
 
-              <Text className="text-sm font-sans-extrabold text-gray-900">{service.price}</Text>
+              <Text className="text-sm font-sans-extrabold text-primary">{service.price}</Text>
             </Pressable>
           );
         })}
