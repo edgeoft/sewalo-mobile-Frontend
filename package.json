@@ -53,12 +53,15 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "@types/react": "~19.2.2",
     "eslint": "^9.39.4",
     "eslint-config-expo": "~56.0.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react-native-a11y": "^3.5.1",
+    "git-cliff": "^2.13.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
@@ -71,7 +74,9 @@
     "ios": "expo run:ios",
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,json}'",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "commitlint": "commitlint --edit",
+    "changelog": "git-cliff -o CHANGELOG.md"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
