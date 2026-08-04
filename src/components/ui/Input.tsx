@@ -10,6 +10,7 @@ export interface InputProps extends TextInputProps {
   inputStyle?: StyleProp<TextStyle>;
   className?: string;
   inputClassName?: string;
+  containerClassName?: string;
 }
 
 export default function Input({
@@ -21,6 +22,7 @@ export default function Input({
   inputStyle,
   className = '',
   inputClassName = '',
+  containerClassName = '',
   onFocus,
   onBlur,
   ...props
@@ -49,7 +51,7 @@ export default function Input({
       <View
         className={`form-input-container ${
           props.multiline ? 'form-input-container-multiline' : 'form-input-container-single'
-        } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''}`}
+        } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''} ${containerClassName}`}
         style={{
           shadowColor: isFocused ? '#485aff' : '#000',
           shadowOffset: { width: 0, height: 2 },

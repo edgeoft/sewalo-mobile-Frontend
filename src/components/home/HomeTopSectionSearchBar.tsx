@@ -15,7 +15,8 @@ export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTo
         <Input
           placeholder={placeholder}
           editable={false}
-          inputClassName="text-sm font-sans-medium text-gray-500"
+          containerClassName="px-3"
+          inputClassName="text-[13px] font-sans-medium text-gray-500"
           rightIcon={<Feather name="search" size={20} color={THEME_COLORS.primary} />}
         />
       </View>
