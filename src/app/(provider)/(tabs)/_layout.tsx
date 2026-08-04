@@ -3,18 +3,17 @@ import { Tabs } from 'expo-router';
 import { useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function ProviderTabBar(props: BottomTabBarProps) {
-  return <BottomNavigationBar {...props} />;
-}
-
 export default function ProviderLayout() {
   const insets = useSafeAreaInsets();
-  const renderTabBar = useCallback((props: BottomTabBarProps) => <ProviderTabBar {...props} />, []);
+  const renderTabBar = useCallback((props: BottomTabBarProps) => <BottomNavigationBar {...props} />, []);
   return (
     <Tabs
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
+        sceneStyle: {
+          backgroundColor: '#f1f5f9',
+        },
         tabBarStyle: {
           height: 56 + insets.bottom,
         },

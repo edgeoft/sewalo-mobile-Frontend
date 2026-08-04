@@ -79,6 +79,8 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
           const translationKey = TAB_TRANSLATION_KEYS[route.name];
           const translatedLabel = translationKey ? t(translationKey) : config.label;
 
+          const isTabSelected = state.routes[state.index]?.key === route.key;
+
           const onPress = () => {
             if (config.action) {
               config.action();
@@ -91,7 +93,7 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
               canPreventDefault: true,
             });
 
-            if (!isFocused && !event.defaultPrevented) {
+            if (!isTabSelected && !event.defaultPrevented) {
               navigation.navigate(route.name, route.params);
             }
           };
