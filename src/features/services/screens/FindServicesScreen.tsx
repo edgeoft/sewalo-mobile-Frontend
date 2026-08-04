@@ -203,48 +203,55 @@ export default function FindServicesScreen() {
           </Text>
         </View>
 
-        {/* Search Bar & Filters Button */}
-        <View className="flex-row items-center gap-2 mb-6">
-          <View className="flex-1">
-            <Input
-              placeholder={t('services.searchPlaceholder2')}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              inputClassName="pr-12 text-sm"
-              rightIcon={
-                <View className="h-8 w-8 items-center justify-center rounded-xl bg-blue-50">
-                  <Feather name="search" size={16} color="#485aff" />
-                </View>
-              }
-            />
-          </View>
+        {/* Full-width Search Bar */}
+        <View className="mb-3">
+          <Input
+            placeholder={t('services.searchPlaceholder2')}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            inputClassName="pr-12 text-sm"
+            rightIcon={
+              <View className="h-8 w-8 items-center justify-center rounded-xl bg-blue-50">
+                <Feather name="search" size={16} color="#485aff" />
+              </View>
+            }
+          />
+        </View>
+
+        {/* Filters & Map Action Toolbar */}
+        <View className="flex-row items-center justify-between gap-3 mb-6">
           <Pressable
             onPress={() => setIsFilterModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel={t('services.filterTitle')}
-            className={`h-12 w-12 rounded-xl border items-center justify-center relative active:opacity-85 ${
+            className={`flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border active:opacity-85 ${
               activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
           >
             <Feather
               name="sliders"
-              size={18}
+              size={16}
               color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'}
               accessible={false}
             />
+            <Text className={`text-xs font-sans-bold ${activeFiltersCount > 0 ? 'text-white' : 'text-gray-800'}`}>
+              {t('services.filterTitle')}
+            </Text>
             {activeFiltersCount > 0 && (
-              <View className="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full h-5 w-5 items-center justify-center border border-white">
+              <View className="bg-red-500 rounded-full h-5 px-1.5 items-center justify-center min-w-[20px]">
                 <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
               </View>
             )}
           </Pressable>
+
           <Pressable
             onPress={handleSwitchToMap}
             accessibilityRole="button"
             accessibilityLabel={t('services.mapView')}
-            className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
+            className="flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-85"
           >
-            <Feather name="map" size={18} color="#485aff" accessible={false} />
+            <Feather name="map" size={16} color="#485aff" accessible={false} />
+            <Text className="text-xs font-sans-bold text-gray-800">{t('services.mapView')}</Text>
           </Pressable>
         </View>
 
