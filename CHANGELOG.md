@@ -141,6 +141,8 @@ This file is auto-generated from conventional commits. Do not edit it manually.
 
 - *(services)* Redesign map view floating controls and add category modal
 
+- *(services)* Render empty state visual for missing work experience and education
+
 
 ### Fixed
 
@@ -207,6 +209,18 @@ This file is auto-generated from conventional commits. Do not edit it manually.
 - *(map)* Optimize safe area padding and remove deprecated safe-area-view imports
 
 - *(services)* Update individual service pricing color to primary and remove heavy item shadows
+
+- *(home)* Add containerClassName prop to Input and adjust search bar internal padding
+
+- *(services)* Prevent provider name and verified badge wrapping on long names
+
+- *(services)* Refine provider details and ratings query execution gating
+
+- Layouts
+
+- Animations and input fields
+
+- Tabs
 
 
 ### Refactored
