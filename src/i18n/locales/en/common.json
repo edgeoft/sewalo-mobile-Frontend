@@ -54,5 +54,10 @@
   "optional": "Optional",
   "contact": "Contact",
   "star": "star",
-  "stars": "stars"
+  "stars": "stars",
+  "to": "to",
+  "day": "Day",
+  "month": "Month",
+  "year": "Year",
+  "selectDateOfBirth": "Select Date of Birth"
 }
