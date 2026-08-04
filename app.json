@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "sewalo-mobile-Frontend",
-    "slug": "sewalo-mobile-Frontend",
+    "name": "Sewalo",
+    "slug": "sewalo-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -45,7 +45,9 @@
           "color": "#485aff"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
