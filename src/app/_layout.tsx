@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { StatusBar } from 'expo-status-bar';
 
@@ -18,26 +19,28 @@ export default function RootLayout() {
   useNotificationObserver();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style="dark" />
-      <PostHogProvider>
-        <SnackbarProvider>
-          <ErrorDialogProvider>
-            <FontProvider>
-              <AuthProvider>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                    contentStyle: {
-                      backgroundColor: '#07111f',
-                    },
-                  }}
-                />
-              </AuthProvider>
-            </FontProvider>
-          </ErrorDialogProvider>
-        </SnackbarProvider>
-      </PostHogProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style="dark" />
+        <PostHogProvider>
+          <SnackbarProvider>
+            <ErrorDialogProvider>
+              <FontProvider>
+                <AuthProvider>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      contentStyle: {
+                        backgroundColor: '#07111f',
+                      },
+                    }}
+                  />
+                </AuthProvider>
+              </FontProvider>
+            </ErrorDialogProvider>
+          </SnackbarProvider>
+        </PostHogProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }

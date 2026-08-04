@@ -373,8 +373,8 @@ export default function GoogleMapsSelector({
   return (
     <View className="flex-1 bg-gray-50">
       <View
-        className="bg-white border-b border-gray-200 px-4 pb-3 z-10"
-        style={{ paddingTop: Math.max(insets.top, 16) }}
+        className="bg-white border-b border-gray-200 px-4 pb-2.5 z-10"
+        style={{ paddingTop: Math.max(insets.top, 12) }}
       >
         <View className="relative">
           <Input
@@ -388,12 +388,12 @@ export default function GoogleMapsSelector({
                 <Feather name="search" size={16} color="#64748b" />
               )
             }
-            inputClassName="text-sm pr-10"
+            inputClassName="text-xs pr-10"
             className="mb-0"
           />
         </View>
 
-        <Text className="text-xs text-gray-500 mt-1.5 leading-4">
+        <Text className="text-xs text-gray-500 mt-1 leading-4">
           {isReverseGeocoding ? (
             <Text className="text-primary">{t('components.resolvingLocation')}</Text>
           ) : (
@@ -438,7 +438,7 @@ export default function GoogleMapsSelector({
 
       <View
         className="flex-row px-4 bg-white border-t border-gray-200 gap-3"
-        style={{ paddingTop: 16, paddingBottom: Math.max(insets.bottom, 16) }}
+        style={{ paddingTop: 10, paddingBottom: Math.max(insets.bottom, 12) }}
       >
         <Button
           title={t('common.cancel')}
