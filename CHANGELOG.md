@@ -137,6 +137,10 @@ This file is auto-generated from conventional commits. Do not edit it manually.
 
 - *(map)* Optimize mobile search-by-map with geohash quantization, 500ms debounce, and 120px collision-free clustering
 
+- *(services)* Expand search bar and extract filters/map toolbar in FindServicesScreen
+
+- *(services)* Redesign map view floating controls and add category modal
+
 
 ### Fixed
 
@@ -197,6 +201,12 @@ This file is auto-generated from conventional commits. Do not edit it manually.
 - Reset password failing due to consumed OTP
 
 - *(services)* Prevent 'No reviews' label container overflow on ProviderHeaderCard
+
+- *(onboarding)* Prevent route reset and preserve step state on profile save
+
+- *(map)* Optimize safe area padding and remove deprecated safe-area-view imports
+
+- *(services)* Update individual service pricing color to primary and remove heavy item shadows
 
 
 ### Refactored
