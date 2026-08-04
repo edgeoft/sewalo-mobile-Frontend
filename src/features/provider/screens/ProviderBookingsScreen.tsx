@@ -29,7 +29,12 @@ export default function ProviderBookingsScreen() {
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
 
   const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
-  const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, limit: 50 });
+  const {
+    data: bookingsData,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useGetBookingsQuery({ status: statusParam, limit: 50 });
   const updateBooking = useUpdateBooking();
   const { showSnackbar } = useSnackbar();
 
@@ -102,7 +107,10 @@ export default function ProviderBookingsScreen() {
 
       <ContentLayout
         scrollable
-        enableRefresh
+        onRefresh={() => {
+          refetch();
+        }}
+        refreshing={isRefetching}
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,

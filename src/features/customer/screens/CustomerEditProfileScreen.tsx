@@ -14,6 +14,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import type { UpdateProfilePayload } from '@/types';
 
 export default function CustomerEditProfileScreen() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function CustomerEditProfileScreen() {
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<BasicInfoFormData>({
@@ -100,7 +102,7 @@ export default function CustomerEditProfileScreen() {
 
   const handleSaveProfile = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {
-      const payload: any = {
+      const payload: UpdateProfilePayload = {
         name: data.fullName,
         phone: data.mobileNumber,
         address: data.location,
@@ -172,6 +174,7 @@ export default function CustomerEditProfileScreen() {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValues={getValues}
               watchLanguages={watchLanguages}
               watchDateOfBirth={watchDateOfBirth}
               watchAvatar={watchAvatar}

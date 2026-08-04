@@ -14,7 +14,6 @@ import {
   ResetPasswordInput,
   ResetPasswordResponse,
   GetProfileResponse,
-  LogoutResponse,
 } from '@/types';
 
 // API client endpoints
@@ -44,8 +43,4 @@ export const resetPasswordAction = async (data: ResetPasswordInput): Promise<Res
 
 export const getProfileAction = async (): Promise<GetProfileResponse> => {
   return internalClient.get<GetProfileResponse>(API_ENDPOINTS.USER.PROFILE);
-};
-
-export const logoutAction = async (): Promise<LogoutResponse> => {
-  return internalClient.post<LogoutResponse>(API_ENDPOINTS.AUTH.LOGOUT);
 };

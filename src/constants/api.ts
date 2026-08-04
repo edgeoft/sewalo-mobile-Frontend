@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
     RESEND_OTP: '/auth/resend-otp',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    REFRESH: '/auth/refresh',
     LOGOUT: '/logout',
   },
   USER: {
@@ -40,7 +41,6 @@ export const API_ENDPOINTS = {
   },
   RATINGS: {
     BASE: '/ratings',
-    LIST: '/ratings',
     MY_RATINGS: '/ratings/my-ratings',
     PROVIDER_RATINGS: (providerId: string) => `/ratings/provider/${providerId}` as const,
     DETAIL: (id: string) => `/ratings/${id}` as const,

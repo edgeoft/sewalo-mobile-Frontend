@@ -26,7 +26,12 @@ export default function CustomerBookingsScreen() {
   const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
 
   const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
-  const { data: bookingsData, isLoading } = useGetBookingsQuery({ status: statusParam, page: 1, limit: 50 });
+  const {
+    data: bookingsData,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useGetBookingsQuery({ status: statusParam, page: 1, limit: 50 });
 
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
@@ -84,7 +89,10 @@ export default function CustomerBookingsScreen() {
 
       <ContentLayout
         scrollable
-        enableRefresh
+        onRefresh={() => {
+          refetch();
+        }}
+        refreshing={isRefetching}
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,

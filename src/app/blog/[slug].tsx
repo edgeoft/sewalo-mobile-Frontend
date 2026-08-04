@@ -10,32 +10,14 @@ import { useGetBlogBySlugQuery } from '@/api';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { formatDate } from '@/utils/time';
 
+import { getReadTime, cleanDescriptionText } from '@/utils/text';
+
 export default function BlogDetailScreen() {
   const { t } = useTranslation();
   const { slug } = useLocalSearchParams<{ slug: string }>();
 
   const { data: blogData, isLoading } = useGetBlogBySlugQuery(slug || '');
   const blog = blogData?.data;
-
-  const cleanDescription = (html: string) => {
-    if (!html) return '';
-    return html
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/p>/gi, '\n\n')
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .trim();
-  };
-
-  const getReadTime = (description: string) => {
-    const words = description.split(/\s+/).length;
-    const time = Math.max(1, Math.ceil(words / 200));
-    return t('common.minRead', { time });
-  };
 
   if (isLoading) {
     return (
@@ -72,7 +54,7 @@ export default function BlogDetailScreen() {
         <ContentLayout>
           {/* Category & Read Time */}
           <View className="flex-row items-center justify-between mt-6 mb-4">
-            <View className="rounded-xl bg-[#eef1ff] px-3 py-1">
+            <View className="rounded-xl bg-surface-indigo-subtle px-3 py-1">
               <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">
                 {blog.category?.name || t('blog.general')}
               </Text>
@@ -105,7 +87,7 @@ export default function BlogDetailScreen() {
 
           {/* Description / Content Body */}
           <Text className="text-sm font-sans-medium text-gray-700 leading-6 tracking-wide">
-            {cleanDescription(blog.description)}
+            {cleanDescriptionText(blog.description)}
           </Text>
         </ContentLayout>
       </ScrollView>

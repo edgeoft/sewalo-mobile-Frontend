@@ -12,6 +12,8 @@ import { ROUTES } from '@/constants/routes';
 import type { Blog } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 
+import { getReadTime } from '@/utils/text';
+
 export default function BlogListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -19,12 +21,6 @@ export default function BlogListScreen() {
 
   const handleArticlePress = (blog: Blog) => {
     router.push(ROUTES.blog.detail(blog.slug));
-  };
-
-  const getReadTime = (description: string) => {
-    const words = description.split(/\s+/).length;
-    const time = Math.max(1, Math.ceil(words / 200));
-    return `${time} min read`;
   };
 
   const sorted = useMemo(() => {
@@ -77,7 +73,7 @@ export default function BlogListScreen() {
                       className="h-24 w-24 rounded-xl bg-gray-50"
                     />
                     <View className="flex-1 justify-between py-0.5">
-                      <View className="self-start rounded-xl bg-[#eef1ff] px-2 py-0.5">
+                      <View className="self-start rounded-xl bg-surface-indigo-subtle px-2 py-0.5">
                         <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">
                           {item.category?.name || t('home.growth')}
                         </Text>

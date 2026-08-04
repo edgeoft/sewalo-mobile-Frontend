@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface FinalInvoiceCardProps {
   booking: CustomerBookingItem;
@@ -29,25 +30,18 @@ export default function FinalInvoiceCard({
   onDownloadInvoice,
 }: FinalInvoiceCardProps) {
   const { t } = useTranslation();
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 0,
-  };
 
   const renderInvoiceRow = (label: string, value: string, isDiscount = false) => (
     <View className="flex-row items-center justify-between py-1">
       <Text className="text-xs font-sans-medium text-gray-500">{label}</Text>
-      <Text className={`text-xs font-sans-semibold ${isDiscount ? 'text-green-600' : 'text-gray-900'}`}>
+      <Text className={`text-xs font-sans-semibold ${isDiscount ? 'text-emerald-600' : 'text-gray-900'}`}>
         {isDiscount ? `- Rs. ${value}` : `Rs. ${value}`}
       </Text>
     </View>
   );
 
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
+    <View className="bg-white rounded-xl border border-gray-200 p-4">
       <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.finalInvoice')}</Text>
 
       <View className="gap-0.5">
@@ -68,14 +62,13 @@ export default function FinalInvoiceCard({
         </View>
       </View>
 
-      {/* Buttons */}
       <View className="mt-4 gap-3">
         <Button
           title={t('customer.downloadInvoice')}
           onPress={onDownloadInvoice}
           className="border-gray-200 bg-white active:bg-gray-50 h-12"
           textClassName="text-gray-900 font-sans-semibold"
-          leftIcon={<Feather name="download" size={16} color="#0f172a" />}
+          leftIcon={<Feather name="download" size={16} color={THEME_COLORS.slate900} />}
         />
         <Button title="Pay Now" variant="primary" onPress={onPayNow} className="h-12" />
       </View>

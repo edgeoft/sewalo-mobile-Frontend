@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { useState, useMemo, useEffect } from 'react';
-import { Pressable, Text, View, ActivityIndicator } from 'react-native';
+import { Pressable, Text, View, ActivityIndicator, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +16,8 @@ import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ProviderCard from '@/components/common/ProviderCard';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
+import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 export default function FindServicesScreen() {
   const { t } = useTranslation();
@@ -24,59 +26,37 @@ export default function FindServicesScreen() {
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
   const { showError } = useErrorDialog();
-  const {
-    category: categoryParam,
-    search: searchParam,
-    minPrice: minPriceParam,
-    maxPrice: maxPriceParam,
-    minRating: minRatingParam,
-    serviceLocation: serviceLocationParam,
-  } = useLocalSearchParams<{
-    category?: string;
-    search?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    minRating?: string;
-    serviceLocation?: string;
-  }>();
+  const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
 
-  const [searchQuery, setSearchQuery] = useState(searchParam || '');
-  const [debouncedSearch, setDebouncedSearch] = useState(searchParam || '');
-  const selectedCategorySlug = categoryParam || undefined;
+  const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
+  const setSearchQuery = useServiceFiltersStore((s) => s.setSearchQuery);
+  const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
+  const setSelectedCategorySlug = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
+  const minPriceStore = useServiceFiltersStore((s) => s.minPrice);
+  const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
+  const minRatingStore = useServiceFiltersStore((s) => s.minRating);
+  const serviceLocationStore = useServiceFiltersStore((s) => s.serviceLocation);
+  const setFilters = useServiceFiltersStore((s) => s.setFilters);
+  const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
+
+  useEffect(() => {
+    if (categoryParam && categoryParam !== selectedCategorySlug) {
+      setSelectedCategorySlug(categoryParam);
+    }
+  }, [categoryParam, selectedCategorySlug, setSelectedCategorySlug]);
+
+  const debouncedSearch = useDebouncedValue(searchQuery, 400);
 
   // Filters Modal State
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState(minPriceParam || '');
-  const [maxPrice, setMaxPrice] = useState(maxPriceParam || '');
-  const [minRating, setMinRating] = useState(minRatingParam || '');
-  const [serviceLocation, setServiceLocation] = useState(serviceLocationParam || '');
-
-  // Active filters applied to query
-  const [appliedFilters, setAppliedFilters] = useState({
-    minPrice: minPriceParam || '',
-    maxPrice: maxPriceParam || '',
-    minRating: minRatingParam || '',
-    serviceLocation: serviceLocationParam || '',
-  });
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 400);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
+  const [minPrice, setMinPrice] = useState(minPriceStore);
+  const [maxPrice, setMaxPrice] = useState(maxPriceStore);
+  const [minRating, setMinRating] = useState(minRatingStore);
+  const [serviceLocation, setServiceLocation] = useState(serviceLocationStore);
 
   const handleSwitchToMap = () => {
-    const searchParams = new URLSearchParams();
-    if (selectedCategorySlug) searchParams.append('category', selectedCategorySlug);
-    if (debouncedSearch) searchParams.append('search', debouncedSearch);
-    if (appliedFilters.minPrice) searchParams.append('minPrice', appliedFilters.minPrice);
-    if (appliedFilters.maxPrice) searchParams.append('maxPrice', appliedFilters.maxPrice);
-    if (appliedFilters.minRating) searchParams.append('minRating', appliedFilters.minRating);
-    if (appliedFilters.serviceLocation) searchParams.append('serviceLocation', appliedFilters.serviceLocation);
-
-    const url = `${isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices}?${searchParams.toString()}`;
-    router.replace(url as any);
+    const route = isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices;
+    router.replace(route);
   };
 
   // Fetch Categories
@@ -86,10 +66,10 @@ export default function FindServicesScreen() {
   const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery({
     search: debouncedSearch || undefined,
     category: selectedCategorySlug || undefined,
-    min_price: appliedFilters.minPrice ? Number(appliedFilters.minPrice) : undefined,
-    max_price: appliedFilters.maxPrice ? Number(appliedFilters.maxPrice) : undefined,
-    min_rating: appliedFilters.minRating ? Number(appliedFilters.minRating) : undefined,
-    service_location: appliedFilters.serviceLocation || undefined,
+    min_price: minPriceStore ? Number(minPriceStore) : undefined,
+    max_price: maxPriceStore ? Number(maxPriceStore) : undefined,
+    min_rating: minRatingStore ? Number(minRatingStore) : undefined,
+    service_location: serviceLocationStore || undefined,
     limit: 50,
   });
 
@@ -109,7 +89,7 @@ export default function FindServicesScreen() {
     })}`;
   };
 
-  const getStartingPrice = (serviceOfferings: any[]) => {
+  const getStartingPrice = (serviceOfferings: { price: string }[] | undefined) => {
     if (!serviceOfferings || serviceOfferings.length === 0) return 'N/A';
     const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
     if (prices.length === 0) return 'N/A';
@@ -117,7 +97,7 @@ export default function FindServicesScreen() {
     return formatPriceInNepali(minPrice);
   };
 
-  const formatLocation = (provider: any) => {
+  const formatLocation = (provider: { city?: string | null; address?: string | null } | undefined | null) => {
     if (!provider) return 'Nepal';
     const city = provider.city;
     const address = provider.address;
@@ -144,7 +124,7 @@ export default function FindServicesScreen() {
   };
 
   const handleApplyFilters = () => {
-    setAppliedFilters({
+    setFilters({
       minPrice,
       maxPrice,
       minRating,
@@ -158,12 +138,7 @@ export default function FindServicesScreen() {
     setMaxPrice('');
     setMinRating('');
     setServiceLocation('');
-    setAppliedFilters({
-      minPrice: '',
-      maxPrice: '',
-      minRating: '',
-      serviceLocation: '',
-    });
+    resetFiltersStore();
     setIsFilterModalOpen(false);
   };
 
@@ -196,7 +171,9 @@ export default function FindServicesScreen() {
     }
   };
 
-  const activeFiltersCount = Object.values(appliedFilters).filter(Boolean).length;
+  const activeFiltersCount = [minPriceStore, maxPriceStore, minRatingStore, serviceLocationStore].filter(
+    Boolean,
+  ).length;
 
   return (
     <View className="flex-1 bg-secondary">
@@ -303,10 +280,16 @@ export default function FindServicesScreen() {
               </Text>
             </View>
           ) : (
-            <View className="gap-4">
-              {verifiedServices.map((service) => (
+            <FlatList
+              data={verifiedServices}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              initialNumToRender={8}
+              maxToRenderPerBatch={5}
+              windowSize={5}
+              ItemSeparatorComponent={() => <View className="h-4" />}
+              renderItem={({ item: service }) => (
                 <ProviderCard
-                  key={service.id}
                   avatarUri={getAvatarUri(service.provider?.avatar)}
                   name={service.provider?.name || 'Service Provider'}
                   serviceLabel={service.category?.name || 'Service'}
@@ -319,8 +302,8 @@ export default function FindServicesScreen() {
                   onFavouritePress={() => handleFavouritePress(service.id)}
                   onPress={() => handleProviderPress(service.provider?.slug || service.provider?.id || '')}
                 />
-              ))}
-            </View>
+              )}
+            />
           )}
         </View>
       </ContentLayout>

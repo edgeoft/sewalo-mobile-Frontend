@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import type { Booking, PaymentMethod } from '@/types';
+import type { Booking, PaymentMethod, MakePaymentResponse } from '@/types';
 import { BOOKING_STATUSES } from '@/types';
 import RadialStepper from '@/components/common/RadialStepper';
 import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyCard';
@@ -134,7 +134,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     processPayment.mutate(
       { bookingId: booking.id, payload },
       {
-        onSuccess: (response) => {
+        onSuccess: (response: MakePaymentResponse) => {
           PaymentFactory.get(response.type).process(response, showSnackbar, t);
         },
       },

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { FALLBACKS } from '@/utils/image';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderHeaderCardProps {
   avatarUri: string;
@@ -38,7 +39,7 @@ export default function ProviderHeaderCard({
   const [imgError, setImgError] = useState(false);
 
   return (
-    <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-start" style={styles.shadowMd}>
+    <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-start">
       <Image
         source={{ uri: imgError ? FALLBACKS.avatar : avatarUri }}
         onError={() => setImgError(true)}
@@ -53,13 +54,13 @@ export default function ProviderHeaderCard({
               <Text className="text-lg font-sans-extrabold text-gray-950 pr-1">{name}</Text>
               {isVerified && (
                 <View className="bg-primary rounded-full h-4 w-4 items-center justify-center">
-                  <Feather name="check" size={10} color="#ffffff" />
+                  <Feather name="check" size={10} color={THEME_COLORS.primaryForeground} />
                 </View>
               )}
             </View>
 
             <View className="flex-row items-center gap-2 mb-2">
-              <View className="rounded-xl bg-[#eef1ff] px-2.5 py-0.5">
+              <View className="rounded-xl bg-surface-indigo-subtle px-2.5 py-0.5">
                 <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
               </View>
 
@@ -68,7 +69,13 @@ export default function ProviderHeaderCard({
                 onPress={onReviewPress}
                 accessibilityRole="button"
               >
-                <Feather name="star" size={12} color="#fbbf24" fill="#fbbf24" accessible={false} />
+                <Feather
+                  name="star"
+                  size={12}
+                  color={THEME_COLORS.amberStar}
+                  fill={THEME_COLORS.amberStar}
+                  accessible={false}
+                />
                 <Text className="text-[11px] font-sans-bold text-gray-900">
                   {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
                 </Text>
@@ -89,7 +96,7 @@ export default function ProviderHeaderCard({
               hitSlop={8}
               className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
             >
-              <Feather name="share-2" size={14} color="#64748b" accessible={false} />
+              <Feather name="share-2" size={14} color={THEME_COLORS.slate500} accessible={false} />
             </Pressable>
             {!isGuest && (
               <Pressable
@@ -100,14 +107,19 @@ export default function ProviderHeaderCard({
                 hitSlop={8}
                 className="h-7 w-7 items-center justify-center rounded-xl bg-gray-50 active:opacity-75"
               >
-                <MaterialIcons name="favorite" size={14} color={isSaved ? '#ef4444' : '#64748b'} accessible={false} />
+                <MaterialIcons
+                  name="favorite"
+                  size={14}
+                  color={isSaved ? THEME_COLORS.dangerRed : THEME_COLORS.slate500}
+                  accessible={false}
+                />
               </Pressable>
             )}
           </View>
         </View>
 
         <View className="flex-row items-center gap-1 mt-1">
-          <Feather name="map-pin" size={12} color="#64748b" />
+          <Feather name="map-pin" size={12} color={THEME_COLORS.slate500} />
           <Text className="flex-1 text-xs font-sans-medium text-gray-500" numberOfLines={1}>
             {location}
           </Text>
@@ -116,13 +128,3 @@ export default function ProviderHeaderCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shadowMd: {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 0,
-  },
-});

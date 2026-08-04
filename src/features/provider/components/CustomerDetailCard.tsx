@@ -2,22 +2,15 @@ import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { type ProviderBookingItem } from '../constants/providerBookings';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface CustomerDetailCardProps {
   booking: ProviderBookingItem;
 }
 
 export default function CustomerDetailCard({ booking }: CustomerDetailCardProps) {
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 0,
-  };
-
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
+    <View className="bg-white rounded-xl border border-gray-200 p-4">
       {/* Header Info: Avatar, Name, Service */}
       <View className="flex-row gap-4 mb-4">
         <Image
@@ -28,13 +21,13 @@ export default function CustomerDetailCard({ booking }: CustomerDetailCardProps)
         <View className="flex-1 justify-center gap-1">
           <Text className="text-base font-sans-bold text-gray-900">{booking.customerName}</Text>
 
-          <View className="flex-row items-center bg-[#eef1ff] px-2 py-0.5 rounded-lg self-start gap-1">
-            <Feather name="tag" size={10} color="#485aff" />
+          <View className="flex-row items-center bg-surface-indigo-subtle px-2 py-0.5 rounded-lg self-start gap-1">
+            <Feather name="tag" size={10} color={THEME_COLORS.primary} />
             <Text className="text-xs font-sans-semibold text-primary uppercase">{booking.serviceLabel}</Text>
           </View>
 
           <View className="flex-row items-center gap-1 mt-0.5">
-            <Feather name="map-pin" size={11} color="#64748b" />
+            <Feather name="map-pin" size={11} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
               {booking.location}
             </Text>
@@ -47,7 +40,7 @@ export default function CustomerDetailCard({ booking }: CustomerDetailCardProps)
         {/* Phone */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Feather name="phone" size={14} color="#64748b" />
+            <Feather name="phone" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Mobile Number</Text>
           </View>
           <Text className="text-xs font-sans-semibold text-gray-900">+9779800000000</Text>
@@ -56,7 +49,7 @@ export default function CustomerDetailCard({ booking }: CustomerDetailCardProps)
         {/* Email */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Feather name="mail" size={14} color="#64748b" />
+            <Feather name="mail" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Email</Text>
           </View>
           <Text className="text-xs font-sans-semibold text-gray-900">customer@example.com</Text>
@@ -65,7 +58,7 @@ export default function CustomerDetailCard({ booking }: CustomerDetailCardProps)
         {/* Location */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Feather name="map-pin" size={14} color="#64748b" />
+            <Feather name="map-pin" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Location</Text>
           </View>
           <Text className="text-xs font-sans-semibold text-gray-900" numberOfLines={1}>

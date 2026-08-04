@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
+import SectionHeader from '@/components/common/SectionHeader';
 import HomeServiceCategoryCard from './HomeServiceCategoryCard';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
@@ -45,16 +46,7 @@ export default function HomeServiceCategoriesSection({
 }: HomeServiceCategoriesSectionProps) {
   return (
     <View className="pt-5">
-      <View className="mb-5 flex-row items-center justify-between">
-        <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
-
-        <Pressable onPress={onActionPress} accessibilityRole="button" accessibilityLabel={actionLabel}>
-          <View className="flex-row items-center gap-0.5">
-            <Text className="text-[11px] font-sans-medium text-gray-400">{actionLabel}</Text>
-            <Feather name="chevron-right" size={13} color="#9ca3af" />
-          </View>
-        </Pressable>
-      </View>
+      <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 4, paddingRight: 4 }}>
         {categories.map((category) => (

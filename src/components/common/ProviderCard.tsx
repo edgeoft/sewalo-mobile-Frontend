@@ -5,6 +5,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { FALLBACKS } from '@/utils/image';
+import { THEME_COLORS } from '@/constants/colors';
 import type { BookingStatus } from '@/types';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
@@ -56,16 +57,7 @@ function ProviderCard({
   return (
     <Pressable
       onPress={onPress}
-      style={[
-        {
-          shadowColor: '#0f172a',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.04,
-          shadowRadius: 10,
-          elevation: 0,
-        },
-        width ? { width } : {},
-      ]}
+      style={width ? { width } : {}}
       className="shrink-0 rounded-xl border border-gray-200 bg-white p-3"
       accessibilityRole="button"
       accessibilityLabel={name}
@@ -95,7 +87,7 @@ function ProviderCard({
                 <MaterialIcons
                   name="favorite"
                   size={14}
-                  color={isFavourite ? '#ef4444' : '#94a3b8'}
+                  color={isFavourite ? THEME_COLORS.dangerRed : THEME_COLORS.slate400}
                   accessible={false}
                 />
               </Pressable>
@@ -103,12 +95,12 @@ function ProviderCard({
           </View>
 
           <View className="flex-row items-center gap-2">
-            <View className="rounded-xl bg-[#eef1ff] px-2 py-0.5">
+            <View className="rounded-xl bg-surface-indigo-subtle px-2 py-0.5">
               <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
             </View>
 
-            <View className="flex-row items-center gap-1 rounded-xl bg-[#fff6e6] px-2 py-0.5">
-              {renderIcon('star', '#fbbf24', 11)}
+            <View className="flex-row items-center gap-1 rounded-xl bg-amber-50 px-2 py-0.5">
+              {renderIcon('star', THEME_COLORS.amberStar, 11)}
               <Text className="text-[10px] font-sans-bold text-gray-900">
                 {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
               </Text>
@@ -117,7 +109,7 @@ function ProviderCard({
 
           <View className="gap-1 mt-1">
             <View className="flex-row items-center gap-1">
-              {renderIcon('map-pin', '#64748b', 12)}
+              {renderIcon('map-pin', THEME_COLORS.slate500, 12)}
               <Text className="flex-1 text-xs font-sans-medium text-gray-500" numberOfLines={1}>
                 {location}
               </Text>
@@ -125,14 +117,14 @@ function ProviderCard({
 
             {isBookingVariant ? (
               <View className="flex-row items-center gap-1">
-                {renderIcon('dollar-sign', '#64748b', 12)}
+                {renderIcon('dollar-sign', THEME_COLORS.slate500, 12)}
                 <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
                   {startingFromPrice}
                 </Text>
               </View>
             ) : (
               <View className="flex-row items-center gap-1">
-                {renderIcon('award', '#64748b', 12)}
+                {renderIcon('award', THEME_COLORS.slate500, 12)}
                 <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
                   {ordersCompleted}
                 </Text>

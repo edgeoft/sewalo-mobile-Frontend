@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
-  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -12,14 +11,14 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
+import { AvatarPicker } from '@/components/common';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
-import { useSnackbar } from '@/components/ui/Snackbar';
+import { THEME_COLORS } from '@/constants/colors';
 import LocationSelector from '@/components/ui/LocationSelector';
 
 import { PersonalInfoData } from '@/types';
@@ -61,7 +60,6 @@ export default function PersonalInfoStep({
   stepper,
 }: PersonalInfoStepProps) {
   const { t } = useTranslation();
-  const { showSnackbar } = useSnackbar();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [dobModalVisible, setDobModalVisible] = useState(false);
@@ -74,27 +72,7 @@ export default function PersonalInfoStep({
   const [tempMonth, setTempMonth] = useState('January');
   const [tempYear, setTempYear] = useState('2000');
 
-  const handlePickAvatar = async () => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        showSnackbar({ message: t('onboarding.permissionPhotoLibrary'), type: 'error' });
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images',
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const pickedUri = result.assets[0].uri;
-        setValue('avatar', pickedUri, { shouldValidate: true });
-      }
-    } catch {
-      showSnackbar({ message: t('onboarding.photoPickerError'), type: 'error' });
-    }
-  };
+  // Date picker state helper
 
   const handleConfirmDate = () => {
     const monthIndex = MONTHS.indexOf(tempMonth) + 1;
@@ -152,40 +130,11 @@ export default function PersonalInfoStep({
 
           <View className="gap-y-4">
             {/* Profile Avatar Selection Section */}
-            <View className="items-center mb-2">
-              <Pressable
-                onPress={handlePickAvatar}
-                className="relative active:opacity-90"
-                accessibilityRole="button"
-                accessibilityLabel="Change profile photo"
-              >
-                {watchAvatar ? (
-                  <Image
-                    source={{ uri: watchAvatar }}
-                    className="h-24 w-24 rounded-full border-2 border-gray-100 bg-gray-50"
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <Image
-                    source={require('@/assets/images/avatar-default.png')}
-                    className="h-24 w-24 rounded-full border-2 border-gray-100 bg-gray-50"
-                    resizeMode="cover"
-                  />
-                )}
-                <View
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary border-2 border-white items-center justify-center shadow-sm"
-                  importantForAccessibility="no"
-                  accessibilityElementsHidden
-                >
-                  <Feather name="camera" size={14} color="#ffffff" />
-                </View>
-              </Pressable>
-              {errors.avatar && (
-                <Text className="text-xs font-sans-medium text-destructive mt-1.5 text-center">
-                  {errors.avatar.message as string}
-                </Text>
-              )}
-            </View>
+            <AvatarPicker
+              avatarUri={watchAvatar}
+              onAvatarChange={(uri) => setValue('avatar', uri, { shouldValidate: true })}
+              className="mb-2"
+            />
 
             {/* Email Address */}
             <Controller
@@ -254,10 +203,12 @@ export default function PersonalInfoStep({
                   paddingHorizontal: 14,
                 }}
               >
-                <Text className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-[#898f8f]'}`}>
+                <Text
+                  className={`text-sm flex-1 ${watchDateOfBirth ? 'text-gray-900' : 'text-form-field-placeholder'}`}
+                >
                   {watchDateOfBirth ? watchDateOfBirth : t('onboarding.selectBirthday')}
                 </Text>
-                <Feather name="calendar" size={16} color="#898f8f" accessible={false} />
+                <Feather name="calendar" size={16} color={THEME_COLORS.slate400} accessible={false} />
               </Pressable>
               {errors.dateOfBirth && (
                 <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">

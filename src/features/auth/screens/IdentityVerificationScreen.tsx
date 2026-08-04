@@ -13,6 +13,7 @@ import Button from '@/components/ui/Button';
 import { useAuth } from '@/providers/AuthProvider';
 import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { useUploadFile, useUpdateProfile } from '@/api';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 import { getImageUrl } from '@/features/auth/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -89,8 +90,8 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
       showSnackbar({ message: 'Your document has been submitted for verification review.', type: 'success' });
       router.back();
-    } catch (error: any) {
-      showSnackbar({ message: error.message || 'Failed to submit document', type: 'error' });
+    } catch (error: unknown) {
+      showSnackbar({ message: extractErrorMessage(error) || 'Failed to submit document', type: 'error' });
     }
   };
 
@@ -149,37 +150,54 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     }
 
     if (isCompleted) {
+      const msg =
+        getMessage() ||
+        t('components.awaitingApprovalDesc') ||
+        'Your document is under review. Please wait for approval.';
       return (
-        <View style={cardShadow} className="mb-6 p-4 bg-amber-50 rounded-xl flex-row items-start">
-          <Feather name="clock" size={16} color="#d97706" style={{ marginTop: 2, marginRight: 8 }} />
+        <View
+          style={cardShadow}
+          className="mb-6 p-4 bg-amber-50 border border-amber-200/60 rounded-xl flex-row items-start"
+        >
+          <Feather name="clock" size={16} color="#b45309" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-amber-900">{t('components.awaitingApproval')}</Text>
-            <Text className="text-[11px] font-sans-medium text-amber-700 mt-0.5 leading-normal">{getMessage()}</Text>
+            <Text className="text-xs font-sans-bold text-amber-950">{t('components.awaitingApproval')}</Text>
+            {!!msg && <Text className="text-[11px] font-sans-medium text-amber-900 mt-0.5 leading-normal">{msg}</Text>}
           </View>
         </View>
       );
     }
 
     if (isVerified) {
+      const msg = getMessage() || t('components.verifiedDesc') || 'Your identity has been verified.';
       return (
-        <View style={cardShadow} className="mb-6 p-4 bg-emerald-50 rounded-xl flex-row items-start">
-          <Feather name="check-circle" size={16} color="#059669" style={{ marginTop: 2, marginRight: 8 }} />
+        <View
+          style={cardShadow}
+          className="mb-6 p-4 bg-emerald-50 border border-emerald-200/60 rounded-xl flex-row items-start"
+        >
+          <Feather name="check-circle" size={16} color="#047857" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-emerald-900">{t('components.verified')}</Text>
-            <Text className="text-[11px] font-sans-medium text-emerald-700 mt-0.5 leading-normal">{getMessage()}</Text>
+            <Text className="text-xs font-sans-bold text-emerald-950">{t('components.verified')}</Text>
+            {!!msg && (
+              <Text className="text-[11px] font-sans-medium text-emerald-900 mt-0.5 leading-normal">{msg}</Text>
+            )}
           </View>
         </View>
       );
     }
 
     if (isRejected) {
+      const msg = getMessage() || t('components.rejectedDesc') || 'Your verification was rejected.';
       return (
-        <View style={cardShadow} className="mb-6 p-4 bg-rose-50 rounded-xl flex-row items-start">
-          <Feather name="alert-triangle" size={16} color="#dc2626" style={{ marginTop: 2, marginRight: 8 }} />
+        <View
+          style={cardShadow}
+          className="mb-6 p-4 bg-rose-50 border border-rose-200/60 rounded-xl flex-row items-start"
+        >
+          <Feather name="alert-triangle" size={16} color="#b91c1c" style={{ marginTop: 2, marginRight: 8 }} />
           <View className="flex-1">
-            <Text className="text-xs font-sans-bold text-rose-900">{t('components.verificationRejected')}</Text>
-            <Text className="text-[11px] font-sans-semibold text-rose-700 mt-0.5 leading-normal">
-              {t('common.reason')}: {getMessage()}
+            <Text className="text-xs font-sans-bold text-rose-950">{t('components.verificationRejected')}</Text>
+            <Text className="text-[11px] font-sans-semibold text-rose-900 mt-0.5 leading-normal">
+              {t('common.reason')}: {msg}
             </Text>
           </View>
         </View>

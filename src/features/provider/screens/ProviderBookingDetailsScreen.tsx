@@ -76,7 +76,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     updateBooking.mutate(
       { id: initialBooking.id, data: { status, ...options } },
       {
-        onSuccess: (result) => {
+        onSuccess: (result: Booking) => {
           setCurrentStatus(result.status);
           const msg = statusMessages[status];
           if (msg) showSnackbar({ message: msg, type: 'success' });
@@ -149,7 +149,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             confirmPayment.mutate(
               { bookingId: initialBooking.id, payload: { has_received_payment: true } },
               {
-                onSuccess: (result) => {
+                onSuccess: (result: Booking) => {
                   setCurrentStatus(result.status);
                   showSnackbar({ message: t('provider.paymentConfirmed'), type: 'success' });
                 },

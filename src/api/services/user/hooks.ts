@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { createQueryHook, createMutationHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getFavoritesAction,
@@ -13,7 +13,7 @@ import {
   getNearbyProvidersAction,
 } from './actions';
 import { getProfileAction } from '../auth/actions';
-import {
+import type {
   AddRemoveFavoritePayload,
   GetFavoritesResponse,
   CompleteProfilePayload,
@@ -33,22 +33,15 @@ import {
   GetNearbyProvidersResponse,
 } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 // Favourite Hooks
-export const useGetFavoritesQuery = (
-  params: { page?: number; limit?: number },
-  options?: Omit<UseQueryOptions<GetFavoritesResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  const page = params.page || 1;
-  const limit = params.limit || 10;
-  return useQuery<GetFavoritesResponse, Error>({
-    queryKey: QUERY_KEYS.FAVOURITES_LIST.LIST(page, limit),
-    queryFn: () => getFavoritesAction(page, limit),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+const favoritesQueryHook = createQueryHook<GetFavoritesResponse, { page?: number; limit?: number } | undefined>(
+  (params) => QUERY_KEYS.FAVOURITES_LIST.LIST(params?.page || 1, params?.limit || 10),
+  (params) => getFavoritesAction(params?.page || 1, params?.limit || 10),
+);
+
+export const useGetFavoritesQuery = (params: { page?: number; limit?: number } = {}) => favoritesQueryHook(params);
 
 export const useAddRemoveFavorite = () => {
   const queryClient = useQueryClient();
@@ -86,104 +79,70 @@ export const useAddRemoveFavorite = () => {
   });
 };
 
-// Onboarding Hooks
-export const useCompleteProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation<UpdateProfileResponse, Error, CompleteProfilePayload>({
-    mutationFn: completeProfileAction,
-    onSuccess: (response) => {
-      useAuthStore.getState().updateUser(response.user);
-      queryClient.setQueryData(QUERY_KEYS.PROFILE, { user: response.user });
-    },
-  });
-};
-
-// Password Hooks
-export const useChangePassword = () => {
-  return useMutation<ChangePasswordResponse, Error, ChangePasswordPayload>({
-    mutationFn: changePasswordAction,
-  });
-};
-
 // Profile Hooks
-export const useGetProfileQuery = () => {
-  return useQuery<GetProfileResponse, Error>({
-    queryKey: QUERY_KEYS.PROFILE,
-    queryFn: getProfileAction,
-  });
-};
-
-export const useUpdateProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation<UpdateProfileResponse, Error, UpdateProfilePayload>({
-    mutationFn: updateProfileAction,
+export const useCompleteProfile = createMutationHook<UpdateProfileResponse, CompleteProfilePayload>(
+  completeProfileAction,
+  {
     onSuccess: (response) => {
       useAuthStore.getState().updateUser(response.user);
-      queryClient.setQueryData(QUERY_KEYS.PROFILE, { user: response.user });
     },
-  });
-};
+    invalidateKeys: () => [QUERY_KEYS.PROFILE],
+  },
+);
 
-export const useGetProviderDetailsQuery = (
-  id: string,
-  options?: Omit<UseQueryOptions<ProviderDetailsResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<ProviderDetailsResponse, Error>({
-    queryKey: QUERY_KEYS.PROVIDER_DETAILS.DETAIL(id),
-    queryFn: () => getProviderDetailsAction(id),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+export const useChangePassword = createMutationHook<ChangePasswordResponse, ChangePasswordPayload>(
+  changePasswordAction,
+);
+
+export const useGetProfileQuery = createQueryHook<GetProfileResponse, void>(() => QUERY_KEYS.PROFILE, getProfileAction);
+
+export const useUpdateProfile = createMutationHook<UpdateProfileResponse, UpdateProfilePayload>(updateProfileAction, {
+  onSuccess: (response) => {
+    useAuthStore.getState().updateUser(response.user);
+  },
+  invalidateKeys: () => [QUERY_KEYS.PROFILE],
+});
+
+const providerDetailsQueryHook = createQueryHook<ProviderDetailsResponse, string>(
+  (id) => QUERY_KEYS.PROVIDER_DETAILS.DETAIL(id),
+  (id) => getProviderDetailsAction(id),
+);
+
+export const useGetProviderDetailsQuery = (id: string, options?: { enabled?: boolean }) =>
+  providerDetailsQueryHook(id, { enabled: (options?.enabled ?? true) && !!id });
 
 // Service Hooks
-export const useGetServicesQuery = (
-  params: GetServiceListParams,
-  options?: Omit<UseQueryOptions<GetServiceListResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<GetServiceListResponse, Error>({
-    queryKey: QUERY_KEYS.SERVICE_LIST.LIST(params),
-    queryFn: () => getServiceListAction(params),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+const servicesQueryHook = createQueryHook<GetServiceListResponse, GetServiceListParams>(
+  (params) => QUERY_KEYS.SERVICE_LIST.LIST(params),
+  (params) => getServiceListAction(params),
+);
+
+export const useGetServicesQuery = (params: GetServiceListParams) => servicesQueryHook(params);
 
 // Nearby Providers Hooks
-export const useGetNearbyProvidersQuery = (
-  params: GetNearbyProvidersParams,
-  options?: Omit<UseQueryOptions<GetNearbyProvidersResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<GetNearbyProvidersResponse, Error>({
-    queryKey: QUERY_KEYS.PROVIDERS_NEARBY.LIST(params),
-    queryFn: () => getNearbyProvidersAction(params),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+const nearbyProvidersQueryHook = createQueryHook<GetNearbyProvidersResponse, GetNearbyProvidersParams>(
+  (params) => QUERY_KEYS.PROVIDERS_NEARBY.LIST(params),
+  (params) => getNearbyProvidersAction(params),
+);
 
-// Role Switching Hooks
-export const useSwitchRole = () => {
-  const queryClient = useQueryClient();
-  return useMutation<SwitchRoleResponse, Error, SwitchRolePayload>({
-    mutationFn: switchRoleAction,
+export const useGetNearbyProvidersQuery = (params: GetNearbyProvidersParams) => nearbyProvidersQueryHook(params);
+
+// Role Switching Hooks (S6 fix: scoped query invalidations)
+const roleSwitchInvalidations = () => [QUERY_KEYS.PROFILE, QUERY_KEYS.BOOKINGS.BASE, QUERY_KEYS.SERVICE_LIST.ALL];
+
+export const useSwitchRole = createMutationHook<SwitchRoleResponse, SwitchRolePayload>(switchRoleAction, {
+  onSuccess: (response) => {
+    useAuthStore.getState().updateUser(response.user);
+  },
+  invalidateKeys: roleSwitchInvalidations,
+});
+
+export const useSwitchRoleWithDetails = createMutationHook<SwitchRoleWithDetailsResponse, SwitchRoleWithDetailsPayload>(
+  switchRoleWithDetailsAction,
+  {
     onSuccess: (response) => {
       useAuthStore.getState().updateUser(response.user);
-      queryClient.invalidateQueries();
     },
-  });
-};
-
-export const useSwitchRoleWithDetails = () => {
-  const queryClient = useQueryClient();
-  return useMutation<SwitchRoleWithDetailsResponse, Error, SwitchRoleWithDetailsPayload>({
-    mutationFn: switchRoleWithDetailsAction,
-    onSuccess: (response) => {
-      useAuthStore.getState().updateUser(response.user);
-      queryClient.invalidateQueries();
-    },
-  });
-};
+    invalidateKeys: roleSwitchInvalidations,
+  },
+);

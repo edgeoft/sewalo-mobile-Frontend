@@ -1,6 +1,8 @@
 import { Stack } from 'expo-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 
+import { StatusBar } from 'expo-status-bar';
+
 import { FontProvider } from '@/providers/FontProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -17,11 +19,12 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StatusBar style="dark" />
       <PostHogProvider>
         <SnackbarProvider>
           <ErrorDialogProvider>
-            <AuthProvider>
-              <FontProvider>
+            <FontProvider>
+              <AuthProvider>
                 <Stack
                   screenOptions={{
                     headerShown: false,
@@ -30,8 +33,8 @@ export default function RootLayout() {
                     },
                   }}
                 />
-              </FontProvider>
-            </AuthProvider>
+              </AuthProvider>
+            </FontProvider>
           </ErrorDialogProvider>
         </SnackbarProvider>
       </PostHogProvider>

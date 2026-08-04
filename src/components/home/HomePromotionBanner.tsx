@@ -16,12 +16,14 @@ export default function HomePromotionBanner({ title, description, buttonLabel, o
   return (
     <View className="pt-5">
       {/* Promotion Card Container */}
-      <View className="rounded-2xl bg-primary p-6 shadow-sm">
+      <View className="rounded-2xl bg-primary p-6">
         {/* Title */}
         <Text className="text-xl font-sans-bold text-white mb-2">{resolvedTitle}</Text>
 
         {/* Description */}
-        <Text className="text-sm font-sans-medium text-[#eef1ff] leading-5 mb-6">{resolvedDescription}</Text>
+        <Text className="text-sm font-sans-medium text-surface-indigo-subtle leading-5 mb-6">
+          {resolvedDescription}
+        </Text>
 
         {/* Action Button */}
         <Pressable

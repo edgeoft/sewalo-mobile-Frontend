@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 
 export interface PaginationListProps<T> {
   data: T[];
@@ -29,15 +30,12 @@ export default function PaginationList<T>({
   const resolvedEmptyDescription = emptyDescription ?? t('errors.recordsNotFoundDesc');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Total pages calculation
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(data.length / pageSize));
   }, [data.length, pageSize]);
 
-  // Adjust page if data length changes
   const activePage = Math.min(currentPage, totalPages);
 
-  // Slice data for the active page
   const pageItems = useMemo(() => {
     const start = (activePage - 1) * pageSize;
     const end = start + pageSize;
@@ -94,7 +92,7 @@ export default function PaginationList<T>({
             isFirstPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}
         >
-          <Feather name="chevron-left" size={18} color="#64748b" accessible={false} />
+          <Feather name="chevron-left" size={18} color={THEME_COLORS.slate500} accessible={false} />
         </Pressable>
 
         <Text className="text-xs font-sans-semibold text-gray-500">
@@ -112,7 +110,7 @@ export default function PaginationList<T>({
             isLastPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}
         >
-          <Feather name="chevron-right" size={18} color="#64748b" accessible={false} />
+          <Feather name="chevron-right" size={18} color={THEME_COLORS.slate500} accessible={false} />
         </Pressable>
       </View>
     </View>

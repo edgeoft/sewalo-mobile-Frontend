@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface AccountMenuItemProps {
   icon: keyof typeof Feather.glyphMap;
@@ -21,7 +22,7 @@ export default function AccountMenuItem({
   destructive = false,
   showChevron = true,
 }: AccountMenuItemProps) {
-  const iconColor = destructive ? '#ef4444' : '#485aff';
+  const iconColor = destructive ? THEME_COLORS.dangerRed : THEME_COLORS.primary;
   const textColor = destructive ? 'text-red-500' : 'text-gray-700';
 
   return (
@@ -32,7 +33,7 @@ export default function AccountMenuItem({
     >
       <View className="flex-row items-center flex-1 mr-3">
         <View
-          className={`h-9 w-9 rounded-xl items-center justify-center ${destructive ? 'bg-red-50' : 'bg-indigo-50/50'}`}
+          className={`h-9 w-9 rounded-xl items-center justify-center ${destructive ? 'bg-red-50' : 'bg-surface-indigo-subtle'}`}
         >
           <Feather name={icon} size={16} color={iconColor} accessible={false} />
         </View>
@@ -49,7 +50,7 @@ export default function AccountMenuItem({
 
       <View className="flex-row items-center gap-x-2">
         {rightContent}
-        {showChevron && <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />}
+        {showChevron && <Feather name="chevron-right" size={16} color={THEME_COLORS.slate400} accessible={false} />}
       </View>
     </Pressable>
   );

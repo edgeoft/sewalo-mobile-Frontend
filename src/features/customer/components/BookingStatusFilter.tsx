@@ -4,6 +4,7 @@ import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
+import { THEME_COLORS } from '@/constants/colors';
 import type { BookingStatus } from '@/types';
 
 interface BookingStatusFilterProps {
@@ -44,7 +45,12 @@ export default function BookingStatusFilter({
             </View>
           </View>
 
-          <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={16} color="#9ca3af" accessible={false} />
+          <Feather
+            name={isOpen ? 'chevron-up' : 'chevron-down'}
+            size={16}
+            color={THEME_COLORS.slate400}
+            accessible={false}
+          />
         </Pressable>
 
         <Modal visible={isOpen} transparent animationType="fade" onRequestClose={() => setIsOpen(false)}>
@@ -75,7 +81,7 @@ export default function BookingStatusFilter({
                       accessibilityRole="button"
                       accessibilityState={{ selected: isSelected }}
                       className={`px-3 py-3 flex-row items-center justify-between ${
-                        isSelected ? 'bg-indigo-50/40' : 'bg-white'
+                        isSelected ? 'bg-surface-indigo-subtle' : 'bg-white'
                       }`}
                     >
                       <View className="flex-row items-center">
@@ -90,7 +96,9 @@ export default function BookingStatusFilter({
                         <View className="rounded-full bg-gray-100 px-2 py-0.5 min-w-7 items-center">
                           <Text className="text-[11px] font-sans-semibold text-gray-500">{countsByStatus[status]}</Text>
                         </View>
-                        {isSelected ? <Feather name="check" size={14} color="#334155" accessible={false} /> : null}
+                        {isSelected ? (
+                          <Feather name="check" size={14} color={THEME_COLORS.slate700} accessible={false} />
+                        ) : null}
                       </View>
                     </Pressable>
                   );

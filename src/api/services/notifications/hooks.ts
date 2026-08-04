@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { createQueryHook, createMutationHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getNotificationsAction,
@@ -10,59 +10,38 @@ import {
 } from './actions';
 import type { GetNotificationsParams, GetNotificationsResponse, UnreadCountResponse } from '@/types';
 
-export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) => {
-  return useQuery<GetNotificationsResponse, Error>({
-    queryKey: QUERY_KEYS.NOTIFICATIONS.LIST(params),
-    queryFn: () => getNotificationsAction(params),
-    retry: false,
-  });
-};
+const notificationsQueryHook = createQueryHook<GetNotificationsResponse, GetNotificationsParams | undefined>(
+  (params) => QUERY_KEYS.NOTIFICATIONS.LIST(params ?? {}),
+  (params) => getNotificationsAction(params ?? {}),
+);
 
-export const useUnreadCountQuery = ({ enabled }: { enabled?: boolean } = {}) => {
-  return useQuery<UnreadCountResponse, Error>({
-    queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT,
-    queryFn: getUnreadCountAction,
-    refetchInterval: 5000,
-    retry: false,
-    enabled,
-  });
-};
+export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) => notificationsQueryHook(params);
 
-export const useMarkNotificationRead = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: markNotificationReadAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
-    },
-  });
-};
+const unreadCountQueryHook = createQueryHook<UnreadCountResponse, void>(
+  () => QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT,
+  getUnreadCountAction,
+  {
+    refetchInterval: 60000, // 60 seconds (P5 fix)
+  },
+);
 
-export const useMarkAllNotificationsRead = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, void>({
-    mutationFn: markAllNotificationsReadAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
-    },
-  });
-};
+export const useUnreadCountQuery = ({ enabled }: { enabled?: boolean } = {}) =>
+  unreadCountQueryHook(undefined, { enabled });
 
-export const useDeleteNotification = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: deleteNotificationAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT });
-    },
-  });
-};
+const notificationInvalidationKeys = () => [QUERY_KEYS.NOTIFICATIONS.ALL, QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT];
 
-export const useRegisterDeviceToken = () => {
-  return useMutation<void, Error, { device_token: string; platform: 'ios' | 'android' }>({
-    mutationFn: registerDeviceTokenAction,
-  });
-};
+export const useMarkNotificationRead = createMutationHook<void, string>(markNotificationReadAction, {
+  invalidateKeys: notificationInvalidationKeys,
+});
+
+export const useMarkAllNotificationsRead = createMutationHook<void, void>(markAllNotificationsReadAction, {
+  invalidateKeys: notificationInvalidationKeys,
+});
+
+export const useDeleteNotification = createMutationHook<void, string>(deleteNotificationAction, {
+  invalidateKeys: notificationInvalidationKeys,
+});
+
+export const useRegisterDeviceToken = createMutationHook<void, { device_token: string; platform: 'ios' | 'android' }>(
+  registerDeviceTokenAction,
+);

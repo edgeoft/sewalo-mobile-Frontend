@@ -1,7 +1,7 @@
-import { Feather } from '@expo/vector-icons';
-import { Pressable, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { View } from 'react-native';
 
-import { ProviderCard } from '@/components/common';
+import { ProviderCard, SectionHeader } from '@/components/common';
 import { Carousel } from '@/components/ui';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import type { Service, ServiceOffering, UserProfile } from '@/types';
@@ -50,18 +50,27 @@ export default function PopularProvidersSection({
   onActionPress,
   onProviderPress,
 }: PopularProvidersSectionProps) {
+  const renderItem = useCallback(
+    ({ item: service, cardWidth }: { item: Service; cardWidth: number }) => (
+      <ProviderCard
+        avatarUri={getAvatarUri(service.provider?.avatar)}
+        name={service.provider?.name || 'Service Provider'}
+        serviceLabel={service.category?.name || 'Service'}
+        location={formatLocation(service.provider)}
+        rating={Number(service.average_rating || 0).toFixed(1)}
+        ordersCompleted={`${service.total_ratings || 0} orders`}
+        startingFromPrice={getStartingPrice(service.service_offerings)}
+        width={cardWidth}
+        isGuest={isGuest}
+        onPress={() => onProviderPress?.(service)}
+      />
+    ),
+    [isGuest, onProviderPress],
+  );
+
   return (
     <View className="pt-5">
-      <View className="mb-5 flex-row items-center justify-between">
-        <Text className="text-xl font-sans-bold tracking-tight text-gray-900">{title}</Text>
-
-        <Pressable onPress={onActionPress} accessibilityRole="button" accessibilityLabel={actionLabel}>
-          <View className="flex-row items-center gap-0.5">
-            <Text className="text-[11px] font-sans-medium text-gray-400">{actionLabel}</Text>
-            <Feather name="chevron-right" size={13} color="#9ca3af" />
-          </View>
-        </Pressable>
-      </View>
+      <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
 
       <Carousel
         data={services}
@@ -69,20 +78,7 @@ export default function PopularProvidersSection({
         gap={16}
         autoplay={true}
         autoplayInterval={10000}
-        renderItem={({ item: service, cardWidth }) => (
-          <ProviderCard
-            avatarUri={getAvatarUri(service.provider?.avatar)}
-            name={service.provider?.name || 'Service Provider'}
-            serviceLabel={service.category?.name || 'Service'}
-            location={formatLocation(service.provider)}
-            rating={Number(service.average_rating || 0).toFixed(1)}
-            ordersCompleted={`${service.total_ratings || 0} orders`}
-            startingFromPrice={getStartingPrice(service.service_offerings)}
-            width={cardWidth}
-            isGuest={isGuest}
-            onPress={() => onProviderPress?.(service)}
-          />
-        )}
+        renderItem={renderItem}
       />
     </View>
   );

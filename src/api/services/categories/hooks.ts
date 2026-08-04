@@ -1,21 +1,13 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { createQueryHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { getCategoriesAction } from './actions';
 import type { CategoryResponse } from '@/types';
 
-export const useGetCategoriesQuery = (
-  show?: 'all' | 'homepage',
-  options?: Omit<UseQueryOptions<CategoryResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<CategoryResponse, Error>({
-    queryKey: QUERY_KEYS.CATEGORIES.ALL(show),
-    queryFn: () => getCategoriesAction(show),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+const categoriesQueryHook = createQueryHook<CategoryResponse, 'all' | 'homepage' | undefined>(
+  (show) => QUERY_KEYS.CATEGORIES.ALL(show),
+  (show) => getCategoriesAction(show),
+);
 
-export const useCategoriesQuery = (show?: 'all' | 'homepage') => {
-  return useGetCategoriesQuery(show);
-};
+export const useGetCategoriesQuery = (show?: 'all' | 'homepage') => categoriesQueryHook(show);
+
+export const useCategoriesQuery = (show?: 'all' | 'homepage') => useGetCategoriesQuery(show);

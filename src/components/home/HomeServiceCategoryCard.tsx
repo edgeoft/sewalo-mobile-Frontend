@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, Text, View, Image } from 'react-native';
 import { getImageUrl } from '@/utils/image';
+import { THEME_COLORS } from '@/constants/colors';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
@@ -23,14 +24,11 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
       accessibilityLabel={label}
       hitSlop={8}
     >
-      <View
-        className="h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white overflow-hidden"
-        style={{ boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}
-      >
+      <View className="h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white overflow-hidden">
         {hasImage ? (
           <Image source={{ uri: getImageUrl(imageUrl) }} className="h-8 w-8" resizeMode="contain" />
         ) : (
-          <Feather name={icon || 'grid'} size={20} color="#485aff" />
+          <Feather name={icon || 'grid'} size={20} color={THEME_COLORS.primary} />
         )}
       </View>
 

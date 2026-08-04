@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import { PackageDeal, ServiceItem } from '@/types';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderServicesTabProps {
   specialPackage?: PackageDeal | null;
@@ -29,11 +30,11 @@ export default function ProviderServicesTab({
       {specialPackage && (
         <View className="gap-y-3">
           <View className="flex-row items-center gap-1.5">
-            <Feather name="zap" size={16} color="#485aff" />
+            <Feather name="zap" size={16} color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-extrabold text-gray-950">{t('services.specialPackageDeals')}</Text>
           </View>
 
-          <View className="bg-[#eef1ff] border border-blue-100 rounded-lg p-4">
+          <View className="bg-surface-indigo-subtle border border-blue-100 rounded-lg p-4">
             <Text className="text-sm font-sans-extrabold text-gray-950 mb-1">{specialPackage.title}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 leading-4.5 mb-3">
               {specialPackage.description}
@@ -46,8 +47,8 @@ export default function ProviderServicesTab({
               </Text>
               {specialPackage.inclusions.map((item, idx) => (
                 <View key={idx} className="flex-row items-center mb-1.5">
-                  <View className="h-4 w-4 bg-[#eef1ff] rounded-full items-center justify-center mr-2">
-                    <Feather name="check" size={10} color="#485aff" />
+                  <View className="h-4 w-4 bg-surface-indigo-subtle rounded-full items-center justify-center mr-2">
+                    <Feather name="check" size={10} color={THEME_COLORS.primary} />
                   </View>
                   <Text className="text-xs font-sans-medium text-gray-700">{item}</Text>
                 </View>
@@ -63,7 +64,7 @@ export default function ProviderServicesTab({
               </View>
 
               <View className="flex-row items-center bg-blue-100/70 px-2.5 py-1 rounded-lg">
-                <Feather name="clock" size={11} color="#485aff" className="mr-1" />
+                <Feather name="clock" size={11} color={THEME_COLORS.primary} className="mr-1" />
                 <Text className="text-[10px] font-sans-bold text-primary">{specialPackage.durationLabel}</Text>
               </View>
             </View>
@@ -98,10 +99,9 @@ export default function ProviderServicesTab({
               onPress={() => onServiceToggle(service.id)}
               accessibilityRole="button"
               accessibilityState={{ checked: isChecked }}
-              className={`bg-white border rounded-lg p-3.5 flex-row items-center justify-between ${
+              className={`bg-white border rounded-lg p-3.5 flex-row items-center justify-between shadow-sm ${
                 isChecked ? 'border-primary' : 'border-gray-200'
               }`}
-              style={styles.shadowMin}
             >
               <View className="flex-row items-center flex-1 pr-4">
                 <Checkbox checked={isChecked} onChange={() => onServiceToggle(service.id)} className="mr-3" />
@@ -112,7 +112,7 @@ export default function ProviderServicesTab({
                       <Text className="text-[9px] font-sans-semibold text-gray-400">{service.category}</Text>
                     </View>
                     <View className="flex-row items-center">
-                      <Feather name="clock" size={10} color="#94a3b8" className="mr-0.5" />
+                      <Feather name="clock" size={10} color={THEME_COLORS.slate400} className="mr-0.5" />
                       <Text className="text-[9px] font-sans-medium text-gray-400">{service.durationLabel}</Text>
                     </View>
                   </View>
@@ -128,7 +128,7 @@ export default function ProviderServicesTab({
       {/* Pricing Info Card */}
       <View className="bg-amber-50/50 border border-amber-200 rounded-lg p-4">
         <View className="flex-row items-center gap-1.5 mb-2">
-          <Feather name="info" size={14} color="#b45309" />
+          <Feather name="info" size={14} color={THEME_COLORS.amberStar} />
           <Text className="text-xs font-sans-bold text-amber-800">{t('services.pricingInfo')}</Text>
         </View>
         {[
@@ -147,13 +147,3 @@ export default function ProviderServicesTab({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shadowMin: {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 0,
-  },
-});

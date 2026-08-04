@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface SectionHeaderProps {
   eyebrow?: string;
@@ -40,7 +41,7 @@ function SectionHeader({
             className="flex-row items-center gap-0.5"
           >
             <Text className="text-[11px] font-sans-medium text-gray-400">{actionLabel}</Text>
-            <Feather name="chevron-right" size={13} color="#9ca3af" />
+            <Feather name="chevron-right" size={13} color={THEME_COLORS.slate400} />
           </Pressable>
         ) : null}
       </View>

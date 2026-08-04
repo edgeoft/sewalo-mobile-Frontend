@@ -9,13 +9,6 @@ interface InvoiceSummaryCardProps {
 
 export default function InvoiceSummaryCard({ booking }: InvoiceSummaryCardProps) {
   const { t } = useTranslation();
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 0,
-  };
 
   const renderInfoRow = (label: string, value: string) => (
     <View className="flex-row items-center justify-between py-1">
@@ -25,7 +18,7 @@ export default function InvoiceSummaryCard({ booking }: InvoiceSummaryCardProps)
   );
 
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
+    <View className="bg-white rounded-xl border border-gray-200 p-4">
       <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.invoiceSummary')}</Text>
       <View className="gap-1">
         {renderInfoRow(booking.serviceName ?? booking.serviceLabel, booking.basePrice ?? booking.bookedPrice)}

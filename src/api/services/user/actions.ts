@@ -57,9 +57,9 @@ export const getProviderDetailsAction = async (id: string): Promise<ProviderDeta
 export const getServiceListAction = async (params: GetServiceListParams): Promise<GetServiceListResponse> => {
   return internalClient.get<GetServiceListResponse>(API_ENDPOINTS.SERVICES.LIST, {
     params: {
-      page: params.page || 1,
-      limit: params.limit || 15,
       ...params,
+      page: params.page ?? 1,
+      limit: params.limit ?? 15,
     },
   });
 };

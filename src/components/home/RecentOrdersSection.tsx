@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, Share } from 'react-native';
+import { Share, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-import { SectionHeader } from '@/components/common';
-import Button from '@/components/ui/Button';
+import { EmptyStateCard, SectionHeader } from '@/components/common';
 import ProviderOrderCard from './ProviderOrderCard';
 import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
+import { THEME_COLORS } from '@/constants/colors';
 
 export interface RecentOrdersSectionProps {
   title: string;
@@ -68,54 +68,50 @@ export default function RecentOrdersSection({
           ))}
         </View>
       ) : !hasService ? (
-        <View className="rounded-2xl border border-gray-200 bg-white px-5 py-8 items-center">
-          <View className="mb-4">
+        <EmptyStateCard
+          title={t('home.createFirstService')}
+          description={t('home.createFirstServiceDesc')}
+          buttonTitle={t('home.createService')}
+          onButtonPress={onCreateServicePress}
+          icon={
             <Svg width={120} height={90} viewBox="0 0 120 90">
-              <Rect x="20" y="15" width="80" height="60" rx="12" fill="#e0f2fe" />
+              <Rect x="20" y="15" width="80" height="60" rx="12" fill={THEME_COLORS.surfaceIndigoSubtle} />
               <Rect x="25" y="22" width="70" height="48" rx="8" fill="#ffffff" />
-              <Rect x="35" y="32" width="50" height="8" rx="4" fill="#0ea5e9" opacity={0.15} />
-              <Rect x="35" y="44" width="35" height="8" rx="4" fill="#0ea5e9" opacity={0.15} />
-              <Circle cx="80" cy="54" r="14" fill="#0ea5e9" />
-              <Path d="M80 48v12M74 54h12" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
+              <Rect x="35" y="32" width="50" height="8" rx="4" fill={THEME_COLORS.primary} opacity={0.15} />
+              <Rect x="35" y="44" width="35" height="8" rx="4" fill={THEME_COLORS.primary} opacity={0.15} />
+              <Circle cx="80" cy="54" r="14" fill={THEME_COLORS.primary} />
+              <Path
+                d="M80 48v12M74 54h12"
+                stroke={THEME_COLORS.primaryForeground}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
             </Svg>
-          </View>
-          <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('home.createFirstService')}</Text>
-          <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 mb-5 px-4">
-            {t('home.createFirstServiceDesc')}
-          </Text>
-          <Button
-            title={t('home.createService')}
-            variant="primary"
-            size="sm"
-            onPress={onCreateServicePress}
-            className="w-full max-w-[200px]"
-          />
-        </View>
+          }
+        />
       ) : (
-        <View className="rounded-2xl border border-gray-200 bg-white px-5 py-8 items-center">
-          <View className="mb-4">
+        <EmptyStateCard
+          title={t('home.boostYourBookings')}
+          description={t('home.shareProfileDesc')}
+          buttonTitle={t('home.shareProfile')}
+          onButtonPress={handleShareProfile}
+          icon={
             <Svg width={120} height={90} viewBox="0 0 120 90">
               <Rect x="20" y="15" width="80" height="60" rx="12" fill="#f0fdf4" />
               <Rect x="25" y="22" width="70" height="48" rx="8" fill="#ffffff" />
               <Circle cx="45" cy="46" r="12" fill="#d1fae5" />
               <Rect x="63" y="40" width="22" height="4" rx="2" fill="#d1fae5" />
               <Rect x="63" y="48" width="16" height="4" rx="2" fill="#d1fae5" />
-              <Circle cx="85" cy="30" r="12" fill="#10b981" />
-              <Path d="M81 30h8 M85 26v8" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+              <Circle cx="85" cy="30" r="12" fill={THEME_COLORS.emeraldSuccess} />
+              <Path
+                d="M81 30h8 M85 26v8"
+                stroke={THEME_COLORS.primaryForeground}
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </Svg>
-          </View>
-          <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('home.boostYourBookings')}</Text>
-          <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 mb-5 px-4">
-            {t('home.shareProfileDesc')}
-          </Text>
-          <Button
-            title={t('home.shareProfile')}
-            variant="primary"
-            size="sm"
-            onPress={handleShareProfile}
-            className="w-full max-w-[200px]"
-          />
-        </View>
+          }
+        />
       )}
     </View>
   );

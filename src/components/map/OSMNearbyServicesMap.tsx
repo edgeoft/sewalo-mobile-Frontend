@@ -4,6 +4,7 @@ import { NearbyProvider, MapViewport } from '@/types';
 import { getImageUrl } from '@/utils/image';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
+import type { MapMarkerPayload } from './GoogleNearbyServicesMap';
 
 export interface NearbyServicesMapProps {
   userLat: number;
@@ -15,7 +16,7 @@ export interface NearbyServicesMapProps {
   onMapViewportChange?: (viewport: MapViewport) => void;
 }
 
-function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersData: any[]) {
+function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersData: MapMarkerPayload[]) {
   const safeJson = safeJsonStringify(providersData);
 
   return `<!DOCTYPE html>
@@ -194,20 +195,6 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
       console.error("Error processing window message:", err);
     }
   });
-
-  document.addEventListener('message', function(e) {
-    try {
-      var msg = JSON.parse(e.data);
-      if (msg.type === 'setSelected') {
-        renderMarkers(msg.id);
-      } else if (msg.type === 'updateData') {
-        markersData = msg.providers;
-        renderMarkers(msg.selectedId);
-      }
-    } catch(err) {
-      console.error("Error processing window message:", err);
-    }
-  });
 </script>
 </body>
 </html>`;
@@ -277,11 +264,7 @@ export default function OSMNearbyServicesMap({
     }
   };
 
-  return (
-    <SharedWebViewMap
-      ref={webViewRef}
-      html={generateOSMNearbyMapHTML(safeLat, safeLng, markersPayload)}
-      onMessage={onMessage}
-    />
-  );
+  const mapHtml = useMemo(() => generateOSMNearbyMapHTML(safeLat, safeLng, []), [safeLat, safeLng]);
+
+  return <SharedWebViewMap ref={webViewRef} html={mapHtml} onMessage={onMessage} />;
 }

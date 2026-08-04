@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
+import { THEME_COLORS } from '@/constants/colors';
 
 export type BillingBasisType = 'per_hour' | 'per_day' | 'per_job' | 'per_project' | 'per_session';
 export type DurationUnitType = 'minutes' | 'hours' | 'days' | 'weeks';
@@ -118,7 +119,7 @@ export default function RateCard({
               }}
             >
               <Text className="text-sm text-gray-900">{t(selectedBasis.labelKey)}</Text>
-              <Feather name="chevron-down" size={15} color="#898f8f" accessible={false} />
+              <Feather name="chevron-down" size={15} color={THEME_COLORS.slate400} accessible={false} />
             </Pressable>
             {billingBasisError && (
               <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{billingBasisError}</Text>
@@ -159,7 +160,7 @@ export default function RateCard({
               }}
             >
               <Text className="text-sm text-gray-900">{t(selectedUnit.labelKey)}</Text>
-              <Feather name="chevron-down" size={15} color="#898f8f" accessible={false} />
+              <Feather name="chevron-down" size={15} color={THEME_COLORS.slate400} accessible={false} />
             </Pressable>
           </View>
         </View>
@@ -189,7 +190,7 @@ export default function RateCard({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -205,7 +206,7 @@ export default function RateCard({
                     title={t(opt.labelKey)}
                     selected={isSelected}
                     indicatorType="radio"
-                    gradientColors={['#eef0ff', '#f8fafc']}
+                    gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
                   />
                 );
               })}
@@ -238,7 +239,7 @@ export default function RateCard({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -254,7 +255,7 @@ export default function RateCard({
                     title={t(opt.labelKey)}
                     selected={isSelected}
                     indicatorType="radio"
-                    gradientColors={['#eef0ff', '#f8fafc']}
+                    gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
                   />
                 );
               })}

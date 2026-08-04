@@ -3,11 +3,14 @@ import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'rea
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '@/utils/image';
+import { THEME_COLORS } from '@/constants/colors';
+
+import type { Category } from '@/types';
 
 interface CategoryScrollSelectorProps {
   selectedCategorySlug?: string;
   onSelectCategory: (slug: string | undefined) => void;
-  categories?: any[];
+  categories?: Category[];
   isLoading: boolean;
   horizontalPaddingClass?: 'px-0' | 'px-4';
 }
@@ -26,8 +29,6 @@ export default function CategoryScrollSelector({
 }: CategoryScrollSelectorProps) {
   const { t } = useTranslation();
 
-  // titlePaddingClass will be px-0 for padded screens (like FindServicesScreen)
-  // and px-4 for unpadded screens (like MapServicesScreen)
   const titlePaddingClass = horizontalPaddingClass;
   const paddingVal = SPACING_MAP[horizontalPaddingClass] ?? 0;
 
@@ -39,7 +40,7 @@ export default function CategoryScrollSelector({
 
       {isLoading ? (
         <View className="items-center justify-center py-8">
-          <ActivityIndicator size="large" color="var(--primary)" />
+          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
         <ScrollView
@@ -84,7 +85,7 @@ export default function CategoryScrollSelector({
                   <Feather
                     name="tag"
                     size={12}
-                    color={isSelected ? 'var(--primary-foreground)' : 'var(--primary)'}
+                    color={isSelected ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
                     style={{ marginRight: 6 }}
                     accessible={false}
                   />

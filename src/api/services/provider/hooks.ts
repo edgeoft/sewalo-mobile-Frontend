@@ -1,11 +1,9 @@
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { createQueryHook, createMutationHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
   getCommissionSummaryAction,
   getCommissionsAction,
   getProviderDashboardStatsAction,
-  getEarningSummaryAction,
-  getMyTransactionsAction,
   createFinanceAccountAction,
   deleteFinanceAccountAction,
   getFinanceAccountsAction,
@@ -15,15 +13,12 @@ import {
   getMyServicesAction,
   createServiceAction,
   updateServiceAction,
-  deleteServiceAction,
 } from './actions';
-import {
+import type {
   GetCommissionsParams,
   GetCommissionsResponse,
   GetCommissionSummaryResponse,
   ProviderDashboardResponse,
-  GetEarningSummaryResponse,
-  GetMyTransactionsResponse,
   CreateFinanceAccountPayload,
   FinanceAccount,
   GetFinanceAccountsResponse,
@@ -37,157 +32,75 @@ import {
 } from '@/types';
 
 // Commissions
-export const useCommissionSummaryQuery = (
-  options?: Omit<UseQueryOptions<GetCommissionSummaryResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<GetCommissionSummaryResponse, Error>({
-    queryKey: QUERY_KEYS.COMMISSION_SUMMARY,
-    queryFn: getCommissionSummaryAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+export const useCommissionSummaryQuery = createQueryHook<GetCommissionSummaryResponse, void>(
+  () => QUERY_KEYS.COMMISSION_SUMMARY,
+  getCommissionSummaryAction,
+);
 
-export const useCommissionsQuery = (
-  params: GetCommissionsParams,
-  options?: Omit<UseQueryOptions<GetCommissionsResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<GetCommissionsResponse, Error>({
-    queryKey: QUERY_KEYS.COMMISSIONS(params),
-    queryFn: () => getCommissionsAction(params),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+const commissionsQueryHook = createQueryHook<GetCommissionsResponse, GetCommissionsParams>(
+  (params) => QUERY_KEYS.COMMISSIONS(params),
+  (params) => getCommissionsAction(params),
+);
+
+export const useCommissionsQuery = (params: GetCommissionsParams) => commissionsQueryHook(params);
 
 // Dashboard
-export const useProviderDashboardQuery = (
-  options?: Omit<UseQueryOptions<ProviderDashboardResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<ProviderDashboardResponse, Error>({
-    queryKey: QUERY_KEYS.PROVIDER_DASHBOARD_STATS,
-    queryFn: getProviderDashboardStatsAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
-
-// Earnings
-export const useEarningSummaryQuery = (
-  options?: Omit<UseQueryOptions<GetEarningSummaryResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  return useQuery<GetEarningSummaryResponse, Error>({
-    queryKey: QUERY_KEYS.EARNING_SUMMARY,
-    queryFn: getEarningSummaryAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
-
-export const useMyTransactionsQuery = (
-  params: { page?: number; limit?: number },
-  options?: Omit<UseQueryOptions<GetMyTransactionsResponse, Error>, 'queryKey' | 'queryFn'>,
-) => {
-  const page = params.page || 1;
-  const limit = params.limit || 10;
-  return useQuery<GetMyTransactionsResponse, Error>({
-    queryKey: QUERY_KEYS.MY_TRANSACTIONS(page, limit),
-    queryFn: () => getMyTransactionsAction({ page, limit }),
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+export const useProviderDashboardQuery = createQueryHook<ProviderDashboardResponse, void>(
+  () => QUERY_KEYS.PROVIDER_DASHBOARD_STATS,
+  getProviderDashboardStatsAction,
+);
 
 // Finance Accounts
-export const useGetFinanceAccountsQuery = (enabled: boolean = true) => {
-  return useQuery<GetFinanceAccountsResponse, Error>({
-    queryKey: QUERY_KEYS.FINANCE_ACCOUNTS,
-    queryFn: getFinanceAccountsAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-    enabled,
-  });
-};
+const financeAccountsQueryHook = createQueryHook<GetFinanceAccountsResponse, void>(
+  () => QUERY_KEYS.FINANCE_ACCOUNTS,
+  getFinanceAccountsAction,
+);
 
-export const useCreateFinanceAccount = () => {
-  return useMutation<FinanceAccount, Error, CreateFinanceAccountPayload>({
-    mutationFn: createFinanceAccountAction,
-  });
-};
+export const useGetFinanceAccountsQuery = (enabled: boolean = true) => financeAccountsQueryHook(undefined, { enabled });
 
-export const useUpdateFinanceAccount = () => {
-  return useMutation<FinanceAccount, Error, UpdateFinanceAccountPayload>({
-    mutationFn: updateFinanceAccountAction,
-  });
-};
+const financeInvalidationKeys = () => [QUERY_KEYS.FINANCE_ACCOUNTS];
 
-export const useDeleteFinanceAccount = () => {
-  return useMutation<void, Error, number>({
-    mutationFn: deleteFinanceAccountAction,
-  });
-};
+export const useCreateFinanceAccount = createMutationHook<FinanceAccount, CreateFinanceAccountPayload>(
+  createFinanceAccountAction,
+  { invalidateKeys: financeInvalidationKeys },
+);
+
+export const useUpdateFinanceAccount = createMutationHook<FinanceAccount, UpdateFinanceAccountPayload>(
+  updateFinanceAccountAction,
+  { invalidateKeys: financeInvalidationKeys },
+);
+
+export const useDeleteFinanceAccount = createMutationHook<void, number>(deleteFinanceAccountAction, {
+  invalidateKeys: financeInvalidationKeys,
+});
 
 // Services
-export const useGetProviderCategoriesQuery = () => {
-  return useQuery<CategoryListResponse, Error>({
-    queryKey: QUERY_KEYS.PROVIDER_CATEGORIES,
-    queryFn: getProviderCategoriesAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-};
+export const useGetProviderCategoriesQuery = createQueryHook<CategoryListResponse, void>(
+  () => QUERY_KEYS.PROVIDER_CATEGORIES,
+  getProviderCategoriesAction,
+);
 
-export const useGetProviderSubCategoriesQuery = (slug: string, enabled: boolean = true) => {
-  return useQuery<SubCategoryListResponse, Error>({
-    queryKey: QUERY_KEYS.PROVIDER_SUBCATEGORIES(slug),
-    queryFn: () => getProviderSubCategoriesAction(slug),
-    enabled: enabled && !!slug,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-};
+const subCategoriesQueryHook = createQueryHook<SubCategoryListResponse, string>(
+  (slug) => QUERY_KEYS.PROVIDER_SUBCATEGORIES(slug),
+  (slug) => getProviderSubCategoriesAction(slug),
+);
 
-export const useGetMyServicesQuery = (options: { enabled?: boolean } = {}) => {
-  return useQuery<GetMyServicesResponse, Error>({
-    queryKey: QUERY_KEYS.MY_SERVICES,
-    queryFn: getMyServicesAction,
-    retry: false,
-    refetchOnWindowFocus: false,
-    ...options,
-  });
-};
+export const useGetProviderSubCategoriesQuery = (slug: string, enabled: boolean = true) =>
+  subCategoriesQueryHook(slug, { enabled: enabled && !!slug });
 
-export const useCreateServiceMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation<Service, Error, CreateServiceParams>({
-    mutationFn: createServiceAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
-    },
-  });
-};
+const myServicesQueryHook = createQueryHook<GetMyServicesResponse, void>(
+  () => QUERY_KEYS.MY_SERVICES,
+  getMyServicesAction,
+);
 
-export const useDeleteServiceMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: deleteServiceAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
-    },
-  });
-};
+export const useGetMyServicesQuery = (options: { enabled?: boolean } = {}) => myServicesQueryHook(undefined, options);
 
-export const useUpdateServiceMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation<Service, Error, UpdateServiceParams>({
-    mutationFn: updateServiceAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_SERVICES });
-    },
-  });
-};
+const myServicesInvalidationKeys = () => [QUERY_KEYS.MY_SERVICES];
+
+export const useCreateServiceMutation = createMutationHook<Service, CreateServiceParams>(createServiceAction, {
+  invalidateKeys: myServicesInvalidationKeys,
+});
+
+export const useUpdateServiceMutation = createMutationHook<Service, UpdateServiceParams>(updateServiceAction, {
+  invalidateKeys: myServicesInvalidationKeys,
+});

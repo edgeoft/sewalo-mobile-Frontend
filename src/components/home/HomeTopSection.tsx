@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,15 +25,19 @@ interface HomeTopSectionProps {
   categories?: Category[];
 }
 
-function pickRandom<T>(arr: T[], n: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, n);
+function pickFeatured<T>(arr: T[], n: number): T[] {
+  return arr.slice(0, n);
 }
 
 export default function HomeTopSection({ variant, stats, categories }: HomeTopSectionProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+
+  const featuredCategories = useMemo(() => {
+    if (!categories || categories.length < 2) return [];
+    return pickFeatured(categories, 2);
+  }, [categories]);
 
   const heroCopyByVariant = {
     guest: {
@@ -81,7 +86,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
   };
 
   return (
-    <ContentLayout className="overflow-hidden bg-[#f7f9ff]">
+    <ContentLayout className="overflow-hidden bg-surface-brand-subtle">
       <HomeTopSectionBackground height={heroCopy.backgroundHeight} />
 
       <View className="gap-y-4 pb-2">
@@ -159,9 +164,9 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
           <>
             <HomeTopSectionSearchBar placeholder={heroCopy.searchPlaceholder} onPress={handleSearchPress} />
 
-            {categories && categories.length >= 2 && (
+            {featuredCategories.length >= 2 && (
               <View className="flex-row flex-wrap gap-2 pt-1">
-                {pickRandom(categories, 2).map((cat) => (
+                {featuredCategories.map((cat) => (
                   <HomeTopSectionServiceChip
                     key={cat.slug}
                     label={cat.name}

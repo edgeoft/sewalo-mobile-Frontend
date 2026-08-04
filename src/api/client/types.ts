@@ -76,10 +76,10 @@ export type Tokens = {
 export type SingleTokenConfig = {
   mode: 'single';
   refreshURL: string;
-  getAccessToken: () => Promise<string | null>;
-  getRefreshToken: () => Promise<string | null>;
-  onTokenRefreshed: (tokens: Tokens) => void;
-  onAuthFailure: () => void;
+  getAccessToken?: () => Promise<string | null>;
+  getRefreshToken?: () => Promise<string | null>;
+  onTokenRefreshed?: (tokens: Tokens) => void;
+  onAuthFailure?: () => void;
   proactiveRefreshSeconds?: number;
 };
 

@@ -1,10 +1,11 @@
-import React from 'react';
+import type { ComponentProps } from 'react';
+import type { Feather } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
 import AccountMenuItem from './AccountMenuItem';
 
 export interface AccountMenuItemOption {
   id: string;
-  icon: any;
+  icon: ComponentProps<typeof Feather>['name'];
   title: string;
   subtitle: string;
   destructive?: boolean;
@@ -27,18 +28,10 @@ export default function AccountMenuSectionCard({
   onItemPress,
   rightContentMap = {},
 }: AccountMenuSectionCardProps) {
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
-
   const isActionsSection = section.id === 'actions';
 
   return (
-    <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <View className="rounded-xl border border-gray-200 bg-white overflow-hidden">
       {!isActionsSection && (
         <View className="bg-gray-50/50 px-4 py-2 border-b border-gray-100">
           <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider">{section.title}</Text>

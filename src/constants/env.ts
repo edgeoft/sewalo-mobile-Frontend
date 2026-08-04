@@ -25,11 +25,6 @@ export const ENV = {
   POSTHOG_PROJECT_TOKEN: process.env.EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN || '',
 
   /**
-   * PostHog Personal/Secret API Key (starts with phx_).
-   */
-  POSTHOG_API_KEY: process.env.EXPO_PUBLIC_POSTHOG_API_KEY || '',
-
-  /**
    * PostHog Host Instance URL.
    */
   POSTHOG_HOST: process.env.EXPO_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',

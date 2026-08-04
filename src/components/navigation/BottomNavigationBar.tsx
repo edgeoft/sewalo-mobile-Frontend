@@ -5,34 +5,12 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { BOTTOM_TAB_CONFIGS, TabConfig } from '@/constants/navigation';
+import { THEME_COLORS } from '@/constants/colors';
 
-export interface BottomTabBarProps {
-  state: {
-    routes: {
-      key: string;
-      name: string;
-      params?: any; // kept as any only where router params are generic
-    }[];
-    index: number;
-  };
-  descriptors: Record<
-    string,
-    {
-      options: {
-        tabBarAccessibilityLabel?: string;
-        tabBarAccessibilityHint?: string;
-        tabBarTestID?: string;
-      };
-      route: any;
-      navigation: any;
-      render: () => React.ReactNode;
-    }
-  >;
-  navigation: {
-    emit: (options: any) => any;
-    navigate: (name: string, params?: any) => void;
-  };
-}
+import type { ComponentProps } from 'react';
+import type { Tabs } from 'expo-router';
+
+export type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 const TAB_TRANSLATION_KEYS: Record<string, string> = {
   home: 'navigation.tabHome',
@@ -82,7 +60,7 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
         shadowRadius: 4,
         elevation: 0,
       }}
-      className="flex-row bg-white border-t border-gray-100/50 w-full"
+      className="flex-row bg-white border-t border-slate-100 w-full"
     >
       {state.routes
         .filter((route) => route.name !== 'map-services')
@@ -94,7 +72,9 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
             (route.name === 'find-services' && currentRouteName === 'map-services');
           const config: TabConfig = BOTTOM_TAB_CONFIGS[route.name] || {
             label: TAB_TRANSLATION_KEYS[route.name] || route.name,
-            icon: (focused) => <Feather name="help-circle" size={22} color={focused ? '#485aff' : '#111827'} />,
+            icon: (focused) => (
+              <Feather name="help-circle" size={22} color={focused ? THEME_COLORS.primary : THEME_COLORS.slate900} />
+            ),
           };
           const translationKey = TAB_TRANSLATION_KEYS[route.name];
           const translatedLabel = translationKey ? t(translationKey) : config.label;
@@ -123,14 +103,16 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
             });
           };
 
+          const opts = options as Record<string, string | undefined>;
+
           return (
             <Pressable
               key={route.key}
               accessibilityRole="tab"
               accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={options.tabBarAccessibilityLabel ?? translatedLabel}
-              accessibilityHint={options.tabBarAccessibilityHint}
-              testID={options.tabBarTestID}
+              accessibilityLabel={opts.tabBarAccessibilityLabel ?? translatedLabel}
+              accessibilityHint={opts.tabBarAccessibilityHint}
+              testID={opts.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
               className="flex-1 items-center justify-center pt-2 pb-0.5"

@@ -12,6 +12,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 export interface Coupon {
   id: string;
@@ -78,10 +79,10 @@ export default function DiscountLoyaltyCard({
               </Text>
             </View>
           ) : (
-            <Text className="form-input-text flex-1 text-[#898f8f]">{t('components.selectCoupon')}</Text>
+            <Text className="form-input-text flex-1 text-slate-400">{t('components.selectCoupon')}</Text>
           )}
           <View className="ml-3">
-            <Feather name="chevron-down" size={16} color="#9ca3af" accessible={false} />
+            <Feather name="chevron-down" size={16} color={THEME_COLORS.slate400} accessible={false} />
           </View>
         </Pressable>
         {selectedCoupon && (
@@ -90,7 +91,7 @@ export default function DiscountLoyaltyCard({
             accessibilityRole="button"
             className="flex-row items-center mt-2"
           >
-            <Feather name="x" size={12} color="#ef4444" accessible={false} />
+            <Feather name="x" size={12} color={THEME_COLORS.dangerRed} accessible={false} />
             <Text className="text-xs font-sans-medium text-red-500 ml-1">{t('components.removeCoupon')}</Text>
           </Pressable>
         )}
@@ -119,7 +120,7 @@ export default function DiscountLoyaltyCard({
                   hitSlop={8}
                   className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
                 >
-                  <Feather name="x" size={16} color="#64748b" />
+                  <Feather name="x" size={16} color={THEME_COLORS.slate500} />
                 </Pressable>
               </View>
 
@@ -136,7 +137,7 @@ export default function DiscountLoyaltyCard({
                       accessibilityState={{ checked: selectedCoupon?.code === coupon.code }}
                       className={`px-4 py-3.5 border rounded-xl ${
                         selectedCoupon?.code === coupon.code
-                          ? 'border-primary bg-[#eef0ff]'
+                          ? 'border-primary bg-surface-indigo-subtle'
                           : 'border-gray-200 bg-white'
                       }`}
                     >
@@ -155,7 +156,7 @@ export default function DiscountLoyaltyCard({
                         </View>
                         {selectedCoupon?.code === coupon.code && (
                           <View className="h-6 w-6 rounded-full bg-primary items-center justify-center mt-0.5">
-                            <Feather name="check" size={12} color="#fff" accessible={false} />
+                            <Feather name="check" size={12} color={THEME_COLORS.primaryForeground} accessible={false} />
                           </View>
                         )}
                       </View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import {
   Modal,
   Pressable,
@@ -17,11 +17,13 @@ import SelectionOption from '@/components/ui/SelectionOption';
 import { SERVICE_CATEGORIES, getServiceTypesByCategory } from '../constants/serviceOptions';
 import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
 import { ServiceFormData } from '@/types';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ServiceFormBasicsProps {
   control: Control<ServiceFormData>;
   errors: FieldErrors<ServiceFormData>;
   setValue: UseFormSetValue<ServiceFormData>;
+  getValues: UseFormGetValues<ServiceFormData>;
   watchCategoryId: string;
   watchServiceTypeIds: string[];
 }
@@ -30,6 +32,7 @@ export default function ServiceFormBasics({
   control,
   errors,
   setValue,
+  getValues,
   watchCategoryId,
   watchServiceTypeIds,
 }: ServiceFormBasicsProps) {
@@ -70,7 +73,8 @@ export default function ServiceFormBasics({
     if (index > -1) {
       currentSelected.splice(index, 1);
       // Remove corresponding rate card entry
-      const rates = { ...control._formValues.rates };
+      const currentRates = getValues('rates');
+      const rates = { ...currentRates };
       delete rates[typeId];
       setValue('rates', rates, { shouldValidate: true });
     } else {
@@ -134,10 +138,10 @@ export default function ServiceFormBasics({
               paddingHorizontal: 14,
             }}
           >
-            <Text className={`text-sm flex-1 ${activeCategory ? 'text-gray-900' : 'text-[#898f8f]'}`}>
+            <Text className={`text-sm flex-1 ${activeCategory ? 'text-gray-900' : 'text-form-field-placeholder'}`}>
               {activeCategory ? activeCategory.name : 'Select a Category'}
             </Text>
-            <Feather name="chevron-down" size={16} color="#898f8f" accessible={false} />
+            <Feather name="chevron-down" size={16} color={THEME_COLORS.slate400} accessible={false} />
           </Pressable>
           {errors.categoryId && (
             <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{errors.categoryId.message}</Text>
@@ -166,7 +170,7 @@ export default function ServiceFormBasics({
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                className={`text-sm flex-1 ${watchServiceTypeIds.length > 0 ? 'text-gray-900' : 'text-[#898f8f]'}`}
+                className={`text-sm flex-1 ${watchServiceTypeIds.length > 0 ? 'text-gray-900' : 'text-form-field-placeholder'}`}
               >
                 {watchServiceTypeIds.length > 0
                   ? (() => {
@@ -179,11 +183,11 @@ export default function ServiceFormBasics({
                     })()
                   : 'Select Service Types'}
               </Text>
-              <Feather name="chevron-down" size={16} color="#898f8f" accessible={false} />
+              <Feather name="chevron-down" size={16} color={THEME_COLORS.slate400} accessible={false} />
             </Pressable>
           ) : (
             <View className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <Text className="text-xs font-sans-medium text-[#898f8f]">
+              <Text className="text-xs font-sans-medium text-form-field-placeholder">
                 Please select a category first to see available service types.
               </Text>
             </View>

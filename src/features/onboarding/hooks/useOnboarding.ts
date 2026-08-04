@@ -12,8 +12,7 @@ import {
   AVAILABILITY_TYPES,
   DEFAULT_WORKING_HOURS_START,
   DEFAULT_WORKING_HOURS_END,
-  WORKING_DAYS_OPTIONS,
-  WorkingDaysOption,
+  AvailabilityType,
 } from '@/constants/availability';
 import {
   Availability,
@@ -94,13 +93,13 @@ export function useOnboarding() {
   const watchDateOfBirth = useWatch({ control: personalInfoControl, name: 'dateOfBirth' }) || '';
   const watchAvatar = useWatch({ control: personalInfoControl, name: 'avatar' }) || '';
 
-  const [userWorkingDays, setUserWorkingDays] = useState<WorkingDaysOption | null>(null);
-  const workingDays: WorkingDaysOption = useMemo(() => {
+  const [userWorkingDays, setUserWorkingDays] = useState<AvailabilityType | null>(null);
+  const workingDays: AvailabilityType = useMemo(() => {
     if (userWorkingDays !== null) return userWorkingDays;
-    if (profile?.availability === AVAILABILITY_TYPES.Always) return WORKING_DAYS_OPTIONS.Everyday;
-    if (profile?.availability === AVAILABILITY_TYPES.Weekdays) return WORKING_DAYS_OPTIONS.SundayFriday;
-    if (profile?.availability === AVAILABILITY_TYPES.Weekends) return WORKING_DAYS_OPTIONS.Weekend;
-    return WORKING_DAYS_OPTIONS.SundayFriday;
+    if (profile?.availability === AVAILABILITY_TYPES.Always) return AVAILABILITY_TYPES.Always;
+    if (profile?.availability === AVAILABILITY_TYPES.Weekdays) return AVAILABILITY_TYPES.Weekdays;
+    if (profile?.availability === AVAILABILITY_TYPES.Weekends) return AVAILABILITY_TYPES.Weekends;
+    return AVAILABILITY_TYPES.Weekdays;
   }, [userWorkingDays, profile?.availability]);
 
   const [userWorkingHoursStart, setUserWorkingHoursStart] = useState<string | null>(null);
@@ -284,12 +283,7 @@ export function useOnboarding() {
     if (currentStepKey === 'availability') {
       setLoading(true);
       try {
-        let availability: Availability = AVAILABILITY_TYPES.Always;
-        if (workingDays === WORKING_DAYS_OPTIONS.SundayFriday) {
-          availability = AVAILABILITY_TYPES.Weekdays;
-        } else if (workingDays === WORKING_DAYS_OPTIONS.Weekend) {
-          availability = AVAILABILITY_TYPES.Weekends;
-        }
+        const availability: Availability = workingDays;
 
         const payload: UpdateProfilePayload = {
           availability,

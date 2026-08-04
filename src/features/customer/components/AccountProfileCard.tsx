@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { UserProfile } from '@/types';
 import { USER_ROLES, USER_STATUSES } from '@/constants/roles';
+import { THEME_COLORS } from '@/constants/colors';
 import { getImageUrl } from '../../auth/utils/image';
 
 interface AccountProfileCardProps {
@@ -23,10 +24,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
   const displayName = isProvider ? user?.name || t('provider.partner') : user?.name || t('customer.guestUser');
 
   return (
-    <View
-      style={styles.card}
-      className="rounded-xl border border-gray-200 bg-white p-4 mb-5 flex-row items-center justify-between"
-    >
+    <View className="rounded-xl border border-gray-200 bg-white p-4 mb-5 flex-row items-center justify-between">
       <View className="flex-row items-center flex-1">
         <View className="relative">
           <Image
@@ -37,7 +35,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
           {isProvider ? (
             isVerified && (
               <View className="absolute bottom-0 right-0 h-4.5 w-4.5 rounded-full bg-primary border-2 border-white items-center justify-center">
-                <Feather name="check" size={10} color="#ffffff" />
+                <Feather name="check" size={10} color={THEME_COLORS.primaryForeground} />
               </View>
             )
           ) : (
@@ -57,7 +55,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
           {isProvider && (
             <View className="flex-row items-center gap-1.5 mt-1.5">
               <View className="flex-row items-center gap-0.5">
-                <Feather name="star" size={10} color="#f59e0b" />
+                <Feather name="star" size={10} color={THEME_COLORS.amberStar} />
                 <Text className="text-[10px] font-sans-bold text-gray-600">
                   {Number(user?.average_rating || user?.avg_rating || 0).toFixed(1)}
                 </Text>
@@ -72,13 +70,3 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  },
-});

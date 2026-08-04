@@ -32,9 +32,5 @@ export function FontProvider({ children }: FontProviderProps) {
     }
   }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return null;
-  }
-
   return <>{children}</>;
 }

@@ -6,7 +6,21 @@ import { getImageUrl } from '@/utils/image';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
 
-function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providersData: any[], apiKey: string) {
+export interface MapMarkerPayload {
+  id: string;
+  name: string;
+  avatar: string;
+  rating: string;
+  lat: number;
+  lng: number;
+}
+
+function generateGoogleNearbyMapHTML(
+  userLat: number,
+  userLng: number,
+  providersData: MapMarkerPayload[],
+  apiKey: string,
+) {
   const safeJson = safeJsonStringify(providersData);
 
   return `
@@ -223,22 +237,6 @@ function generateGoogleNearbyMapHTML(userLat: number, userLng: number, providers
       console.error("Error processing window message:", err);
     }
   });
-
-  document.addEventListener('message', function(e) {
-    try {
-      var msg = JSON.parse(e.data);
-      if (msg.type === 'setSelected') {
-        selectedId = msg.id;
-        renderMarkers();
-      } else if (msg.type === 'updateData') {
-        markersData = msg.providers;
-        selectedId = msg.selectedId;
-        renderMarkers();
-      }
-    } catch(err) {
-      console.error("Error processing window message:", err);
-    }
-  });
 </script>
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap" async defer></script>
@@ -311,11 +309,7 @@ export default function GoogleNearbyServicesMap({
     }
   };
 
-  return (
-    <SharedWebViewMap
-      ref={webViewRef}
-      html={generateGoogleNearbyMapHTML(safeLat, safeLng, markersPayload, apiKey)}
-      onMessage={onMessage}
-    />
-  );
+  const mapHtml = useMemo(() => generateGoogleNearbyMapHTML(safeLat, safeLng, [], apiKey), [safeLat, safeLng, apiKey]);
+
+  return <SharedWebViewMap ref={webViewRef} html={mapHtml} onMessage={onMessage} />;
 }

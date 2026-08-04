@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { BOOKING_STATUSES } from '@/types';
 import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderOrderCardProps {
   order: ProviderBookingItem;
@@ -19,18 +20,9 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
   const statusPresentation = BOOKING_STATUS_PRESENTATION[order.status];
   const isPending = order.status === BOOKING_STATUSES.Pending;
 
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 0,
-  };
-
   return (
     <Pressable
       onPress={onPress}
-      style={cardShadow}
       className="rounded-xl border border-gray-200 bg-white p-3 active:opacity-95"
       accessibilityRole="button"
       accessibilityLabel={`Order from ${order.customerName}`}
@@ -66,13 +58,13 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <View className="gap-y-1">
             {/* Scheduled Date/Time */}
             <View className="flex-row items-center gap-1.5">
-              <Feather name="calendar" size={12} color="#64748b" />
+              <Feather name="calendar" size={12} color={THEME_COLORS.slate500} />
               <Text className="text-xs font-sans-medium text-gray-500">{order.bookingDate}</Text>
             </View>
 
             {/* Location */}
             <View className="flex-row items-center gap-1.5">
-              <Feather name="map-pin" size={12} color="#64748b" />
+              <Feather name="map-pin" size={12} color={THEME_COLORS.slate500} />
               <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
                 {order.location}
               </Text>
@@ -113,7 +105,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <Pressable
             onPress={onPress}
             accessibilityRole="button"
-            className="rounded-xl bg-[#eef1ff] px-4 py-2 active:opacity-90"
+            className="rounded-xl bg-surface-indigo-subtle px-4 py-2 active:opacity-90"
           >
             <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
           </Pressable>

@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { ENV } from '@/constants/env';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -76,28 +76,21 @@ function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
       console.error("Error processing window message:", err);
     }
   });
-
-  document.addEventListener('message', function(e) {
-    try {
-      var msg = JSON.parse(e.data);
-      if (msg.type === 'setMarker') {
-        var pos = { lat: parseFloat(msg.lat), lng: parseFloat(msg.lng) };
-        marker.setPosition(pos);
-        map.setCenter(pos);
-      }
-    } catch(err) {
-      console.error("Error processing window message:", err);
-    }
-  });
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap" async defer></script>
 </body>
 </html>`;
 }
 
-const extractComponent = (components: any[], types: string[]): string => {
+interface GoogleAddressComponent {
+  types: string[];
+  long_name: string;
+  short_name: string;
+}
+
+const extractComponent = (components: GoogleAddressComponent[], types: string[]): string => {
   for (const type of types) {
-    const comp = components.find((c: any) => c.types.includes(type));
+    const comp = components.find((c) => c.types.includes(type));
     if (comp) {
       return comp.long_name;
     }
@@ -372,6 +365,11 @@ export default function GoogleMapsSelector({
     </Pressable>
   );
 
+  const mapHtml = useMemo(
+    () => generateGoogleMapHTML(initialLat, initialLng, apiKey),
+    [initialLat, initialLng, apiKey],
+  );
+
   return (
     <View className="flex-1 bg-gray-50">
       <View
@@ -408,7 +406,7 @@ export default function GoogleMapsSelector({
         <View className="flex-1" importantForAccessibility="no">
           <SharedWebViewMap
             ref={webViewRef}
-            html={generateGoogleMapHTML(initialLat, initialLng, apiKey)}
+            html={mapHtml}
             onMessage={handleMessage}
             onLoadEnd={() => {
               webViewRef.current?.postMessage(

@@ -9,6 +9,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
   title: string;
@@ -85,7 +86,11 @@ export default function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={variant === 'light' ? '#485aff' : '#ffffff'} className="mr-2" />
+        <ActivityIndicator
+          size="small"
+          color={variant === 'light' ? THEME_COLORS.primary : THEME_COLORS.primaryForeground}
+          className="mr-2"
+        />
       ) : (
         <View className="flex-row items-center justify-center">
           {leftIcon && <View className="mr-1">{leftIcon}</View>}

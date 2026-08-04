@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ExperienceItem {
   id: number;
@@ -57,24 +58,24 @@ export default function ProviderOverviewTab({
   return (
     <View className="gap-y-4">
       {/* About Bio Section */}
-      <View className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
+      <View className="bg-white border border-gray-200 rounded-lg p-4">
         <Text className="text-sm font-sans-bold text-gray-950 mb-2">{t('services.aboutProvider')}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-5">{bio || t('services.noBio')}</Text>
       </View>
 
       {/* Merged Background, Skills, Experience Container */}
-      <View className="bg-white border border-gray-200 rounded-lg p-4 gap-y-4" style={styles.shadowMin}>
+      <View className="bg-white border border-gray-200 rounded-lg p-4 gap-y-4">
         {/* Experience & Languages Summary */}
         <View className="gap-y-3">
           <View className="flex-row items-center gap-2">
-            <Feather name="briefcase" size={14} color="#485aff" />
+            <Feather name="briefcase" size={14} color={THEME_COLORS.primary} />
             <Text className="text-xs font-sans-bold text-gray-900">
               {experience || t('services.experiencedProfessional')}
             </Text>
           </View>
 
           <View className="flex-row items-center gap-2">
-            <Feather name="globe" size={14} color="#485aff" />
+            <Feather name="globe" size={14} color={THEME_COLORS.primary} />
             <Text className="text-xs font-sans-bold text-gray-900">{t('services.languages')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500">
               {languages.length > 0 ? languages.join(', ') : t('services.notSpecified')}
@@ -152,14 +153,14 @@ export default function ProviderOverviewTab({
 
       {/* Certificates Section */}
       {hasCertificates && (
-        <View className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
+        <View className="bg-white border border-gray-200 rounded-lg p-4">
           <Text className="text-sm font-sans-bold text-gray-950 mb-3">{t('services.certificatesDocuments')}</Text>
           <View className="gap-y-2">
             {certificates.map((cert, index) => {
               const val = typeof cert === 'string' ? cert : cert.value;
               return (
                 <View key={index} className="flex-row items-center gap-2">
-                  <Feather name="award" size={14} color="#f59e0b" />
+                  <Feather name="award" size={14} color={THEME_COLORS.amberStar} />
                   <Text className="text-xs font-sans-medium text-gray-600">{val}</Text>
                 </View>
               );
@@ -170,13 +171,3 @@ export default function ProviderOverviewTab({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shadowMin: {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 0,
-  },
-});

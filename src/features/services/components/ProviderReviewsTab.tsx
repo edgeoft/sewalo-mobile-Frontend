@@ -1,9 +1,10 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { ReviewItem } from '@/types';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderReviewsTabProps {
   rating: string;
@@ -15,9 +16,9 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
   const { t } = useTranslation();
   if (reviews.length === 0) {
     return (
-      <View className="bg-white border border-gray-200 rounded-lg px-5 py-8 items-center" style={styles.shadowMin}>
-        <View className="h-16 w-16 bg-[#fffbf0] rounded-full items-center justify-center mb-3 border border-[#fef3c7]">
-          <Feather name="message-square" size={28} color="#d97706" />
+      <View className="bg-white border border-gray-200 rounded-lg px-5 py-8 items-center">
+        <View className="h-16 w-16 bg-amber-50 rounded-full items-center justify-center mb-3 border border-amber-100">
+          <Feather name="message-square" size={28} color={THEME_COLORS.amberStar} />
         </View>
         <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('services.noReviewsYet')}</Text>
         <Text className="text-xs font-sans-medium text-gray-400 text-center leading-4 max-w-[240px]">
@@ -34,20 +35,40 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
     for (let i = 1; i <= 5; i++) {
       if (i <= floorRating) {
         stars.push(
-          <Feather key={i} name="star" size={size} color="#fbbf24" fill="#fbbf24" style={{ marginRight: 2 }} />,
+          <Feather
+            key={i}
+            name="star"
+            size={size}
+            color={THEME_COLORS.amberStar}
+            fill={THEME_COLORS.amberStar}
+            style={{ marginRight: 2 }}
+          />,
         );
       } else if (i - 0.5 <= ratingVal) {
         stars.push(
           <View key={i} style={{ flexDirection: 'row', marginRight: 2 }}>
-            <Feather name="star" size={size} color="#fbbf24" fill="#fbbf24" style={{ position: 'absolute' }} />
+            <Feather
+              name="star"
+              size={size}
+              color={THEME_COLORS.amberStar}
+              fill={THEME_COLORS.amberStar}
+              style={{ position: 'absolute' }}
+            />
             <View style={{ width: size / 2, overflow: 'hidden' }}>
-              <Feather name="star" size={size} color="#e2e8f0" fill="#e2e8f0" />
+              <Feather name="star" size={size} color={THEME_COLORS.slate200} fill={THEME_COLORS.slate200} />
             </View>
           </View>,
         );
       } else {
         stars.push(
-          <Feather key={i} name="star" size={size} color="#e2e8f0" fill="#e2e8f0" style={{ marginRight: 2 }} />,
+          <Feather
+            key={i}
+            name="star"
+            size={size}
+            color={THEME_COLORS.slate200}
+            fill={THEME_COLORS.slate200}
+            style={{ marginRight: 2 }}
+          />,
         );
       }
     }
@@ -64,7 +85,7 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
   return (
     <View className="gap-y-4">
       {/* Rating Breakdown Header */}
-      <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-center" style={styles.shadowMin}>
+      <View className="bg-white border border-gray-200 rounded-lg p-4 flex-row items-center">
         <View className="items-center justify-center pr-5 border-r border-gray-100 mr-5">
           <Text className="text-3xl font-sans-extrabold text-gray-950">
             {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
@@ -80,7 +101,13 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
           {ratingStats.map((stat) => (
             <View key={stat.stars} className="flex-row items-center">
               <Text className="text-[10px] font-sans-bold text-gray-500 w-3">{stat.stars}</Text>
-              <Feather name="star" size={9} color="#fbbf24" fill="#fbbf24" style={{ marginHorizontal: 3 }} />
+              <Feather
+                name="star"
+                size={9}
+                color={THEME_COLORS.amberStar}
+                fill={THEME_COLORS.amberStar}
+                style={{ marginHorizontal: 3 }}
+              />
 
               {/* Progress bar line */}
               <View className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden mr-2">
@@ -96,7 +123,7 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
       {/* Reviews List */}
       <View className="gap-y-3">
         {reviews.map((rev) => (
-          <View key={rev.id} className="bg-white border border-gray-200 rounded-lg p-4" style={styles.shadowMin}>
+          <View key={rev.id} className="bg-white border border-gray-200 rounded-lg p-4">
             {/* User Avatar + Date Row */}
             <View className="flex-row items-center justify-between mb-2">
               <View className="flex-row items-center">
@@ -121,7 +148,7 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
             {rev.reply && (
               <View className="mt-3 bg-gray-50 border border-gray-100 rounded-lg p-3 ml-2.5">
                 <View className="flex-row items-center mb-1">
-                  <Feather name="corner-down-right" size={12} color="#485aff" className="mr-1.5" />
+                  <Feather name="corner-down-right" size={12} color={THEME_COLORS.primary} className="mr-1.5" />
                   <Text className="text-[10px] font-sans-bold text-primary uppercase tracking-wider">
                     {t('services.replyFromProvider')}
                   </Text>
@@ -135,13 +162,3 @@ export default function ProviderReviewsTab({ rating, reviewCount, reviews }: Pro
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  shadowMin: {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 0,
-  },
-});

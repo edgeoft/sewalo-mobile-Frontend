@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -69,20 +69,6 @@ function generateOSMMapHTML(lat: number, lng: number) {
   });
 
   window.addEventListener('message', function(e) {
-    try {
-      var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-      if (msg.type === 'setMarker') {
-        var ll = L.latLng(parseFloat(msg.lat), parseFloat(msg.lng));
-        marker.setLatLng(ll);
-        map.setView(ll, map.getZoom());
-        map.invalidateSize();
-      }
-    } catch(err) {
-      console.error("Error processing window message:", err);
-    }
-  });
-
-  document.addEventListener('message', function(e) {
     try {
       var msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
       if (msg.type === 'setMarker') {
@@ -264,8 +250,8 @@ export default function OpenStreetMapSelector({
           },
         );
         if (response.ok) {
-          const data = await response.json();
-          const results = data.map((item: any) => ({
+          const data = (await response.json()) as { display_name: string; lat: string; lon: string }[];
+          const results = data.map((item) => ({
             description: item.display_name,
             display_name: item.display_name,
             lat: item.lat,
@@ -389,6 +375,8 @@ export default function OpenStreetMapSelector({
     </Pressable>
   );
 
+  const mapHtml = useMemo(() => generateOSMMapHTML(initialLat, initialLng), [initialLat, initialLng]);
+
   return (
     <View className="flex-1 bg-gray-50">
       <View
@@ -424,7 +412,7 @@ export default function OpenStreetMapSelector({
         <View className="flex-1" importantForAccessibility="no">
           <SharedWebViewMap
             ref={webViewRef}
-            html={generateOSMMapHTML(initialLat, initialLng)}
+            html={mapHtml}
             onMessage={handleMessage}
             onLoadEnd={() => {
               webViewRef.current?.postMessage(

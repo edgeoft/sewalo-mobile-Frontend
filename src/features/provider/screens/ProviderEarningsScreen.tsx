@@ -40,6 +40,7 @@ export default function ProviderEarningsScreen() {
     isLoading: isCommissionsLoading,
     isError: isCommissionsError,
     refetch: refetchCommissions,
+    isRefetching: isRefetchingCommissions,
   } = useCommissionsQuery({
     type: activeTab,
     has_paid: filterStatus === EARNINGS_FILTER_STATUS.All ? undefined : filterStatus === EARNINGS_FILTER_STATUS.Paid,
@@ -94,7 +95,8 @@ export default function ProviderEarningsScreen() {
 
       <ContentLayout
         scrollable
-        enableRefresh
+        onRefresh={handleRetry}
+        refreshing={isRefetchingCommissions}
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,

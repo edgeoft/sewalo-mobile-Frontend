@@ -3,6 +3,7 @@ import { View, Text, Pressable, Modal, SafeAreaView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import NativeMapProvider from '../map/NativeMapProvider';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface LocationData {
   address: string;
@@ -56,15 +57,15 @@ export default function LocationSelector({
         accessibilityHint={error}
       >
         <View className="flex-row items-center gap-x-2 flex-1 mr-2 bg-transparent">
-          <Feather name="map-pin" size={16} color="#898f8f" />
+          <Feather name="map-pin" size={16} color={THEME_COLORS.slate400} />
           <Text
             numberOfLines={1}
-            className={`text-sm flex-1 ${value ? 'text-gray-900 font-sans-medium' : 'text-[#898f8f]'}`}
+            className={`text-sm flex-1 ${value ? 'text-gray-900 font-sans-medium' : 'text-form-field-placeholder'}`}
           >
             {value ? value : resolvedPlaceholder}
           </Text>
         </View>
-        <Feather name="chevron-right" size={16} color="#898f8f" />
+        <Feather name="chevron-right" size={16} color={THEME_COLORS.slate400} />
       </Pressable>
 
       {error ? <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{error}</Text> : null}

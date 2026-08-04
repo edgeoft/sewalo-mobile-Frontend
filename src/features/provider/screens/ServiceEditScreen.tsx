@@ -54,6 +54,7 @@ export default function ServiceEditScreen() {
     control,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<ServiceFormData>({
@@ -231,6 +232,7 @@ export default function ServiceEditScreen() {
           control={control}
           errors={errors}
           setValue={setValue}
+          getValues={getValues}
           watchCategoryId={watchCategoryId}
           watchServiceTypeIds={watchServiceTypeIds}
         />

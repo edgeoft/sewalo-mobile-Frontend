@@ -50,7 +50,7 @@ export const createSingleTokenManager = (
         console.warn('Failed to clear tokens during auth failure', err);
       })
       .finally(() => {
-        config.onAuthFailure();
+        config.onAuthFailure?.();
       });
   };
 
@@ -86,7 +86,7 @@ export const createSingleTokenManager = (
         };
 
         await setTokens(newTokens);
-        config.onTokenRefreshed(newTokens);
+        config.onTokenRefreshed?.(newTokens);
         return newTokens.accessToken;
       } catch (err) {
         handleAuthFailure();

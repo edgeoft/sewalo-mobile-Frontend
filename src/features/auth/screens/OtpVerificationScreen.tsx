@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { NativeSyntheticEvent, Pressable, Text, TextInput, TextInputKeyPressEventData, View } from 'react-native';
 
 import { useResendOtp, useVerifyOtp } from '@/api';
 import Button from '@/components/ui/Button';
@@ -69,7 +69,7 @@ export default function OtpVerificationScreen() {
     }
   };
 
-  const handleKeyPress = (e: any, index: number) => {
+  const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
     if (e.nativeEvent.key === 'Backspace') {
       if (otp[index] === '' && index > 0 && inputRefs.current[index - 1]) {
         const newOtp = [...otp];

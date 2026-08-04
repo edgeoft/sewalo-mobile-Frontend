@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
+import { Animated, View, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
-import { type ReactNode } from 'react';
-import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import LanguageSelector from '@/components/ui/LanguageSelector';
@@ -9,6 +9,7 @@ import TopBar from './TopBar';
 import { useAuth } from '@/providers/AuthProvider';
 import { useUnreadCountQuery } from '@/api';
 import { USER_ROLES } from '@/types';
+import { ROUTES } from '@/constants/routes';
 
 interface HeaderBaseProps {
   showBackButton?: boolean;
@@ -17,18 +18,19 @@ interface HeaderBaseProps {
   contentClassName?: string;
   includeBottomBorder?: boolean;
   onBackPress?: () => void;
+  style?: Animated.WithAnimatedValue<ViewStyle>;
 }
 
-type LanguageHeaderProps = HeaderBaseProps & {
-  variant?: 'language';
-};
-
 type MenuHeaderProps = HeaderBaseProps & {
-  variant: 'menu';
+  variant?: 'menu';
   showNotifications?: boolean;
   onNotificationsPress?: () => void;
   onMenuPress?: () => void;
   showNotificationBadge?: boolean;
+};
+
+type LanguageHeaderProps = HeaderBaseProps & {
+  variant: 'language';
 };
 
 type CustomHeaderProps = HeaderBaseProps & {
@@ -36,17 +38,30 @@ type CustomHeaderProps = HeaderBaseProps & {
   rightContent: ReactNode;
 };
 
-type HeaderProps = LanguageHeaderProps | MenuHeaderProps | CustomHeaderProps;
+type HeaderProps = MenuHeaderProps | LanguageHeaderProps | CustomHeaderProps;
 
 export default function Header(props: HeaderProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { role } = useAuth();
-  const { showBackButton = false, leadingContent, containerClassName, contentClassName, includeBottomBorder } = props;
+  const {
+    showBackButton = false,
+    leadingContent,
+    containerClassName,
+    contentClassName,
+    includeBottomBorder,
+    style,
+  } = props;
 
   const isGuest = role === USER_ROLES.Guest;
+  const isMenuVariant = props.variant === 'menu' || !props.variant;
+  const showNotifications = isMenuVariant ? (props.showNotifications ?? !isGuest) : false;
+  const showNotificationBadge = isMenuVariant ? (props.showNotificationBadge ?? true) : false;
+  const handleNotificationsPress =
+    isMenuVariant && props.onNotificationsPress ? props.onNotificationsPress : () => router.push(ROUTES.notifications);
+
   const { data: unreadData } = useUnreadCountQuery({
-    enabled: !isGuest && props.variant === 'menu' && !!props.showNotificationBadge,
+    enabled: !isGuest && showNotifications && showNotificationBadge,
   });
   const badgeCount = unreadData?.unread_count || 0;
 
@@ -55,21 +70,21 @@ export default function Header(props: HeaderProps) {
       return props.rightContent;
     }
 
-    if (props.variant === 'menu') {
-      if (isGuest) {
-        return <LanguageSelector />;
-      }
+    if (props.variant === 'language' || isGuest) {
+      return <LanguageSelector />;
+    }
 
-      return props.showNotifications ? (
+    if (showNotifications) {
+      return (
         <View className="flex-row items-center">
           <HeaderIconButton
             icon="bell"
             accessibilityLabel={t('home.notificationAccessibility')}
-            onPress={props.onNotificationsPress}
+            onPress={handleNotificationsPress}
             badgeCount={badgeCount}
           />
         </View>
-      ) : null;
+      );
     }
 
     return <LanguageSelector />;
@@ -84,6 +99,7 @@ export default function Header(props: HeaderProps) {
       containerClassName={containerClassName}
       contentClassName={contentClassName}
       includeBottomBorder={includeBottomBorder}
+      style={style}
     />
   );
 }

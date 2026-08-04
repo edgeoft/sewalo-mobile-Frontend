@@ -9,13 +9,6 @@ interface BookingInfoCardProps {
 
 function BookingInfoCard({ booking }: BookingInfoCardProps) {
   const { t } = useTranslation();
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 0,
-  };
 
   const renderInfoRow = (label: string, value: string) => (
     <View className="flex-row items-center justify-between py-1">
@@ -27,7 +20,7 @@ function BookingInfoCard({ booking }: BookingInfoCardProps) {
   );
 
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4" style={cardShadow}>
+    <View className="bg-white rounded-xl border border-gray-200 p-4">
       <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.bookingDetails')}</Text>
       <View className="gap-1">
         {renderInfoRow(t('customer.dateAndTime'), booking.dateTime ?? '19 Mar 2026 • 11:20AM')}

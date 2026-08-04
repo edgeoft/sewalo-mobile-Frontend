@@ -23,7 +23,7 @@ export default function CustomerFavouritesScreen() {
   const { t } = useTranslation();
   const [page] = useState(1);
 
-  const { data: favoritesData, isLoading, isError, refetch } = useGetFavoritesQuery({ page, limit: 20 });
+  const { data: favoritesData, isLoading, isError, refetch, isRefetching } = useGetFavoritesQuery({ page, limit: 20 });
 
   const addRemoveFav = useAddRemoveFavorite();
   const { showSnackbar } = useSnackbar();
@@ -45,7 +45,10 @@ export default function CustomerFavouritesScreen() {
 
       <ContentLayout
         scrollable
-        enableRefresh
+        onRefresh={() => {
+          refetch();
+        }}
+        refreshing={isRefetching}
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,

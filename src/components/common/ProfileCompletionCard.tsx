@@ -5,6 +5,7 @@ import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from '
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
+import { THEME_COLORS } from '@/constants/colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -25,7 +26,6 @@ export default function ProfileCompletionCard({
   const { percentage, completedCount, totalCount, items, topPrompt, isFullyComplete } = useProfileCompletion();
   const [expanded, setExpanded] = useState(false);
 
-  // SVG calculations for radial progress ring
   const center = size / 2;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -45,27 +45,25 @@ export default function ProfileCompletionCard({
     strokeDashoffset: strokeDashoffset.value,
   }));
 
-  const progressColor = isFullyComplete ? '#10b981' : '#485aff';
+  const progressColor = isFullyComplete ? THEME_COLORS.emeraldSuccess : THEME_COLORS.primary;
   const incompleteItems = items.filter((item) => !item.isComplete);
 
   return (
-    <View
-      className={`rounded-xl border border-gray-200 bg-white p-4 mb-5 ${className}`}
-      style={{
-        shadowColor: '#0f172a',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.03,
-        shadowRadius: 8,
-        elevation: 0,
-      }}
-    >
+    <View className={`rounded-xl border border-gray-200 bg-white p-4 mb-5 ${className}`}>
       {/* Top Header Row */}
       <View className="flex-row items-center justify-between gap-x-4">
         {/* Left: Radial Progress Ring */}
         <View style={{ width: size, height: size }} className="items-center justify-center relative">
           <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
             {/* Background Track Circle */}
-            <Circle cx={center} cy={center} r={radius} stroke="#e2e8f0" strokeWidth={strokeWidth} fill="none" />
+            <Circle
+              cx={center}
+              cy={center}
+              r={radius}
+              stroke={THEME_COLORS.slate200}
+              strokeWidth={strokeWidth}
+              fill="none"
+            />
             {/* Active Radial Progress Circle */}
             <AnimatedCircle
               cx={center}
@@ -92,7 +90,7 @@ export default function ProfileCompletionCard({
             <Text className="text-base font-sans-bold text-gray-950">Profile Completion</Text>
             {isFullyComplete && (
               <View className="bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex-row items-center">
-                <Feather name="check-circle" size={10} color="#10b981" />
+                <Feather name="check-circle" size={10} color={THEME_COLORS.emeraldSuccess} />
                 <Text className="text-[10px] font-sans-bold text-emerald-700 ml-1">Complete</Text>
               </View>
             )}
@@ -112,7 +110,12 @@ export default function ProfileCompletionCard({
             hitSlop={8}
             className="p-2 rounded-full bg-gray-50 active:bg-gray-100 border border-gray-100"
           >
-            <Feather name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color="#64748b" accessible={false} />
+            <Feather
+              name={expanded ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color={THEME_COLORS.slate500}
+              accessible={false}
+            />
           </Pressable>
         )}
       </View>
@@ -120,7 +123,7 @@ export default function ProfileCompletionCard({
       {/* Contextual Recommendation Banner */}
       <View className="mt-3 bg-primary/5 border border-primary/10 rounded-lg p-2.5 flex-row items-center gap-x-2.5">
         <View className="h-6 w-6 rounded-full bg-primary/10 items-center justify-center flex-shrink-0">
-          <Feather name={isFullyComplete ? 'award' : 'info'} size={13} color="#485aff" />
+          <Feather name={isFullyComplete ? 'award' : 'info'} size={13} color={THEME_COLORS.primary} />
         </View>
         <Text className="text-xs font-sans-medium text-gray-700 flex-1 leading-snug">{topPrompt}</Text>
       </View>
@@ -133,7 +136,7 @@ export default function ProfileCompletionCard({
               <View key={item.key} className="flex-row items-center justify-between py-1 px-1">
                 <View className="flex-row items-center gap-x-2.5 flex-1 mr-2">
                   <View className="h-5 w-5 rounded-full items-center justify-center bg-gray-100 border border-gray-200">
-                    <Feather name="circle" size={12} color="#94a3b8" />
+                    <Feather name="circle" size={12} color={THEME_COLORS.slate400} />
                   </View>
                   <Text className="text-xs font-sans-semibold text-gray-900">{item.label}</Text>
                 </View>
@@ -151,7 +154,7 @@ export default function ProfileCompletionCard({
             ))
           ) : (
             <View className="flex-row items-center justify-center py-2 bg-emerald-50/50 rounded-lg">
-              <Feather name="check-circle" size={14} color="#10b981" />
+              <Feather name="check-circle" size={14} color={THEME_COLORS.emeraldSuccess} />
               <Text className="text-xs font-sans-semibold text-emerald-700 ml-1.5">
                 All profile sections completed!
               </Text>

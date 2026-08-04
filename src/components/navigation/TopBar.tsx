@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { Image, Pressable, View } from 'react-native';
+import { Animated, Image, Pressable, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -13,27 +13,32 @@ interface TopBarProps {
   contentClassName?: string;
   includeBottomBorder?: boolean;
   onBackPress?: () => void;
+  style?: Animated.WithAnimatedValue<ViewStyle>;
 }
 
 export default function TopBar({
   leadingContent,
   showBackButton = false,
   rightContent,
-  containerClassName = 'bg-white border-b border-gray-100/50',
+  containerClassName = 'bg-white',
   contentClassName = '',
   includeBottomBorder = true,
   onBackPress,
+  style,
 }: TopBarProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
   return (
-    <View
-      style={{
-        paddingTop: Math.max(insets.top, 6),
-        height: 56 + Math.max(insets.top, 6),
-      }}
-      className={`flex-row justify-between items-center px-4 ${containerClassName} ${includeBottomBorder ? 'border-b border-gray-100/50' : ''}`}
+    <Animated.View
+      style={[
+        {
+          paddingTop: Math.max(insets.top, 6),
+          height: 56 + Math.max(insets.top, 6),
+        },
+        style,
+      ]}
+      className={`flex-row justify-between items-center px-4 ${containerClassName} ${includeBottomBorder ? 'border-b border-slate-100' : ''}`}
     >
       <View className={`flex-row items-center ${contentClassName}`}>
         {leadingContent}
@@ -60,6 +65,6 @@ export default function TopBar({
       </View>
 
       {rightContent}
-    </View>
+    </Animated.View>
   );
 }

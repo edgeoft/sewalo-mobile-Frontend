@@ -1,5 +1,6 @@
 import { createApiClient } from '../factory';
 import { ENV } from '@/constants/env';
+import { API_ENDPOINTS } from '@/constants/api';
 
 // Configured singleton instance of the API Client for our internal backend
 export const internalClient = createApiClient({
@@ -9,13 +10,7 @@ export const internalClient = createApiClient({
   timeout: 10000,
   auth: {
     mode: 'single',
-    refreshURL: '/auth/refresh',
-    getAccessToken: async () => {
-      return null;
-    },
-    getRefreshToken: async () => {
-      return null;
-    },
+    refreshURL: API_ENDPOINTS.AUTH.REFRESH,
     onTokenRefreshed: () => {},
     onAuthFailure: () => {
       console.warn('[Auth] Internal backend authentication failed');

@@ -20,14 +20,14 @@ export default function ProviderQuickStats({
     <View className="gap-y-3">
       <View className="flex-row gap-3">
         {/* Stat 1: Starting Price */}
-        <View className="flex-1 bg-[#ebfbf3] border border-[#a3e9c9] rounded-lg p-3.5">
+        <View className="flex-1 bg-emerald-50 border border-emerald-200 rounded-lg p-3.5">
           <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-emerald-600">
             {t('services.startingPrice')}
           </Text>
           <Text className="text-sm font-sans-extrabold text-emerald-800 mt-1">{startingPrice}</Text>
         </View>
         {/* Stat 2: Orders Completed */}
-        <View className="flex-1 bg-[#faf0ff] border border-[#e8c4fd] rounded-lg p-3.5">
+        <View className="flex-1 bg-purple-50 border border-purple-200 rounded-lg p-3.5">
           <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-purple-600">
             {t('services.ordersCompleted')}
           </Text>
@@ -37,15 +37,15 @@ export default function ProviderQuickStats({
 
       <View className="flex-row gap-3">
         {/* Stat 3: Special Packages */}
-        <View className="flex-1 bg-[#fff8eb] border border-[#fde0b2] rounded-lg p-3.5">
+        <View className="flex-1 bg-amber-50 border border-amber-200 rounded-lg p-3.5">
           <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-amber-600">
             {t('services.specialPackages')}
           </Text>
           <Text className="text-sm font-sans-extrabold text-amber-800 mt-1">{specialPackagesCount}</Text>
         </View>
         {/* Stat 4: Availability */}
-        <View className="flex-1 bg-[#eef2ff] border border-[#c7d2fe] rounded-lg p-3.5">
-          <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-[#312e81]">
+        <View className="flex-1 bg-indigo-50 border border-indigo-200 rounded-lg p-3.5">
+          <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-indigo-900">
             {t('services.availability')}
           </Text>
           <View className="flex-row mt-1">

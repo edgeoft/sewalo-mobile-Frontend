@@ -1,4 +1,4 @@
-type QueryParams = any;
+type QueryParams = unknown;
 
 export const QUERY_KEYS = {
   PROFILE: ['profile'],

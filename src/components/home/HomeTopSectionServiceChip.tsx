@@ -10,14 +10,7 @@ export default function HomeTopSectionServiceChip({ label, onPress }: HomeTopSec
     <Pressable
       onPress={onPress}
       accessibilityRole={onPress ? 'button' : undefined}
-      className="rounded-full bg-white px-3 py-1 active:opacity-80"
-      style={{
-        shadowColor: '#0f172a',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 0,
-      }}
+      className="rounded-full bg-white border border-gray-100 px-3 py-1 active:opacity-80"
     >
       <Text className="text-xs font-sans-semibold text-primary">{label}</Text>
     </Pressable>

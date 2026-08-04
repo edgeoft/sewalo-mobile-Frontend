@@ -18,6 +18,7 @@ import { useCreateRating, useUpdateRating } from '@/api';
 import type { Rating } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface RatingModalProps {
   visible: boolean;
@@ -114,7 +115,7 @@ export default function RatingModal({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={20} color="#64748b" />
+                <Feather name="x" size={20} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -144,7 +145,11 @@ export default function RatingModal({
                     accessibilityState={{ selected: (hoveredRating || rating) >= star }}
                     className="p-1"
                   >
-                    <Feather name="star" size={32} color={(hoveredRating || rating) >= star ? '#f59e0b' : '#d1d5db'} />
+                    <Feather
+                      name="star"
+                      size={32}
+                      color={(hoveredRating || rating) >= star ? THEME_COLORS.amberStar : THEME_COLORS.slate300}
+                    />
                   </Pressable>
                 ))}
                 {rating > 0 && (
@@ -159,7 +164,7 @@ export default function RatingModal({
               </Text>
               <TextInput
                 placeholder={t('customer.reviewPlaceholder')}
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor={THEME_COLORS.slate400}
                 multiline
                 value={review}
                 onChangeText={setReview}
@@ -189,7 +194,7 @@ export default function RatingModal({
                   className="flex-1 py-3.5 rounded-lg bg-primary items-center active:opacity-90 disabled:opacity-50"
                 >
                   {isPending ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={THEME_COLORS.primaryForeground} />
                   ) : (
                     <Text className="text-sm font-sans-bold text-white">
                       {isEditing ? t('customer.updateReview') : t('customer.submitReview')}

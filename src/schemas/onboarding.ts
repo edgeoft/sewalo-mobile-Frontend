@@ -11,20 +11,39 @@ export const validateAge18Plus = (dateString: string): boolean => {
   return age >= 18;
 };
 
-export const personalInfoSchema = z.object({
-  fullName: z.string().optional(),
-  email: z.string().email({ message: 'Please enter a valid email address' }).optional().or(z.literal('')),
-  location: z.string().min(1, { message: 'Location is required' }),
-  lat: z.number().optional(),
-  lng: z.number().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  dateOfBirth: z.string().min(1, { message: 'Date of birth is required' }).refine(validateAge18Plus, {
-    message: 'You must be 18 years or older',
-  }),
-  avatar: z.string().min(1, { message: 'Profile photo is required' }),
-  mobileNumber: z.string().optional(),
+export const getPersonalInfoSchema = (t: (key: string) => string) =>
+  z.object({
+    fullName: z.string().optional(),
+    email: z
+      .string()
+      .email({ message: t('validation.invalidEmail') })
+      .optional()
+      .or(z.literal('')),
+    location: z.string().min(1, { message: t('validation.locationRequired') }),
+    lat: z.number().optional(),
+    lng: z.number().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    dateOfBirth: z
+      .string()
+      .min(1, { message: t('validation.dobRequired') })
+      .refine(validateAge18Plus, {
+        message: t('validation.mustBe18Plus'),
+      }),
+    avatar: z.string().min(1, { message: t('validation.avatarRequired') }),
+    mobileNumber: z.string().optional(),
+  });
+
+export const personalInfoSchema = getPersonalInfoSchema((key) => {
+  const defaults: Record<string, string> = {
+    'validation.invalidEmail': 'Please enter a valid email address',
+    'validation.locationRequired': 'Location is required',
+    'validation.dobRequired': 'Date of birth is required',
+    'validation.mustBe18Plus': 'You must be 18 years or older',
+    'validation.avatarRequired': 'Profile photo is required',
+  };
+  return defaults[key] || key;
 });
 
 export { financeAccountSchema as financialSchema } from '@/schemas/provider';

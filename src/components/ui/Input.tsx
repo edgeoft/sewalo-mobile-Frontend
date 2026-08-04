@@ -28,12 +28,12 @@ export default function Input({
   const [isFocused, setIsFocused] = useState(false);
   const labelId = useId();
 
-  const handleFocus = (e: any) => {
+  const handleFocus = (e: Parameters<NonNullable<TextInputProps['onFocus']>>[0]) => {
     setIsFocused(true);
     if (onFocus) onFocus(e);
   };
 
-  const handleBlur = (e: any) => {
+  const handleBlur = (e: Parameters<NonNullable<TextInputProps['onBlur']>>[0]) => {
     setIsFocused(false);
     if (onBlur) onBlur(e);
   };

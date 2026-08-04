@@ -8,13 +8,13 @@ import { useSwitchRoleWithDetails, useUploadFile, ApiError } from '@/api';
 import { convertTimeTo24h } from '@/utils/time';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES } from '@/constants/roles';
+import { THEME_COLORS } from '@/constants/colors';
 import RadialStepper from '@/components/common/RadialStepper';
 import {
-  WORKING_DAYS_OPTIONS,
-  WORKING_DAYS_MAPPING,
+  AVAILABILITY_TYPES,
   DEFAULT_WORKING_HOURS_START,
   DEFAULT_WORKING_HOURS_END,
-  WorkingDaysOption,
+  AvailabilityType,
 } from '@/constants/availability';
 
 import AvailabilityStep from '@/features/onboarding/components/AvailabilityStep';
@@ -45,7 +45,7 @@ export default function BecomeProviderScreen() {
   const needsDocument = !isPartial || missingFields.includes('document');
 
   const [activeIndex, setActiveIndex] = useState(needsAvailability ? 1 : 2);
-  const [workingDays, setWorkingDays] = useState<WorkingDaysOption>(WORKING_DAYS_OPTIONS.SundayFriday);
+  const [workingDays, setWorkingDays] = useState<AvailabilityType>(AVAILABILITY_TYPES.Weekdays);
   const [workingHoursStart, setWorkingHoursStart] = useState(DEFAULT_WORKING_HOURS_START);
   const [workingHoursEnd, setWorkingHoursEnd] = useState(DEFAULT_WORKING_HOURS_END);
   const [documentImage, setDocumentImage] = useState<string | null>(null);
@@ -78,12 +78,16 @@ export default function BecomeProviderScreen() {
         documentPath = uploadRes.path;
       }
 
-      const mapped = WORKING_DAYS_MAPPING[workingDays];
+      const daysMap: Record<AvailabilityType, string[]> = {
+        always: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+        weekdays: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        weekends: ['saturday'],
+      };
 
       await switchRoleWithDetails({
         target_role: USER_ROLES.Provider,
-        availability: mapped.availability,
-        availability_days: [...mapped.days],
+        availability: workingDays,
+        availability_days: daysMap[workingDays],
         start_time: convertTimeTo24h(workingHoursStart),
         end_time: convertTimeTo24h(workingHoursEnd),
         document: documentPath || null,
@@ -140,8 +144,8 @@ export default function BecomeProviderScreen() {
         label={stepperLabel}
         subtitle={stepperSubtitle}
         iconName={activeIndex === 1 ? 'calendar' : 'shield'}
-        progressColor="#485aff"
-        bgColor="#ffffff"
+        progressColor={THEME_COLORS.primary}
+        bgColor={THEME_COLORS.primaryForeground}
       />
     ) : null;
 
@@ -187,7 +191,7 @@ export default function BecomeProviderScreen() {
       {submitting && (
         <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
           <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Registering profile...</Text>
           </View>
         </View>

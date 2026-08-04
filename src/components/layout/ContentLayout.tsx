@@ -1,5 +1,4 @@
 import { memo, ReactNode } from 'react';
-import { useRefreshControl } from '@/hooks/useRefreshControl';
 import { RefreshControl, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
 
 interface ContentLayoutProps {
@@ -11,7 +10,6 @@ interface ContentLayoutProps {
   showsVerticalScrollIndicator?: boolean;
   onRefresh?: () => Promise<void> | void;
   refreshing?: boolean;
-  enableRefresh?: boolean;
   scrollRef?: React.Ref<ScrollView>;
 }
 
@@ -23,16 +21,9 @@ function ContentLayout({
   contentContainerStyle,
   showsVerticalScrollIndicator = false,
   onRefresh,
-  refreshing,
-  enableRefresh = false,
+  refreshing = false,
   scrollRef,
 }: ContentLayoutProps) {
-  const { refreshing: hookRefreshing, onRefresh: hookOnRefresh } = useRefreshControl();
-
-  const handleRefresh = onRefresh || hookOnRefresh;
-  const isRefreshing = refreshing !== undefined ? refreshing : hookRefreshing;
-  const hasRefresh = !!onRefresh || enableRefresh;
-
   const layoutClassName = `${className} px-4`.trim();
 
   if (scrollable) {
@@ -44,13 +35,8 @@ function ContentLayout({
         contentContainerStyle={contentContainerStyle}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
         refreshControl={
-          hasRefresh ? (
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-              tintColor="#485aff"
-              colors={['#485aff']}
-            />
+          onRefresh ? (
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#485aff" colors={['#485aff']} />
           ) : undefined
         }
       >

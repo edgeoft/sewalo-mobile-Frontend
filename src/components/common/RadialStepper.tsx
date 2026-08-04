@@ -5,6 +5,7 @@ import Svg, { Circle } from 'react-native-svg';
 import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { BOOKING_STATUSES, type BookingStatus, USER_ROLES } from '@/types';
+import { THEME_COLORS } from '@/constants/colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -48,9 +49,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.acceptStep'),
       iconName: 'send',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.Confirmed]: {
       stepNumber: 2,
@@ -61,9 +62,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.jobStartedStep'),
       iconName: 'calendar',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.InProgress]: {
       stepNumber: 3,
@@ -74,9 +75,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.completedStep'),
       iconName: 'tool',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.Completed]: {
       stepNumber: 4,
@@ -87,9 +88,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.readyToPayStep'),
       iconName: 'award',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.ReadyToPay]: {
       stepNumber: 5,
@@ -100,9 +101,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.paymentInitiatedStep'),
       iconName: 'file-text',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.PaymentInitiated]: {
       stepNumber: 6,
@@ -113,9 +114,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.jobsCompletedStep'),
       iconName: 'refresh-cw',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.Paid]: {
       stepNumber: 7,
@@ -126,9 +127,9 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.enjoyService'),
       iconName: 'check',
-      iconColor: '#485aff',
-      progressColor: '#485aff',
-      bgColor: '#f4f6ff',
+      iconColor: THEME_COLORS.primary,
+      progressColor: THEME_COLORS.primary,
+      bgColor: THEME_COLORS.surfaceBrandSubtle,
     },
     [BOOKING_STATUSES.Cancelled]: {
       stepNumber: 0,
@@ -139,8 +140,8 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.bookingCancelled'),
       iconName: 'x-circle',
-      iconColor: '#ef4444',
-      progressColor: '#ef4444',
+      iconColor: THEME_COLORS.dangerRed,
+      progressColor: THEME_COLORS.dangerRed,
       bgColor: '#fef2f2',
     },
     [BOOKING_STATUSES.Rejected]: {
@@ -152,8 +153,8 @@ function getStepConfigs(t: (key: string) => string): Record<string, StepConfig> 
       },
       nextLabel: t('components.bookingRejected'),
       iconName: 'alert-triangle',
-      iconColor: '#f97316',
-      progressColor: '#f97316',
+      iconColor: THEME_COLORS.amberStar,
+      progressColor: THEME_COLORS.amberStar,
       bgColor: '#fff7ed',
     },
   };
@@ -182,9 +183,9 @@ export default function RadialStepper({
         label: label || '',
         subtitle: subtitle || '',
         iconName: iconName || 'help-circle',
-        iconColor: iconColor || '#485aff',
-        progressColor: progressColor || '#485aff',
-        bgColor: bgColor || '#f4f6ff',
+        iconColor: iconColor || THEME_COLORS.primary,
+        progressColor: progressColor || THEME_COLORS.primary,
+        bgColor: bgColor || THEME_COLORS.surfaceBrandSubtle,
       }
     : (() => {
         const stepConfigs = getStepConfigs(t);
@@ -206,16 +207,14 @@ export default function RadialStepper({
   const total = isCustom ? totalSteps || 1 : 7;
   const current = resolvedConfig.stepNumber;
 
-  // SVG calculations
   const center = size / 2;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
-  // For cancelled/rejected, we show full circle colored red/orange or just no progress
   const fillPercentage = isCancelledOrRejected ? 1.0 : current / total;
   const targetOffset = circumference - fillPercentage * circumference;
 
-  const strokeDashoffset = useSharedValue(circumference); // Start empty
+  const strokeDashoffset = useSharedValue(circumference);
 
   useEffect(() => {
     strokeDashoffset.value = withTiming(targetOffset, {
@@ -232,22 +231,21 @@ export default function RadialStepper({
 
   return (
     <View
-      className="flex-row items-center gap-4 bg-white p-4 rounded-lg border border-gray-200 mb-6"
+      className="flex-row items-center gap-4 p-4 rounded-lg border border-gray-200 mb-6"
       style={{
-        shadowColor: '#0f172a',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 10,
-        elevation: 0,
         backgroundColor: resolvedConfig.bgColor,
       }}
     >
-      {/* Circle Container */}
       <View style={{ width: size, height: size }} className="items-center justify-center relative">
         <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
-          {/* Background Circle */}
-          <Circle cx={center} cy={center} r={radius} stroke="#f1f5f9" strokeWidth={strokeWidth} fill="none" />
-          {/* Active Arc */}
+          <Circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke={THEME_COLORS.slate100}
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
           <AnimatedCircle
             cx={center}
             cy={center}
@@ -260,7 +258,6 @@ export default function RadialStepper({
             fill="none"
           />
         </Svg>
-        {/* Central Icon */}
         <View
           className="absolute items-center justify-center"
           style={{
@@ -272,7 +269,6 @@ export default function RadialStepper({
         </View>
       </View>
 
-      {/* Steps Metadata */}
       <View className="flex-1 justify-center bg-transparent">
         <Text className="text-base font-sans-bold text-gray-950 leading-snug">{resolvedConfig.label}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 mt-0.5" numberOfLines={2}>

@@ -56,7 +56,7 @@ export function useAccountActions() {
               if (missing?.length) {
                 params.missingFields = JSON.stringify(missing);
               }
-              router.push({ pathname: ROUTES.customer.becomeProvider, params } as Href);
+              router.push({ pathname: ROUTES.customer.becomeProvider, params });
               return;
             }
             const errMsg = err.message || 'Failed to switch role.';

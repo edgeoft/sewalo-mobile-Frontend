@@ -1,22 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { createMutationHook } from '@/api/client/query/factory';
 import type { UploadFileResponse, UploadFilePayload } from '@/types';
-
-import { uploadFileAction, deleteFileAction } from './actions';
+import { uploadFileAction } from './actions';
 
 /**
  * Hook to execute file upload mutation.
  */
-export const useUploadFile = () => {
-  return useMutation<UploadFileResponse, Error, UploadFilePayload>({
-    mutationFn: ({ uri, folder }) => uploadFileAction(uri, folder),
-  });
-};
-
-/**
- * Hook to execute file deletion mutation.
- */
-export const useDeleteFile = () => {
-  return useMutation<{ success: boolean }, Error, string>({
-    mutationFn: (path) => deleteFileAction(path),
-  });
-};
+export const useUploadFile = createMutationHook<UploadFileResponse, UploadFilePayload>(({ uri, folder }) =>
+  uploadFileAction(uri, folder),
+);

@@ -18,6 +18,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
+import type { UpdateProfilePayload } from '@/types';
 import { Availability } from '@/types';
 import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END } from '@/constants/availability';
 
@@ -63,6 +64,7 @@ export default function ProviderEditProfileScreen() {
     control,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<BasicInfoFormData>({
@@ -108,7 +110,7 @@ export default function ProviderEditProfileScreen() {
 
   const handleSaveBasicInfo = (data: BasicInfoFormData) => {
     const saveProfileData = (avatarPath: string | null) => {
-      const payload: any = {
+      const payload: UpdateProfilePayload = {
         name: data.fullName,
         phone: formatPhone(data.mobileNumber),
         address: data.location,
@@ -152,7 +154,7 @@ export default function ProviderEditProfileScreen() {
   // 2. Skills & Experience State
   const [educationList, setEducationList] = useState<EducationItem[]>(
     user?.education && user.education.length > 0
-      ? user.education.map((edu: any) => ({
+      ? user.education.map((edu) => ({
           id: edu.id,
           degree: edu.degree || '',
           institution: edu.institute || '',
@@ -164,7 +166,7 @@ export default function ProviderEditProfileScreen() {
 
   const [experienceList, setExperienceList] = useState<ExperienceItem[]>(
     user?.experience && user.experience.length > 0
-      ? user.experience.map((exp: any) => ({
+      ? user.experience.map((exp) => ({
           id: exp.id,
           title: exp.title || '',
           company: exp.company_name || '',
@@ -265,6 +267,7 @@ export default function ProviderEditProfileScreen() {
               control={control}
               errors={errors}
               setValue={setValue}
+              getValues={getValues}
               watchLanguages={watchLanguages}
               watchDateOfBirth={watchDateOfBirth}
               watchAvatar={watchAvatar}

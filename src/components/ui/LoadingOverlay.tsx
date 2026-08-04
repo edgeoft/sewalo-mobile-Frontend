@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface LoadingOverlayProps {
   visible: boolean;
@@ -20,7 +21,7 @@ export default function LoadingOverlay({ visible, message }: LoadingOverlayProps
       accessibilityViewIsModal
     >
       <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-        <ActivityIndicator size="large" color="#485aff" />
+        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         {message && <Text className="text-sm font-sans-semibold text-gray-800 mt-3">{message}</Text>}
       </View>
     </View>

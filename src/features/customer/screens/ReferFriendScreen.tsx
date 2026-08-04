@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View, Text, Share, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import Button from '@/components/ui/Button';
 import { useReferralCodeQuery, useReferralStatsQuery } from '@/api';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 
 const APP_LINK = 'https://sipalu.com';
 
@@ -32,13 +33,22 @@ export default function ReferFriendScreen() {
   const { showSnackbar } = useSnackbar();
   const isLoading = codeLoading || statsLoading;
 
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
+
   const handleCopyLink = async () => {
     if (!referralLink) return;
     try {
       await Clipboard.setStringAsync(referralLink);
       setCopied(true);
       showSnackbar({ message: t('customer.referLinkCopied'), type: 'success' });
-      setTimeout(() => setCopied(false), 2000);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       showSnackbar({ message: t('customer.failedToCopy'), type: 'error' });
     }
@@ -50,8 +60,8 @@ export default function ReferFriendScreen() {
       await Share.share({
         message: t('customer.shareMessage', { link: referralLink }),
       });
-    } catch (error: any) {
-      showSnackbar({ message: t('customer.failedToShare', { error: error.message }), type: 'error' });
+    } catch (error: unknown) {
+      showSnackbar({ message: t('customer.failedToShare', { error: extractErrorMessage(error) }), type: 'error' });
     }
   };
 
