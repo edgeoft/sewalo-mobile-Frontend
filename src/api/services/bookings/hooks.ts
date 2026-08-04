@@ -130,7 +130,7 @@ const providerRatingsQueryHook = createQueryHook<GetProviderRatingResponse, stri
 );
 
 export const useGetProviderRatingsQuery = (providerId: string, options?: { enabled?: boolean }) =>
-  providerRatingsQueryHook(providerId, { enabled: options?.enabled ?? !!providerId });
+  providerRatingsQueryHook(providerId, { enabled: (options?.enabled ?? true) && Boolean(providerId) });
 
 const myRatingsQueryHook = createQueryHook<GetMyRatingsResponse, GetMyRatingsParams | undefined>(
   (params) => QUERY_KEYS.MY_RATINGS.LIST(params ?? {}),

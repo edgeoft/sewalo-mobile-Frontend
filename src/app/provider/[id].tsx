@@ -40,12 +40,12 @@ export default function DynamicProviderDetailRoute() {
   const providerSlug = slug || '';
 
   const { data: apiData, isLoading: isLoadingProvider } = useGetProviderDetailsQuery(providerSlug, {
-    enabled: isLoggedIn,
+    enabled: isLoggedIn && Boolean(providerSlug),
   });
 
   const providerId = apiData?.provider?.id || '';
   const { data: ratingsData } = useGetProviderRatingsQuery(providerId, {
-    enabled: isLoggedIn && !!providerId,
+    enabled: isLoggedIn && Boolean(providerId),
   });
 
   if (!isLoggedIn) {
