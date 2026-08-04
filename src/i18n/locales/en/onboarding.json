@@ -97,5 +97,17 @@
   "permissionPhotoLibrary": "We need access to your photo library to select a profile picture.",
   "photoPickerError": "Something went wrong while picking the avatar.",
   "verificationPermissionError": "We need access to your photo library to select a verification document.",
-  "verificationPickerError": "Something went wrong while selecting the image."
+  "verificationPickerError": "Something went wrong while selecting the image.",
+  "availabilityTitle": "Set Your Availability",
+  "availabilitySubtitle": "Choose the days and hours you're available for bookings.",
+  "stepWelcome": "Welcome",
+  "stepPersonalDetails": "Personal Details",
+  "stepAvailability": "Availability",
+  "stepIdentityVerification": "Identity Verification",
+  "stepFinish": "Finish",
+  "stepPersonalDetailsSubtitleProvider": "Step 1 of 3: Personal Details",
+  "stepPersonalDetailsSubtitleCustomer": "Step 1 of 2: Personal Details",
+  "stepAvailabilitySubtitle": "Step 2 of 3: Weekly Schedule",
+  "stepIdentitySubtitleProvider": "Step 3 of 3: ID Document",
+  "stepIdentitySubtitleCustomer": "Step 2 of 2: ID Document"
 }

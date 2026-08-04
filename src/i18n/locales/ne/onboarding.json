@@ -96,5 +96,17 @@
   "permissionPhotoLibrary": "प्रोफाइल फोटो छान्न हामीलाई तपाईंको फोटो ग्यालरीको पहुँच चाहिन्छ।",
   "photoPickerError": "फोटो छान्दा केही गलत भयो।",
   "verificationPermissionError": "परिचयपत्र छान्न हामीलाई तपाईंको फोटो ग्यालरीको पहुँच चाहिन्छ।",
-  "verificationPickerError": "फोटो छान्दा केही गलत भयो।"
+  "verificationPickerError": "फोटो छान्दा केही गलत भयो।",
+  "availabilityTitle": "उपलब्धता मिलाउनुहोस्",
+  "availabilitySubtitle": "बुकिङका लागि तपाईं उपलब्ध हुने दिन र समय छान्नुहोस्।",
+  "stepWelcome": "स्वागत",
+  "stepPersonalDetails": "व्यक्तिगत विवरण",
+  "stepAvailability": "उपलब्धता",
+  "stepIdentityVerification": "पहिचान प्रमाणीकरण",
+  "stepFinish": "समाप्त",
+  "stepPersonalDetailsSubtitleProvider": "चरण १/३: व्यक्तिगत विवरण",
+  "stepPersonalDetailsSubtitleCustomer": "चरण १/२: व्यक्तिगत विवरण",
+  "stepAvailabilitySubtitle": "चरण २/३: साप्ताहिक तालिका",
+  "stepIdentitySubtitleProvider": "चरण ३/३: परिचयपत्र",
+  "stepIdentitySubtitleCustomer": "चरण २/२: परिचयपत्र"
 }

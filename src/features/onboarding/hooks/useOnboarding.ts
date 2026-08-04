@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useSnackbar } from '@/components/ui/Snackbar';
 
 import { ROUTES } from '@/constants/routes';
@@ -40,6 +41,7 @@ export interface StepInfo {
 
 export function useOnboarding() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { setRole, user } = useAuth();
   const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
   const { showSnackbar } = useSnackbar();
@@ -131,39 +133,44 @@ export function useOnboarding() {
     () =>
       role === USER_ROLES.Provider
         ? [
-            { key: 'welcome', label: 'Welcome' },
+            { key: 'welcome', label: t('onboarding.stepWelcome') },
             {
               key: 'personal_info',
-              label: 'Personal Details',
-              subtitle: 'Step 1 of 3: Personal Details',
+              label: t('onboarding.stepPersonalDetails'),
+              subtitle: t('onboarding.stepPersonalDetailsSubtitleProvider'),
               icon: 'user',
             },
-            { key: 'availability', label: 'Availability', subtitle: 'Step 2 of 3: Weekly Schedule', icon: 'calendar' },
+            {
+              key: 'availability',
+              label: t('onboarding.stepAvailability'),
+              subtitle: t('onboarding.stepAvailabilitySubtitle'),
+              icon: 'calendar',
+            },
             {
               key: 'identity_verification',
-              label: 'Identity Verification',
-              subtitle: 'Step 3 of 3: ID Document',
+              label: t('onboarding.stepIdentityVerification'),
+              subtitle: t('onboarding.stepIdentitySubtitleProvider'),
               icon: 'shield',
             },
-            { key: 'finish', label: 'Finish' },
+            { key: 'finish', label: t('onboarding.stepFinish') },
           ]
         : [
-            { key: 'welcome', label: 'Welcome' },
+            { key: 'welcome', label: t('onboarding.stepWelcome') },
             {
               key: 'personal_info',
-              label: 'Personal Details',
-              subtitle: 'Step 1 of 2: Personal Details',
+              label: t('onboarding.stepPersonalDetails'),
+              subtitle: t('onboarding.stepPersonalDetailsSubtitleCustomer'),
               icon: 'user',
             },
             {
               key: 'identity_verification',
-              label: 'Identity Verification',
-              subtitle: 'Step 2 of 2: ID Document',
+              label: t('onboarding.stepIdentityVerification'),
+              subtitle: t('onboarding.stepIdentitySubtitleCustomer'),
               icon: 'shield',
             },
-            { key: 'finish', label: 'Finish' },
+            { key: 'finish', label: t('onboarding.stepFinish') },
           ],
-    [role],
+    [role, t],
   );
 
   const totalFormSteps = steps.length - 2;
@@ -178,8 +185,9 @@ export function useOnboarding() {
       avatar: profile.avatar || '',
     }).success;
 
-    // If no email, name, or dob has been set yet, start at Welcome step
-    if (!profile.email && !profile.name && !profile.dob) return 0;
+    // If no email or dob has been set yet, start at Welcome step
+    // (name is set during signup, so it's not an onboarding progress indicator)
+    if (!profile.email && !profile.dob) return 0;
     // If personal details aren't complete yet, start at Personal Details step
     if (!personalInfoValid) return 1;
 

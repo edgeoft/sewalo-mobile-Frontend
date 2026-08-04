@@ -221,5 +221,5 @@ TextInput {
 }
 
 @utility form-input-text {
-  @apply flex-1 text-sm text-gray-900 py-0;
+  @apply flex-1 text-sm text-gray-900 py-0 self-center;
 }

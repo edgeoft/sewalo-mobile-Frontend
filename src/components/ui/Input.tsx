@@ -52,13 +52,6 @@ export default function Input({
         className={`form-input-container ${
           props.multiline ? 'form-input-container-multiline' : 'form-input-container-single'
         } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''} ${containerClassName}`}
-        style={{
-          shadowColor: isFocused ? '#485aff' : '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isFocused ? 0.08 : 0.015,
-          shadowRadius: isFocused ? 4 : 2,
-          elevation: isFocused ? 2 : 0,
-        }}
       >
         {leftIcon && (
           <View className="mr-3" importantForAccessibility="no" accessibilityElementsHidden>
@@ -70,7 +63,16 @@ export default function Input({
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholderTextColor="#898f8f"
-          style={[{ includeFontPadding: false, textAlignVertical: 'center' }, inputStyle]}
+          style={[
+            {
+              includeFontPadding: false,
+              textAlignVertical: 'center',
+              paddingVertical: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+            },
+            inputStyle,
+          ]}
           className={`form-input-text ${inputClassName}`}
           accessibilityLabel={label}
           accessibilityLabelledBy={label ? labelId : undefined}

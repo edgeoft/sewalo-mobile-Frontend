@@ -15,6 +15,7 @@ export default function ProviderLayout() {
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
+        animation: 'fade',
         tabBarStyle: {
           height: 56 + insets.bottom,
         },

@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Dimensions, Image, Linking, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import Animated, { SlideInRight } from 'react-native-reanimated';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
@@ -325,7 +326,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           </ScrollView>
 
           {/* 5. Tab Content Panel */}
-          <View className="mt-2">
+          <Animated.View key={activeTab} entering={SlideInRight.duration(200)} className="mt-2">
             {activeTab === 'overview' && (
               <ProviderOverviewTab
                 bio={provider.bio}
@@ -359,7 +360,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
                 reviews={provider.reviews}
               />
             )}
-          </View>
+          </Animated.View>
         </ContentLayout>
       </ScrollView>
 

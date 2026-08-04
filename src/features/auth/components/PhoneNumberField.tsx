@@ -26,15 +26,8 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
         className={`form-input-container form-input-container-single ${
           error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''
         }`}
-        style={{
-          shadowColor: isFocused ? '#485aff' : '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isFocused ? 0.08 : 0.015,
-          shadowRadius: isFocused ? 4 : 2,
-          elevation: isFocused ? 2 : 0,
-        }}
       >
-        <View className="flex-row items-center pr-2.5">
+        <View className="flex-row items-center pr-2.5 h-full">
           <Text className="text-base mr-1">🇳🇵</Text>
           <Text className="text-sm font-sans-semibold text-gray-800">+977</Text>
         </View>
@@ -61,7 +54,9 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
               style={{
                 includeFontPadding: false,
                 textAlignVertical: 'center',
-                padding: 0,
+                paddingVertical: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
               }}
             />
           )}
