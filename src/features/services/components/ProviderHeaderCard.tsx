@@ -50,10 +50,12 @@ export default function ProviderHeaderCard({
       <View className="flex-1 justify-between py-0.5">
         <View className="flex-row items-start justify-between">
           <View className="flex-1 mr-2">
-            <View className="flex-row items-center flex-wrap mb-1">
-              <Text className="text-lg font-sans-extrabold text-gray-950 pr-1">{name}</Text>
+            <View className="flex-row items-center gap-1.5 mb-1 pr-1">
+              <Text className="text-lg font-sans-extrabold text-gray-950 flex-shrink" numberOfLines={1}>
+                {name}
+              </Text>
               {isVerified && (
-                <View className="bg-primary rounded-full h-4 w-4 items-center justify-center">
+                <View className="bg-primary rounded-full h-4 w-4 items-center justify-center shrink-0">
                   <Feather name="check" size={10} color={THEME_COLORS.primaryForeground} />
                 </View>
               )}
