@@ -222,6 +222,8 @@ This file is auto-generated from conventional commits. Do not edit it manually.
 
 - Tabs
 
+- Gesture navigation black border
+
 
 ### Refactored
 
