@@ -1,8 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 import { StatusBar } from 'expo-status-bar';
+import { NavigationBar } from 'expo-navigation-bar';
 
 import { queryClient } from '@/api/client/query/queryClient';
 import { ErrorDialogProvider } from '@/components/ui/ErrorDialog';
@@ -22,6 +22,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <StatusBar style="dark" />
+        <NavigationBar style="dark" />
         <PostHogProvider>
           <SnackbarProvider>
             <ErrorDialogProvider>

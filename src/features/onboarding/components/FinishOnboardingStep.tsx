@@ -33,9 +33,10 @@ export default function FinishOnboardingStep({ onFinish }: FinishOnboardingStepP
 
       {/* Sticky Bottom Actions Container */}
       <View
-        className="-mx-4 bg-white border-t border-gray-100 px-5 pt-2.5"
+        className="-mx-4 bg-white border-t border-gray-100 px-5"
         style={{
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 6 : 14,
+          paddingTop: 12,
+          paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,

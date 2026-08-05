@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Modal } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import NativeMapProvider from '../map/NativeMapProvider';
@@ -77,7 +76,7 @@ export default function LocationSelector({
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <SafeAreaProvider style={{ flex: 1 }}>
+        <View className="flex-1 bg-white">
           <NativeMapProvider
             coordinates={coordinates}
             initialLat={lat}
@@ -91,7 +90,7 @@ export default function LocationSelector({
               setModalVisible(false);
             }}
           />
-        </SafeAreaProvider>
+        </View>
       </Modal>
     </View>
   );

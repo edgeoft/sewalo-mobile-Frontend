@@ -137,9 +137,10 @@ export default function IdentityVerificationStep({
 
       {/* Sticky Bottom Actions Container */}
       <View
-        className="bg-white border-t border-gray-100 px-5 pt-2.5 gap-y-1.5"
+        className="bg-white border-t border-gray-100 px-5 gap-y-1.5"
         style={{
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 6 : 14,
+          paddingTop: 12,
+          paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,

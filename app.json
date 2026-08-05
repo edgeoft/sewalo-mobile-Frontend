@@ -18,6 +18,10 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "navigationBar": {
+        "backgroundColor": "#00000000",
+        "barStyle": "dark-content"
+      },
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.sewalomobileFrontend"
     },
