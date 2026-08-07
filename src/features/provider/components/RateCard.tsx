@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -178,7 +187,7 @@ export default function RateCard({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.6 }]} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.7 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -196,21 +205,23 @@ export default function RateCard({
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('services.chooseBillingBasis')}</Text>
 
-            <View className="gap-y-2.5">
-              {BILLING_BASIS_OPTIONS.map((opt) => {
-                const isSelected = opt.value === billingBasisValue;
-                return (
-                  <SelectionOption
-                    key={opt.value}
-                    onPress={() => handleSelectBasis(opt.value)}
-                    title={t(opt.labelKey)}
-                    selected={isSelected}
-                    indicatorType="radio"
-                    gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
-                  />
-                );
-              })}
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
+              <View className="gap-y-2.5 pb-4">
+                {BILLING_BASIS_OPTIONS.map((opt) => {
+                  const isSelected = opt.value === billingBasisValue;
+                  return (
+                    <SelectionOption
+                      key={opt.value}
+                      onPress={() => handleSelectBasis(opt.value)}
+                      title={t(opt.labelKey)}
+                      selected={isSelected}
+                      indicatorType="radio"
+                      gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
+                    />
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -227,7 +238,7 @@ export default function RateCard({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.5 }]} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.7 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -245,21 +256,23 @@ export default function RateCard({
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('services.chooseDurationUnit')}</Text>
 
-            <View className="gap-y-2.5">
-              {DURATION_UNIT_OPTIONS.map((opt) => {
-                const isSelected = opt.value === durationUnitValue;
-                return (
-                  <SelectionOption
-                    key={opt.value}
-                    onPress={() => handleSelectUnit(opt.value)}
-                    title={t(opt.labelKey)}
-                    selected={isSelected}
-                    indicatorType="radio"
-                    gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
-                  />
-                );
-              })}
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
+              <View className="gap-y-2.5 pb-4">
+                {DURATION_UNIT_OPTIONS.map((opt) => {
+                  const isSelected = opt.value === durationUnitValue;
+                  return (
+                    <SelectionOption
+                      key={opt.value}
+                      onPress={() => handleSelectUnit(opt.value)}
+                      title={t(opt.labelKey)}
+                      selected={isSelected}
+                      indicatorType="radio"
+                      gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
+                    />
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>

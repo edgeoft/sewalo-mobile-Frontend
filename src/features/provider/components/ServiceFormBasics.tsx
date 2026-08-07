@@ -236,7 +236,7 @@ export default function ServiceFormBasics({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.55 }]} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.75 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -254,21 +254,23 @@ export default function ServiceFormBasics({
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose a primary service category</Text>
 
-            <View className="gap-y-2.5">
-              {categoriesList.map((cat) => {
-                const isSelected = cat.id === watchCategoryId;
-                return (
-                  <SelectionOption
-                    key={cat.id}
-                    onPress={() => handleCategorySelect(cat.id)}
-                    title={cat.name}
-                    selected={isSelected}
-                    indicatorType="radio"
-                    gradientColors={['#eef0ff', '#f8fafc']}
-                  />
-                );
-              })}
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
+              <View className="gap-y-2.5 pb-4">
+                {categoriesList.map((cat) => {
+                  const isSelected = cat.id === watchCategoryId;
+                  return (
+                    <SelectionOption
+                      key={cat.id}
+                      onPress={() => handleCategorySelect(cat.id)}
+                      title={cat.name}
+                      selected={isSelected}
+                      indicatorType="radio"
+                      gradientColors={['#eef0ff', '#f8fafc']}
+                    />
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -285,7 +287,7 @@ export default function ServiceFormBasics({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.65 }]} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.75 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -303,7 +305,7 @@ export default function ServiceFormBasics({
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose services you offer</Text>
 
-            <ScrollView showsVerticalScrollIndicator={false} className="max-h-[70%] mb-4">
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
               <View className="gap-y-2.5 pb-4">
                 {availableServiceTypes.map((type) => {
                   const isSelected = watchServiceTypeIds.includes(type.id);

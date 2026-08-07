@@ -61,7 +61,11 @@ export default function SheetContainer({
 
           {description && <Text className="text-gray-500 text-sm font-sans-medium mb-4">{description}</Text>}
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ flexShrink: 1 }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
             {children}
           </ScrollView>
         </View>

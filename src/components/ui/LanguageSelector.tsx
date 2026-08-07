@@ -1,7 +1,16 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import SelectionOption from './SelectionOption';
 
@@ -47,7 +56,7 @@ export default function LanguageSelector() {
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.drawerContainer, { maxHeight: height * 0.56 }]} className="bg-white px-5 pb-7 pt-4">
+          <View style={[styles.drawerContainer, { maxHeight: height * 0.7 }]} className="bg-white px-5 pb-7 pt-4">
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-1">
@@ -64,24 +73,26 @@ export default function LanguageSelector() {
 
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">{t('common.chooseLanguage')}</Text>
 
-            <View className="gap-y-2.5">
-              {languages.map((lang) => {
-                const isSelected = currentLanguage.startsWith(lang.code);
-                return (
-                  <SelectionOption
-                    key={lang.code}
-                    onPress={() => handleSelectLanguage(lang.code)}
-                    title={lang.code === 'en' ? t('common.english') : lang.label}
-                    subtitle={isSelected ? t('common.currentlySelected') : undefined}
-                    selected={isSelected}
-                    icon={<Text className="text-lg">{lang.flag}</Text>}
-                    iconStyle="plain"
-                    indicatorType="radio"
-                    gradientColors={['#eef0ff', '#f8fafc']}
-                  />
-                );
-              })}
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
+              <View className="gap-y-2.5 pb-4">
+                {languages.map((lang) => {
+                  const isSelected = currentLanguage.startsWith(lang.code);
+                  return (
+                    <SelectionOption
+                      key={lang.code}
+                      onPress={() => handleSelectLanguage(lang.code)}
+                      title={lang.code === 'en' ? t('common.english') : lang.label}
+                      subtitle={isSelected ? t('common.currentlySelected') : undefined}
+                      selected={isSelected}
+                      icon={<Text className="text-lg">{lang.flag}</Text>}
+                      iconStyle="plain"
+                      indicatorType="radio"
+                      gradientColors={['#eef0ff', '#f8fafc']}
+                    />
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
