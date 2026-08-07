@@ -42,6 +42,7 @@ export default function MapServicesScreen() {
   const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
   const minRatingStore = useServiceFiltersStore((s) => s.minRating);
   const serviceLocationStore = useServiceFiltersStore((s) => s.serviceLocation);
+  const radiusStore = useServiceFiltersStore((s) => s.radius);
   const setFilters = useServiceFiltersStore((s) => s.setFilters);
   const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
 
@@ -53,6 +54,7 @@ export default function MapServicesScreen() {
   const [maxPrice, setMaxPrice] = useState(maxPriceStore);
   const [minRating, setMinRating] = useState(minRatingStore);
   const [serviceLocation, setServiceLocation] = useState(serviceLocationStore);
+  const [radius, setRadius] = useState(radiusStore);
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
 
@@ -118,7 +120,7 @@ export default function MapServicesScreen() {
         }
       : {}),
     zoom: debouncedViewport.zoom,
-    radius: 25,
+    radius: radiusStore ? Number(radiusStore) : 25,
     limit: 150,
     category: selectedCategorySlug || undefined,
     min_rating: minRatingStore ? Number(minRatingStore) : undefined,
@@ -173,6 +175,7 @@ export default function MapServicesScreen() {
       maxPrice,
       minRating,
       serviceLocation,
+      radius,
     });
     setIsFilterModalOpen(false);
   };
@@ -182,6 +185,7 @@ export default function MapServicesScreen() {
     setMaxPrice('');
     setMinRating('');
     setServiceLocation('');
+    setRadius('25');
     resetFiltersStore();
     setIsFilterModalOpen(false);
   };
@@ -503,6 +507,8 @@ export default function MapServicesScreen() {
         setMinRating={setMinRating}
         serviceLocation={serviceLocation}
         setServiceLocation={setServiceLocation}
+        radius={radius}
+        setRadius={setRadius}
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
       />

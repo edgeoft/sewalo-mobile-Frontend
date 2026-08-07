@@ -16,6 +16,8 @@ export interface ServiceFilterModalProps {
   setMinRating: (val: string) => void;
   serviceLocation: string;
   setServiceLocation: (val: string) => void;
+  radius?: string;
+  setRadius?: (val: string) => void;
   onApply: () => void;
   onReset: () => void;
 }
@@ -31,6 +33,8 @@ export default function ServiceFilterModal({
   setMinRating,
   serviceLocation,
   setServiceLocation,
+  radius = '25',
+  setRadius,
   onApply,
   onReset,
 }: ServiceFilterModalProps) {
@@ -73,6 +77,31 @@ export default function ServiceFilterModal({
                   onChangeText={setMaxPrice}
                   className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50/50"
                 />
+              </View>
+            </View>
+
+            {/* Search Radius */}
+            <View className="gap-2">
+              <Text className="text-sm font-sans-bold text-gray-800">Search Radius (km)</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {['2', '5', '10', '25', '50', '100'].map((r) => {
+                  const isSelected = (radius || '25') === r;
+                  return (
+                    <Pressable
+                      key={r}
+                      onPress={() => setRadius && setRadius(r)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
+                      className={`px-3.5 py-2 rounded-xl border items-center justify-center ${
+                        isSelected ? 'bg-primary/10 border-primary' : 'bg-white border-gray-200'
+                      }`}
+                    >
+                      <Text className={`text-xs font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-700'}`}>
+                        {r} km
+                      </Text>
+                    </Pressable>
+                  );
+                })}
               </View>
             </View>
 

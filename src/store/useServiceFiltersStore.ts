@@ -7,9 +7,16 @@ export interface ServiceFiltersState {
   maxPrice: string;
   minRating: string;
   serviceLocation: string;
+  radius: string;
   setSearchQuery: (query: string) => void;
   setSelectedCategorySlug: (slug: string | undefined) => void;
-  setFilters: (filters: { minPrice?: string; maxPrice?: string; minRating?: string; serviceLocation?: string }) => void;
+  setFilters: (filters: {
+    minPrice?: string;
+    maxPrice?: string;
+    minRating?: string;
+    serviceLocation?: string;
+    radius?: string;
+  }) => void;
   resetFilters: () => void;
   clearAll: () => void;
 }
@@ -21,6 +28,7 @@ const initialFilters = {
   maxPrice: '',
   minRating: '',
   serviceLocation: '',
+  radius: '25',
 };
 
 export const useServiceFiltersStore = create<ServiceFiltersState>()((set) => ({
@@ -34,6 +42,7 @@ export const useServiceFiltersStore = create<ServiceFiltersState>()((set) => ({
       maxPrice: '',
       minRating: '',
       serviceLocation: '',
+      radius: '25',
     }),
   clearAll: () => set(initialFilters),
 }));

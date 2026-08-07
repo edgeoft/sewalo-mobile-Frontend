@@ -36,6 +36,7 @@ export default function FindServicesScreen() {
   const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
   const minRatingStore = useServiceFiltersStore((s) => s.minRating);
   const serviceLocationStore = useServiceFiltersStore((s) => s.serviceLocation);
+  const radiusStore = useServiceFiltersStore((s) => s.radius);
   const setFilters = useServiceFiltersStore((s) => s.setFilters);
   const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
 
@@ -53,6 +54,7 @@ export default function FindServicesScreen() {
   const [maxPrice, setMaxPrice] = useState(maxPriceStore);
   const [minRating, setMinRating] = useState(minRatingStore);
   const [serviceLocation, setServiceLocation] = useState(serviceLocationStore);
+  const [radius, setRadius] = useState(radiusStore);
 
   const handleSwitchToMap = () => {
     const route = isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices;
@@ -129,6 +131,7 @@ export default function FindServicesScreen() {
       maxPrice,
       minRating,
       serviceLocation,
+      radius,
     });
     setIsFilterModalOpen(false);
   };
@@ -138,6 +141,7 @@ export default function FindServicesScreen() {
     setMaxPrice('');
     setMinRating('');
     setServiceLocation('');
+    setRadius('25');
     resetFiltersStore();
     setIsFilterModalOpen(false);
   };
@@ -327,6 +331,8 @@ export default function FindServicesScreen() {
         setMinRating={setMinRating}
         serviceLocation={serviceLocation}
         setServiceLocation={setServiceLocation}
+        radius={radius}
+        setRadius={setRadius}
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
       />
