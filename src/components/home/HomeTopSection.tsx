@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
@@ -41,34 +41,15 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
 
   const heroCopyByVariant = {
     guest: {
-      backgroundHeight: 286,
-      title: (
-        <Trans i18nKey="home.guestHeroTitle">
-          Find <Text className="text-primary">trusted</Text>
-          {'\n'}professionals near you
-        </Trans>
-      ),
-      subtitle: t('home.guestHeroSubtitle'),
+      backgroundHeight: 160,
       searchPlaceholder: t('home.guestSearchPlaceholder'),
     },
     customer: {
-      backgroundHeight: 188,
-      title: (
-        <Trans i18nKey="home.customerHeroTitle">
-          Your <Text className="text-primary">next booking</Text> starts here
-        </Trans>
-      ),
-      subtitle: t('home.customerHeroSubtitle'),
+      backgroundHeight: 160,
       searchPlaceholder: t('home.customerSearchPlaceholder'),
     },
     provider: {
-      backgroundHeight: 220,
-      title: (
-        <Trans i18nKey="home.providerHeroTitle">
-          Grow your <Text className="text-primary">business</Text>
-        </Trans>
-      ),
-      subtitle: t('home.providerHeroSubtitle'),
+      backgroundHeight: 180,
       searchPlaceholder: '',
     },
   };
@@ -100,15 +81,6 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
       <View className="gap-y-4 pb-2">
         {/* Spacer to reserve room for absolute/sticky DashboardTopBar */}
         <View style={{ height: 56 + Math.max(insets.top, 6) }} />
-
-        <View>
-          <Text className="max-w-62 text-[33px] font-sans-extrabold leading-9.5 tracking-tight text-gray-900">
-            {heroCopy.title}
-          </Text>
-          <Text className="mt-3 max-w-71.5 text-[15px] font-sans-medium leading-5.5 text-gray-500">
-            {heroCopy.subtitle}
-          </Text>
-        </View>
 
         {variant === USER_ROLES.Provider ? (
           <View className="flex-row flex-wrap justify-between gap-3 mt-2">
