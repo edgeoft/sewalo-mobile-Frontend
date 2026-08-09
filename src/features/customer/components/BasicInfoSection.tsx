@@ -67,11 +67,20 @@ export default function BasicInfoSection({
   };
 
   return (
-    <View className="rounded-xl border border-gray-200 bg-white p-4 mb-6 shadow-sm">
-      <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('components.basicInfo')}</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">{t('components.basicInfoDesc')}</Text>
+    <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
+      <View className="mb-3 flex-row items-center gap-x-2.5">
+        <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center">
+          <Feather name="user" size={16} color="#485aff" />
+        </View>
+        <View className="flex-1">
+          <Text className="text-base font-sans-bold text-gray-950">{t('components.basicInfo')}</Text>
+          <Text className="text-xs font-sans-medium text-gray-500 mt-0.5 leading-tight">
+            {t('components.basicInfoDesc')}
+          </Text>
+        </View>
       </View>
+
+      <View className="border-b border-gray-100 mb-4" />
 
       <View className="gap-y-4">
         <AvatarPicker
@@ -201,7 +210,8 @@ export default function BasicInfoSection({
           onPress={onSave}
           loading={loading}
           variant="primary"
-          className="mt-2 bg-primary"
+          size="md"
+          className="mt-4 w-full bg-primary"
         />
       </View>
 

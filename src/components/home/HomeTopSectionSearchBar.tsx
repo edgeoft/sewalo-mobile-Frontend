@@ -10,12 +10,11 @@ interface HomeTopSectionSearchBarProps {
 
 export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTopSectionSearchBarProps) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button">
-      <View pointerEvents="none" className="rounded-xl">
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={placeholder}>
+      <View pointerEvents="none">
         <Input
           placeholder={placeholder}
           editable={false}
-          containerClassName="px-3"
           inputClassName="text-[13px] font-sans-medium text-gray-500"
           rightIcon={<Feather name="search" size={20} color={THEME_COLORS.primary} />}
         />

@@ -44,22 +44,15 @@ export default function AvailabilityStep({
       >
         {stepper}
 
-        <View
-          style={{
-            shadowColor: '#0f172a',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.02,
-            shadowRadius: 8,
-            elevation: 0,
-          }}
-          className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
-        >
-          <View className="mb-4">
-            <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('onboarding.availabilityTitle')}</Text>
-            <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
+        <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
+          <View className="mb-3">
+            <Text className="text-base font-sans-bold text-gray-950 mb-0.5">{t('onboarding.availabilityTitle')}</Text>
+            <Text className="text-xs font-sans-medium text-gray-500 leading-tight">
               {t('onboarding.availabilitySubtitle')}
             </Text>
           </View>
+
+          <View className="border-b border-gray-100 mb-4" />
 
           <AvailabilityEditor
             workingDays={workingDays}
@@ -88,7 +81,7 @@ export default function AvailabilityStep({
           title={t('onboarding.save')}
           onPress={onNext}
           variant="primary"
-          size="sm"
+          size="md"
           className="w-full bg-primary"
         />
       </View>

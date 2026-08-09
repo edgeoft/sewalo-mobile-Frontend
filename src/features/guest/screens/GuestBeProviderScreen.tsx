@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +8,6 @@ import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
-import { BECOME_PROVIDER } from '@/constants/images';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES } from '@/types';
 import BeProviderBenefitCard from '../components/BeProviderBenefitCard';
@@ -112,7 +111,6 @@ export default function GuestBeProviderScreen() {
 
         <View className="pb-8">
           <SectionHeader title={t('guest.howItWorks')} description={t('guest.howItWorksDesc')} className="mb-5" />
-          <Image source={BECOME_PROVIDER.process} className="w-full h-40 rounded-2xl mb-5" resizeMode="cover" />
           <View className="gap-y-3">
             {steps.map((item) => (
               <BeProviderStepCard key={item.step} {...item} />
@@ -122,7 +120,6 @@ export default function GuestBeProviderScreen() {
 
         <View className="pb-8">
           <SectionHeader title={t('guest.keyBenefits')} description={t('guest.keyBenefitsDesc')} className="mb-5" />
-          <Image source={BECOME_PROVIDER.benefits} className="w-full h-40 rounded-2xl mb-5" resizeMode="cover" />
           <View className="gap-y-3">
             {benefits.map((item) => (
               <BeProviderBenefitCard key={item.title} {...item} />

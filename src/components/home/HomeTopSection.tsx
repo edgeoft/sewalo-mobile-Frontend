@@ -44,7 +44,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
 
   const heroCopyByVariant = {
     guest: {
-      backgroundHeight: 180,
+      backgroundHeight: 155,
       title: (
         <Trans i18nKey="home.welcomeGuest">
           Welcome to <Text className="text-primary font-sans-bold">Sewalo</Text>
@@ -54,7 +54,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
       searchPlaceholder: t('home.guestSearchPlaceholder'),
     },
     customer: {
-      backgroundHeight: 180,
+      backgroundHeight: 155,
       title: firstName ? (
         <Trans i18nKey="home.welcomeBackUser" values={{ name: firstName }}>
           Welcome back, <Text className="text-primary font-sans-bold">{firstName}</Text>
@@ -176,25 +176,7 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
             </View>
           </View>
         ) : (
-          <>
-            <HomeTopSectionSearchBar placeholder={heroCopy.searchPlaceholder} onPress={handleSearchPress} />
-
-            {featuredCategories.length >= 2 && (
-              <View className="flex-row flex-wrap gap-2 pt-1">
-                {featuredCategories.map((cat) => (
-                  <HomeTopSectionServiceChip
-                    key={cat.slug}
-                    label={cat.name}
-                    onPress={() =>
-                      router.push(
-                        `${variant === USER_ROLES.Customer ? ROUTES.customer.findServices : ROUTES.guest.findServices}?category=${cat.slug}`,
-                      )
-                    }
-                  />
-                ))}
-              </View>
-            )}
-          </>
+          <HomeTopSectionSearchBar placeholder={heroCopy.searchPlaceholder} onPress={handleSearchPress} />
         )}
       </View>
     </ContentLayout>

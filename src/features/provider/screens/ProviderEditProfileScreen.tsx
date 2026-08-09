@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, ActivityIndicator, ScrollView, Pressable, Text } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Header from '@/components/navigation/Header';
@@ -22,43 +23,43 @@ import type { UpdateProfilePayload } from '@/types';
 import { Availability } from '@/types';
 import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END } from '@/constants/availability';
 
+type EditProfileTab = 'basic' | 'skills' | 'availability';
+
+const getInitialTab = (sec?: string): EditProfileTab => {
+  if (sec === 'education' || sec === 'experience' || sec === 'skills') return 'skills';
+  if (sec === 'availability') return 'availability';
+  return 'basic';
+};
+
 export default function ProviderEditProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user, isLoading } = useAuth();
   const { section } = useLocalSearchParams<{ section?: string }>();
 
-  const scrollRef = useRef<ScrollView>(null);
-  const [sectionLayouts, setSectionLayouts] = useState<Record<string, number>>({});
-
   const { showSnackbar } = useSnackbar();
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
-  const handleSectionLayout = (key: string, y: number) => {
-    setSectionLayouts((prev) => ({ ...prev, [key]: y }));
-  };
+  const targetTab = useMemo(() => getInitialTab(section), [section]);
+  const [userSelectedTab, setUserSelectedTab] = useState<EditProfileTab | null>(null);
+  const [lastSection, setLastSection] = useState<string | undefined>(section);
 
-  useEffect(() => {
-    if (!section) return;
+  if (section !== lastSection) {
+    setLastSection(section);
+    setUserSelectedTab(null);
+  }
 
-    // Map section search param to section layout keys
-    let targetKey = section;
-    if (section === 'avatar' || section === 'contact' || section === 'address') {
-      targetKey = 'basic';
-    } else if (section === 'education' || section === 'experience') {
-      targetKey = 'skills';
-    } else if (section === 'document') {
-      targetKey = 'identity';
-    }
+  const activeTab = userSelectedTab ?? targetTab;
 
-    const targetY = sectionLayouts[targetKey];
-    if (targetY !== undefined) {
-      setTimeout(() => {
-        scrollRef.current?.scrollTo({ y: Math.max(0, targetY - 12), animated: true });
-      }, 100);
-    }
-  }, [section, sectionLayouts]);
+  const tabItems = useMemo(
+    () => [
+      { id: 'basic' as EditProfileTab, label: t('components.basicInfo'), icon: 'user' as const },
+      { id: 'skills' as EditProfileTab, label: t('provider.skillsAndExperience'), icon: 'award' as const },
+      { id: 'availability' as EditProfileTab, label: t('provider.workingDays'), icon: 'clock' as const },
+    ],
+    [t],
+  );
 
   const {
     control,
@@ -247,7 +248,6 @@ export default function ProviderEditProfileScreen() {
       ) : (
         <ContentLayout
           scrollable
-          scrollRef={scrollRef}
           className="flex-1"
           contentContainerStyle={{
             paddingTop: 20,
@@ -255,14 +255,53 @@ export default function ProviderEditProfileScreen() {
           }}
         >
           <SectionHeader
-            title={t('provider.editPartnerProfile')}
+            title={t('navigation.editProfile')}
             description={t('provider.editProfileDesc')}
-            className="mb-6"
-            titleClassName="text-2xl text-gray-950 font-sans-extrabold"
+            className="mb-4"
+            titleClassName="text-xl text-gray-950 font-sans-bold"
           />
 
-          {/* Basic Info Block */}
-          <View onLayout={(e) => handleSectionLayout('basic', e.nativeEvent.layout.y)}>
+          {/* Horizontal Scrollable Pill Tab Navigation Bar */}
+          <View className="mb-5">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingRight: 16 }}
+              className="flex-row"
+            >
+              {tabItems.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <Pressable
+                    key={tab.id}
+                    onPress={() => setUserSelectedTab(tab.id)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: isActive }}
+                    className={`flex-row items-center px-4 py-2.5 rounded-xl border mr-2.5 ${
+                      isActive ? 'bg-primary border-primary shadow-sm' : 'bg-white border-gray-200 active:bg-gray-50'
+                    }`}
+                  >
+                    <Feather
+                      name={tab.icon}
+                      size={15}
+                      color={isActive ? '#ffffff' : '#64748b'}
+                      style={{ marginRight: 6 }}
+                    />
+                    <Text
+                      className={`text-xs ${
+                        isActive ? 'font-sans-bold text-white' : 'font-sans-semibold text-gray-700'
+                      }`}
+                    >
+                      {tab.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          {/* Active Tab Form Content */}
+          {activeTab === 'basic' && (
             <BasicInfoSection
               control={control}
               errors={errors}
@@ -274,10 +313,9 @@ export default function ProviderEditProfileScreen() {
               onSave={handleSubmit(handleSaveBasicInfo)}
               loading={isUpdating || isUploading}
             />
-          </View>
+          )}
 
-          {/* Skills & Experience Block */}
-          <View onLayout={(e) => handleSectionLayout('skills', e.nativeEvent.layout.y)}>
+          {activeTab === 'skills' && (
             <SkillsExperienceSection
               educationList={educationList}
               experienceList={experienceList}
@@ -288,10 +326,9 @@ export default function ProviderEditProfileScreen() {
               onSave={handleSaveSkills}
               loading={isUpdating}
             />
-          </View>
+          )}
 
-          {/* Availability Block */}
-          <View onLayout={(e) => handleSectionLayout('availability', e.nativeEvent.layout.y)}>
+          {activeTab === 'availability' && (
             <AvailabilitySection
               workingDays={workingDays}
               onChangeWorkingDays={setWorkingDays}
@@ -304,7 +341,7 @@ export default function ProviderEditProfileScreen() {
               onSave={handleSaveAvailability}
               loading={isUpdating}
             />
-          </View>
+          )}
         </ContentLayout>
       )}
     </View>

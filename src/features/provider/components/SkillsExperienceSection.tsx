@@ -102,22 +102,20 @@ export default function SkillsExperienceSection({
   };
 
   return (
-    <View
-      style={{
-        shadowColor: '#0f172a',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.02,
-        shadowRadius: 8,
-        elevation: 0,
-      }}
-      className="rounded-xl border border-gray-200 bg-white p-4 mb-6"
-    >
-      <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('provider.skillsAndExperience')}</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          {t('provider.skillsAndExperienceDesc')}
-        </Text>
+    <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
+      <View className="mb-3 flex-row items-center gap-x-2.5">
+        <View className="w-8 h-8 rounded-full bg-purple-50 items-center justify-center">
+          <Feather name="award" size={16} color="#9333ea" />
+        </View>
+        <View className="flex-1">
+          <Text className="text-base font-sans-bold text-gray-950">{t('provider.skillsAndExperience')}</Text>
+          <Text className="text-xs font-sans-medium text-gray-500 mt-0.5 leading-tight">
+            {t('provider.skillsAndExperienceDesc')}
+          </Text>
+        </View>
       </View>
+
+      <View className="border-b border-gray-100 mb-4" />
 
       <View className="gap-y-5">
         {/* Education Section */}
@@ -206,13 +204,13 @@ export default function SkillsExperienceSection({
           />
         </View>
 
-        {/* Save Education & Experience Button */}
         <Button
-          title={t('provider.saveEducationExperience')}
+          title={t('common.save')}
           onPress={onSave}
           loading={loading}
           variant="primary"
-          className="mt-2 bg-primary"
+          size="md"
+          className="mt-4 w-full bg-primary"
         />
       </View>
 

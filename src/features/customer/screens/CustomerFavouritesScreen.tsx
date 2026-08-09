@@ -118,7 +118,6 @@ export default function CustomerFavouritesScreen() {
                     );
                     refetch();
                   }}
-                  actionLabel={t('home.viewDetails')}
                   variant="details"
                   onPress={() => {
                     const slug = provider?.slug || service?.id || item.service_id;

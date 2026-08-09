@@ -27,13 +27,15 @@ export default function AvailabilitySection({
   const { t } = useTranslation();
 
   return (
-    <View className="flex-1 bg-white p-5 rounded-3xl border border-gray-200 mb-6">
+    <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
       <AvailabilityEditor
         workingDays={workingDays}
         onChangeWorkingDays={onChangeWorkingDays}
         workingHoursStart={workingHoursStart}
         workingHoursEnd={workingHoursEnd}
         onChangeHours={onChangeHours}
+        title={t('provider.workingDays')}
+        subtitle={t('provider.editProfileDesc')}
         onSave={onSave}
         saveButtonTitle={t('common.save')}
         loading={loading}

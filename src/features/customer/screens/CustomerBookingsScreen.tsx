@@ -189,7 +189,6 @@ export default function CustomerBookingsScreen() {
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}
-                actionLabel={t('home.viewDetails')}
                 variant="booking"
                 onPress={() => {
                   router.push(ROUTES.customer.bookingDetail(booking.id));

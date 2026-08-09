@@ -46,7 +46,7 @@ function ProviderCard({
   isGuest = false,
 }: ProviderCardProps) {
   const { t } = useTranslation();
-  const resolvedActionLabel = actionLabel ?? t('home.viewDetails');
+  const showCustomAction = Boolean(actionLabel && actionLabel !== t('home.viewDetails'));
   const [imgError, setImgError] = useState(false);
   const isBookingVariant = variant === 'booking';
   const renderIcon = (icon: FeatherIconName, color: string, size: number) => (
@@ -58,7 +58,7 @@ function ProviderCard({
     <Pressable
       onPress={onPress}
       style={width ? { width } : {}}
-      className="shrink-0 rounded-xl border border-gray-200 bg-white p-3"
+      className="shrink-0 rounded-lg border border-gray-200 bg-white p-3"
       accessibilityRole="button"
       accessibilityLabel={name}
     >
@@ -67,7 +67,7 @@ function ProviderCard({
           source={{ uri: imgError ? FALLBACKS.image : avatarUri || FALLBACKS.image }}
           onError={() => setImgError(true)}
           resizeMode="cover"
-          className="h-24 w-24 rounded-xl bg-gray-50"
+          className="h-24 w-24 rounded-lg bg-gray-50"
         />
 
         <View className="flex-1 justify-between py-0.5">
@@ -82,7 +82,7 @@ function ProviderCard({
                 accessibilityLabel={`Save ${name}`}
                 accessibilityState={{ selected: isFavourite }}
                 hitSlop={8}
-                className="ml-2 h-7 w-7 items-center justify-center rounded-xl bg-gray-50"
+                className="ml-2 h-7 w-7 items-center justify-center rounded-md bg-gray-50"
               >
                 <MaterialIcons
                   name="favorite"
@@ -95,11 +95,11 @@ function ProviderCard({
           </View>
 
           <View className="flex-row items-center gap-2">
-            <View className="rounded-xl bg-surface-indigo-subtle px-2 py-0.5">
+            <View className="rounded-md bg-surface-indigo-subtle px-2 py-0.5">
               <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{serviceLabel}</Text>
             </View>
 
-            <View className="flex-row items-center gap-1 rounded-xl bg-amber-50 px-2 py-0.5">
+            <View className="flex-row items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5">
               {renderIcon('star', THEME_COLORS.amberStar, 11)}
               <Text className="text-[10px] font-sans-bold text-gray-900">
                 {isNaN(Number(rating)) ? '0.0' : Number(rating).toFixed(1)}
@@ -117,7 +117,7 @@ function ProviderCard({
 
             {isBookingVariant ? (
               <View className="flex-row items-center gap-1">
-                {renderIcon('dollar-sign', THEME_COLORS.slate500, 12)}
+                {renderIcon('tag', THEME_COLORS.primary, 12)}
                 <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
                   {startingFromPrice}
                 </Text>
@@ -139,7 +139,7 @@ function ProviderCard({
       <View className="flex-row items-center justify-between">
         {statusPresentation ? (
           <View
-            className="flex-row items-center rounded-xl px-2.5 py-1"
+            className="flex-row items-center rounded-md px-2.5 py-1"
             style={{ backgroundColor: statusPresentation.backgroundColor }}
           >
             <View
@@ -151,15 +151,18 @@ function ProviderCard({
             </Text>
           </View>
         ) : !isBookingVariant ? (
-          <View className="flex-row items-center">
+          <View className="flex-row items-center gap-1.5">
+            <Feather name="tag" size={13} color={THEME_COLORS.primary} />
             <Text className="text-xs font-sans-medium text-gray-400">{t('home.startingFrom')}</Text>
             <Text className="text-sm font-sans-bold text-primary">{startingFromPrice}</Text>
           </View>
         ) : null}
 
-        <View className="rounded-md bg-primary px-4 py-2">
-          <Text className="text-xs font-sans-semibold text-white">{resolvedActionLabel}</Text>
-        </View>
+        {showCustomAction && (
+          <View className="rounded-md bg-primary px-4 py-2">
+            <Text className="text-xs font-sans-semibold text-white">{actionLabel}</Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );

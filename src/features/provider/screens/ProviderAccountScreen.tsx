@@ -66,7 +66,7 @@ export default function ProviderAccountScreen() {
           titleClassName="text-2xl"
         />
 
-        {/* 1. Partner Profile Card */}
+        {/* 1. Profile Card */}
         <AccountProfileCard user={user} role={USER_ROLES.Provider} />
 
         {/* 2. Profile Completion Tracker Card */}

@@ -89,19 +89,29 @@ export default function AvailabilityEditor({
 
   return (
     <View className="flex-1">
-      {title && (
-        <View className="mb-6">
-          <Text className="text-2xl font-sans-extrabold text-gray-900 tracking-tight">{title}</Text>
-          {subtitle && <Text className="text-sm font-sans-medium text-gray-500 mt-1 leading-5">{subtitle}</Text>}
-        </View>
-      )}
+      {title ? (
+        <>
+          <View className="mb-3 flex-row items-center gap-x-2.5">
+            <View className="w-8 h-8 rounded-full bg-emerald-50 items-center justify-center">
+              <Feather name="clock" size={16} color="#059669" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-sans-bold text-gray-950">{title}</Text>
+              {subtitle && (
+                <Text className="text-xs font-sans-medium text-gray-500 mt-0.5 leading-tight">{subtitle}</Text>
+              )}
+            </View>
+          </View>
+          <View className="border-b border-gray-100 mb-4" />
+        </>
+      ) : null}
 
       {/* Working Days */}
-      <View className="mb-6">
-        <Text className="text-xs font-sans-bold text-gray-950 mb-3 uppercase tracking-wide">
+      <View className="mb-5">
+        <Text className="text-xs font-sans-bold text-gray-900 mb-2.5 uppercase tracking-wide">
           {t('provider.workingDays')}
         </Text>
-        <View className="gap-y-3">
+        <View className="gap-y-2.5">
           {dayOptions.map((opt) => {
             const isSelected =
               workingDays === opt.id ||
@@ -112,26 +122,32 @@ export default function AvailabilityEditor({
               <Pressable
                 key={opt.id}
                 onPress={() => onChangeWorkingDays(opt.id)}
-                className={`p-4 rounded-2xl border flex-row items-center justify-between ${
+                accessibilityRole="radio"
+                accessibilityState={{ checked: isSelected }}
+                className={`p-3.5 rounded-xl border flex-row items-center justify-between ${
                   isSelected ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'
                 }`}
               >
                 <View className="flex-1 pr-3">
-                  <Text className={`text-base font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-900'}`}>
-                    {opt.title}
-                  </Text>
-                  <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{opt.sub}</Text>
-                  <View className="mt-2 flex-row items-center">
-                    <Feather name="calendar" size={12} color="#64748b" />
-                    <Text className="text-[11px] font-sans-semibold text-gray-500 ml-1">{opt.days}</Text>
+                  <View className="flex-row items-center justify-between gap-x-2 mb-1">
+                    <Text
+                      className={`text-sm font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-900'}`}
+                      numberOfLines={1}
+                    >
+                      {opt.title}
+                    </Text>
+                    <View className="bg-gray-100 px-2 py-0.5 rounded-md">
+                      <Text className="text-[10px] font-sans-semibold text-gray-600">{opt.days}</Text>
+                    </View>
                   </View>
+                  <Text className="text-xs font-sans-medium text-gray-500">{opt.sub}</Text>
                 </View>
                 <View
-                  className={`w-5 h-5 rounded-full border items-center justify-center ${
+                  className={`w-4 h-4 rounded-full border items-center justify-center ${
                     isSelected ? 'border-primary bg-primary' : 'border-gray-300 bg-white'
                   }`}
                 >
-                  {isSelected && <View className="w-2 h-2 rounded-full bg-white" />}
+                  {isSelected && <View className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </View>
               </Pressable>
             );
@@ -140,37 +156,41 @@ export default function AvailabilityEditor({
       </View>
 
       {/* Working Hours */}
-      <View className="mb-6">
-        <Text className="text-xs font-sans-bold text-gray-950 mb-3 uppercase tracking-wide">
+      <View className="mb-5">
+        <Text className="text-xs font-sans-bold text-gray-900 mb-2.5 uppercase tracking-wide">
           {t('provider.workingHours')}
         </Text>
-        <View className="flex-row items-center gap-x-3">
+        <View className="flex-row items-center gap-x-2.5">
           <Pressable
             onPress={() => openTimePicker('start')}
-            className="flex-1 p-4 rounded-2xl border border-gray-200 bg-white flex-row items-center justify-between active:bg-gray-50"
+            accessibilityRole="button"
+            accessibilityLabel={`${t('provider.startTime')}: ${workingHoursStart}`}
+            className="flex-1 p-3 rounded-xl border border-gray-200 bg-white flex-row items-center justify-between active:bg-gray-50"
           >
-            <View>
+            <View className="flex-1 pr-1">
               <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
                 {t('provider.startTime')}
               </Text>
-              <Text className="text-base font-sans-bold text-gray-900">{workingHoursStart}</Text>
+              <Text className="text-sm font-sans-bold text-gray-900">{workingHoursStart}</Text>
             </View>
-            <Feather name="clock" size={18} color="#64748b" />
+            <Feather name="clock" size={16} color="#64748b" />
           </Pressable>
 
-          <Text className="text-sm font-sans-semibold text-gray-400">{t('common.to')}</Text>
+          <Text className="text-xs font-sans-semibold text-gray-400">{t('common.to')}</Text>
 
           <Pressable
             onPress={() => openTimePicker('end')}
-            className="flex-1 p-4 rounded-2xl border border-gray-200 bg-white flex-row items-center justify-between active:bg-gray-50"
+            accessibilityRole="button"
+            accessibilityLabel={`${t('provider.endTime')}: ${workingHoursEnd}`}
+            className="flex-1 p-3 rounded-xl border border-gray-200 bg-white flex-row items-center justify-between active:bg-gray-50"
           >
-            <View>
+            <View className="flex-1 pr-1">
               <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
                 {t('provider.endTime')}
               </Text>
-              <Text className="text-base font-sans-bold text-gray-900">{workingHoursEnd}</Text>
+              <Text className="text-sm font-sans-bold text-gray-900">{workingHoursEnd}</Text>
             </View>
-            <Feather name="clock" size={18} color="#64748b" />
+            <Feather name="clock" size={16} color="#64748b" />
           </Pressable>
         </View>
       </View>
@@ -179,9 +199,10 @@ export default function AvailabilityEditor({
         <Button
           title={saveButtonTitle || t('common.save')}
           variant="primary"
+          size="md"
           onPress={onSave}
           loading={loading}
-          className="w-full mt-4"
+          className="w-full mt-4 bg-primary"
         />
       )}
 

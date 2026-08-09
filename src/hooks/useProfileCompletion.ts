@@ -100,7 +100,7 @@ export function useProfileCompletion(): ProfileCompletionResult {
           label: 'Identity Verification',
           isComplete: Boolean(user.document),
           actionRoute: '/provider/verification-documents',
-          promptMessage: 'Your profile is missing identity verification. Submit your ID for a verified partner badge.',
+          promptMessage: 'Your profile is missing identity verification. Submit your ID for a verified badge.',
         },
       ];
 

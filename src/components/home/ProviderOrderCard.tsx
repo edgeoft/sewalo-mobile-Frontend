@@ -23,13 +23,13 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
   return (
     <Pressable
       onPress={onPress}
-      className="rounded-xl border border-gray-200 bg-white p-3 active:opacity-95"
+      className="rounded-lg border border-gray-200 bg-white p-3 active:opacity-95"
       accessibilityRole="button"
       accessibilityLabel={`Order from ${order.customerName}`}
     >
       <View className="flex-row gap-3">
         {/* Customer Avatar */}
-        <Image source={{ uri: order.customerAvatar }} className="h-16 w-16 rounded-xl bg-gray-50" resizeMode="cover" />
+        <Image source={{ uri: order.customerAvatar }} className="h-16 w-16 rounded-lg bg-gray-50" resizeMode="cover" />
 
         {/* Customer & Order Details */}
         <View className="flex-1 justify-center">
@@ -80,7 +80,10 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
       <View className="flex-row items-center justify-between">
         <View>
           <Text className="text-[10px] font-sans-medium text-gray-400">{t('home.totalPrice')}</Text>
-          <Text className="text-base font-sans-bold text-gray-900">{order.bookedPrice}</Text>
+          <View className="flex-row items-center gap-1.5 mt-0.5">
+            <Feather name="tag" size={13} color={THEME_COLORS.primary} />
+            <Text className="text-base font-sans-bold text-gray-900">{order.bookedPrice}</Text>
+          </View>
         </View>
 
         {isPending ? (
@@ -88,7 +91,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             <Pressable
               onPress={() => onDecline?.(order.id)}
               accessibilityRole="button"
-              className="rounded-xl border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
+              className="rounded-md border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
             >
               <Text className="text-xs font-sans-bold text-red-600">{t('home.decline')}</Text>
             </Pressable>
@@ -96,7 +99,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             <Pressable
               onPress={() => onAccept?.(order.id)}
               accessibilityRole="button"
-              className="rounded-xl bg-primary px-4 py-2 active:opacity-90"
+              className="rounded-md bg-primary px-4 py-2 active:opacity-90"
             >
               <Text className="text-xs font-sans-bold text-white">{t('home.accept')}</Text>
             </Pressable>
@@ -105,7 +108,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <Pressable
             onPress={onPress}
             accessibilityRole="button"
-            className="rounded-xl bg-surface-indigo-subtle px-4 py-2 active:opacity-90"
+            className="rounded-md bg-surface-indigo-subtle px-3.5 py-1.5 active:opacity-90"
           >
             <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
           </Pressable>
