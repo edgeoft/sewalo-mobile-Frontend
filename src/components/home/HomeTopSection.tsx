@@ -3,10 +3,11 @@ import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES, type Category } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
@@ -33,6 +34,8 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const user = useAuthStore((s) => s.user);
+  const firstName = user?.name ? user.name.trim().split(' ')[0] || '' : '';
 
   const featuredCategories = useMemo(() => {
     if (!categories || categories.length < 2) return [];
@@ -41,15 +44,37 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
 
   const heroCopyByVariant = {
     guest: {
-      backgroundHeight: 160,
+      backgroundHeight: 180,
+      title: (
+        <Trans i18nKey="home.welcomeGuest">
+          Welcome to <Text className="text-primary font-sans-bold">Sewalo</Text>
+        </Trans>
+      ),
+      subtitle: t('home.guestHeroSubtitle'),
       searchPlaceholder: t('home.guestSearchPlaceholder'),
     },
     customer: {
-      backgroundHeight: 160,
+      backgroundHeight: 180,
+      title: firstName ? (
+        <Trans i18nKey="home.welcomeBackUser" values={{ name: firstName }}>
+          Welcome back, <Text className="text-primary font-sans-bold">{firstName}</Text>
+        </Trans>
+      ) : (
+        <Text className="text-gray-900 font-sans-bold">{t('home.welcomeBack')}</Text>
+      ),
+      subtitle: t('home.customerHeroSubtitle'),
       searchPlaceholder: t('home.customerSearchPlaceholder'),
     },
     provider: {
-      backgroundHeight: 180,
+      backgroundHeight: 200,
+      title: firstName ? (
+        <Trans i18nKey="home.welcomeBackUser" values={{ name: firstName }}>
+          Welcome back, <Text className="text-primary font-sans-bold">{firstName}</Text>
+        </Trans>
+      ) : (
+        <Text className="text-gray-900 font-sans-bold">{t('home.welcomeBack')}</Text>
+      ),
+      subtitle: t('home.providerHeroSubtitle'),
       searchPlaceholder: '',
     },
   };
@@ -78,9 +103,19 @@ export default function HomeTopSection({ variant, stats, categories }: HomeTopSe
     <ContentLayout className="overflow-hidden bg-surface-brand-subtle">
       <HomeTopSectionBackground height={heroCopy.backgroundHeight} />
 
-      <View className="gap-y-4 pb-2">
+      <View className="gap-y-3 pb-2">
         {/* Spacer to reserve room for absolute/sticky DashboardTopBar */}
         <View style={{ height: 56 + Math.max(insets.top, 6) }} />
+
+        {/* Hero Header */}
+        <View className="pt-0.5 pb-0.5">
+          <Text numberOfLines={1} className="text-xl font-sans-bold text-gray-900 tracking-tight">
+            {heroCopy.title}
+          </Text>
+          <Text numberOfLines={1} className="mt-0.5 text-xs font-sans-medium text-gray-500">
+            {heroCopy.subtitle}
+          </Text>
+        </View>
 
         {variant === USER_ROLES.Provider ? (
           <View className="flex-row flex-wrap justify-between gap-3 mt-2">

@@ -45,7 +45,7 @@ export default function TopBar({
         {showBackButton && (
           <Pressable
             onPress={onBackPress}
-            className="mr-1.5 p-1.5 active:opacity-75"
+            className="-ml-1.5 mr-1.5 p-1.5 active:opacity-75"
             hitSlop={6}
             accessibilityRole="button"
             accessibilityLabel={t('common.back')}
@@ -56,7 +56,7 @@ export default function TopBar({
         {!showBackButton && (
           <Image
             source={LOGO.secondary}
-            className="w-28 h-11"
+            className="w-28 h-11 -ml-1"
             resizeMode="contain"
             accessible={false}
             importantForAccessibility="no"
