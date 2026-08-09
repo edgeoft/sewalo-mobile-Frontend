@@ -4,16 +4,19 @@
     "slug": "sewalo-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/app_icon.png",
+    "icon": "./assets/app_icons/ios_icon.png",
     "scheme": "sewalomobilefrontend",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.anonymous.sewalomobileFrontend"
+      "bundleIdentifier": "com.anonymous.sewalomobileFrontend",
+      "icon": "./assets/app_icons/ios_icon.png"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app_icon.png"
+        "foregroundImage": "./assets/app_icons/android_adaptive_foreground.png",
+        "backgroundColor": "#485aff"
       },
+      "icon": "./assets/app_icons/ios_icon.png",
       "navigationBar": {
         "backgroundColor": "#00000000",
         "barStyle": "dark-content"
@@ -41,7 +44,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/app_icon.png",
+          "icon": "./assets/app_icons/android_adaptive_foreground.png",
           "color": "#485aff"
         }
       ],
