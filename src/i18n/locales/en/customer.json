@@ -76,6 +76,7 @@
   "retryConnection": "Retry Connection",
   "loadMoreFavourites": "Load More Favourites",
   "noMoreFavourites": "No more favourites",
+  "addedToFavourites": "Added to favourites",
   "removedFromFavourites": "Removed from favourites",
   "myBookingsTitle": "My Bookings",
   "myBookingsDesc": "Track all bookings and filter by status.",

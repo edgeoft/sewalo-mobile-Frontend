@@ -168,9 +168,16 @@ export default function FindServicesScreen() {
         ],
       });
     } else {
+      const isCurrentlyFav = favouriteIds.has(serviceId);
       addRemoveFav.mutate(
         { service_id: serviceId },
-        { onSuccess: () => showSnackbar({ message: 'Added to favourites', type: 'success' }) },
+        {
+          onSuccess: () =>
+            showSnackbar({
+              message: isCurrentlyFav ? t('customer.removedFromFavourites') : t('customer.addedToFavourites'),
+              type: 'success',
+            }),
+        },
       );
     }
   };

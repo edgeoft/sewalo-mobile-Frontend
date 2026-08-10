@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -32,6 +33,7 @@ interface ProviderDetailsScreenProps {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function ProviderDetailsScreen({ provider }: ProviderDetailsScreenProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { role } = useAuth();
@@ -75,7 +77,10 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
       { service_id: provider.serviceId },
       {
         onSuccess: () => {
-          showSnackbar({ message: newIsSaved ? 'Added to favourites' : 'Removed from favourites', type: 'success' });
+          showSnackbar({
+            message: newIsSaved ? t('customer.addedToFavourites') : t('customer.removedFromFavourites'),
+            type: 'success',
+          });
         },
         onError: () => setIsSaved(!newIsSaved),
       },

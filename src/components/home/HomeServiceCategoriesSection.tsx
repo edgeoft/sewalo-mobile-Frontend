@@ -48,17 +48,23 @@ export default function HomeServiceCategoriesSection({
     <View className="pt-5">
       <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 4, paddingRight: 4 }}>
-        {categories.map((category) => (
-          <HomeServiceCategoryCard
-            key={category.label}
-            icon={category.icon}
-            imageUrl={category.imageUrl}
-            label={category.label}
-            onPress={() => onCategoryPress?.(category)}
-          />
-        ))}
-      </ScrollView>
+      <View className="-mx-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingLeft: 4, paddingRight: 16, gap: 4 }}
+        >
+          {categories.map((category) => (
+            <HomeServiceCategoryCard
+              key={category.label}
+              icon={category.icon}
+              imageUrl={category.imageUrl}
+              label={category.label}
+              onPress={() => onCategoryPress?.(category)}
+            />
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 }

@@ -76,6 +76,7 @@
   "retryConnection": "पुन: जडान प्रयास गर्नुहोस्",
   "loadMoreFavourites": "थप मनपर्ने लोड गर्नुहोस्",
   "noMoreFavourites": "थप मनपर्ने छैनन्",
+  "addedToFavourites": "मनपर्नेमा थपियो",
   "removedFromFavourites": "मनपर्नेबाट हटाइयो",
   "myBookingsTitle": "मेरो बुकिङहरू",
   "myBookingsDesc": "सबै बुकिङहरू ट्र्याक गर्नुहोस् र स्थिति अनुसार फिल्टर गर्नुहोस्।",

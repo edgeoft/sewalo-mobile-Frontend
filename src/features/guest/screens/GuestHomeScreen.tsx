@@ -13,6 +13,7 @@ import {
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
+import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { getReadTime, cleanDescriptionText } from '@/utils/text';
@@ -20,6 +21,7 @@ import { getReadTime, cleanDescriptionText } from '@/utils/text';
 export default function GuestHomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { showError } = useErrorDialog();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: categoriesData } = useCategoriesQuery('homepage');
@@ -70,9 +72,19 @@ export default function GuestHomeScreen() {
               services={servicesData.data}
               isGuest={true}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
-              onProviderPress={(service) =>
-                router.push(ROUTES.providerDetail(service.provider?.slug || service.provider?.id || service.id))
-              }
+              onProviderPress={() => {
+                showError({
+                  title: t('auth.authRequiredTitle'),
+                  message: t('auth.authRequiredProviderMsg'),
+                  actions: [
+                    { text: t('common.cancel'), style: 'cancel' },
+                    {
+                      text: t('auth.login'),
+                      onPress: () => router.push(ROUTES.auth.signin),
+                    },
+                  ],
+                });
+              }}
             />
           )}
 

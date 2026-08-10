@@ -73,8 +73,6 @@ export const useAddRemoveFavorite = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FAVOURITES_LIST.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL });
     },
   });
 };

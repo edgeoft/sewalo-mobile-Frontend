@@ -11,6 +11,7 @@ export default function ProviderLayout() {
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
+        animation: 'shift',
         sceneStyle: {
           backgroundColor: '#f1f5f9',
         },
