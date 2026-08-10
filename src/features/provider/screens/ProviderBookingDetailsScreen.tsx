@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, View, Text, Pressable, StyleSheet, Linking } from 'react-native';
+import { Image, View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -364,7 +364,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
-          elevation: 10,
+          elevation: Platform.OS === 'android' ? 0 : 10,
         }}
       >
         {currentStatus === BOOKING_STATUSES.Pending && (

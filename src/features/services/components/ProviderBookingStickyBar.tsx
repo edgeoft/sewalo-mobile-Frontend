@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.06,
     shadowRadius: 12,
-    elevation: 10,
+    elevation: Platform.OS === 'android' ? 0 : 10,
   },
 });

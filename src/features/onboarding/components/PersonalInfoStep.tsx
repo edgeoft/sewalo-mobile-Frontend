@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -230,7 +231,7 @@ export default function PersonalInfoStep({
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
-          elevation: 10,
+          elevation: Platform.OS === 'android' ? 0 : 10,
         }}
       >
         <Button

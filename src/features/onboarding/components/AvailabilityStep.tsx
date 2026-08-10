@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -74,7 +74,7 @@ export default function AvailabilityStep({
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
-          elevation: 10,
+          elevation: Platform.OS === 'android' ? 0 : 10,
         }}
       >
         <Button

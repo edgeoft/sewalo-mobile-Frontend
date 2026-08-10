@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -145,7 +145,7 @@ export default function IdentityVerificationStep({
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
-          elevation: 10,
+          elevation: Platform.OS === 'android' ? 0 : 10,
         }}
       >
         <Button
