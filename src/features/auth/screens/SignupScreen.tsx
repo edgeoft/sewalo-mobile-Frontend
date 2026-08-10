@@ -124,7 +124,7 @@ export default function SignupScreen() {
                 onChange={onChange}
                 size="sm"
                 label={
-                  <Text className="text-sm font-sans-semibold text-gray-800 leading-4">
+                  <Text className="text-sm font-sans-semibold text-gray-800 leading-5">
                     {t('auth.agreeToTermsPrefix')}
                     <Text
                       onPress={() => showSnackbar({ message: 'Terms of Service pressed', type: 'info' })}
@@ -132,7 +132,7 @@ export default function SignupScreen() {
                     >
                       {t('auth.termsOfService')}
                     </Text>
-                    <Text className="ml-1">{`${t('auth.and')} `}</Text>
+                    {` ${t('auth.and')} `}
                     <Text
                       onPress={() => showSnackbar({ message: 'Privacy Policy pressed', type: 'info' })}
                       className="text-primary underline"

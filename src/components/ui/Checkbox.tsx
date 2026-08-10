@@ -74,7 +74,7 @@ export default function Checkbox({
       </View>
 
       {label && (
-        <View className="ml-2.5">
+        <View className="ml-2.5 flex-1">
           {typeof label === 'string' ? (
             <Text className={`text-sm font-sans-medium text-gray-700 ${labelClassName}`}>{label}</Text>
           ) : (
