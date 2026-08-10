@@ -32,7 +32,10 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
         )}
       </View>
 
-      <Text className="mt-1.5 text-center text-[11px] font-sans-medium leading-3 text-gray-900 w-14" numberOfLines={2}>
+      <Text
+        className="mt-1.5 text-center text-[11px] font-sans-medium leading-[14px] text-gray-900 w-full px-0.5"
+        numberOfLines={2}
+      >
         {label}
       </Text>
     </Pressable>
