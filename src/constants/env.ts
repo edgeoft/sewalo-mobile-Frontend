@@ -16,8 +16,14 @@ export const ENV = {
 
   /**
    * Google Maps API Key for maps and geocoding services.
+   * Note: Non-public keys are read from process.env.GOOGLE_MAPS_API_KEY or EXPO_PUBLIC_GOOGLE_MAPS_API_KEY fallback.
    */
-  GOOGLE_MAPS_API_KEY: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+
+  /**
+   * PostHog Personal API Key (non-public / secret key).
+   */
+  POSTHOG_API_KEY: process.env.POSTHOG_API_KEY || '',
 
   /**
    * PostHog Project Token (starts with phc_).
