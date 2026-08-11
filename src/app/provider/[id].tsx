@@ -117,6 +117,7 @@ export default function DynamicProviderDetailRoute() {
     const pkg = firstService?.service_packages?.[0];
     const specialPackage = pkg
       ? {
+          id: pkg.id,
           title: pkg.name,
           description: pkg.description || '',
           inclusions: pkg.services_offered?.map(resolveInclusion).filter(Boolean) || [],
@@ -162,6 +163,9 @@ export default function DynamicProviderDetailRoute() {
       specialPackagesCount: firstService?.service_packages?.length || 0,
       availability: provider.availability || t('services.always'),
       availabilityLabel: provider.availability || t('services.always'),
+      availabilityDays: provider.availability_days || undefined,
+      startTime: provider.start_time || undefined,
+      endTime: provider.end_time || undefined,
       workingHours:
         provider.start_time && provider.end_time
           ? `${provider.start_time} - ${provider.end_time}`

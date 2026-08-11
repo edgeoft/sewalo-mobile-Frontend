@@ -162,5 +162,13 @@
   "durationUnitWeeks": "Weeks",
   "mapView": "Map View",
   "listView": "List View",
-  "viewProfile": "View Profile"
+  "viewProfile": "View Profile",
+  "pastDateNotAllowed": "Booking date cannot be in the past",
+  "pastTimeNotAllowed": "Start time cannot be in the past for today's date",
+  "invalidDate": "Please select a valid date",
+  "notWorkingDay": "Selected date is not a provider working day",
+  "outsideWorkingHours": "Start time must be within working hours ({{start}} – {{end}})",
+  "outsideWorkingHoursGeneric": "Start time must be within provider working hours",
+  "providerWorkingHours": "Provider working hours: {{start}} – {{end}}",
+  "bookingFailed": "Failed to create booking. Please try again."
 }

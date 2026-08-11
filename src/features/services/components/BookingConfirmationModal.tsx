@@ -16,7 +16,12 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
-import { ServiceItem } from '@/types';
+import { ProviderDetail, ServiceItem } from '@/types';
+import {
+  getProviderAvailabilityError,
+  getProviderWorkingHours,
+  type ProviderAvailabilityInfo,
+} from '../utils/providerAvailability';
 
 interface LocationData {
   address: string;
@@ -42,6 +47,8 @@ interface BookingConfirmationModalProps {
   onClose: () => void;
   selectedServices: ServiceItem[];
   totalPrice: number;
+  provider?: ProviderDetail | ProviderAvailabilityInfo | null;
+  isLoading?: boolean;
   onConfirm: (details: BookingDetails) => void;
 }
 
@@ -72,6 +79,8 @@ export default function BookingConfirmationModal({
   onClose,
   selectedServices,
   totalPrice,
+  provider,
+  isLoading = false,
   onConfirm,
 }: BookingConfirmationModalProps) {
   const { t } = useTranslation();
@@ -93,16 +102,22 @@ export default function BookingConfirmationModal({
   const [tempMinute, setTempMinute] = useState('00');
   const [tempPeriod, setTempPeriod] = useState('AM');
 
+  const workingHours = getProviderWorkingHours(provider);
+
   const handleConfirmDate = () => {
     const monthIndex = String(MONTHS.indexOf(tempMonth) + 1).padStart(2, '0');
-    setServiceDate(`${tempYear}-${monthIndex}-${tempDay}`);
+    const formattedDate = `${tempYear}-${monthIndex}-${tempDay}`;
+    setServiceDate(formattedDate);
+    setErrors((prev) => ({ ...prev, serviceDate: '' }));
     setDatePickerVisible(false);
   };
 
   const handleConfirmTime = () => {
     const hour = parseInt(tempHour, 10);
     const hour24 = tempPeriod === 'PM' && hour !== 12 ? hour + 12 : tempPeriod === 'AM' && hour === 12 ? 0 : hour;
-    setStartTime(`${String(hour24).padStart(2, '0')}:${tempMinute}`);
+    const formattedTime = `${String(hour24).padStart(2, '0')}:${tempMinute}`;
+    setStartTime(formattedTime);
+    setErrors((prev) => ({ ...prev, startTime: '' }));
     setTimePickerVisible(false);
   };
 
@@ -121,6 +136,16 @@ export default function BookingConfirmationModal({
     }
     if (!startTime.trim()) {
       newErrors.startTime = t('services.startTimeRequired');
+    }
+
+    if (serviceDate.trim() && startTime.trim()) {
+      const availErrors = getProviderAvailabilityError(t, provider, serviceDate, startTime);
+      if (availErrors.serviceDateError) {
+        newErrors.serviceDate = availErrors.serviceDateError;
+      }
+      if (availErrors.startTimeError) {
+        newErrors.startTime = availErrors.startTimeError;
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -240,18 +265,28 @@ export default function BookingConfirmationModal({
                 </View>
               </Pressable>
 
-              <Pressable onPress={openTimePicker} accessibilityRole="button">
-                <View pointerEvents="none">
-                  <Input
-                    label={t('services.startTimeLabel')}
-                    placeholder={t('services.selectStartTimePlaceholder')}
-                    value={startTime}
-                    onChangeText={() => {}}
-                    error={errors.startTime}
-                    rightIcon={<Feather name="clock" size={16} color="#898f8f" />}
-                  />
-                </View>
-              </Pressable>
+              <View>
+                <Pressable onPress={openTimePicker} accessibilityRole="button">
+                  <View pointerEvents="none">
+                    <Input
+                      label={t('services.startTimeLabel')}
+                      placeholder={t('services.selectStartTimePlaceholder')}
+                      value={startTime}
+                      onChangeText={() => {}}
+                      error={errors.startTime}
+                      rightIcon={<Feather name="clock" size={16} color="#898f8f" />}
+                    />
+                  </View>
+                </Pressable>
+                {workingHours.startTime && workingHours.endTime && !errors.startTime ? (
+                  <Text className="text-xs font-sans-medium text-gray-500 mt-1 ml-0.5">
+                    {t('services.providerWorkingHours', {
+                      start: workingHours.startTime,
+                      end: workingHours.endTime,
+                    })}
+                  </Text>
+                ) : null}
+              </View>
 
               <View>
                 <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
@@ -278,7 +313,14 @@ export default function BookingConfirmationModal({
             </View>
 
             <View className="pt-2 pb-6 border-t border-gray-100 gap-y-2.5">
-              <Button title={t('services.confirmBooking')} variant="primary" size="md" onPress={handleConfirm} />
+              <Button
+                title={t('services.confirmBooking')}
+                variant="primary"
+                size="md"
+                loading={isLoading}
+                disabled={isLoading}
+                onPress={handleConfirm}
+              />
 
               <Button
                 title={t('common.cancel')}

@@ -190,7 +190,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           ? {
               service_packages: [
                 {
-                  service_package_id: provider.specialPackage.title,
+                  service_package_id: provider.specialPackage.id || provider.specialPackage.title,
                   unit_price:
                     Math.round(parseFloat(provider.specialPackage.price.replace(/Rs\.\s*/i, '').replace(/,/g, ''))) ||
                     0,
@@ -211,6 +211,16 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           pathname: ROUTES.bookingConfirmation,
           params: { bookingId: result.id },
         });
+      },
+      onError: (err: unknown) => {
+        let message = t('services.bookingFailed');
+        if (err && typeof err === 'object' && err !== null && 'response' in err) {
+          const resErr = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
+          if (resErr) message = resErr;
+        } else if (err instanceof Error && err.message) {
+          message = err.message;
+        }
+        showSnackbar({ message, type: 'error' });
       },
     });
   };
@@ -410,6 +420,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
         onClose={() => setIsBookingModalVisible(false)}
         selectedServices={modalServices}
         totalPrice={modalPrice}
+        provider={provider}
+        isLoading={createBooking.isPending}
         onConfirm={handleConfirmBooking}
       />
     </View>

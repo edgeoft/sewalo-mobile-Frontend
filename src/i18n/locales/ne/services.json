@@ -162,5 +162,13 @@
   "durationUnitWeeks": "हप्ता",
   "mapView": "नक्सा हेर्नुहोस्",
   "listView": "सूची हेर्नुहोस्",
-  "viewProfile": "प्रोफाइल हेर्नुहोस्"
+  "viewProfile": "प्रोफाइल हेर्नुहोस्",
+  "pastDateNotAllowed": "बुकिङ मिति विगतको हुन सक्दैन",
+  "pastTimeNotAllowed": "आजको मितिको लागि सुरु समय विगतको हुन सक्दैन",
+  "invalidDate": "कृपया एउटा मान्य मिति चयन गर्नुहोस्",
+  "notWorkingDay": "चयन गरिएको मिति प्रदायकको कार्य दिन होइन",
+  "outsideWorkingHours": "सुरु समय कार्य समय ({{start}} – {{end}}) भित्र हुनुपर्छ",
+  "outsideWorkingHoursGeneric": "सुरु समय प्रदायकको कार्य समय भित्र हुनुपर्छ",
+  "providerWorkingHours": "प्रदायकको कार्य समय: {{start}} – {{end}}",
+  "bookingFailed": "बुकिङ सिर्जना गर्न असफल भयो। कृपया पुन: प्रयास गर्नुहोस्।"
 }

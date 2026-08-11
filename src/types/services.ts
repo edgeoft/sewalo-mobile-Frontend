@@ -157,6 +157,7 @@ export interface UpdateServiceParams extends CreateServiceParams {
 
 // UI Detail Types (Moved from features/services/types.ts)
 export interface PackageDeal {
+  id?: string;
   title: string;
   description: string;
   inclusions: string[];
@@ -205,6 +206,9 @@ export interface ProviderDetail {
   specialPackagesCount: number;
   availability: string;
   availabilityLabel: string;
+  availabilityDays?: string | string[] | null;
+  startTime?: string;
+  endTime?: string;
   workingHours: string;
   phone: string;
   email: string;
