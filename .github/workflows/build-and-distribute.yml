@@ -106,10 +106,18 @@ jobs:
 
       - name: Generate Automated Release Notes
         run: |
-          echo "## Sewalo Build (${GITHUB_SHA:0:7})" > RELEASE_NOTES.md
+          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
+          BUILD_NUM=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.android?.versionCode || 1);")
+
+          echo "## Sewalo ${VERSION} (Build #${BUILD_NUM})" > RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
-          echo "### Recent Commit Changes:" >> RELEASE_NOTES.md
-          git log -n 10 --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" >> RELEASE_NOTES.md
+          echo "### User Changes:" >> RELEASE_NOTES.md
+
+          pnpm git-cliff --unreleased --strip header >> RELEASE_NOTES.md 2>/dev/null || true
+
+          if [ $(wc -l < RELEASE_NOTES.md) -le 4 ]; then
+            git log -n 15 --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" | grep -E "^- (feat|fix|perf)(\(.*\))?:" >> RELEASE_NOTES.md || true
+          fi
           echo "" >> RELEASE_NOTES.md
 
       - name: Upload APK to Firebase App Distribution
