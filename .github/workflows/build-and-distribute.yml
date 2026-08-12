@@ -70,6 +70,29 @@ jobs:
         run: |
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.jks
 
+      - name: Configure .env Environment Variables
+        env:
+          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64 }}
+          EXPO_PUBLIC_ENV: ${{ secrets.EXPO_PUBLIC_ENV || 'dev' }}
+          EXPO_PUBLIC_API_BASE_URL: ${{ secrets.EXPO_PUBLIC_API_BASE_URL }}
+          EXPO_PUBLIC_S3_BASE_URL: ${{ secrets.EXPO_PUBLIC_S3_BASE_URL }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ secrets.EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          EXPO_PUBLIC_POSTHOG_HOST: ${{ secrets.EXPO_PUBLIC_POSTHOG_HOST }}
+        run: |
+          if [ -n "$ENV_FILE_BASE64" ]; then
+            echo "$ENV_FILE_BASE64" | base64 -d > .env
+          else
+            echo "EXPO_PUBLIC_ENV=$EXPO_PUBLIC_ENV" > .env
+            [ -n "$EXPO_PUBLIC_API_BASE_URL" ] && echo "EXPO_PUBLIC_API_BASE_URL=$EXPO_PUBLIC_API_BASE_URL" >> .env
+            [ -n "$EXPO_PUBLIC_S3_BASE_URL" ] && echo "EXPO_PUBLIC_S3_BASE_URL=$EXPO_PUBLIC_S3_BASE_URL" >> .env
+            [ -n "$GOOGLE_MAPS_API_KEY" ] && echo "GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY" >> .env
+            [ -n "$EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN" ] && echo "EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN=$EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN" >> .env
+            [ -n "$POSTHOG_API_KEY" ] && echo "POSTHOG_API_KEY=$POSTHOG_API_KEY" >> .env
+            [ -n "$EXPO_PUBLIC_POSTHOG_HOST" ] && echo "EXPO_PUBLIC_POSTHOG_HOST=$EXPO_PUBLIC_POSTHOG_HOST" >> .env
+          fi
+
       - name: Fast Compile Android Release APK
         env:
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"
@@ -109,4 +132,4 @@ jobs:
       - name: Security Cleanup of Credentials
         if: always()
         run: |
-          rm -f gcp-key.json android/app/release.jks android/app/google-services.json RELEASE_NOTES.md
+          rm -f .env gcp-key.json android/app/release.jks android/app/google-services.json RELEASE_NOTES.md
