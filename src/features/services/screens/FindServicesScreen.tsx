@@ -41,8 +41,9 @@ export default function FindServicesScreen() {
   const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
 
   useEffect(() => {
-    if (categoryParam && categoryParam !== selectedCategorySlug) {
-      setSelectedCategorySlug(categoryParam);
+    const nextCategory = categoryParam || undefined;
+    if (nextCategory !== selectedCategorySlug) {
+      setSelectedCategorySlug(nextCategory);
     }
   }, [categoryParam, selectedCategorySlug, setSelectedCategorySlug]);
 
@@ -270,9 +271,9 @@ export default function FindServicesScreen() {
         <CategoryScrollSelector
           selectedCategorySlug={selectedCategorySlug}
           onSelectCategory={(slug) => {
-            router.replace(
-              `${isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices}?category=${slug || ''}`,
-            );
+            setSelectedCategorySlug(slug);
+            const baseRoute = isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices;
+            router.replace(slug ? `${baseRoute}?category=${slug}` : baseRoute);
           }}
           categories={categoriesData?.data}
           isLoading={isLoadingCategories}
