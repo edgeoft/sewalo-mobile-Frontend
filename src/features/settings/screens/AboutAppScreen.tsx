@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Linking, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
-import { SectionHeader, UpdateAlertModal } from '@/components/common';
-import Button from '@/components/ui/Button';
+import { SectionHeader } from '@/components/common';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useDistributionUpdate } from '@/hooks/useDistributionUpdate';
 
@@ -15,21 +14,8 @@ export default function AboutAppScreen() {
   const insets = useSafeAreaInsets();
   const { showSnackbar } = useSnackbar();
   const { t } = useTranslation();
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const { version, buildNumber, isBeta, isChecking, updateInfo, checkForUpdate } = useDistributionUpdate();
-
-  const handleCheckUpdates = async () => {
-    const result = await checkForUpdate();
-    if (result.updateAvailable) {
-      setShowUpdateModal(true);
-    } else {
-      showSnackbar({
-        message: t('settings.appUpToDate'),
-        type: 'success',
-      });
-    }
-  };
+  const { version, buildNumber, isBeta } = useDistributionUpdate();
 
   const handleOpenLink = (url: string) => {
     Linking.openURL(url).catch(() => {
@@ -116,18 +102,6 @@ export default function AboutAppScreen() {
           </View>
         </View>
 
-        {/* Action Buttons */}
-        <View className="gap-y-3">
-          <Button
-            title={isChecking ? t('settings.checking') : t('settings.checkForUpdates')}
-            variant="outline"
-            loading={isChecking}
-            onPress={handleCheckUpdates}
-            className="w-full h-12 bg-white border-gray-200"
-            textClassName="text-gray-700"
-          />
-        </View>
-
         {/* Copyright Footer */}
         <View className="mt-8 items-center justify-center">
           <Text className="text-[10px] font-sans-semibold text-gray-400 text-center leading-4">
@@ -138,19 +112,6 @@ export default function AboutAppScreen() {
           </Text>
         </View>
       </ContentLayout>
-
-      {/* Update Modal */}
-      <UpdateAlertModal
-        visible={showUpdateModal}
-        latestVersion={updateInfo?.latestVersion}
-        releaseNotes={updateInfo?.releaseNotes}
-        isMandatory={updateInfo?.isMandatory}
-        onClose={() => setShowUpdateModal(false)}
-        onUpdate={() => {
-          setShowUpdateModal(false);
-          // Launch distribution update or store link
-        }}
-      />
     </View>
   );
 }

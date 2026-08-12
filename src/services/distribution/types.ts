@@ -10,6 +10,7 @@ export interface UpdateCheckResult {
   latestVersion?: string;
   releaseNotes?: string;
   isMandatory?: boolean;
+  downloadUrl?: string;
 }
 
 export interface IDistributionService {
