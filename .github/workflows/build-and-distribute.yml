@@ -20,9 +20,9 @@ permissions:
 
 jobs:
   build-and-distribute:
-    name: Build APK/AAB & Distribute via Firebase
+    name: Build APK & Distribute via Firebase
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -46,8 +46,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Gradle
+      - name: Setup Gradle with Caching
         uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
 
       - name: Decode google-services.json
         env:
@@ -63,24 +65,16 @@ jobs:
         run: |
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.jks
 
-      - name: Build Android Release APK
+      - name: Fast Compile Android Release APK
         env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
-
-      - name: Build Android Release AAB
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          cd android
-          ./gradlew bundleRelease --no-daemon
+          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
 
       - name: Prepare Release Notes
         run: |
