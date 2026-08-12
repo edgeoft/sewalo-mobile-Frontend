@@ -2,7 +2,7 @@ export interface DistributionVersionInfo {
   version: string;
   buildNumber: string | number;
   isBeta: boolean;
-  variant: 'beta' | 'production' | 'development';
+  variant: string;
 }
 
 export interface UpdateCheckResult {

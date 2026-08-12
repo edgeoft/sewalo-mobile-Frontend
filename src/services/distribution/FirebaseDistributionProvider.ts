@@ -2,22 +2,22 @@ import { NativeModules, Platform } from 'react-native';
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
+import { ENV } from '@/constants/env';
 
 /**
  * Firebase App Distribution Provider
- * Used for internal beta testing, tester feedback, and in-app update alerts.
+ * Used for development/staging testing, tester feedback, and in-app update alerts.
  */
 export class FirebaseDistributionProvider implements IDistributionService {
   getVersionInfo(): DistributionVersionInfo {
-    const version = Application.nativeApplicationVersion || Constants.expoConfig?.version || '0.1.0-beta.1';
+    const version = Application.nativeApplicationVersion || Constants.expoConfig?.version || '0.1.0';
     const buildNumber = Application.nativeBuildVersion || String(Constants.expoConfig?.android?.versionCode || 1);
-    const isBeta = version.includes('beta') || version.startsWith('0.');
 
     return {
       version,
       buildNumber,
-      isBeta,
-      variant: 'beta',
+      isBeta: true,
+      variant: ENV.APP_ENV,
     };
   }
 
