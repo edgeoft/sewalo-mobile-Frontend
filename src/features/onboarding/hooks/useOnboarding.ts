@@ -42,7 +42,7 @@ export interface StepInfo {
 export function useOnboarding() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { setRole, user } = useAuth();
+  const { setRole, user, logout } = useAuth();
   const { role: rawRole, phone } = useLocalSearchParams<{ role?: string; phone?: string }>();
   const { showSnackbar } = useSnackbar();
 
@@ -429,6 +429,15 @@ export function useOnboarding() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace(ROUTES.auth.signin);
+    } catch {
+      router.replace(ROUTES.auth.signin);
+    }
+  };
+
   const currentStep = steps[activeIndex];
   const isFormStep = currentStep.key !== 'welcome' && currentStep.key !== 'finish';
 
@@ -457,6 +466,7 @@ export function useOnboarding() {
     handleSkip,
     handleBack,
     handleFinish,
+    handleLogout,
     user,
   };
 }

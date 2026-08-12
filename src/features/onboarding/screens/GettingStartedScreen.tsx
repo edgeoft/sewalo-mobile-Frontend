@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -48,6 +48,7 @@ export default function GettingStartedScreen() {
     handleSkip,
     handleBack,
     handleFinish,
+    handleLogout,
     user,
   } = useOnboarding();
 
@@ -190,7 +191,20 @@ export default function GettingStartedScreen() {
       <TopBar
         showBackButton={activeIndex > 0}
         onBackPress={handleBack}
-        rightContent={<LanguageSelector />}
+        rightContent={
+          <View className="flex-row items-center gap-x-2">
+            <LanguageSelector />
+            <Pressable
+              onPress={handleLogout}
+              className="flex-row items-center bg-gray-100 active:bg-gray-200 px-2.5 py-1.5 rounded-lg border border-gray-200"
+              accessibilityRole="button"
+              accessibilityLabel={t('navigation.logout')}
+            >
+              <Feather name="log-out" size={14} color="#64748b" />
+              <Text className="text-xs font-sans-semibold text-gray-700 ml-1.5">{t('navigation.logout')}</Text>
+            </Pressable>
+          </View>
+        }
         includeBottomBorder={true}
         containerClassName="bg-white border-b border-gray-100"
       />
