@@ -34,6 +34,7 @@ function ContentLayout({
         className={layoutClassName}
         contentContainerStyle={contentContainerStyle}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           onRefresh ? (
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#485aff" colors={['#485aff']} />

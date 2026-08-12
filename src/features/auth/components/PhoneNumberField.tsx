@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 
+import { unformatPhone } from '../utils/phone';
+
 interface PhoneNumberFieldProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: string;
   placeholder: string;
   error?: string;
+  editable?: boolean;
 }
 
 export default function PhoneNumberField<TFieldValues extends FieldValues>({
@@ -16,6 +19,7 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
   label,
   placeholder,
   error,
+  editable = true,
 }: PhoneNumberFieldProps<TFieldValues>) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -41,8 +45,8 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
             <TextInput
               placeholder={placeholder}
               placeholderTextColor="#898f8f"
-              value={String(value ?? '')}
-              onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ''))}
+              value={unformatPhone(String(value ?? ''))}
+              onChangeText={(text) => onChange(unformatPhone(text))}
               onFocus={() => setIsFocused(true)}
               onBlur={() => {
                 setIsFocused(false);
@@ -50,6 +54,7 @@ export default function PhoneNumberField<TFieldValues extends FieldValues>({
               }}
               keyboardType="phone-pad"
               maxLength={10}
+              editable={editable}
               className="form-input-text"
               style={{
                 includeFontPadding: false,

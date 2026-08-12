@@ -209,7 +209,7 @@ TextInput {
 }
 
 @utility form-input-container-multiline {
-  @apply py-3;
+  @apply py-3 items-start;
 }
 
 @utility form-input-container-focus {

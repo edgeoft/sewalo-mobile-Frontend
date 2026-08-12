@@ -12,6 +12,7 @@ import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSect
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '../../auth/utils/image';
+import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import type { UpdateProfilePayload } from '@/types';
@@ -62,7 +63,7 @@ export default function CustomerEditProfileScreen() {
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: user?.name || '',
-      mobileNumber: user?.phone || '',
+      mobileNumber: unformatPhone(user?.phone) || '',
       location: user?.address || '',
       lat: user?.coordinates?.lat || 27.700769,
       lng: user?.coordinates?.lng || 85.30014,
@@ -81,7 +82,7 @@ export default function CustomerEditProfileScreen() {
     if (user) {
       reset({
         fullName: user.name || '',
-        mobileNumber: user.phone || '',
+        mobileNumber: unformatPhone(user.phone) || '',
         location: user.address || '',
         lat: user.coordinates?.lat || 27.700769,
         lng: user.coordinates?.lng || 85.30014,
@@ -104,7 +105,7 @@ export default function CustomerEditProfileScreen() {
     const saveProfileData = (avatarPath: string | null) => {
       const payload: UpdateProfilePayload = {
         name: data.fullName,
-        phone: data.mobileNumber,
+        phone: formatPhone(data.mobileNumber),
         address: data.location,
         city: data.city,
         state: data.state,

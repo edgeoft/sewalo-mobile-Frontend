@@ -1,5 +1,5 @@
-import React, { useId, useState } from 'react';
-import { StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
+import React, { useId, useRef, useState } from 'react';
+import { Pressable, StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -29,6 +29,7 @@ export default function Input({
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const labelId = useId();
+  const inputRef = useRef<TextInput>(null);
 
   const handleFocus = (e: Parameters<NonNullable<TextInputProps['onFocus']>>[0]) => {
     setIsFocused(true);
@@ -40,6 +41,12 @@ export default function Input({
     if (onBlur) onBlur(e);
   };
 
+  const handleContainerPress = () => {
+    if (props.editable !== false) {
+      inputRef.current?.focus();
+    }
+  };
+
   return (
     <View style={containerStyle} className={`w-full ${className}`}>
       {label && (
@@ -48,7 +55,8 @@ export default function Input({
         </Text>
       )}
 
-      <View
+      <Pressable
+        onPress={handleContainerPress}
         className={`form-input-container ${
           props.multiline ? 'form-input-container-multiline' : 'form-input-container-single'
         } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''} ${containerClassName}`}
@@ -60,13 +68,14 @@ export default function Input({
         )}
 
         <TextInput
+          ref={inputRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholderTextColor="#898f8f"
           style={[
             {
               includeFontPadding: false,
-              textAlignVertical: 'center',
+              textAlignVertical: props.multiline ? 'top' : 'center',
               paddingVertical: 0,
               paddingTop: 0,
               paddingBottom: 0,
@@ -86,7 +95,7 @@ export default function Input({
             {rightIcon}
           </View>
         )}
-      </View>
+      </Pressable>
 
       {error && (
         <Text accessibilityLiveRegion="polite" className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
