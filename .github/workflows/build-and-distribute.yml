@@ -18,6 +18,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  NODE_OPTIONS: '--no-deprecation --no-warnings'
+
 jobs:
   build-and-distribute:
     name: Build APK & Distribute via Firebase
@@ -27,6 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 15
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -76,9 +81,13 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
 
-      - name: Prepare Release Notes
+      - name: Generate Automated Release Notes
         run: |
-          echo "Automated Sewalo build commit: ${GITHUB_SHA:0:7}" > RELEASE_NOTES.md
+          echo "## Sewalo Build (${GITHUB_SHA:0:7})" > RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+          echo "### Recent Commit Changes:" >> RELEASE_NOTES.md
+          git log -n 10 --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
 
       - name: Upload APK to Firebase App Distribution
         env:
@@ -99,5 +108,9 @@ jobs:
           if [ -n "$FIREBASE_TESTERS" ]; then
             EXTRA_FLAGS="$EXTRA_FLAGS --testers $FIREBASE_TESTERS"
           fi
-          npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md || npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --release-notes-file RELEASE_NOTES.md
-          rm -f gcp-key.json
+          pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md || pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --release-notes-file RELEASE_NOTES.md
+
+      - name: Security Cleanup of Credentials
+        if: always()
+        run: |
+          rm -f gcp-key.json android/app/release.jks android/app/google-services.json RELEASE_NOTES.md
