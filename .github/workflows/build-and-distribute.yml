@@ -8,8 +8,8 @@ on:
     inputs:
       release_group:
         description: 'Firebase App Distribution Release Group'
-        required: true
-        default: 'internal-testers'
+        required: false
+        default: ''
 
 concurrency:
   group: build-distribute-${{ github.ref }}
@@ -84,9 +84,20 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
+          FIREBASE_TESTERS: ${{ secrets.FIREBASE_TESTERS }}
         if: ${{ env.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         run: |
           echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --groups "${{ inputs.release_group || 'internal-testers' }}" --release-notes-file RELEASE_NOTES.md
+          EXTRA_FLAGS=""
+          if [ -n "$FIREBASE_GROUPS" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --groups $FIREBASE_GROUPS"
+          elif [ -n "${{ inputs.release_group }}" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --groups ${{ inputs.release_group }}"
+          fi
+          if [ -n "$FIREBASE_TESTERS" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --testers $FIREBASE_TESTERS"
+          fi
+          npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md || npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --release-notes-file RELEASE_NOTES.md
           rm -f gcp-key.json
