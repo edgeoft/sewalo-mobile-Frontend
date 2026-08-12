@@ -31,7 +31,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
         with:
-          fetch-depth: 15
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -100,9 +100,12 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
+          BUILD_NUM=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.android?.versionCode || 1);")
+          echo "Building APK for Version $VERSION (versionCode: $BUILD_NUM)..."
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
+          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a -PversionCode=$BUILD_NUM -PversionName="$VERSION"
 
       - name: Generate Automated Release Notes
         run: |
@@ -128,9 +131,12 @@ jobs:
           TAG_NAME="v${VERSION#v}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+          git fetch --tags || true
+          if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1 && ! git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
             git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
             git push origin "$TAG_NAME" || true
+          else
+            echo "Tag $TAG_NAME already exists, skipping tag push."
           fi
 
       - name: Upload APK to Firebase App Distribution
