@@ -128,16 +128,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
-          TAG_NAME="v${VERSION#v}"
+          BASE_TAG="v${VERSION#v}"
+          TAG_NAME="$BASE_TAG"
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch --tags || true
-          if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1 && ! git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
-            git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
-            git push origin "$TAG_NAME" || true
-          else
-            echo "Tag $TAG_NAME already exists, skipping tag push."
+          git fetch --tags --force || true
+
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1 || git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
+            TAG_NAME="${BASE_TAG}-build${GITHUB_RUN_NUMBER}"
           fi
+
+          echo "Creating automated release tag: $TAG_NAME"
+          git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
+          git push origin "$TAG_NAME"
 
       - name: Upload APK to Firebase App Distribution
         env:
