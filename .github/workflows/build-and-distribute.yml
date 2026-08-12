@@ -145,15 +145,18 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
           FIREBASE_TESTERS: ${{ secrets.FIREBASE_TESTERS }}
+          INPUT_RELEASE_GROUP: ${{ inputs.release_group }}
         if: ${{ env.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         run: |
           echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          TARGET_GROUPS="${FIREBASE_GROUPS:-${{ inputs.release_group || 'internal-testers' }}}"
+          TARGET_GROUPS="${FIREBASE_GROUPS:-${INPUT_RELEASE_GROUP}}"
+          TARGET_GROUPS="${TARGET_GROUPS:-internal-testers}"
           EXTRA_FLAGS="--groups $TARGET_GROUPS"
           if [ -n "$FIREBASE_TESTERS" ]; then
             EXTRA_FLAGS="$EXTRA_FLAGS --testers $FIREBASE_TESTERS"
           fi
+          echo "Distributing APK to group: $TARGET_GROUPS"
           pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md
 
       - name: Security Cleanup of Credentials
