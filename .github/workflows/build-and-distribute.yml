@@ -89,11 +89,10 @@ jobs:
       - name: Upload APK to Firebase App Distribution
         env:
           FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         if: ${{ env.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
-        uses: wshipbg/firebase-app-distribution-action@v1
-        with:
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          file: android/app/build/outputs/apk/release/app-release.apk
-          groups: ${{ inputs.release_group || 'internal-testers' }}
-          releaseNotesFile: RELEASE_NOTES.md
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
+          npx firebase-tools appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --groups "${{ inputs.release_group || 'internal-testers' }}" --release-notes-file RELEASE_NOTES.md
+          rm -f gcp-key.json
