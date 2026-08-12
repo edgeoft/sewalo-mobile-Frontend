@@ -8,3 +8,4 @@ export { default as ProfileCompletionCard } from './ProfileCompletionCard';
 export { default as ProviderCard } from './ProviderCard';
 export { default as RadialStepper } from './RadialStepper';
 export { default as SectionHeader } from './SectionHeader';
+export { default as UpdateAlertModal } from './UpdateAlertModal';

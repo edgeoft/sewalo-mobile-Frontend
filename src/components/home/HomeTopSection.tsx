@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,7 +10,6 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES, type Category } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
-import HomeTopSectionServiceChip from './HomeTopSectionServiceChip';
 
 type HomeTopSectionVariant = 'guest' | 'customer' | 'provider';
 
@@ -26,21 +24,12 @@ interface HomeTopSectionProps {
   categories?: Category[];
 }
 
-function pickFeatured<T>(arr: T[], n: number): T[] {
-  return arr.slice(0, n);
-}
-
-export default function HomeTopSection({ variant, stats, categories }: HomeTopSectionProps) {
+export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const firstName = user?.name ? user.name.trim().split(' ')[0] || '' : '';
-
-  const featuredCategories = useMemo(() => {
-    if (!categories || categories.length < 2) return [];
-    return pickFeatured(categories, 2);
-  }, [categories]);
 
   const heroCopyByVariant = {
     guest: {

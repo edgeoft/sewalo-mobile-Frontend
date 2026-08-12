@@ -6,25 +6,39 @@ import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
-import { SectionHeader } from '@/components/common';
+import { SectionHeader, UpdateAlertModal } from '@/components/common';
 import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { useDistributionUpdate } from '@/hooks/useDistributionUpdate';
 
 export default function AboutAppScreen() {
   const insets = useSafeAreaInsets();
   const { showSnackbar } = useSnackbar();
   const { t } = useTranslation();
-  const [checking, setChecking] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const handleCheckUpdates = () => {
-    setChecking(true);
-    setTimeout(() => {
-      setChecking(false);
+  const { isChecking, updateInfo, isFeedbackSupported, checkForUpdate, startFeedback } = useDistributionUpdate();
+
+  const handleCheckUpdates = async () => {
+    const result = await checkForUpdate();
+    if (result.updateAvailable) {
+      setShowUpdateModal(true);
+    } else {
       showSnackbar({
         message: t('settings.appUpToDate'),
         type: 'success',
       });
-    }, 1500);
+    }
+  };
+
+  const handleSendFeedback = async () => {
+    const launched = await startFeedback();
+    if (!launched) {
+      showSnackbar({
+        message: 'Feedback tool unavailable in this environment',
+        type: 'info',
+      });
+    }
   };
 
   const handleOpenLink = (url: string) => {
@@ -77,7 +91,7 @@ export default function AboutAppScreen() {
           <View className="w-full border-t border-gray-50 pt-4 gap-y-3">
             <View className="flex-row justify-between items-center">
               <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.version')}</Text>
-              <Text className="text-xs font-sans-bold text-gray-800">1.0.0 (Build 47)</Text>
+              <Text className="text-xs font-sans-bold text-gray-800">Beta Version</Text>
             </View>
 
             <View className="flex-row justify-between items-center">
@@ -98,20 +112,32 @@ export default function AboutAppScreen() {
 
             <View className="flex-row justify-between items-center">
               <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.releaseDate')}</Text>
-              <Text className="text-xs font-sans-bold text-gray-800">June 2026</Text>
+              <Text className="text-xs font-sans-bold text-gray-800">August 2026</Text>
             </View>
           </View>
         </View>
 
-        {/* Check Updates Button */}
-        <Button
-          title={checking ? t('settings.checking') : t('settings.checkForUpdates')}
-          variant="outline"
-          loading={checking}
-          onPress={handleCheckUpdates}
-          className="w-full h-12 bg-white border-gray-200"
-          textClassName="text-gray-700"
-        />
+        {/* Action Buttons */}
+        <View className="gap-y-3">
+          <Button
+            title={isChecking ? t('settings.checking') : t('settings.checkForUpdates')}
+            variant="outline"
+            loading={isChecking}
+            onPress={handleCheckUpdates}
+            className="w-full h-12 bg-white border-gray-200"
+            textClassName="text-gray-700"
+          />
+
+          {isFeedbackSupported && (
+            <Button
+              title="Send Tester Feedback"
+              variant="outline"
+              onPress={handleSendFeedback}
+              className="w-full h-12 bg-white border-primary/30"
+              textClassName="text-primary font-sans-semibold"
+            />
+          )}
+        </View>
 
         {/* Copyright Footer */}
         <View className="mt-8 items-center justify-center">
@@ -123,6 +149,19 @@ export default function AboutAppScreen() {
           </Text>
         </View>
       </ContentLayout>
+
+      {/* Update Modal */}
+      <UpdateAlertModal
+        visible={showUpdateModal}
+        latestVersion={updateInfo?.latestVersion}
+        releaseNotes={updateInfo?.releaseNotes}
+        isMandatory={updateInfo?.isMandatory}
+        onClose={() => setShowUpdateModal(false)}
+        onUpdate={() => {
+          setShowUpdateModal(false);
+          // Launch distribution update or store link
+        }}
+      />
     </View>
   );
 }

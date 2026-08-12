@@ -1,7 +1,7 @@
 {
   "name": "sewalo-mobile-frontend",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "packageManager": "pnpm@10.9.0",
   "dependencies": {
     "@expo-google-fonts/manrope": "^0.4.2",
@@ -63,7 +63,6 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-react-native-a11y": "^3.5.1",
-    "git-cliff": "^2.13.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
@@ -77,8 +76,7 @@
     "format": "prettier --write '**/*.{ts,tsx,js,jsx,json}'",
     "web": "expo start --web",
     "lint": "expo lint",
-    "commitlint": "commitlint --edit",
-    "changelog": "git-cliff -o CHANGELOG.md"
+    "commitlint": "commitlint --edit"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

@@ -2,13 +2,14 @@
   "expo": {
     "name": "Sewalo",
     "slug": "sewalo-mobile",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/app_icons/ios_icon.png",
     "scheme": "sewalomobilefrontend",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.anonymous.sewalomobileFrontend",
+      "bundleIdentifier": "com.edgeoft.sewalo",
+      "buildNumber": "1",
       "icon": "./assets/app_icons/ios_icon.png"
     },
     "android": {
@@ -22,7 +23,8 @@
         "barStyle": "dark-content"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.sewalomobileFrontend"
+      "package": "com.edgeoft.sewalo",
+      "versionCode": 1
     },
     "web": {
       "output": "static",

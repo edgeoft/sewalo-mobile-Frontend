@@ -17,6 +17,7 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+google-services.json
 
 # Metro
 .metro-health-check*
@@ -40,7 +41,7 @@ example
 
 # generated native folders
 /ios
-/android
+# /android tracked for GitHub Actions native builds
 
 
 .env
