@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   NODE_OPTIONS: '--no-deprecation --no-warnings'
@@ -119,6 +119,19 @@ jobs:
             git log -n 15 --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" | grep -E "^- (feat|fix|perf)(\(.*\))?:" >> RELEASE_NOTES.md || true
           fi
           echo "" >> RELEASE_NOTES.md
+
+      - name: Create and Push Automated Release Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
+          TAG_NAME="v${VERSION#v}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
+            git push origin "$TAG_NAME" || true
+          fi
 
       - name: Upload APK to Firebase App Distribution
         env:
