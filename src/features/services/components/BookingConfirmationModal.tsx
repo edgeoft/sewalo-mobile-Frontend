@@ -20,6 +20,7 @@ import { ProviderDetail, ServiceItem } from '@/types';
 import {
   getProviderAvailabilityError,
   getProviderWorkingHours,
+  isPastDate,
   type ProviderAvailabilityInfo,
 } from '../utils/providerAvailability';
 
@@ -72,7 +73,6 @@ const PERIODS = ['AM', 'PM'];
 
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 5 }, (_, i) => String(currentYear + i));
-const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0'));
 
 export default function BookingConfirmationModal({
   visible,
@@ -107,6 +107,11 @@ export default function BookingConfirmationModal({
   const handleConfirmDate = () => {
     const monthIndex = String(MONTHS.indexOf(tempMonth) + 1).padStart(2, '0');
     const formattedDate = `${tempYear}-${monthIndex}-${tempDay}`;
+    if (isPastDate(formattedDate)) {
+      setErrors((prev) => ({ ...prev, serviceDate: t('services.pastDateNotAllowed') }));
+      setDatePickerVisible(false);
+      return;
+    }
     setServiceDate(formattedDate);
     setErrors((prev) => ({ ...prev, serviceDate: '' }));
     setDatePickerVisible(false);
@@ -177,15 +182,26 @@ export default function BookingConfirmationModal({
   const durationDisplay = selectedServices.length > 0 ? selectedServices[0].durationLabel : '1 Day';
 
   const openDatePicker = () => {
+    const today = new Date();
     if (serviceDate) {
       const parts = serviceDate.split('-');
       if (parts.length === 3) {
-        setTempYear(parts[0]);
-        const mIndex = parseInt(parts[1], 10) - 1;
-        if (mIndex >= 0 && mIndex < 12) setTempMonth(MONTHS[mIndex]);
-        setTempDay(parts[2].startsWith('0') ? parts[2] : parts[2]);
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const d = parseInt(parts[2], 10);
+        const dateObj = new Date(y, m, d);
+        if (!isNaN(dateObj.getTime()) && !isPastDate(serviceDate)) {
+          setTempYear(parts[0]);
+          if (m >= 0 && m < 12) setTempMonth(MONTHS[m]);
+          setTempDay(String(d).padStart(2, '0'));
+          setDatePickerVisible(true);
+          return;
+        }
       }
     }
+    setTempYear(String(today.getFullYear()));
+    setTempMonth(MONTHS[today.getMonth()]);
+    setTempDay(String(today.getDate()).padStart(2, '0'));
     setDatePickerVisible(true);
   };
 
@@ -363,82 +379,135 @@ export default function BookingConfirmationModal({
               </Pressable>
             </View>
 
-            <View className="flex-row justify-between mb-6 gap-x-2">
-              <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.year')}</Text>
-                <ScrollView
-                  style={{ height: 150 }}
-                  showsVerticalScrollIndicator={false}
-                  className="border border-gray-100 rounded-lg"
-                >
-                  {YEARS.map((y) => (
-                    <Pressable
-                      key={y}
-                      onPress={() => setTempYear(y)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: tempYear === y }}
-                      className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
-                    >
-                      <Text
-                        className={`font-sans-medium ${tempYear === y ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
-                      >
-                        {y}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
-              </View>
+            {(() => {
+              const selectedYearNum = parseInt(tempYear, 10) || currentYear;
+              const selectedMonthIdx = MONTHS.indexOf(tempMonth);
+              const now = new Date();
+              const currentMonthIdx = now.getMonth();
+              const currentDayNum = now.getDate();
 
-              <View className="flex-[1.5]">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.month')}</Text>
-                <ScrollView
-                  style={{ height: 150 }}
-                  showsVerticalScrollIndicator={false}
-                  className="border border-gray-100 rounded-lg"
-                >
-                  {MONTHS.map((m) => (
-                    <Pressable
-                      key={m}
-                      onPress={() => setTempMonth(m)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: tempMonth === m }}
-                      className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''}`}
-                    >
-                      <Text
-                        className={`font-sans-medium ${tempMonth === m ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
-                      >
-                        {m}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
-              </View>
+              const maxDaysInMonth = new Date(selectedYearNum, selectedMonthIdx + 1, 0).getDate();
+              const daysList = Array.from({ length: maxDaysInMonth }, (_, i) => String(i + 1).padStart(2, '0'));
 
-              <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.day')}</Text>
-                <ScrollView
-                  style={{ height: 150 }}
-                  showsVerticalScrollIndicator={false}
-                  className="border border-gray-100 rounded-lg"
-                >
-                  {DAYS.map((d) => (
-                    <Pressable
-                      key={d}
-                      onPress={() => setTempDay(d)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: tempDay === d }}
-                      className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''}`}
+              return (
+                <View className="flex-row justify-between mb-6 gap-x-2">
+                  <View className="flex-1">
+                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                      {t('services.year')}
+                    </Text>
+                    <ScrollView
+                      style={{ height: 150 }}
+                      showsVerticalScrollIndicator={false}
+                      className="border border-gray-100 rounded-lg"
                     >
-                      <Text
-                        className={`font-sans-medium ${tempDay === d ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
-                      >
-                        {d}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
-              </View>
-            </View>
+                      {YEARS.map((y) => (
+                        <Pressable
+                          key={y}
+                          onPress={() => setTempYear(y)}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected: tempYear === y }}
+                          className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
+                        >
+                          <Text
+                            className={`font-sans-medium ${tempYear === y ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
+                          >
+                            {y}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </ScrollView>
+                  </View>
+
+                  <View className="flex-[1.5]">
+                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                      {t('services.month')}
+                    </Text>
+                    <ScrollView
+                      style={{ height: 150 }}
+                      showsVerticalScrollIndicator={false}
+                      className="border border-gray-100 rounded-lg"
+                    >
+                      {MONTHS.map((m, idx) => {
+                        const isPastMonth = selectedYearNum === currentYear && idx < currentMonthIdx;
+                        return (
+                          <Pressable
+                            key={m}
+                            disabled={isPastMonth}
+                            onPress={() => {
+                              setTempMonth(m);
+                              const newMaxDays = new Date(selectedYearNum, idx + 1, 0).getDate();
+                              if (parseInt(tempDay, 10) > newMaxDays) {
+                                setTempDay(String(newMaxDays).padStart(2, '0'));
+                              }
+                            }}
+                            accessibilityRole="button"
+                            accessibilityState={{ selected: tempMonth === m, disabled: isPastMonth }}
+                            className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''} ${
+                              isPastMonth ? 'opacity-30' : ''
+                            }`}
+                          >
+                            <Text
+                              className={`font-sans-medium ${
+                                tempMonth === m
+                                  ? 'text-primary font-sans-bold'
+                                  : isPastMonth
+                                    ? 'text-gray-300'
+                                    : 'text-gray-700'
+                              }`}
+                            >
+                              {m}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+
+                  <View className="flex-1">
+                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                      {t('services.day')}
+                    </Text>
+                    <ScrollView
+                      style={{ height: 150 }}
+                      showsVerticalScrollIndicator={false}
+                      className="border border-gray-100 rounded-lg"
+                    >
+                      {daysList.map((d) => {
+                        const dNum = parseInt(d, 10);
+                        const isPastDay =
+                          selectedYearNum === currentYear &&
+                          selectedMonthIdx === currentMonthIdx &&
+                          dNum < currentDayNum;
+                        return (
+                          <Pressable
+                            key={d}
+                            disabled={isPastDay}
+                            onPress={() => setTempDay(d)}
+                            accessibilityRole="button"
+                            accessibilityState={{ selected: tempDay === d, disabled: isPastDay }}
+                            className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''} ${
+                              isPastDay ? 'opacity-30' : ''
+                            }`}
+                          >
+                            <Text
+                              className={`font-sans-medium ${
+                                tempDay === d
+                                  ? 'text-primary font-sans-bold'
+                                  : isPastDay
+                                    ? 'text-gray-300'
+                                    : 'text-gray-700'
+                              }`}
+                            >
+                              {d}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </ScrollView>
+                  </View>
+                </View>
+              );
+            })()}
 
             <Button
               title={t('services.confirmDate')}
