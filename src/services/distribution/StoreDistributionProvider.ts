@@ -1,10 +1,11 @@
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
+import { ENV } from '@/constants/env';
 
 /**
- * Production Store Distribution Provider
- * Used when app is published on Google Play Store and Apple App Store.
+ * Play Store / App Store Production Distribution Provider
+ * Fallback provider used for official app store production builds.
  */
 export class StoreDistributionProvider implements IDistributionService {
   getVersionInfo(): DistributionVersionInfo {
@@ -15,19 +16,18 @@ export class StoreDistributionProvider implements IDistributionService {
       version,
       buildNumber,
       isBeta: false,
-      variant: 'production',
+      variant: ENV.APP_ENV,
     };
   }
 
   async checkForUpdate(): Promise<UpdateCheckResult> {
-    // Standard in-app store update check stub (can be wired to sp-react-native-in-app-updates or Store API)
+    // Official store in-app updates flow
     return {
       updateAvailable: false,
     };
   }
 
   isFeedbackSupported(): boolean {
-    // Tester feedback is disabled in public production store releases
     return false;
   }
 

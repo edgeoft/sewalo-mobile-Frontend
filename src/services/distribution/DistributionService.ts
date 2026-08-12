@@ -1,17 +1,20 @@
 import { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
 import { FirebaseDistributionProvider } from './FirebaseDistributionProvider';
 import { StoreDistributionProvider } from './StoreDistributionProvider';
+import { ENV } from '@/constants/env';
 
 /**
  * Distribution Service Strategy Manager
- * Resolves the appropriate provider dynamically based on EXPO_PUBLIC_APP_VARIANT
+ * Dynamically resolves the provider based on process.env.EXPO_PUBLIC_ENV (ENV.APP_ENV).
+ * Dev / Staging / Beta -> Firebase App Distribution
+ * Production -> Store Distribution
  */
 class DistributionServiceManager implements IDistributionService {
   private activeProvider: IDistributionService;
 
   constructor() {
-    const variant = process.env.EXPO_PUBLIC_APP_VARIANT || 'beta';
-    if (variant === 'production') {
+    const env = ENV.APP_ENV;
+    if (env === 'production' || env === 'prod') {
       this.activeProvider = new StoreDistributionProvider();
     } else {
       this.activeProvider = new FirebaseDistributionProvider();

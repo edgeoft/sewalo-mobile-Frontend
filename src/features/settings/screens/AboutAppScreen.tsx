@@ -17,7 +17,8 @@ export default function AboutAppScreen() {
   const { t } = useTranslation();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const { isChecking, updateInfo, isFeedbackSupported, checkForUpdate, startFeedback } = useDistributionUpdate();
+  const { version, buildNumber, isBeta, isChecking, updateInfo, isFeedbackSupported, checkForUpdate, startFeedback } =
+    useDistributionUpdate();
 
   const handleCheckUpdates = async () => {
     const result = await checkForUpdate();
@@ -91,7 +92,16 @@ export default function AboutAppScreen() {
           <View className="w-full border-t border-gray-50 pt-4 gap-y-3">
             <View className="flex-row justify-between items-center">
               <Text className="text-xs font-sans-semibold text-gray-400">{t('settings.version')}</Text>
-              <Text className="text-xs font-sans-bold text-gray-800">Beta Version</Text>
+              <View className="flex-row items-center gap-x-2">
+                <Text className="text-xs font-sans-bold text-gray-800">
+                  {version.startsWith('v') ? version : `v${version}`} (Build {buildNumber})
+                </Text>
+                <View className={`px-2 py-0.5 rounded-full ${isBeta ? 'bg-amber-100' : 'bg-emerald-100'}`}>
+                  <Text className={`text-[10px] font-sans-bold ${isBeta ? 'text-amber-800' : 'text-emerald-800'}`}>
+                    {isBeta ? 'Beta' : 'Production'}
+                  </Text>
+                </View>
+              </View>
             </View>
 
             <View className="flex-row justify-between items-center">
