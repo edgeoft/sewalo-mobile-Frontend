@@ -99,16 +99,12 @@ jobs:
         run: |
           echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          EXTRA_FLAGS=""
-          if [ -n "$FIREBASE_GROUPS" ]; then
-            EXTRA_FLAGS="$EXTRA_FLAGS --groups $FIREBASE_GROUPS"
-          elif [ -n "${{ inputs.release_group }}" ]; then
-            EXTRA_FLAGS="$EXTRA_FLAGS --groups ${{ inputs.release_group }}"
-          fi
+          TARGET_GROUPS="${FIREBASE_GROUPS:-${{ inputs.release_group || 'internal-testers' }}}"
+          EXTRA_FLAGS="--groups $TARGET_GROUPS"
           if [ -n "$FIREBASE_TESTERS" ]; then
             EXTRA_FLAGS="$EXTRA_FLAGS --testers $FIREBASE_TESTERS"
           fi
-          pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md || pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" --release-notes-file RELEASE_NOTES.md
+          pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md
 
       - name: Security Cleanup of Credentials
         if: always()
