@@ -131,11 +131,18 @@ export default function PersonalInfoStep({
 
           <View className="gap-y-4">
             {/* Profile Avatar Selection Section */}
-            <AvatarPicker
-              avatarUri={watchAvatar}
-              onAvatarChange={(uri) => setValue('avatar', uri, { shouldValidate: true })}
-              className="mb-2"
-            />
+            <View className="items-center">
+              <AvatarPicker
+                avatarUri={watchAvatar}
+                onAvatarChange={(uri) => setValue('avatar', uri, { shouldValidate: true })}
+                className="mb-2"
+              />
+              {errors.avatar?.message && (
+                <Text className="text-xs font-sans-medium text-destructive text-center mt-1">
+                  {errors.avatar.message as string}
+                </Text>
+              )}
+            </View>
 
             {/* Email Address */}
             <Controller

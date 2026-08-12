@@ -185,7 +185,7 @@ export default function GettingStartedScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-secondary">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-secondary">
       {/* Top Bar for Screen Navigation */}
       <TopBar
         showBackButton={activeIndex > 0}

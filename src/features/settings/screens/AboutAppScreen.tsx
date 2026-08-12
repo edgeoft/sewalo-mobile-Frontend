@@ -17,8 +17,7 @@ export default function AboutAppScreen() {
   const { t } = useTranslation();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const { version, buildNumber, isBeta, isChecking, updateInfo, isFeedbackSupported, checkForUpdate, startFeedback } =
-    useDistributionUpdate();
+  const { version, buildNumber, isBeta, isChecking, updateInfo, checkForUpdate } = useDistributionUpdate();
 
   const handleCheckUpdates = async () => {
     const result = await checkForUpdate();
@@ -28,16 +27,6 @@ export default function AboutAppScreen() {
       showSnackbar({
         message: t('settings.appUpToDate'),
         type: 'success',
-      });
-    }
-  };
-
-  const handleSendFeedback = async () => {
-    const launched = await startFeedback();
-    if (!launched) {
-      showSnackbar({
-        message: 'Feedback tool unavailable in this environment',
-        type: 'info',
       });
     }
   };
@@ -137,16 +126,6 @@ export default function AboutAppScreen() {
             className="w-full h-12 bg-white border-gray-200"
             textClassName="text-gray-700"
           />
-
-          {isFeedbackSupported && (
-            <Button
-              title="Send Tester Feedback"
-              variant="outline"
-              onPress={handleSendFeedback}
-              className="w-full h-12 bg-white border-primary/30"
-              textClassName="text-primary font-sans-semibold"
-            />
-          )}
         </View>
 
         {/* Copyright Footer */}

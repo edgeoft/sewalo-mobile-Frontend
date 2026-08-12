@@ -225,69 +225,77 @@ export function useOnboarding() {
     }
 
     if (currentStepKey === 'personal_info') {
-      handlePersonalInfoSubmit(async (data) => {
-        setLoading(true);
-        try {
-          let avatarPath = data.avatar || '';
+      handlePersonalInfoSubmit(
+        async (data) => {
+          setLoading(true);
+          try {
+            let avatarPath = data.avatar || '';
 
-          if (
-            data.avatar &&
-            (data.avatar.startsWith('file://') ||
-              data.avatar.startsWith('ph://') ||
-              data.avatar.startsWith('content://'))
-          ) {
-            const uploadRes = await uploadFile({ uri: data.avatar, folder: 'profile' });
-            avatarPath = uploadRes.path;
-          }
-
-          let lat = data.lat || 27.700769;
-          let lng = data.lng || 85.30014;
-          let address = data.location;
-          let city = data.city || '';
-          let state = data.state || '';
-          let country = data.country || '';
-
-          const cleanVal = (val: string, fallback: string) => {
-            if (!val || val.trim() === '' || val.toLowerCase() === 'n/a') {
-              return fallback;
+            if (
+              data.avatar &&
+              (data.avatar.startsWith('file://') ||
+                data.avatar.startsWith('ph://') ||
+                data.avatar.startsWith('content://'))
+            ) {
+              const uploadRes = await uploadFile({ uri: data.avatar, folder: 'profile' });
+              avatarPath = uploadRes.path;
             }
-            return val;
-          };
 
-          city = cleanVal(city, 'Kathmandu');
-          state = cleanVal(state, 'Bagmati');
-          country = cleanVal(country, 'Nepal');
+            let lat = data.lat || 27.700769;
+            let lng = data.lng || 85.30014;
+            let address = data.location;
+            let city = data.city || '';
+            let state = data.state || '';
+            let country = data.country || '';
 
-          if (!data.lat || !data.lng) {
-            const parts = data.location.split(',').map((p: string) => p.trim());
-            address = parts[0] || 'Kathmandu';
-            city = parts[1] || parts[0] || 'Kathmandu';
-            state = parts[2] || 'Bagmati';
-            country = parts[3] || 'Nepal';
+            const cleanVal = (val: string, fallback: string) => {
+              if (!val || val.trim() === '' || val.toLowerCase() === 'n/a') {
+                return fallback;
+              }
+              return val;
+            };
+
+            city = cleanVal(city, 'Kathmandu');
+            state = cleanVal(state, 'Bagmati');
+            country = cleanVal(country, 'Nepal');
+
+            if (!data.lat || !data.lng) {
+              const parts = data.location.split(',').map((p: string) => p.trim());
+              address = parts[0] || 'Kathmandu';
+              city = parts[1] || parts[0] || 'Kathmandu';
+              state = parts[2] || 'Bagmati';
+              country = parts[3] || 'Nepal';
+            }
+
+            const payload: UpdateProfilePayload = {
+              email: data.email,
+              address,
+              city,
+              state,
+              country,
+              dob: data.dateOfBirth,
+              coordinates: { lat, lng },
+            };
+            if (avatarPath) {
+              payload.avatar = avatarPath;
+            }
+
+            await updateProfile(payload);
+            setActiveIndex((prev) => prev + 1);
+          } catch (err) {
+            const errMsg = err instanceof Error ? err.message : 'Failed to save personal details.';
+            showSnackbar({ message: errMsg, type: 'error' });
+          } finally {
+            setLoading(false);
           }
-
-          const payload: UpdateProfilePayload = {
-            email: data.email,
-            address,
-            city,
-            state,
-            country,
-            dob: data.dateOfBirth,
-            coordinates: { lat, lng },
-          };
-          if (avatarPath) {
-            payload.avatar = avatarPath;
+        },
+        (validationErrors) => {
+          const firstError = Object.values(validationErrors)[0]?.message;
+          if (firstError) {
+            showSnackbar({ message: String(firstError), type: 'error' });
           }
-
-          await updateProfile(payload);
-          setActiveIndex((prev) => prev + 1);
-        } catch (err) {
-          const errMsg = err instanceof Error ? err.message : 'Failed to save personal details.';
-          showSnackbar({ message: errMsg, type: 'error' });
-        } finally {
-          setLoading(false);
-        }
-      })();
+        },
+      )();
       return;
     }
 
