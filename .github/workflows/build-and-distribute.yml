@@ -93,6 +93,10 @@ jobs:
             [ -n "$EXPO_PUBLIC_POSTHOG_HOST" ] && echo "EXPO_PUBLIC_POSTHOG_HOST=$EXPO_PUBLIC_POSTHOG_HOST" >> .env
           fi
 
+      - name: Calculate and Apply Automated SemVer Version
+        run: |
+          pnpm version:bump --write
+
       - name: Fast Compile Android Release APK
         env:
           GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"

@@ -82,7 +82,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "commitlint": "commitlint --edit",
-    "changelog:check": "git-cliff --unreleased"
+    "changelog:check": "git-cliff --unreleased",
+    "version:bump": "node scripts/bump-version.js"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
