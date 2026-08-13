@@ -41,20 +41,27 @@ We enforce **Conventional Commits** via `@commitlint/cli` on all Pull Requests a
 
 ## 2. Automated Versioning System
 
-You **never** need to manually edit `package.json`, `app.json`, or native build numbers. Versioning is calculated dynamically via `app.config.ts` and GitHub Actions:
+You **never** need to manually edit `package.json`, `app.json`, or native build numbers. Versioning is calculated dynamically via `scripts/bump-version.js` (`pnpm version:bump`), `app.config.ts`, and GitHub Actions:
 
 ```mermaid
 flowchart TD
     GitCommits[Total Git Commit Count] --> BuildNum[versionCode / buildNumber = Git Commit Count]
-    PkgVersion[package.json base version] --> EnvCheck{EXPO_PUBLIC_ENV?}
-    EnvCheck -->|dev / staging| BetaVer[v0.1.0-beta.BUILD_NUMBER]
-    EnvCheck -->|prod| ReleaseVer[v1.0.0]
+    ConventionalCommits[Conventional Commits: feat / fix / BREAKING CHANGE] --> SemVerBump[scripts/bump-version.js calculates Base Version]
+    SemVerBump --> PkgVersion[package.json Base Version: Major.Minor.Patch]
+    PkgVersion --> EnvCheck{EXPO_PUBLIC_ENV?}
+    EnvCheck -->|dev / staging| BetaVer[vMAJOR.MINOR.PATCH-beta.BUILD_NUMBER]
+    EnvCheck -->|prod| ReleaseVer[vMAJOR.MINOR.PATCH]
 ```
 
+- **Automated Base SemVer Calculation**: `scripts/bump-version.js` inspects commit history since the last release tag. It automatically bumps:
+  - **Minor** (`0.1.0` ➔ `0.2.0`) when `feat:` commits are detected.
+  - **Patch** (`0.1.0` ➔ `0.1.1`) when `fix:` or `perf:` commits are detected.
+  - **Major** (`0.1.0` ➔ `1.0.0`) when `BREAKING CHANGE:` or `!:` commits are detected.
+  - Run `pnpm version:bump` locally to inspect or `--write` to apply.
 - **Monotonic Native Build Numbers**: `android.versionCode` and `ios.buildNumber` are automatically computed from total git commit count (`git rev-list --count HEAD`). Every commit increments this number, preventing store upload rejections.
 - **Version String (`version`)**:
-  - `EXPO_PUBLIC_ENV=dev`: Formatted as Beta version string (`v0.1.0-beta.203`).
-  - `EXPO_PUBLIC_ENV=prod`: Formatted as clean Production release number (`v1.0.0`).
+  - `EXPO_PUBLIC_ENV=dev`: Formatted as Beta version string ending in `-beta.${buildNumber}` (e.g., `0.2.0-beta.215`).
+  - `EXPO_PUBLIC_ENV=prod`: Formatted as clean Production release number (`0.2.0`).
 
 ---
 
