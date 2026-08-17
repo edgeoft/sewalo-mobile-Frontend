@@ -13,6 +13,7 @@ import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
 import type { FavoriteItem } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/features/auth/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 
 import Button from '@/components/ui/Button';
 import EmptyFavouritesState from '../components/EmptyFavouritesState';
@@ -101,11 +102,15 @@ export default function CustomerFavouritesScreen() {
                 <ProviderCard
                   avatarUri={imageUri}
                   name={provider?.name || 'Service Partner'}
+                  isVerified={true}
                   serviceLabel={service?.category?.name || 'Service'}
                   location={provider?.address || provider?.city || 'Kathmandu, Nepal'}
-                  ordersCompleted={`${provider?.profile_views || 0} Views`}
+                  ordersCompleted={t('services.ordersCompletedCount', { count: service?.total_ratings || 0 })}
                   rating={Number(service?.average_rating || 0).toFixed(1)}
+                  reviewsCount={service?.total_ratings}
                   startingFromPrice={startingPrice}
+                  schedule={formatProviderSchedule(provider, t)}
+                  availabilityStatus={getProviderAvailabilityBadge(provider, t)}
                   isFavourite={true}
                   onFavouritePress={() => {
                     const serviceId = service?.id || item.service_id;

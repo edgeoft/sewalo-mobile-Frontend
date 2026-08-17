@@ -170,5 +170,10 @@
   "outsideWorkingHours": "Start time must be within working hours ({{start}} – {{end}})",
   "outsideWorkingHoursGeneric": "Start time must be within provider working hours",
   "providerWorkingHours": "Provider working hours: {{start}} – {{end}}",
-  "bookingFailed": "Failed to create booking. Please try again."
+  "bookingFailed": "Failed to create booking. Please try again.",
+  "availableToday": "Available Today",
+  "availableTomorrow": "Available Tomorrow",
+  "available": "Available",
+  "ordersCompletedCount": "{{count}} Orders Completed",
+  "reviewsCountShort": "{{count}} reviews"
 }

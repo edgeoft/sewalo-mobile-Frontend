@@ -163,13 +163,9 @@ export default function DynamicProviderDetailRoute() {
       specialPackagesCount: firstService?.service_packages?.length || 0,
       availability: provider.availability || t('services.always'),
       availabilityLabel: provider.availability || t('services.always'),
-      availabilityDays: provider.availability_days || undefined,
-      startTime: provider.start_time || undefined,
-      endTime: provider.end_time || undefined,
-      workingHours:
-        provider.start_time && provider.end_time
-          ? `${provider.start_time} - ${provider.end_time}`
-          : t('services.defaultWorkingHours'),
+      availability_days: provider.availability_days || null,
+      start_time: provider.start_time || null,
+      end_time: provider.end_time || null,
       phone: provider.phone || '',
       email: provider.email || '',
       bio: provider.description || firstService?.description || t('services.noBio'),

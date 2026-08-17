@@ -297,7 +297,11 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
             phone={provider.phone}
             email={provider.email}
             fullLocation={provider.fullLocation}
-            workingHours={provider.workingHours}
+            workingHours={
+              provider.start_time && provider.end_time
+                ? `${provider.start_time} - ${provider.end_time}`
+                : t('services.defaultWorkingHours')
+            }
             onCallPress={handleCall}
             onEmailPress={handleEmail}
             onDirectionsPress={handleDirections}

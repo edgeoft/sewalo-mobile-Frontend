@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
-import { ProviderDetail, ServiceItem } from '@/types';
+import { ServiceItem } from '@/types';
 import {
   getProviderAvailabilityError,
   getProviderWorkingHours,
@@ -48,7 +48,7 @@ interface BookingConfirmationModalProps {
   onClose: () => void;
   selectedServices: ServiceItem[];
   totalPrice: number;
-  provider?: ProviderDetail | ProviderAvailabilityInfo | null;
+  provider?: ProviderAvailabilityInfo | null;
   isLoading?: boolean;
   onConfirm: (details: BookingDetails) => void;
 }

@@ -18,6 +18,8 @@ import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
+import { USER_STATUSES } from '@/constants/roles';
 
 export default function FindServicesScreen() {
   const { t } = useTranslation();
@@ -311,11 +313,18 @@ export default function FindServicesScreen() {
                 <ProviderCard
                   avatarUri={getAvatarUri(service.provider?.avatar)}
                   name={service.provider?.name || 'Service Provider'}
+                  isVerified={
+                    service.provider?.status === USER_STATUSES.Verified ||
+                    Boolean(service.provider?.profile_verified_at)
+                  }
                   serviceLabel={service.category?.name || 'Service'}
                   location={formatLocation(service.provider)}
                   rating={Number(service.average_rating || 0).toFixed(1)}
-                  ordersCompleted={`${service.total_ratings || 0} orders`}
+                  reviewsCount={service.total_ratings}
+                  ordersCompleted={t('services.ordersCompletedCount', { count: service.total_ratings || 0 })}
                   startingFromPrice={getStartingPrice(service.service_offerings)}
+                  schedule={formatProviderSchedule(service.provider, t)}
+                  availabilityStatus={getProviderAvailabilityBadge(service.provider, t)}
                   isFavourite={favouriteIds.has(service.id)}
                   isGuest={isGuest}
                   onFavouritePress={() => handleFavouritePress(service.id)}

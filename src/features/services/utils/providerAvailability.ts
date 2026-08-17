@@ -1,13 +1,10 @@
 import type { TFunction } from 'i18next';
 import { AVAILABILITY_TYPES, WORKING_DAYS_OPTIONS } from '@/constants/availability';
+import type { UserProfile } from '@/types';
 
-export interface ProviderAvailabilityInfo {
-  startTime?: string | null;
-  endTime?: string | null;
-  availability?: string | null;
-  availabilityDays?: string | string[] | null;
-  workingHours?: string | null;
-}
+export type ProviderAvailabilityInfo = Partial<
+  Pick<UserProfile, 'availability' | 'availability_days' | 'start_time' | 'end_time'>
+>;
 
 const DAY_INDEX_BY_LABEL: Record<string, number> = {
   sunday: 0,
@@ -115,25 +112,23 @@ export const getProviderWorkingHours = (
 ): { startTime: string | null; endTime: string | null } => {
   if (!provider) return { startTime: null, endTime: null };
 
-  let startTime = provider.startTime ? provider.startTime.slice(0, 5) : null;
-  let endTime = provider.endTime ? provider.endTime.slice(0, 5) : null;
-
-  if (!startTime || !endTime) {
-    const parsed = parseWorkingHoursFromText(provider.workingHours);
-    if (!startTime) startTime = parsed.startTime;
-    if (!endTime) endTime = parsed.endTime;
-  }
+  const startTime = provider.start_time ? provider.start_time.slice(0, 5) : null;
+  const endTime = provider.end_time ? provider.end_time.slice(0, 5) : null;
 
   return { startTime, endTime };
 };
 
-export const getSelectedDayIndexes = (provider: ProviderAvailabilityInfo): number[] => {
-  if (provider.availabilityDays) {
-    const rawDays = Array.isArray(provider.availabilityDays)
-      ? provider.availabilityDays
-      : provider.availabilityDays.split(',');
+export const getSelectedDayIndexes = (provider: ProviderAvailabilityInfo | null | undefined): number[] => {
+  if (!provider) return ALL_DAY_INDEXES;
 
-    const days = rawDays
+  if (provider.availability_days) {
+    const rawDaysList = Array.isArray(provider.availability_days)
+      ? provider.availability_days
+      : typeof provider.availability_days === 'string'
+        ? (provider.availability_days as string).split(',')
+        : [];
+
+    const days = rawDaysList
       .map((value) =>
         value
           .replace(/\[|\]|"/g, '')
@@ -141,7 +136,7 @@ export const getSelectedDayIndexes = (provider: ProviderAvailabilityInfo): numbe
           .toLowerCase(),
       )
       .map((value) => DAY_INDEX_BY_LABEL[value])
-      .filter((value) => value !== undefined);
+      .filter((value): value is number => value !== undefined);
 
     if (days.length > 0) return days;
   }
@@ -230,4 +225,120 @@ export const getProviderAvailabilityError = (
   }
 
   return {};
+};
+
+export const formatTimeLabel = (timeStr: string | null | undefined): string => {
+  if (!timeStr) return '';
+  const trimmed = timeStr.trim();
+  const ampmMatch = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (ampmMatch) {
+    const hour = parseInt(ampmMatch[1], 10);
+    const period = ampmMatch[3].toUpperCase();
+    return `${hour} ${period}`;
+  }
+  const match24 = trimmed.match(/^(\d{1,2}):(\d{2})/);
+  if (match24) {
+    let hour = parseInt(match24[1], 10);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    if (hour > 12) hour -= 12;
+    if (hour === 0) hour = 12;
+    return `${hour} ${period}`;
+  }
+  return trimmed;
+};
+
+export const formatProviderSchedule = (
+  provider: ProviderAvailabilityInfo | null | undefined,
+  _t?: TFunction,
+): string | null => {
+  if (!provider) return null;
+
+  const hasHours = Boolean(provider.start_time || provider.end_time);
+  const hasDays = Boolean(provider.availability_days || provider.availability);
+
+  if (!hasHours && !hasDays) {
+    return null;
+  }
+
+  const workingHours = getProviderWorkingHours(provider);
+  const start = formatTimeLabel(workingHours.startTime);
+  const end = formatTimeLabel(workingHours.endTime);
+  const timeLabel = start && end ? `${start} - ${end}` : start || end || '';
+
+  let daysLabel: string | null = null;
+  if (provider.availability_days || provider.availability) {
+    const dayIndexes = getSelectedDayIndexes(provider);
+    if (dayIndexes.length === 7) {
+      daysLabel = 'Everyday';
+    } else if (
+      dayIndexes.length === 5 &&
+      dayIndexes.includes(1) &&
+      dayIndexes.includes(2) &&
+      dayIndexes.includes(3) &&
+      dayIndexes.includes(4) &&
+      dayIndexes.includes(5)
+    ) {
+      daysLabel = 'Mon - Fri';
+    } else if (
+      dayIndexes.length === 6 &&
+      dayIndexes.includes(0) &&
+      dayIndexes.includes(1) &&
+      dayIndexes.includes(2) &&
+      dayIndexes.includes(3) &&
+      dayIndexes.includes(4) &&
+      dayIndexes.includes(5)
+    ) {
+      daysLabel = 'Sun - Fri';
+    } else if (dayIndexes.length === 2 && dayIndexes.includes(0) && dayIndexes.includes(6)) {
+      daysLabel = 'Weekends';
+    } else if (dayIndexes.length === 1 && dayIndexes.includes(6)) {
+      daysLabel = 'Saturday';
+    }
+  }
+
+  if (daysLabel && timeLabel) {
+    return `${daysLabel} • ${timeLabel}`;
+  }
+  return daysLabel || timeLabel || null;
+};
+
+export const getProviderAvailabilityBadge = (
+  provider: ProviderAvailabilityInfo | null | undefined,
+  t: TFunction,
+): string | null => {
+  if (!provider) return null;
+
+  const hasAvailabilityData = Boolean(provider.availability || provider.start_time || provider.availability_days);
+  if (!hasAvailabilityData) return null;
+
+  if (provider.availability === 'unavailable') {
+    return null;
+  }
+
+  if (provider.availability === 'always') {
+    return t('services.availableToday');
+  }
+
+  const todayStr = getDateString(new Date());
+  const isWorkingToday = isProviderWorkingDay(provider, todayStr);
+
+  if (isWorkingToday) {
+    const workingHours = getProviderWorkingHours(provider);
+    const endMinutes = getTimeInMinutes(workingHours.endTime);
+    const currentMinutes = getTimeInMinutes(getCurrentTimeString());
+
+    if (endMinutes === null || currentMinutes === null || currentMinutes <= endMinutes) {
+      return t('services.availableToday');
+    }
+  }
+
+  // Check tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = getDateString(tomorrow);
+  if (isProviderWorkingDay(provider, tomorrowStr)) {
+    return t('services.availableTomorrow');
+  }
+
+  return null;
 };

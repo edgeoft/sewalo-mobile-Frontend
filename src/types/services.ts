@@ -78,6 +78,10 @@ export interface FavoriteProvider {
   profile_views: number | null;
   city: string | null;
   address: string | null;
+  availability?: string | null;
+  availability_days?: string[] | null;
+  start_time?: string | null;
+  end_time?: string | null;
 }
 
 export interface FavoriteService {
@@ -204,12 +208,11 @@ export interface ProviderDetail {
   startingPrice: string;
   ordersCompleted: string;
   specialPackagesCount: number;
-  availability: string;
+  availability: string | null;
   availabilityLabel: string;
-  availabilityDays?: string | string[] | null;
-  startTime?: string;
-  endTime?: string;
-  workingHours: string;
+  availability_days: string[] | null;
+  start_time: string | null;
+  end_time: string | null;
   phone: string;
   email: string;
   bio: string;

@@ -170,5 +170,10 @@
   "outsideWorkingHours": "सुरु समय कार्य समय ({{start}} – {{end}}) भित्र हुनुपर्छ",
   "outsideWorkingHoursGeneric": "सुरु समय प्रदायकको कार्य समय भित्र हुनुपर्छ",
   "providerWorkingHours": "प्रदायकको कार्य समय: {{start}} – {{end}}",
-  "bookingFailed": "बुकिङ सिर्जना गर्न असफल भयो। कृपया पुन: प्रयास गर्नुहोस्।"
+  "bookingFailed": "बुकिङ सिर्जना गर्न असफल भयो। कृपया पुन: प्रयास गर्नुहोस्।",
+  "availableToday": "आज उपलब्ध",
+  "availableTomorrow": "भोलि उपलब्ध",
+  "available": "उपलब्ध",
+  "ordersCompletedCount": "{{count}} अर्डरहरू पूरा",
+  "reviewsCountShort": "{{count}} समीक्षाहरू"
 }
