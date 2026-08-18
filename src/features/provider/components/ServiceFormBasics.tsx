@@ -111,7 +111,7 @@ export default function ServiceFormBasics({
             <Input
               label="Service Title *"
               placeholder="e.g. Premium Deep Cleaning & Sanitization"
-              value={value}
+              value={value ?? ''}
               onChangeText={onChange}
               onBlur={onBlur}
               inputStyle={{ padding: 0 }}
@@ -208,7 +208,7 @@ export default function ServiceFormBasics({
               <Input
                 label="Describe Your Service *"
                 placeholder="Describe your services in detail (minimum 20 characters). Mention what is included, your work process, and materials used."
-                value={value}
+                value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 multiline={true}

@@ -273,7 +273,7 @@ export default function ServiceFormStandout({
           <Input
             label="Portfolio Website URL (Optional)"
             placeholder="e.g. www.myportfolio.com"
-            value={value}
+            value={value ?? ''}
             onChangeText={onChange}
             onBlur={onBlur}
             inputStyle={{ padding: 0 }}

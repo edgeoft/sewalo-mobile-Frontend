@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocalSearchParams, useRouter, Href } from 'expo-router';
 import { useForm, Resolver, useWatch } from 'react-hook-form';
 import { View, ActivityIndicator } from 'react-native';
@@ -63,8 +63,11 @@ export default function ServiceEditScreen() {
     mode: 'onBlur',
   });
 
+  const hasInitializedRef = useRef(false);
+
   useEffect(() => {
-    if (isEditMode && service) {
+    if (isEditMode && service && !hasInitializedRef.current) {
+      hasInitializedRef.current = true;
       const unitMap: Record<string, 'minutes' | 'hours' | 'days' | 'weeks'> = {
         hour: 'hours',
         day: 'days',
@@ -89,27 +92,30 @@ export default function ServiceEditScreen() {
       };
       const deliveryTypes = service.service_location?.map((loc) => locationReverseMap[loc]).filter(Boolean) || [];
 
-      reset({
-        title: service.name || '',
-        categoryId: service.category_id || '',
-        serviceTypeIds: service.service_offerings?.map((offering) => offering.sub_category_id) || [],
-        description: service.description || '',
-        rates: parsedRates,
-        deliveryTypes: deliveryTypes.length > 0 ? deliveryTypes : [DELIVERY_TYPES.Customer],
-        workSamples: (service.portfolio || []).map((p) => ({
-          uri: getImageUrl(p) || '',
-          uploaded: true,
-        })),
-        hashtags: service.tags || [],
-        portfolioUrl: service.portfolio_url || '',
-        packages:
-          service.service_packages?.map((pkg) => ({
-            id: pkg.id,
-            title: pkg.name,
-            description: pkg.description || '',
-            price: pkg.price ? pkg.price.toString() : '',
-          })) || [],
-      });
+      reset(
+        {
+          title: service.name || '',
+          categoryId: service.category_id || '',
+          serviceTypeIds: service.service_offerings?.map((offering) => offering.sub_category_id) || [],
+          description: service.description || '',
+          rates: parsedRates,
+          deliveryTypes: deliveryTypes.length > 0 ? deliveryTypes : [DELIVERY_TYPES.Customer],
+          workSamples: (service.portfolio || []).map((p) => ({
+            uri: getImageUrl(p) || '',
+            uploaded: true,
+          })),
+          hashtags: service.tags || [],
+          portfolioUrl: service.portfolio_url || '',
+          packages:
+            service.service_packages?.map((pkg) => ({
+              id: pkg.id,
+              title: pkg.name,
+              description: pkg.description || '',
+              price: pkg.price ? pkg.price.toString() : '',
+            })) || [],
+        },
+        { keepDirtyValues: true },
+      );
     }
   }, [isEditMode, service, reset]);
 
@@ -191,7 +197,6 @@ export default function ServiceEditScreen() {
         {
           onSuccess: () => {
             showSnackbar({ message: t('provider.serviceUpdated'), type: 'success' });
-            router.replace(ROUTES.provider.services);
           },
         },
       );
