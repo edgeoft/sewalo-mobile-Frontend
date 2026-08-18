@@ -38,6 +38,7 @@ interface BasicInfoSectionProps {
   watchAvatar: string | null;
   onSave: () => void;
   loading?: boolean;
+  isProvider?: boolean;
 }
 
 export default function BasicInfoSection({
@@ -50,6 +51,7 @@ export default function BasicInfoSection({
   watchAvatar = null,
   onSave,
   loading = false,
+  isProvider = false,
 }: BasicInfoSectionProps) {
   const { t } = useTranslation();
   const [langModalVisible, setLangModalVisible] = useState(false);
@@ -190,19 +192,25 @@ export default function BasicInfoSection({
         <Controller
           control={control}
           name="bio"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label="Bio (Optional)"
-              placeholder="Customers want to know who they are hiring. A friendly bio helps you win more jobs."
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              multiline={true}
-              numberOfLines={4}
-              inputStyle={{ height: 90, textAlignVertical: 'top', padding: 0 }}
-              error={errors.bio?.message as string}
-            />
-          )}
+          render={({ field: { onChange, onBlur, value } }) => {
+            const bioPlaceholder = isProvider
+              ? t('components.bioPlaceholderProvider')
+              : t('components.bioPlaceholderCustomer');
+
+            return (
+              <Input
+                label={t('components.bioOptional')}
+                placeholder={bioPlaceholder}
+                value={value ?? ''}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                multiline={true}
+                numberOfLines={4}
+                inputStyle={{ height: 90, textAlignVertical: 'top', padding: 0 }}
+                error={errors.bio?.message as string}
+              />
+            );
+          }}
         />
 
         <Button

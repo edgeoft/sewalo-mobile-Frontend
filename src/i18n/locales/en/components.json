@@ -87,5 +87,8 @@
   "removeAccountConfirm": "Are you sure you want to remove this account?",
   "saving": "Saving...",
   "saveAccount": "Save Account",
-  "processingEllipsis": "Processing..."
+  "processingEllipsis": "Processing...",
+  "bioOptional": "Bio (Optional)",
+  "bioPlaceholderCustomer": "Tell service providers a little bit about yourself or your household preferences.",
+  "bioPlaceholderProvider": "Customers want to know who they are hiring. A friendly bio helps you win more jobs."
 }

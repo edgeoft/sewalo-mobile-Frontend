@@ -41,16 +41,12 @@ export default function ProviderEditProfileScreen() {
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutate: uploadFile, isPending: isUploading } = useUploadFile();
 
-  const targetTab = useMemo(() => getInitialTab(section), [section]);
-  const [userSelectedTab, setUserSelectedTab] = useState<EditProfileTab | null>(null);
-  const [lastSection, setLastSection] = useState<string | undefined>(section);
+  const [userTab, setUserTab] = useState<{ section?: string; tab: EditProfileTab }>({
+    section,
+    tab: getInitialTab(section),
+  });
 
-  if (section !== lastSection) {
-    setLastSection(section);
-    setUserSelectedTab(null);
-  }
-
-  const activeTab = userSelectedTab ?? targetTab;
+  const activeTab = userTab.section === section ? userTab.tab : getInitialTab(section);
 
   const tabItems = useMemo(
     () => [
@@ -67,7 +63,6 @@ export default function ProviderEditProfileScreen() {
     setValue,
     getValues,
     formState: { errors },
-    reset,
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: user?.name || '',
@@ -85,25 +80,6 @@ export default function ProviderEditProfileScreen() {
     },
     mode: 'onBlur',
   });
-
-  React.useEffect(() => {
-    if (user) {
-      reset({
-        fullName: user.name || '',
-        mobileNumber: unformatPhone(user.phone) || '',
-        location: user.address || '',
-        lat: user.coordinates?.lat || 27.700769,
-        lng: user.coordinates?.lng || 85.30014,
-        city: user.city || '',
-        state: user.state || '',
-        country: user.country || '',
-        dateOfBirth: user.dob || '',
-        languages: user.language || [],
-        bio: user.description || '',
-        avatar: getImageUrl(user.avatar) || null,
-      });
-    }
-  }, [user, reset]);
 
   const watchLanguages = useWatch({ control, name: 'languages' }) || [];
   const watchDateOfBirth = useWatch({ control, name: 'dateOfBirth' }) || '';
@@ -274,7 +250,7 @@ export default function ProviderEditProfileScreen() {
                 return (
                   <Pressable
                     key={tab.id}
-                    onPress={() => setUserSelectedTab(tab.id)}
+                    onPress={() => setUserTab({ section, tab: tab.id })}
                     accessibilityRole="tab"
                     accessibilityState={{ selected: isActive }}
                     className={`flex-row items-center px-4 py-2.5 rounded-xl border mr-2.5 ${
@@ -312,6 +288,7 @@ export default function ProviderEditProfileScreen() {
               watchAvatar={watchAvatar}
               onSave={handleSubmit(handleSaveBasicInfo)}
               loading={isUpdating || isUploading}
+              isProvider={true}
             />
           )}
 

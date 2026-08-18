@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, ActivityIndicator, ScrollView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,6 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import type { UpdateProfilePayload } from '@/types';
 
 export default function CustomerEditProfileScreen() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user, isLoading } = useAuth();
@@ -59,7 +58,6 @@ export default function CustomerEditProfileScreen() {
     setValue,
     getValues,
     formState: { errors },
-    reset,
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: user?.name || '',
@@ -77,25 +75,6 @@ export default function CustomerEditProfileScreen() {
     },
     mode: 'onBlur',
   });
-
-  React.useEffect(() => {
-    if (user) {
-      reset({
-        fullName: user.name || '',
-        mobileNumber: unformatPhone(user.phone) || '',
-        location: user.address || '',
-        lat: user.coordinates?.lat || 27.700769,
-        lng: user.coordinates?.lng || 85.30014,
-        city: user.city || '',
-        state: user.state || '',
-        country: user.country || '',
-        dateOfBirth: user.dob || '',
-        languages: user.language || [],
-        bio: user.description || '',
-        avatar: getImageUrl(user.avatar) || null,
-      });
-    }
-  }, [user, reset]);
 
   const watchLanguages = useWatch({ control, name: 'languages' }) || [];
   const watchDateOfBirth = useWatch({ control, name: 'dateOfBirth' }) || '';
@@ -126,7 +105,6 @@ export default function CustomerEditProfileScreen() {
       updateProfile(payload, {
         onSuccess: () => {
           showSnackbar({ message: t('customer.profileUpdated'), type: 'success' });
-          router.back();
         },
       });
     };
