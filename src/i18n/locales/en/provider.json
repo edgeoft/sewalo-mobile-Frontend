@@ -226,5 +226,7 @@
   "vat": "VAT (13%)",
   "accountSetAsPrimary": "Account set as your primary payout method.",
   "accountAddedSuccess": "Account added successfully!",
-  "endService": "End Service"
+  "endService": "End Service",
+  "vatInclusivePricing": "VAT-inclusive pricing",
+  "vatInclusivePricingDesc": "The price you enter already includes VAT. No additional VAT will be charged to the customer."
 }

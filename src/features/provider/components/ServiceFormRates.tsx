@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Control, FieldError, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
+import { THEME_COLORS } from '@/constants/colors';
 import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
 import { ServiceFormData } from '@/types';
 import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
@@ -29,6 +31,7 @@ export default function ServiceFormRates({
   watchPackages = [],
   watchCategoryId,
 }: ServiceFormRatesProps) {
+  const { t } = useTranslation();
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPkgForm, setShowPkgForm] = useState(false);
   const [pkgTitle, setPkgTitle] = useState('');
@@ -162,7 +165,7 @@ export default function ServiceFormRates({
   return (
     <View
       style={{
-        shadowColor: '#0f172a',
+        shadowColor: THEME_COLORS.slate900,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.02,
         shadowRadius: 8,
@@ -171,18 +174,29 @@ export default function ServiceFormRates({
       className="rounded-xl border border-gray-200 bg-white p-3.5 mb-6"
     >
       {/* Header Inside Card */}
-      <View className="mb-4">
-        <Text className="text-base font-sans-bold text-gray-950 mb-1">Your Services & Rates</Text>
+      <View className="mb-3">
+        <Text className="text-base font-sans-bold text-gray-950 mb-1">{t('services.yourServicesRates')}</Text>
         <Text className="text-xs font-sans-medium text-gray-500 leading-normal">
-          List the specific tasks you perform and how much you charge for them. Refer to the{' '}
+          {t('services.listTasksCharge')}{' '}
           <Text
             onPress={() => setShowGuideModal(true)}
             accessibilityRole="link"
             className="text-primary underline font-sans-semibold"
           >
-            guideline
+            {t('services.guideline')}
           </Text>
         </Text>
+      </View>
+
+      {/* VAT-Inclusive Pricing Banner */}
+      <View className="flex-row items-start gap-2.5 rounded-xl border border-blue-100 bg-blue-50/70 p-3 mb-4">
+        <Feather name="info" size={16} color={THEME_COLORS.infoBlue} style={{ marginTop: 1 }} />
+        <View className="flex-1">
+          <Text className="text-xs font-sans-bold text-blue-900 mb-0.5">{t('services.vatInclusivePricing')}</Text>
+          <Text className="text-[11px] font-sans-medium text-blue-700 leading-4">
+            {t('services.vatInclusivePricingDesc')}
+          </Text>
+        </View>
       </View>
 
       {watchServiceTypeIds.length === 0 ? (
@@ -255,7 +269,7 @@ export default function ServiceFormRates({
                       hitSlop={8}
                       className="absolute top-3.5 right-3.5 h-6 w-6 rounded-full bg-red-50/80 border border-red-100/50 items-center justify-center active:bg-red-100"
                     >
-                      <Feather name="trash-2" size={12} color="#ef4444" />
+                      <Feather name="trash-2" size={12} color={THEME_COLORS.dangerRed} />
                     </Pressable>
                   </View>
                 ))}
@@ -319,7 +333,7 @@ export default function ServiceFormRates({
                 accessibilityRole="button"
                 className="py-3 border border-dashed border-gray-300 rounded-lg bg-gray-50/50 flex-row items-center justify-center active:bg-gray-100"
               >
-                <Feather name="plus" size={12} color="#485aff" className="mr-1.5" accessible={false} />
+                <Feather name="plus" size={12} color={THEME_COLORS.primary} className="mr-1.5" accessible={false} />
                 <Text className="text-xs font-sans-semibold text-primary">Create a Package</Text>
               </Pressable>
             )}

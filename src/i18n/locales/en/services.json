@@ -175,5 +175,9 @@
   "availableTomorrow": "Available Tomorrow",
   "available": "Available",
   "ordersCompletedCount": "{{count}} Orders Completed",
-  "reviewsCountShort": "{{count}} reviews"
+  "reviewsCountShort": "{{count}} reviews",
+  "vatInclusivePricing": "VAT-inclusive pricing",
+  "vatInclusivePricingDesc": "The price you enter already includes VAT. No additional VAT will be charged to the customer.",
+  "listTasksCharge": "List the specific tasks you perform and how much you charge for them. Refer to the",
+  "guideline": "guideline"
 }
