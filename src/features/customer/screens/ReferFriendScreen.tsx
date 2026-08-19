@@ -13,8 +13,7 @@ import { useReferralCodeQuery, useReferralStatsQuery } from '@/api';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { extractErrorMessage } from '@/api/client/query/errorHandler';
-
-const APP_LINK = 'https://sipalu.com';
+import { WEB_URLS } from '@/constants/urls';
 
 export default function ReferFriendScreen() {
   const insets = useSafeAreaInsets();
@@ -26,7 +25,7 @@ export default function ReferFriendScreen() {
   const { data: statsData, isLoading: statsLoading } = useReferralStatsQuery();
 
   const referralCode = codeData?.data?.referral_code || '';
-  const referralLink = referralCode ? `${APP_LINK}/signup?referral=${referralCode}` : '';
+  const referralLink = referralCode ? WEB_URLS.signupReferral(referralCode) : '';
   const totalReferred = statsData?.data?.total_referred || 0;
   const loyaltyPoints = user?.loyalty_points || 0;
 

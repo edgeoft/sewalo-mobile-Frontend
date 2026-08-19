@@ -148,6 +148,7 @@ export default function DynamicProviderDetailRoute() {
 
     return {
       id: provider.id,
+      slug: provider.slug || providerSlug,
       serviceId: firstService?.id,
       isFavourite: firstService?.is_favourite || false,
       name: provider.name,

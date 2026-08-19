@@ -7,6 +7,7 @@ import { EmptyStateCard, SectionHeader } from '@/components/common';
 import ProviderOrderCard from './ProviderOrderCard';
 import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
 import { THEME_COLORS } from '@/constants/colors';
+import { WEB_BASE_URL, WEB_URLS } from '@/constants/urls';
 
 export interface RecentOrdersSectionProps {
   title: string;
@@ -18,6 +19,7 @@ export interface RecentOrdersSectionProps {
   onDeclineOrder?: (id: string) => void;
   hasService?: boolean;
   providerName?: string;
+  providerSlug?: string;
   onCreateServicePress?: () => void;
 }
 
@@ -31,6 +33,7 @@ export default function RecentOrdersSection({
   onDeclineOrder,
   hasService = false,
   providerName = '',
+  providerSlug = '',
   onCreateServicePress,
 }: RecentOrdersSectionProps) {
   const { t } = useTranslation();
@@ -38,8 +41,9 @@ export default function RecentOrdersSection({
   const handleShareProfile = async () => {
     try {
       const shareName = providerName || t('home.serviceProvider');
+      const profileUrl = providerSlug ? WEB_URLS.providerProfile(providerSlug) : WEB_BASE_URL;
       await Share.share({
-        message: `${shareName} ${t('home.shareProfileDesc')} https://sewalo.com`,
+        message: `${shareName} - ${t('home.shareProfileDesc')} ${profileUrl}`,
       });
     } catch (error) {
       console.log('Error sharing:', error);

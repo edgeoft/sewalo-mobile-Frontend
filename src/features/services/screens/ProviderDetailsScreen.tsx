@@ -9,6 +9,7 @@ import Animated, { SlideInRight } from 'react-native-reanimated';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
+import { WEB_URLS } from '@/constants/urls';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
 import { BookServiceFormData, ProviderDetail, USER_ROLES } from '@/types';
@@ -90,8 +91,9 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   // Share profile action
   const handleShare = async () => {
     try {
+      const shareUrl = WEB_URLS.providerProfile(provider.slug || provider.id);
       await Share.share({
-        message: `Check out ${provider.name} (${provider.serviceLabel}) on Sewalo! Rating: ${provider.rating}/5. Location: ${provider.location}.`,
+        message: `Check out ${provider.name} (${provider.serviceLabel}) on Sewalo! Rating: ${provider.rating}/5. Location: ${provider.location}. ${shareUrl}`,
       });
     } catch (error) {
       console.log('Error sharing:', error);

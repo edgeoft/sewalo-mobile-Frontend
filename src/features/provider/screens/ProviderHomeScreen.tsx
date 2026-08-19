@@ -38,6 +38,7 @@ export default function ProviderHomeScreen() {
 
   const hasService = !!myServicesData?.data?.id;
   const providerName = profileData?.user?.name || '';
+  const providerSlug = profileData?.user?.slug || profileData?.user?.id || '';
 
   const handleAcceptOrder = (id: string) => {
     updateBooking.mutate(
@@ -120,6 +121,7 @@ export default function ProviderHomeScreen() {
             onDeclineOrder={handleDeclineOrder}
             hasService={hasService}
             providerName={providerName}
+            providerSlug={providerSlug}
             onCreateServicePress={() => router.push({ pathname: ROUTES.provider.serviceEdit, params: { mode: 'add' } })}
           />
 
