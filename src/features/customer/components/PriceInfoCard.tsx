@@ -24,7 +24,6 @@ export default function PriceInfoCard({ booking }: PriceInfoCardProps) {
       <Text className="text-base font-sans-bold text-gray-900 mb-3">{t('customer.priceDetails')}</Text>
       <View className="gap-1">
         {renderInfoRow(booking.serviceName ?? booking.serviceLabel, booking.basePrice ?? booking.bookedPrice)}
-        {renderInfoRow(t('customer.vat'), booking.vatAmount ?? 'Rs. 0')}
         <View className="border-t border-gray-100 my-2" />
         <View className="flex-row items-center justify-between py-1">
           <Text className="text-base font-sans-bold text-gray-950">{t('customer.total')}</Text>

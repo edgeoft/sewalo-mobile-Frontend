@@ -23,8 +23,6 @@ export default function InvoiceSummaryCard({ booking }: InvoiceSummaryCardProps)
       <View className="gap-1">
         {renderInfoRow(booking.serviceName ?? booking.serviceLabel, booking.basePrice ?? booking.bookedPrice)}
         {renderInfoRow(t('customer.hoursWorked'), '2 Hours @ Rs. 2,500/hr')}
-        {renderInfoRow(t('customer.platformFee'), 'Rs. 150')}
-        {renderInfoRow(t('customer.vat'), booking.vatAmount ?? 'Rs. 650')}
       </View>
     </View>
   );

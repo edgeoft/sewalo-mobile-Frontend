@@ -28,8 +28,7 @@ export default function ProviderInvoiceEditorCard({
   };
 
   const parsedBasePrice = parseFloat(basePrice) || 0;
-  const vatValue = (parsedBasePrice + platformFee) * 0.13;
-  const total = parsedBasePrice + platformFee + vatValue;
+  const total = parsedBasePrice + platformFee;
 
   // Sync total whenever it changes
   React.useEffect(() => {
@@ -62,8 +61,7 @@ export default function ProviderInvoiceEditorCard({
           </View>
         </View>
 
-        {renderInfoRow(t('services.platformFee'), `Rs. ${platformFee.toLocaleString()}`)}
-        {renderInfoRow(t('services.vat'), `Rs. ${vatValue.toFixed(2)}`)}
+        {platformFee > 0 && renderInfoRow(t('services.platformFee'), `Rs. ${platformFee.toLocaleString()}`)}
 
         <View className="border-t border-gray-100 my-2" />
 

@@ -10,7 +10,7 @@ interface FinalInvoiceCardProps {
   booking: CustomerBookingItem;
   basePriceValue: number;
   platformFeeValue: number;
-  vatValue: number;
+  vatValue?: number;
   couponDiscountValue: number;
   loyaltyDiscountValue: number;
   totalPayableValue: number;
@@ -22,7 +22,6 @@ export default function FinalInvoiceCard({
   booking,
   basePriceValue,
   platformFeeValue,
-  vatValue,
   couponDiscountValue,
   loyaltyDiscountValue,
   totalPayableValue,
@@ -46,8 +45,7 @@ export default function FinalInvoiceCard({
 
       <View className="gap-0.5">
         {renderInvoiceRow(booking.serviceName ?? booking.serviceLabel, basePriceValue.toLocaleString())}
-        {renderInvoiceRow(t('customer.platformFee'), platformFeeValue.toLocaleString())}
-        {renderInvoiceRow(t('customer.vat'), vatValue.toLocaleString())}
+        {platformFeeValue > 0 && renderInvoiceRow(t('customer.platformFee'), platformFeeValue.toLocaleString())}
 
         {couponDiscountValue > 0 &&
           renderInvoiceRow(t('customer.couponDiscount'), couponDiscountValue.toLocaleString(), true)}

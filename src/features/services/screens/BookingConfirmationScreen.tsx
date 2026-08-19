@@ -155,10 +155,6 @@ export default function BookingConfirmationScreen() {
                 <Text className="text-xs font-sans-medium text-gray-500">{t('services.subTotal')}</Text>
                 <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subTotal.toLocaleString()}</Text>
               </View>
-              <View className="flex-row justify-between">
-                <Text className="text-xs font-sans-medium text-gray-500">{t('services.vat')}</Text>
-                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vatAmount.toLocaleString()}</Text>
-              </View>
             </View>
           )}
 

@@ -76,7 +76,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const loyaltyDiscountValue = loyaltyPointsNum * pointsRate;
 
   const subtotal = Math.max(0, basePriceValue + platformFeeValue - couponDiscountValue - loyaltyDiscountValue);
-  const totalPayableValue = subtotal + vatValue;
+  const totalPayableValue = subtotal;
 
   const handleLoyaltyPointsChange = (text: string) => {
     const numericText = text.replace(/[^0-9]/g, '');
@@ -375,10 +375,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                     </Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                   </View>
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
-                    <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
-                  </View>
                   <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
                     <Text className="text-sm font-sans-bold text-gray-900">{t('customer.total')}</Text>
                     <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
@@ -425,10 +421,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                 </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
-                  <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
-                </View>
               </View>
 
               <DiscountLoyaltyCard
@@ -446,16 +438,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
                 </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.platformFee')}</Text>
-                  <Text className="text-xs font-sans-semibold text-gray-800">
-                    Rs. {platformFeeValue.toLocaleString()}
-                  </Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
-                  <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
-                </View>
+                {platformFeeValue > 0 && (
+                  <View className="flex-row justify-between">
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.platformFee')}</Text>
+                    <Text className="text-xs font-sans-semibold text-gray-800">
+                      Rs. {platformFeeValue.toLocaleString()}
+                    </Text>
+                  </View>
+                )}
                 {couponDiscountValue > 0 && (
                   <View className="flex-row justify-between">
                     <Text className="text-xs font-sans-medium text-green-600">{t('customer.couponDiscount')}</Text>
@@ -518,10 +508,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <View className="flex-row justify-between">
                 <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
                 <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
-              </View>
-              <View className="flex-row justify-between">
-                <Text className="text-xs font-sans-medium text-gray-500">{t('customer.vat')}</Text>
-                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vat.toLocaleString()}</Text>
               </View>
             </View>
 

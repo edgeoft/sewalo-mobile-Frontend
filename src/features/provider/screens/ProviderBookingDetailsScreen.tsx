@@ -300,10 +300,6 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                       Rs. {basePriceValue.toLocaleString()}
                     </Text>
                   </View>
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">{t('provider.vat')}</Text>
-                    <Text className="text-xs font-sans-semibold text-gray-800">Rs. {vatValue.toLocaleString()}</Text>
-                  </View>
                   <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
                     <Text className="text-sm font-sans-bold text-gray-900">{t('provider.total')}</Text>
                     <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
