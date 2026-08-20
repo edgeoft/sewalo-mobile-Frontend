@@ -80,7 +80,7 @@
   "removedFromFavourites": "Removed from favourites",
   "myBookingsTitle": "My Bookings",
   "myBookingsDesc": "Track all bookings and filter by status.",
-  "searchBookingPlaceholder": "Search booking by provider, service, or location",
+  "searchBookingPlaceholder": "Search bookings...",
   "loadMoreBookings": "Load More Bookings",
   "noMoreBookings": "No more bookings",
   "noBookingsMatchFilter": "No bookings match your filter",

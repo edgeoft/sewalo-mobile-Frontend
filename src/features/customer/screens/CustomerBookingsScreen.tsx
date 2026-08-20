@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import Input from '@/components/ui/Input';
+import SearchBar from '@/components/ui/SearchBar';
+import { THEME_COLORS } from '@/constants/colors';
 import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
 import { BOOKING_STATUSES, type BookingStatus } from '@/types';
 import BookingStatusFilter from '../components/BookingStatusFilter';
@@ -121,36 +122,25 @@ export default function CustomerBookingsScreen() {
             accessibilityRole="button"
             accessibilityLabel={searchExpanded ? t('common.close') : t('common.search')}
             accessibilityState={{ expanded: searchExpanded }}
-            className="h-12 w-12 rounded-xl border border-gray-200 bg-white items-center justify-center active:opacity-80"
-            style={{
-              shadowColor: '#0f172a',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.04,
-              shadowRadius: 10,
-              elevation: 0,
-            }}
+            style={{ borderRadius: 10 }}
+            className="h-12 w-12 border border-gray-200 bg-white items-center justify-center active:opacity-80"
           >
-            <Feather name={searchExpanded ? 'x' : 'search'} size={18} color={searchExpanded ? '#64748b' : '#485aff'} />
+            <Feather
+              name={searchExpanded ? 'x' : 'search'}
+              size={18}
+              color={searchExpanded ? THEME_COLORS.slate500 : THEME_COLORS.primary}
+            />
           </Pressable>
         </View>
 
         {searchExpanded ? (
           <View className="mb-5">
-            <Input
+            <SearchBar
               placeholder={t('customer.searchBookingPlaceholder')}
               value={searchQuery}
               onChangeText={setSearchQuery}
-              leftIcon={null}
-              className="h-14"
-              inputClassName="text-sm font-sans-medium text-gray-500"
-              containerStyle={{
-                shadowColor: '#0f172a',
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.08,
-                shadowRadius: 18,
-                elevation: 0,
-              }}
-              rightIcon={<Feather name="search" size={20} color="#485aff" />}
+              onClear={() => setSearchQuery('')}
+              autoFocus
             />
           </View>
         ) : null}

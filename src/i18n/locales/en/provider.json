@@ -114,7 +114,7 @@
   "partner": "Partner",
   "noEmail": "No email provided",
   "noPhone": "No phone number",
-  "searchBookingPlaceholder": "Search booking by customer, service, or location",
+  "searchBookingPlaceholder": "Search bookings...",
   "incomingBookingsTitle": "Incoming Bookings",
   "incomingBookingsDesc": "Manage client bookings and filter requests by status.",
   "bookingAccepted": "Booking accepted successfully",

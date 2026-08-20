@@ -12,3 +12,4 @@ export { default as SheetContainer } from './SheetContainer';
 export { default as LoadingOverlay } from './LoadingOverlay';
 export { SnackbarProvider, useSnackbar } from './Snackbar';
 export { ErrorDialogProvider, useErrorDialog } from './ErrorDialog';
+export { default as SearchBar } from './SearchBar';

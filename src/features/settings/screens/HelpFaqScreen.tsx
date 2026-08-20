@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import Input from '@/components/ui/Input';
+import SearchBar from '@/components/ui/SearchBar';
 
 interface FaqItem {
   id: string;
@@ -126,20 +126,12 @@ export default function HelpFaqScreen() {
 
         {/* Search Input */}
         <View className="mb-4">
-          <Input
+          <SearchBar
             placeholder={t('settings.searchQuestions')}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            leftIcon={<Feather name="search" size={16} color="var(--muted-foreground)" />}
-            className="h-12"
-            inputClassName="text-sm font-sans-medium"
-            containerStyle={{
-              shadowColor: '#0f172a',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.02,
-              shadowRadius: 4,
-              elevation: 0,
-            }}
+            onClear={() => setSearchQuery('')}
+            iconPosition="left"
           />
         </View>
 

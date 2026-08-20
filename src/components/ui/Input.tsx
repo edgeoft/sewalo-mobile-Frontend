@@ -71,7 +71,9 @@ export default function Input({
           ref={inputRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          placeholderTextColor="#898f8f"
+          placeholderTextColor="#94a3b8"
+          numberOfLines={props.multiline ? props.numberOfLines : 1}
+          multiline={props.multiline ?? false}
           style={[
             {
               includeFontPadding: false,
@@ -82,7 +84,7 @@ export default function Input({
             },
             inputStyle,
           ]}
-          className={`form-input-text ${inputClassName}`}
+          className={`form-input-text min-w-0 ${inputClassName}`}
           accessibilityLabel={label}
           accessibilityLabelledBy={label ? labelId : undefined}
           accessibilityState={{ disabled: props.editable === false }}

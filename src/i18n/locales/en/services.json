@@ -1,5 +1,5 @@
 {
-  "searchPlaceholder": "Please search for services or providers...",
+  "searchPlaceholder": "Search services or providers...",
   "bookingConfirmed": "Booking Confirmed!",
   "bookingConfirmedDesc": "Thank you for booking with Sewalo. Your service provider will be in touch shortly.",
   "providerNotFound": "Provider Not Found",
@@ -20,7 +20,7 @@
   "allCategories": "All Categories",
   "findServicesTitle": "Find Services",
   "findServicesSubtitle": "Find and book professional service providers near you.",
-  "searchPlaceholder2": "What services are you looking for?",
+  "searchPlaceholder2": "Search services or providers...",
   "browseByCategory": "Browse by category",
   "allServices": "All Services",
   "serviceProviders": "Service Providers",

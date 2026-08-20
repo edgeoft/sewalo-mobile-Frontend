@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import Input from '@/components/ui/Input';
+import SearchBar from '@/components/ui/SearchBar';
 import { ROUTES } from '@/constants/routes';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
@@ -219,16 +219,12 @@ export default function FindServicesScreen() {
 
         {/* Full-width Search Bar */}
         <View className="mb-3">
-          <Input
+          <SearchBar
             placeholder={t('services.searchPlaceholder2')}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            inputClassName="pr-12 text-sm"
-            rightIcon={
-              <View className="h-8 w-8 items-center justify-center rounded-xl bg-blue-50">
-                <Feather name="search" size={16} color="#485aff" />
-              </View>
-            }
+            onClear={() => setSearchQuery('')}
+            iconPosition="right"
           />
         </View>
 

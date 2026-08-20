@@ -1,5 +1,5 @@
 {
-  "searchPlaceholder": "कृपया सेवा वा प्रदायकहरू खोज्नुहोस्...",
+  "searchPlaceholder": "सेवा वा प्रदायक खोज्नुहोस्...",
   "bookingConfirmed": "बुकिङ पुष्टि भयो!",
   "bookingConfirmedDesc": "सेवालोमा बुक गर्नुभएकोमा धन्यवाद। तपाईंको सेवा प्रदायकले चाँडै सम्पर्क गर्नेछ।",
   "providerNotFound": "प्रदायक फेला परेन",
@@ -20,7 +20,7 @@
   "allCategories": "सबै कोटीहरू",
   "findServicesTitle": "सेवाहरू खोज्नुहोस्",
   "findServicesSubtitle": "तपाईंको नजिकका पेशेवर सेवा प्रदायकहरू खोज्नुहोस् र बुक गर्नुहोस्।",
-  "searchPlaceholder2": "तपाईं कस्तो सेवा खोज्दै हुनुहुन्छ?",
+  "searchPlaceholder2": "सेवा वा प्रदायक खोज्नुहोस्...",
   "browseByCategory": "कोटी अनुसार ब्राउज गर्नुहोस्",
   "allServices": "सबै सेवाहरू",
   "serviceProviders": "सेवा प्रदायकहरू",

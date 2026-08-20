@@ -1,6 +1,6 @@
 {
   "selectLocation": "Please select your location...",
-  "searchAddress": "Please search for an address or landmark...",
+  "searchAddress": "Search address or landmark...",
   "resolvingLocation": "Please wait, resolving location details...",
   "selectedLocation": "Selected location: {{address}}",
   "dragMarker": "Please drag the marker to pick a location",

@@ -5,7 +5,8 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from '
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import Button from '../ui/Button';
-import Input from '../ui/Input';
+import SearchBar from '../ui/SearchBar';
+import { THEME_COLORS } from '@/constants/colors';
 import type { MapProviderProps, SearchResult } from './types';
 import { SharedWebViewMap } from './SharedWebViewMap';
 import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE } from './mapShared';
@@ -384,18 +385,16 @@ export default function OpenStreetMapSelector({
         style={{ paddingTop: Math.max(insets.top, 12) }}
       >
         <View className="relative">
-          <Input
+          <SearchBar
             placeholder={t('components.searchAddress')}
             value={searchQuery}
             onChangeText={handleSearchChange}
-            rightIcon={
-              isSearching ? (
-                <ActivityIndicator size="small" color="#485aff" />
-              ) : (
-                <Feather name="search" size={16} color="#64748b" />
-              )
-            }
-            inputClassName="text-xs pr-10"
+            onClear={() => {
+              setSearchQuery('');
+              setSearchResults([]);
+            }}
+            rightIcon={isSearching ? <ActivityIndicator size="small" color={THEME_COLORS.primary} /> : undefined}
+            iconPosition="left"
             className="mb-0"
           />
         </View>

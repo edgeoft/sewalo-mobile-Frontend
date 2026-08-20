@@ -1,7 +1,4 @@
-import { Feather } from '@expo/vector-icons';
-import { Pressable, View } from 'react-native';
-import Input from '@/components/ui/Input';
-import { THEME_COLORS } from '@/constants/colors';
+import SearchBar from '@/components/ui/SearchBar';
 
 interface HomeTopSectionSearchBarProps {
   placeholder: string;
@@ -10,15 +7,12 @@ interface HomeTopSectionSearchBarProps {
 
 export default function HomeTopSectionSearchBar({ placeholder, onPress }: HomeTopSectionSearchBarProps) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={placeholder}>
-      <View pointerEvents="none">
-        <Input
-          placeholder={placeholder}
-          editable={false}
-          inputClassName="text-[13px] font-sans-medium text-gray-500"
-          rightIcon={<Feather name="search" size={20} color={THEME_COLORS.primary} />}
-        />
-      </View>
-    </Pressable>
+    <SearchBar
+      placeholder={placeholder}
+      editable={false}
+      onPress={onPress}
+      iconPosition="right"
+      inputClassName="text-[13px] text-gray-500"
+    />
   );
 }
