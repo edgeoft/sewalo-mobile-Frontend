@@ -1,6 +1,7 @@
 import type { TFunction } from 'i18next';
 import { AVAILABILITY_TYPES, WORKING_DAYS_OPTIONS } from '@/constants/availability';
 import type { UserProfile } from '@/types';
+import { formatTime } from '@/utils/time';
 
 export type ProviderAvailabilityInfo = Partial<
   Pick<UserProfile, 'availability' | 'availability_days' | 'start_time' | 'end_time'>
@@ -39,8 +40,9 @@ const ALL_DAY_INDEXES = [0, 1, 2, 3, 4, 5, 6];
 
 export const getTimeInMinutes = (value: string | null | undefined): number | null => {
   if (!value) return null;
-  const cleaned = value.trim();
-  const match = cleaned.match(/^(\d{1,2}):(\d{2})/);
+  const formatted = formatTime(value);
+  if (!formatted) return null;
+  const match = formatted.match(/^(\d{1,2}):(\d{2})/);
   if (!match) return null;
   const hour = Number(match[1]);
   const minute = Number(match[2]);
@@ -112,8 +114,8 @@ export const getProviderWorkingHours = (
 ): { startTime: string | null; endTime: string | null } => {
   if (!provider) return { startTime: null, endTime: null };
 
-  const startTime = provider.start_time ? provider.start_time.slice(0, 5) : null;
-  const endTime = provider.end_time ? provider.end_time.slice(0, 5) : null;
+  const startTime = provider.start_time ? formatTime(provider.start_time) : null;
+  const endTime = provider.end_time ? formatTime(provider.end_time) : null;
 
   return { startTime, endTime };
 };
@@ -229,14 +231,9 @@ export const getProviderAvailabilityError = (
 
 export const formatTimeLabel = (timeStr: string | null | undefined): string => {
   if (!timeStr) return '';
-  const trimmed = timeStr.trim();
-  const ampmMatch = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (ampmMatch) {
-    const hour = parseInt(ampmMatch[1], 10);
-    const period = ampmMatch[3].toUpperCase();
-    return `${hour} ${period}`;
-  }
-  const match24 = trimmed.match(/^(\d{1,2}):(\d{2})/);
+  const formatted = formatTime(timeStr);
+  if (!formatted) return timeStr.trim();
+  const match24 = formatted.match(/^(\d{1,2}):(\d{2})/);
   if (match24) {
     let hour = parseInt(match24[1], 10);
     const period = hour >= 12 ? 'PM' : 'AM';
@@ -244,7 +241,7 @@ export const formatTimeLabel = (timeStr: string | null | undefined): string => {
     if (hour === 0) hour = 12;
     return `${hour} ${period}`;
   }
-  return trimmed;
+  return formatted;
 };
 
 export const formatProviderSchedule = (
