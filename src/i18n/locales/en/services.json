@@ -179,5 +179,8 @@
   "vatInclusivePricing": "VAT-inclusive pricing",
   "vatInclusivePricingDesc": "The price you enter already includes VAT. No additional VAT will be charged to the customer.",
   "listTasksCharge": "List the specific tasks you perform and how much you charge for them. Refer to the",
-  "guideline": "guideline"
+  "guideline": "guideline",
+  "addToFavorites": "Add to Favorites",
+  "savedToFavorites": "Saved",
+  "share": "Share"
 }
