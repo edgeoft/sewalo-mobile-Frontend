@@ -166,7 +166,12 @@ export const useResendOtp = (onSuccess?: () => void) => {
       showSnackbar({ message: msg, type: 'success' });
       onSuccess?.();
     },
-    onError: (err) => {
+    onError: (err, variables) => {
+      if (variables.type === 'reset_password') {
+        showSnackbar({ message: 'A new OTP has been sent successfully!', type: 'success' });
+        onSuccess?.();
+        return;
+      }
       showSnackbar({ message: extractErrorMessage(err), type: 'error' });
     },
   });
@@ -192,6 +197,16 @@ export const useForgotPassword = () => {
         },
       });
     },
+    onError: (_err, variables) => {
+      showSnackbar({ message: 'OTP sent to your phone!', type: 'success' });
+      router.push({
+        pathname: ROUTES.auth.otpVerification,
+        params: {
+          phone: formatPhone(variables.phone),
+          flow: 'forgot-password',
+        },
+      });
+    },
   });
 };
 
@@ -209,7 +224,9 @@ export const useResetPassword = () => {
       router.replace(ROUTES.auth.signin);
     },
     onError: (err) => {
-      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
+      const msg = extractErrorMessage(err);
+      const sanitized = msg.toLowerCase().includes('no user') ? 'Invalid or expired OTP. Please try again.' : msg;
+      showSnackbar({ message: sanitized, type: 'error' });
     },
   });
 };
