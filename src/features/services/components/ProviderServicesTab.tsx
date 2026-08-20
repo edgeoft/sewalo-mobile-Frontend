@@ -14,6 +14,7 @@ interface ProviderServicesTabProps {
   selectedServices: Record<string, boolean>;
   onServiceToggle: (serviceId: string) => void;
   onBookPackage: () => void;
+  isOwnProfile?: boolean;
 }
 
 export default function ProviderServicesTab({
@@ -22,10 +23,19 @@ export default function ProviderServicesTab({
   selectedServices,
   onServiceToggle,
   onBookPackage,
+  isOwnProfile = false,
 }: ProviderServicesTabProps) {
   const { t } = useTranslation();
   return (
     <View className="gap-y-5">
+      {isOwnProfile && (
+        <View className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex-row items-center gap-2">
+          <Feather name="info" size={16} color="#485aff" />
+          <Text className="text-xs font-sans-medium text-blue-800 flex-1">
+            You cannot book your own services. Switch to Provider mode to manage pricing and offerings.
+          </Text>
+        </View>
+      )}
       {/* Special Package Deals (Conditional) */}
       {specialPackage && (
         <View className="gap-y-2">
@@ -77,13 +87,15 @@ export default function ProviderServicesTab({
               </View>
             </View>
 
-            <Button
-              title={t('services.bookPackage')}
-              variant="primary"
-              onPress={onBookPackage}
-              className="py-2.5 rounded-lg"
-              leftIcon={<Feather name="calendar" size={16} color="white" />}
-            />
+            {!isOwnProfile && (
+              <Button
+                title={t('services.bookPackage')}
+                variant="primary"
+                onPress={onBookPackage}
+                className="py-2.5 rounded-lg"
+                leftIcon={<Feather name="calendar" size={16} color="white" />}
+              />
+            )}
           </View>
         </View>
       )}
@@ -100,11 +112,12 @@ export default function ProviderServicesTab({
         </View>
 
         {individualServices.map((service) => {
-          const isChecked = !!selectedServices[service.id];
+          const isChecked = !isOwnProfile && !!selectedServices[service.id];
           return (
             <Pressable
               key={service.id}
-              onPress={() => onServiceToggle(service.id)}
+              onPress={() => !isOwnProfile && onServiceToggle(service.id)}
+              disabled={isOwnProfile}
               accessibilityRole="button"
               accessibilityState={{ checked: isChecked }}
               className={`bg-white border rounded-xl p-3.5 flex-row items-center justify-between ${
@@ -112,7 +125,9 @@ export default function ProviderServicesTab({
               }`}
             >
               <View className="flex-row items-center flex-1 pr-4">
-                <Checkbox checked={isChecked} onChange={() => onServiceToggle(service.id)} className="mr-3" />
+                {!isOwnProfile && (
+                  <Checkbox checked={isChecked} onChange={() => onServiceToggle(service.id)} className="mr-3" />
+                )}
                 <View className="flex-1">
                   <Text className="text-xs font-sans-bold text-gray-900 mb-1">{service.title}</Text>
                   <View className="flex-row items-center flex-wrap gap-2">

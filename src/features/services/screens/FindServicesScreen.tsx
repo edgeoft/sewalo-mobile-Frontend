@@ -20,6 +20,7 @@ import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 import { USER_STATUSES } from '@/constants/roles';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function FindServicesScreen() {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export default function FindServicesScreen() {
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
   const { showError } = useErrorDialog();
+  const currentUser = useAuthStore((state) => state.user);
   const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
 
   const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
@@ -78,10 +80,13 @@ export default function FindServicesScreen() {
     limit: 50,
   });
 
-  // Display services directly as verified provider filtering is handled server-side
+  // Display services directly as verified provider filtering is handled server-side,
+  // with client-side exclusion of currentUser's own provider services
   const verifiedServices = useMemo(() => {
-    return servicesData?.data || [];
-  }, [servicesData]);
+    const list = servicesData?.data || [];
+    if (!currentUser?.id) return list;
+    return list.filter((s) => s.provider_id !== currentUser.id && s.provider?.id !== currentUser.id);
+  }, [servicesData, currentUser]);
 
   const getAvatarUri = (avatar: string | null | undefined) => {
     return getImageUrl(avatar) || FALLBACKS.avatar;

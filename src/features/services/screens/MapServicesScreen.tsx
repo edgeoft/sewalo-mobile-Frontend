@@ -131,8 +131,12 @@ export default function MapServicesScreen() {
   });
 
   const providers = useMemo(() => {
-    return providersData?.data || [];
-  }, [providersData]);
+    const list = providersData?.data || [];
+    if (!currentUser?.id) return list;
+    return list.filter(
+      (p) => p.id !== currentUser.id && (p as { provider_id?: string }).provider_id !== currentUser.id,
+    );
+  }, [providersData, currentUser]);
 
   const selectedProvider = useMemo(() => {
     if (!selectedProviderId) return null;

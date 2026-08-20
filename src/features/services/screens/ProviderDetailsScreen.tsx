@@ -15,6 +15,7 @@ import { useCreateBooking, useAddRemoveFavorite } from '@/api';
 import { BookServiceFormData, ProviderDetail, USER_ROLES } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { useAuthStore } from '@/store/useAuthStore';
 
 // Import subcomponents
 import BookingConfirmationModal, { type BookingDetails } from '../components/BookingConfirmationModal';
@@ -40,6 +41,11 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const { role } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
+  const currentUser = useAuthStore((state) => state.user);
+
+  const isOwnProfile = Boolean(
+    currentUser && (provider.id === currentUser.id || (provider.slug && provider.slug === currentUser.slug)),
+  );
 
   const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'portfolio' | 'reviews'>('services');
   const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
@@ -56,6 +62,11 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   // Toggle saving to favorites
   const handleToggleSave = () => {
+    if (isOwnProfile) {
+      showSnackbar({ message: 'You cannot add your own service to favourites.', type: 'error' });
+      return;
+    }
+
     if (isGuest) {
       showError({
         title: 'Authentication Required',
@@ -151,6 +162,10 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   // Open booking confirmation modal for selected individual services
   const handleBookSelected = () => {
+    if (isOwnProfile) {
+      showSnackbar({ message: 'You cannot book your own service.', type: 'error' });
+      return;
+    }
     if (selectedServicesCount === 0) {
       showSnackbar({ message: 'Please check at least one service to book.', type: 'error' });
       return;
@@ -161,6 +176,10 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   // Open booking confirmation modal for special package
   const handleBookPackage = () => {
+    if (isOwnProfile) {
+      showSnackbar({ message: 'You cannot book your own service.', type: 'error' });
+      return;
+    }
     if (!provider.specialPackage) return;
     setBookingModalType('package');
     setIsBookingModalVisible(true);
@@ -170,6 +189,10 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const createBooking = useCreateBooking();
 
   const handleConfirmBooking = (details: BookingDetails) => {
+    if (isOwnProfile) {
+      showSnackbar({ message: 'You cannot book your own service.', type: 'error' });
+      return;
+    }
     const payload: BookServiceFormData = {
       service_id: provider.serviceId || '',
       service_date: details.serviceDate,
@@ -367,6 +390,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
                 selectedServices={selectedServices}
                 onServiceToggle={toggleService}
                 onBookPackage={handleBookPackage}
+                isOwnProfile={isOwnProfile}
               />
             )}
 
@@ -386,7 +410,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
       </ScrollView>
 
       {/* Sticky Bottom Booking Bar */}
-      {activeTab === 'services' && selectedServicesCount > 0 && (
+      {!isOwnProfile && activeTab === 'services' && selectedServicesCount > 0 && (
         <ProviderBookingStickyBar
           selectedCount={selectedServicesCount}
           totalPrice={totalSelectedPrice}
