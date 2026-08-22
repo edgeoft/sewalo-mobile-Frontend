@@ -11,6 +11,7 @@ import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
+import { useServiceFilters } from '@/hooks/useServiceFilters';
 import { MapViewport } from '@/types';
 import { addBoundingBoxBuffer } from '@/utils/geohash';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
@@ -38,23 +39,31 @@ export default function MapServicesScreen() {
   const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
   const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
   const setSelectedCategorySlugStore = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
-  const minPriceStore = useServiceFiltersStore((s) => s.minPrice);
-  const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
-  const minRatingStore = useServiceFiltersStore((s) => s.minRating);
-  const serviceLocationStore = useServiceFiltersStore((s) => s.serviceLocation);
-  const radiusStore = useServiceFiltersStore((s) => s.radius);
-  const setFilters = useServiceFiltersStore((s) => s.setFilters);
-  const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
+  const {
+    minPriceStore,
+    maxPriceStore,
+    minRatingStore,
+    serviceLocationStore,
+    radiusStore,
+    isFilterModalOpen,
+    setIsFilterModalOpen,
+    minPrice,
+    maxPrice,
+    minRating,
+    serviceLocation,
+    radius,
+    setRadius,
+    setMinPrice,
+    setMaxPrice,
+    setMinRating,
+    setServiceLocation,
+    handleApplyFilters,
+    handleResetFilters,
+    activeFiltersCount,
+  } = useServiceFilters();
 
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
-
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState(minPriceStore);
-  const [maxPrice, setMaxPrice] = useState(maxPriceStore);
-  const [minRating, setMinRating] = useState(minRatingStore);
-  const [serviceLocation, setServiceLocation] = useState(serviceLocationStore);
-  const [radius, setRadius] = useState(radiusStore);
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
 
@@ -148,10 +157,11 @@ export default function MapServicesScreen() {
   useEffect(() => {
     if (providers.length > 0 && !selectedProviderId && !hasAutoselected) {
       const firstId = providers[0].id;
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setSelectedProviderId(firstId);
         setHasAutoselected(true);
       }, 0);
+      return () => clearTimeout(timeout);
     }
   }, [providers, selectedProviderId, hasAutoselected]);
 
@@ -173,35 +183,10 @@ export default function MapServicesScreen() {
     }
   };
 
-  const handleApplyFilters = () => {
-    setFilters({
-      minPrice,
-      maxPrice,
-      minRating,
-      serviceLocation,
-      radius,
-    });
-    setIsFilterModalOpen(false);
-  };
-
-  const handleResetFilters = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setMinRating('');
-    setServiceLocation('');
-    setRadius('25');
-    resetFiltersStore();
-    setIsFilterModalOpen(false);
-  };
-
   const handleSwitchToList = () => {
     const route = isGuest ? ROUTES.guest.findServices : ROUTES.customer.findServices;
     router.replace(route);
   };
-
-  const activeFiltersCount = [minPriceStore, maxPriceStore, minRatingStore, serviceLocationStore].filter(
-    Boolean,
-  ).length;
 
   const currentCategoryName = useMemo(() => {
     if (!selectedCategorySlug) return t('common.all');

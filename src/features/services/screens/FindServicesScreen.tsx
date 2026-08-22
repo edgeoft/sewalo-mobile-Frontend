@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Pressable, Text, View, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import ProviderCard from '@/components/common/ProviderCard';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
+import { useServiceFilters } from '@/hooks/useServiceFilters';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 import { USER_STATUSES } from '@/constants/roles';
@@ -41,13 +42,29 @@ export default function FindServicesScreen() {
   const setSearchQuery = useServiceFiltersStore((s) => s.setSearchQuery);
   const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
   const setSelectedCategorySlug = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
-  const minPriceStore = useServiceFiltersStore((s) => s.minPrice);
-  const maxPriceStore = useServiceFiltersStore((s) => s.maxPrice);
-  const minRatingStore = useServiceFiltersStore((s) => s.minRating);
-  const serviceLocationStore = useServiceFiltersStore((s) => s.serviceLocation);
-  const radiusStore = useServiceFiltersStore((s) => s.radius);
-  const setFilters = useServiceFiltersStore((s) => s.setFilters);
-  const resetFiltersStore = useServiceFiltersStore((s) => s.resetFilters);
+
+  // Shared filter-draft lifecycle (modal editing -> apply commits to store)
+  const {
+    minPriceStore,
+    maxPriceStore,
+    minRatingStore,
+    serviceLocationStore,
+    isFilterModalOpen,
+    setIsFilterModalOpen,
+    minPrice,
+    maxPrice,
+    minRating,
+    serviceLocation,
+    radius,
+    setRadius,
+    setMinPrice,
+    setMaxPrice,
+    setMinRating,
+    setServiceLocation,
+    handleApplyFilters,
+    handleResetFilters,
+    activeFiltersCount,
+  } = useServiceFilters();
 
   useEffect(() => {
     const nextCategory = categoryParam || undefined;
@@ -57,14 +74,6 @@ export default function FindServicesScreen() {
   }, [categoryParam, selectedCategorySlug, setSelectedCategorySlug]);
 
   const debouncedSearch = useDebouncedValue(searchQuery, 400);
-
-  // Filters Modal State
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState(minPriceStore);
-  const [maxPrice, setMaxPrice] = useState(maxPriceStore);
-  const [minRating, setMinRating] = useState(minRatingStore);
-  const [serviceLocation, setServiceLocation] = useState(serviceLocationStore);
-  const [radius, setRadius] = useState(radiusStore);
 
   const handleSwitchToMap = () => {
     const route = isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices;
@@ -114,27 +123,6 @@ export default function FindServicesScreen() {
     [isGuest, t, showError, router],
   );
 
-  const handleApplyFilters = () => {
-    setFilters({
-      minPrice,
-      maxPrice,
-      minRating,
-      serviceLocation,
-      radius,
-    });
-    setIsFilterModalOpen(false);
-  };
-
-  const handleResetFilters = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setMinRating('');
-    setServiceLocation('');
-    setRadius('25');
-    resetFiltersStore();
-    setIsFilterModalOpen(false);
-  };
-
   const addRemoveFav = useAddRemoveFavorite();
   const { showSnackbar } = useSnackbar();
 
@@ -172,11 +160,6 @@ export default function FindServicesScreen() {
       }
     },
     [isGuest, t, showError, router, favouriteIds, addRemoveFav, showSnackbar],
-  );
-
-  const activeFiltersCount = useMemo(
-    () => [minPriceStore, maxPriceStore, minRatingStore, serviceLocationStore].filter(Boolean).length,
-    [minPriceStore, maxPriceStore, minRatingStore, serviceLocationStore],
   );
 
   const keyExtractor = useCallback((item: Service) => item.id, []);
