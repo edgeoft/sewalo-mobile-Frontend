@@ -428,7 +428,7 @@ export default function GoogleMapsSelector({
             <FlatList
               data={searchResults}
               renderItem={renderSearchResult}
-              keyExtractor={(_, index) => index.toString()}
+              keyExtractor={(item) => item.place_id ?? `${item.lat},${item.lon}`}
               keyboardShouldPersistTaps="handled"
             />
           </View>

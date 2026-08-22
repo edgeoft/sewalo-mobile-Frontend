@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { Image } from 'expo-image';
 import React from 'react';
-import { ScrollView, Text, View, Image, ActivityIndicator } from 'react-native';
+import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
@@ -49,7 +50,13 @@ export default function BlogDetailScreen() {
       <Header showBackButton />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-12">
-        <Image source={{ uri: imgUri }} className="w-full h-64 bg-gray-100" resizeMode="cover" />
+        <Image
+          source={{ uri: imgUri }}
+          className="w-full h-64 bg-gray-100"
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
+        />
 
         <ContentLayout>
           {/* Category & Read Time */}

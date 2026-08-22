@@ -14,7 +14,8 @@ export const QUERY_KEYS = {
     ALL: ['my-ratings'],
     LIST: (params?: QueryParams) => ['my-ratings', params] as const,
   },
-  PROVIDER_RATINGS: (providerId: string) => ['provider-ratings', providerId] as const,
+  PROVIDER_RATINGS: (providerId: string, params?: { page?: number; limit?: number }) =>
+    ['provider-ratings', providerId, params ?? {}] as const,
   BLOGS: {
     LIST: (params?: QueryParams) => ['blogs', params] as const,
     FEATURED: ['featured-blog'],

@@ -140,7 +140,7 @@ export default function ServiceFormStandout({
           {watchWorkSamples.map((sample, index) => {
             const isUploading = uploadingIndex === index;
             return (
-              <View key={index} className="w-32 h-24 rounded-lg overflow-hidden bg-gray-50 relative">
+              <View key={sample.uri} className="w-32 h-24 rounded-lg overflow-hidden bg-gray-50 relative">
                 <Image source={{ uri: sample.uri }} className="w-full h-full" resizeMode="cover" />
 
                 {/* Uploading progress overlay */}

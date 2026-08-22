@@ -1,7 +1,8 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { FALLBACKS } from '@/utils/image';
@@ -97,7 +98,9 @@ function ProviderCard({
         <Image
           source={{ uri: imgError ? FALLBACKS.avatar : avatarUri || FALLBACKS.avatar }}
           onError={() => setImgError(true)}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
           className="h-14 w-14 rounded-full bg-slate-100"
         />
 

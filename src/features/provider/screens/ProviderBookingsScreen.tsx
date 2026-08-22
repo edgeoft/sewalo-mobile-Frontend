@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Pressable, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import BookingStatusFilter from '@/features/customer/components/BookingStatusFil
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
 import { useGetBookingsQuery, useUpdateBooking } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { getAvatarUrl } from '@/utils/image';
 import { formatDate, formatTime } from '@/utils/time';
 
 export default function ProviderBookingsScreen() {
@@ -51,49 +51,57 @@ export default function ProviderBookingsScreen() {
     return counts;
   }, [bookings]);
 
-  const mapToProviderItem = (booking: (typeof bookings)[0]) => ({
-    id: booking.id,
-    customerName: booking.user?.name || 'Customer',
-    customerAvatar: getImageUrl(booking.user?.avatar) || FALLBACKS.avatar,
-    serviceLabel: booking.service?.name || 'Service',
-    location: booking.city ? `${booking.city}${booking.address ? `, ${booking.address}` : ''}` : 'Nepal',
-    bookingDate: [formatDate(booking.service_date), formatTime(booking.start_time)].filter(Boolean).join(', '),
-    bookedPrice: booking.invoice?.total ? `Rs. ${Number(booking.invoice.total).toLocaleString()}` : '',
-    status: booking.status,
-    cancelReason: booking.cancellation_reason || undefined,
-  });
+  const providerItems = useMemo(
+    () =>
+      bookings.map((booking) => ({
+        id: booking.id,
+        customerName: booking.user?.name || 'Customer',
+        customerAvatar: getAvatarUrl(booking.user?.avatar),
+        serviceLabel: booking.service?.name || 'Service',
+        location: booking.city ? `${booking.city}${booking.address ? `, ${booking.address}` : ''}` : 'Nepal',
+        bookingDate: [formatDate(booking.service_date), formatTime(booking.start_time)].filter(Boolean).join(', '),
+        bookedPrice: booking.invoice?.total ? `Rs. ${Number(booking.invoice.total).toLocaleString()}` : '',
+        status: booking.status,
+        cancelReason: booking.cancellation_reason || undefined,
+      })),
+    [bookings],
+  );
 
-  const handleAcceptOrder = (id: string) => {
-    updateBooking.mutate(
-      { id, data: { status: BOOKING_STATUSES.Confirmed } },
-      { onSuccess: () => showSnackbar({ message: t('provider.bookingAccepted'), type: 'success' }) },
-    );
-  };
+  const handleAcceptOrder = useCallback(
+    (id: string) => {
+      updateBooking.mutate(
+        { id, data: { status: BOOKING_STATUSES.Confirmed } },
+        { onSuccess: () => showSnackbar({ message: t('provider.bookingAccepted'), type: 'success' }) },
+      );
+    },
+    [updateBooking, t, showSnackbar],
+  );
 
-  const handleDeclineOrder = (id: string) => {
-    updateBooking.mutate(
-      {
-        id,
-        data: { status: BOOKING_STATUSES.Rejected, cancellation_reason: 'Provider declined the booking request.' },
-      },
-      { onSuccess: () => showSnackbar({ message: t('provider.bookingDeclined'), type: 'success' }) },
-    );
-  };
+  const handleDeclineOrder = useCallback(
+    (id: string) => {
+      updateBooking.mutate(
+        {
+          id,
+          data: { status: BOOKING_STATUSES.Rejected, cancellation_reason: 'Provider declined the booking request.' },
+        },
+        { onSuccess: () => showSnackbar({ message: t('provider.bookingDeclined'), type: 'success' }) },
+      );
+    },
+    [updateBooking, t, showSnackbar],
+  );
 
-  const filteredBookings = useMemo(() => {
+  const filteredItems = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
-    if (!normalizedQuery) return bookings;
-    return bookings.filter((b) => {
-      const customerName = b.user?.name?.toLowerCase() || '';
-      const serviceName = b.service?.name?.toLowerCase() || '';
-      const location = b.city?.toLowerCase() || '';
+    if (!normalizedQuery) return providerItems;
+    return providerItems.filter((b) => {
+      const q = normalizedQuery;
       return (
-        customerName.includes(normalizedQuery) ||
-        serviceName.includes(normalizedQuery) ||
-        location.includes(normalizedQuery)
+        b.customerName.toLowerCase().includes(q) ||
+        b.serviceLabel.toLowerCase().includes(q) ||
+        b.location.toLowerCase().includes(q)
       );
     });
-  }, [searchQuery, bookings]);
+  }, [searchQuery, providerItems]);
 
   return (
     <View className="flex-1 bg-secondary">
@@ -168,7 +176,7 @@ export default function ProviderBookingsScreen() {
         ) : (
           <LoadMoreList
             key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
-            data={filteredBookings}
+            data={filteredItems}
             keyExtractor={(booking) => booking.id}
             initialVisibleCount={4}
             pageSize={4}
@@ -180,13 +188,13 @@ export default function ProviderBookingsScreen() {
                 description={t('customer.noBookingsMatchFilterDesc')}
               />
             }
-            renderItem={(booking) => (
+            renderItem={(item) => (
               <ProviderOrderCard
-                order={mapToProviderItem(booking)}
+                order={item}
                 onAccept={handleAcceptOrder}
                 onDecline={handleDeclineOrder}
                 onPress={() => {
-                  router.push(ROUTES.provider.bookingDetail(booking.id));
+                  router.push(ROUTES.provider.bookingDetail(item.id));
                 }}
               />
             )}

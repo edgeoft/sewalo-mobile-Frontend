@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Image, Linking, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
@@ -184,7 +185,13 @@ export default function ProviderServicesScreen() {
 
               {/* Preview Image */}
               <View className="rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
-                <Image source={{ uri: portfolioPhotos[0] }} className="h-52 w-full" resizeMode="cover" />
+                <Image
+                  source={{ uri: portfolioPhotos[0] }}
+                  className="h-52 w-full"
+                  contentFit="cover"
+                  transition={150}
+                  cachePolicy="memory-disk"
+                />
               </View>
             </View>
 
@@ -290,7 +297,12 @@ export default function ProviderServicesScreen() {
                   autoplayInterval={6000}
                   renderItem={({ item: photo }) => (
                     <View className="h-44 w-full rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
-                      <Image source={{ uri: photo }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                      <Image
+                        source={{ uri: photo }}
+                        style={{ width: '100%', height: '100%' }}
+                        contentFit="cover"
+                        cachePolicy="memory-disk"
+                      />
                     </View>
                   )}
                 />

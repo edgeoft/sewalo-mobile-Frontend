@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import { View, Text, Pressable, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
@@ -72,7 +73,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       { id, is_default: true },
       {
         onSuccess: () => {
-          return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
+          return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS }).then(() => {
             showSnackbar({ message: t('provider.accountSetAsPrimary'), type: 'success' });
           });
         },
@@ -92,7 +93,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           onPress: () => {
             deleteAccount(id, {
               onSuccess: () => {
-                return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] });
+                return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS });
               },
             });
           },
@@ -112,7 +113,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       },
       {
         onSuccess: () => {
-          return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
+          return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS }).then(() => {
             setShowAddForm(false);
             reset();
             showSnackbar({ message: t('provider.accountAddedSuccess'), type: 'success' });

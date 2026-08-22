@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -37,19 +37,20 @@ export default function NotificationsScreen() {
   const notifications = notificationsData?.data || [];
   const unreadCount = unreadData?.unread_count || 0;
 
-  const handleMarkRead = (id: string) => {
-    markRead.mutate(id);
-  };
+  const handleMarkRead = useCallback((id: string) => markRead.mutate(id), [markRead]);
 
-  const handleDelete = (id: string) => {
-    deleteNotif.mutate(id);
-  };
+  const handleDelete = useCallback((id: string) => deleteNotif.mutate(id), [deleteNotif]);
 
-  const handleMarkAllAsRead = () => {
-    markAllRead.mutate();
-  };
+  const handleMarkAllAsRead = useCallback(() => markAllRead.mutate(), [markAllRead]);
 
-  const handlePress = (item: Notification) => {};
+  const handlePress = useCallback((_item: Notification) => {}, []);
+
+  const renderItem = useCallback(
+    (item: Notification) => (
+      <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
+    ),
+    [handleMarkRead, handleDelete, handlePress],
+  );
 
   const filterOptions = useMemo<SegmentedControlOption<NotificationFilter>[]>(
     () => [
@@ -129,7 +130,7 @@ export default function NotificationsScreen() {
           </View>
         ) : (
           <LoadMoreList
-            key={`${activeFilter}-${notifications.length}`}
+            key={activeFilter}
             data={notifications}
             keyExtractor={(item) => item.id}
             initialVisibleCount={6}
@@ -138,9 +139,7 @@ export default function NotificationsScreen() {
             endReachedLabel={t('common.allCaughtUp')}
             emptyContent={emptyContent}
             listClassName="gap-1"
-            renderItem={(item) => (
-              <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
-            )}
+            renderItem={renderItem}
           />
         )}
       </ContentLayout>

@@ -209,6 +209,11 @@ export type GetMyRatingsResponse = PaginatedResponse<Rating>;
 
 export type GetProviderRatingResponse = DataEnvelope<Rating[]>;
 
+export type GetProviderRatingsParams = {
+  page?: number;
+  limit?: number;
+};
+
 export type GetMyRatingsParams = {
   page?: number;
   limit?: number;

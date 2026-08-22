@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
@@ -29,7 +30,13 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
     >
       <View className="flex-row gap-3">
         {/* Customer Avatar */}
-        <Image source={{ uri: order.customerAvatar }} className="h-16 w-16 rounded-lg bg-gray-50" resizeMode="cover" />
+        <Image
+          source={{ uri: order.customerAvatar }}
+          className="h-16 w-16 rounded-lg bg-gray-50"
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
+        />
 
         {/* Customer & Order Details */}
         <View className="flex-1 justify-center">

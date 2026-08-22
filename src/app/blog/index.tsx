@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useGetBlogsQuery } from '@/api';
 import LoadMoreList from '@/components/common/LoadMoreList';
@@ -69,7 +70,9 @@ export default function BlogListScreen() {
                   <View className="flex-row gap-3">
                     <Image
                       source={{ uri: getImageUrl(item.img_url) || FALLBACKS.image }}
-                      resizeMode="cover"
+                      contentFit="cover"
+                      transition={150}
+                      cachePolicy="memory-disk"
                       className="h-24 w-24 rounded-xl bg-gray-50"
                     />
                     <View className="flex-1 justify-between py-0.5">
