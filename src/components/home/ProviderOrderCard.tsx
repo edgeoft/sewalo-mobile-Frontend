@@ -5,7 +5,7 @@ import { Feather } from '@expo/vector-icons';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { BOOKING_STATUSES } from '@/types';
-import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
+import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderOrderCardProps {

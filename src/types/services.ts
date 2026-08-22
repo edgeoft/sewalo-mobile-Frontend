@@ -1,6 +1,6 @@
-import { Category, SubCategory } from './categories';
-import { UserProfile } from './user';
-import { PaginatedResponse } from './common';
+import type { Category, SubCategory } from './categories';
+import type { UserProfile, EducationItem, ExperienceItem } from './user';
+import type { PaginatedResponse, DataEnvelope } from './common';
 
 // Service API Types
 export interface ServiceOffering {
@@ -75,7 +75,6 @@ export interface FavoriteProvider {
   average_rating?: string;
   avg_rating: number | null;
   total_ratings?: number;
-  profile_views: number | null;
   city: string | null;
   address: string | null;
   availability?: string | null;
@@ -143,17 +142,11 @@ export interface CreateServiceParams {
   service_packages: CreateServicePackage[];
 }
 
-export interface GetMyServicesResponse {
-  data: Service;
-}
+export type GetMyServicesResponse = DataEnvelope<Service>;
 
-export interface CategoryListResponse {
-  data: Category[];
-}
+export type CategoryListResponse = DataEnvelope<Category[]>;
 
-export interface SubCategoryListResponse {
-  data: SubCategory[];
-}
+export type SubCategoryListResponse = DataEnvelope<SubCategory[]>;
 
 export interface UpdateServiceParams extends CreateServiceParams {
   id: string;
@@ -209,7 +202,6 @@ export interface ProviderDetail {
   startingPrice: string;
   ordersCompleted: string;
   specialPackagesCount: number;
-  availability: string | null;
   availabilityLabel: string;
   availability_days: string[] | null;
   start_time: string | null;
@@ -220,31 +212,9 @@ export interface ProviderDetail {
   languages: string[];
   skills: string[];
   experience: string;
-  education?:
-    | {
-        id: number;
-        degree: string;
-        institute: string;
-        start_date: string;
-        end_date?: string | null;
-      }[]
-    | null;
-  experienceList?:
-    | {
-        id: number;
-        title: string;
-        company_name: string;
-        start_date: string;
-        end_date: string | null;
-      }[]
-    | null;
-  certificates?:
-    | {
-        id: number;
-        value: string;
-      }[]
-    | string[]
-    | null;
+  education?: EducationItem[] | null;
+  experienceList?: ExperienceItem[] | null;
+  certificates?: string[] | null;
   specialPackage?: PackageDeal | null;
   individualServices: ServiceItem[];
   portfolio: PortfolioItem[];

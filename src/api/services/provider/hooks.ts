@@ -17,7 +17,7 @@ import {
 import type {
   GetCommissionsParams,
   GetCommissionsResponse,
-  GetCommissionSummaryResponse,
+  CommissionSummary,
   ProviderDashboardResponse,
   CreateFinanceAccountPayload,
   FinanceAccount,
@@ -32,7 +32,7 @@ import type {
 } from '@/types';
 
 // Commissions
-export const useCommissionSummaryQuery = createQueryHook<GetCommissionSummaryResponse, void>(
+export const useCommissionSummaryQuery = createQueryHook<CommissionSummary, void>(
   () => QUERY_KEYS.COMMISSION_SUMMARY,
   getCommissionSummaryAction,
 );

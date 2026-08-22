@@ -1,11 +1,7 @@
-export interface LocationData {
-  address: string;
-  lat: number;
-  lng: number;
+import type { LocationData } from '@/types';
+
+export interface MapLocationData extends LocationData {
   coordinates?: { lat: number; lng: number } | null;
-  city?: string;
-  state?: string;
-  country?: string;
 }
 
 export interface MapProviderProps {
@@ -13,7 +9,7 @@ export interface MapProviderProps {
   initialLng?: number;
   coordinates?: { lat: number; lng: number } | null;
   initialAddress?: string;
-  onSelectLocation: (data: LocationData) => Promise<void>;
+  onSelectLocation: (data: MapLocationData) => Promise<void>;
   onCancel: () => Promise<void>;
 }
 

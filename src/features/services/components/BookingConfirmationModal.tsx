@@ -24,15 +24,7 @@ import {
   isPastDate,
   type ProviderAvailabilityInfo,
 } from '../utils/providerAvailability';
-
-interface LocationData {
-  address: string;
-  lat: number;
-  lng: number;
-  city?: string;
-  state?: string;
-  country?: string;
-}
+import type { LocationData } from '@/types';
 
 export interface BookingDetails {
   serviceDate: string;

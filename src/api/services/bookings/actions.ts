@@ -10,7 +10,6 @@ import type {
   GetBookingsParams,
   UpdateBookingPayload,
   GetApplicableCouponsResponse,
-  UpdateInvoiceItemsPayload,
   MakePaymentPayload,
   MakePaymentResponse,
   ConfirmPaymentPayload,
@@ -79,11 +78,6 @@ export const downloadInvoiceAction = async (invoiceId: string): Promise<string> 
   });
 
   return result.uri;
-};
-
-// Invoice Actions
-export const updateInvoiceItemsAction = async (payload: UpdateInvoiceItemsPayload): Promise<void> => {
-  return internalClient.post(API_ENDPOINTS.INVOICES.UPDATE_WITH_ITEMS(payload.id), payload);
 };
 
 // Payment Actions

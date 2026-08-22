@@ -12,8 +12,8 @@ import Header from '@/components/navigation/Header';
 import SearchBar from '@/components/ui/SearchBar';
 import { THEME_COLORS } from '@/constants/colors';
 import { ROUTES } from '@/constants/routes';
-import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
-import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_FILTER_STATUSES } from '@/constants/bookings';
+import { BOOKING_STATUSES, type BookingFilterStatus } from '@/types';
 import BookingStatusFilter from '@/features/customer/components/BookingStatusFilter';
 import EmptyBookingsState from '@/features/customer/components/EmptyBookingsState';
 import { useGetBookingsQuery, useUpdateBooking } from '@/api';
@@ -27,9 +27,9 @@ export default function ProviderBookingsScreen() {
   const { t } = useTranslation();
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
+  const [selectedStatus, setSelectedStatus] = useState<BookingFilterStatus>(BOOKING_FILTER_STATUSES.All);
 
-  const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
+  const statusParam = selectedStatus === BOOKING_FILTER_STATUSES.All ? undefined : selectedStatus;
   const {
     data: bookingsData,
     isLoading,
@@ -42,13 +42,11 @@ export default function ProviderBookingsScreen() {
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
   const countsByStatus = useMemo(() => {
-    const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(
-      (acc, status) => ({ ...acc, [status]: 0 }),
-      {} as Record<BookingStatus, number>,
-    );
-    counts[BOOKING_STATUSES.All] = bookings.length;
+    const counts = {} as Record<BookingFilterStatus, number>;
+    for (const status of BOOKING_STATUS_FILTER_OPTIONS) counts[status] = 0;
+    counts[BOOKING_FILTER_STATUSES.All] = bookings.length;
     bookings.forEach((booking) => {
-      if (counts[booking.status] !== undefined) counts[booking.status] += 1;
+      counts[booking.status] += 1;
     });
     return counts;
   }, [bookings]);

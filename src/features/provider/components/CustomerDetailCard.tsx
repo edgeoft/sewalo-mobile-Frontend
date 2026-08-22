@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { type ProviderBookingItem } from '../constants/providerBookings';
+import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 
 interface CustomerDetailCardProps {

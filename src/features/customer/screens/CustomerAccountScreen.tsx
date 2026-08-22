@@ -83,7 +83,7 @@ export default function CustomerAccountScreen() {
             <AccountMenuSectionCard
               key={section.title}
               section={section}
-              onItemPress={(id) => handleItemPress(id as AccountMenuItemId)}
+              onItemPress={handleItemPress}
               rightContentMap={{
                 language: <LanguageSelector />,
               }}

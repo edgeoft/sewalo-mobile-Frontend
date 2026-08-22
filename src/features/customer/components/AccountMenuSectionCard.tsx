@@ -1,26 +1,12 @@
-import type { ComponentProps } from 'react';
-import type { Feather } from '@expo/vector-icons';
+import React from 'react';
 import { View, Text } from 'react-native';
+import type { AccountMenuItemId, AccountMenuSection } from '@/types';
 import AccountMenuItem from './AccountMenuItem';
-
-export interface AccountMenuItemOption {
-  id: string;
-  icon: ComponentProps<typeof Feather>['name'];
-  title: string;
-  subtitle: string;
-  destructive?: boolean;
-}
-
-export interface AccountMenuSection {
-  id: string;
-  title: string;
-  items: AccountMenuItemOption[];
-}
 
 interface AccountMenuSectionCardProps {
   section: AccountMenuSection;
-  onItemPress: (itemId: string) => void;
-  rightContentMap?: Record<string, React.ReactNode>;
+  onItemPress: (itemId: AccountMenuItemId) => void;
+  rightContentMap?: Partial<Record<AccountMenuItemId, React.ReactNode>>;
 }
 
 export default function AccountMenuSectionCard({

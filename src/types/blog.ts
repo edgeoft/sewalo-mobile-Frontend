@@ -1,3 +1,5 @@
+import type { DataEnvelope } from './common';
+
 export interface BlogCategory {
   id: string;
   name: string;
@@ -23,24 +25,10 @@ export interface Blog {
   category?: BlogCategory;
 }
 
-export interface GetBlogsResponse {
-  data: Blog[];
-  meta?: {
-    current_page: number;
-    per_page: number;
-    total: number;
-    last_page: number;
-  };
-}
+export type GetBlogsResponse = DataEnvelope<Blog[]>;
 
-export interface GetFeaturedBlogResponse {
-  data: Blog | null;
-}
+export type GetFeaturedBlogResponse = DataEnvelope<Blog | null>;
 
-export interface GetBlogBySlugResponse {
-  data: Blog;
-}
+export type GetBlogBySlugResponse = DataEnvelope<Blog>;
 
-export interface GetBlogCategoriesResponse {
-  data: BlogCategory[];
-}
+export type GetBlogCategoriesResponse = DataEnvelope<BlogCategory[]>;

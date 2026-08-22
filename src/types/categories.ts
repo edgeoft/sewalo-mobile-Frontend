@@ -1,3 +1,5 @@
+import type { DataEnvelope } from './common';
+
 export interface Category {
   id: string;
   name: string;
@@ -7,9 +9,7 @@ export interface Category {
   show_on_homepage?: boolean;
 }
 
-export interface CategoryResponse {
-  data: Category[];
-}
+export type CategoryResponse = DataEnvelope<Category[]>;
 
 export interface SubCategory {
   id: string;

@@ -116,7 +116,6 @@ export function mapApiToProviderDetail(
     startingPrice: getStartingPrice(firstService?.service_offerings),
     ordersCompleted: `${providerReviewCount} ${t('home.orders')}`,
     specialPackagesCount: firstService?.service_packages?.length || 0,
-    availability,
     availabilityLabel: availability,
     availability_days: provider.availability_days || null,
     start_time: provider.start_time || null,

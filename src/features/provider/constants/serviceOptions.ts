@@ -1,7 +1,4 @@
-export interface ServiceCategory {
-  id: string;
-  name: string;
-}
+import type { Category } from '@/types';
 
 export interface ServiceType {
   id: string;
@@ -9,11 +6,12 @@ export interface ServiceType {
   name: string;
 }
 
-export const SERVICE_CATEGORIES: ServiceCategory[] = [
-  { id: 'cleaning', name: 'Cleaning Services' },
-  { id: 'design', name: 'Design Services' },
-  { id: 'computers', name: 'IT Support & Computers' },
-  { id: 'beauty', name: 'Beauty & Saloon' },
+/** Offline fallback used only when the categories API returns empty. */
+export const SERVICE_CATEGORIES: Category[] = [
+  { id: 'cleaning', name: 'Cleaning Services', slug: 'cleaning' },
+  { id: 'design', name: 'Design Services', slug: 'design' },
+  { id: 'computers', name: 'IT Support & Computers', slug: 'computers' },
+  { id: 'beauty', name: 'Beauty & Saloon', slug: 'beauty' },
 ];
 
 export const SERVICE_TYPES: ServiceType[] = [

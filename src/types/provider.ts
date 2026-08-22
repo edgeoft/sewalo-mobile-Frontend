@@ -1,5 +1,5 @@
 import { UserProfile, DeliveryType, BookingStatus } from '@/types';
-import { PaginatedResponse } from './common';
+import { PaginatedResponse, DataEnvelope } from './common';
 
 export interface ProviderBookingItem {
   id: string;
@@ -15,9 +15,6 @@ export interface ProviderBookingItem {
 }
 
 // Earnings Types
-export type TransactionType = 'credit' | 'debit';
-export type TransactionMethod = 'esewa' | 'cash';
-
 export interface TransactionBooking {
   id: string;
   user_id: string;
@@ -39,51 +36,6 @@ export interface TransactionBooking {
     image: string | null;
   };
 }
-
-export interface Transaction {
-  id: string;
-  booking_id: string;
-  provider_id: string;
-  type: TransactionType;
-  method: TransactionMethod;
-  amount: number;
-  commission_rate: number;
-  commission_amount: number;
-  net_amount: number;
-  status: string;
-  commission_status: string;
-  description: string;
-  notes: string;
-  processed_at: string;
-  created_at: string;
-  updated_at: string;
-  booking?: TransactionBooking;
-  provider?: UserProfile;
-}
-
-export interface GetEarningSummaryResponse {
-  provider: UserProfile;
-  earnings: {
-    total_earnings: number;
-    pending_commission: number;
-    pending_payouts: number;
-    total_commission_paid: number;
-    total_payouts_received: number;
-  };
-  statistics: {
-    total_transactions: number;
-    completed_transactions: number;
-    pending_commission_amount: number;
-    pending_payouts_amount: number;
-  };
-}
-
-export interface GetMyTransactionsParams {
-  limit: number;
-  page: number;
-}
-
-export type GetMyTransactionsResponse = PaginatedResponse<Transaction>;
 
 // Commission Types
 export const COMMISSION_TYPE = {
@@ -129,8 +81,6 @@ export interface GetCommissionsParams {
 }
 
 export type GetCommissionsResponse = PaginatedResponse<Commission>;
-
-export type GetCommissionSummaryResponse = CommissionSummary;
 
 // Finance Types
 export const FINANCE_ACCOUNT_TYPE = {
@@ -197,30 +147,23 @@ export interface ServiceFormData {
   }[];
 }
 
-// Financial details form types
-export type FinanceAccountFormValues = {
-  type: FinanceAccountType;
-  name: string;
-  account_holder_name: string;
-  account_no: string;
-  is_default?: boolean;
-};
+export interface DashboardStats {
+  pendingOrders: number;
+  completedOrders: number;
+  avgRating: number;
+  completionRate: string;
+}
 
-export type FinancialData = FinanceAccountFormValues;
+export interface DashboardMetrics {
+  totalEarnings: string;
+  profileViews: string;
+  acceptanceRate: string;
+  acceptanceRating: string;
+}
 
 export interface ProviderDashboardResponse {
-  stats: {
-    pendingOrders: number;
-    completedOrders: number;
-    avgRating: number;
-    completionRate: string;
-  };
-  metrics: {
-    totalEarnings: string;
-    profileViews: string;
-    acceptanceRate: string;
-    acceptanceRating: string;
-  };
+  stats: DashboardStats;
+  metrics: DashboardMetrics;
   recentBookings: ProviderBookingItem[];
 }
 
@@ -272,10 +215,4 @@ export interface GetNearbyProvidersParams {
   search?: string;
 }
 
-export interface GetNearbyProvidersResponse {
-  data: NearbyProvider[];
-  meta: {
-    total: number;
-    radius_km: number;
-  };
-}
+export type GetNearbyProvidersResponse = DataEnvelope<NearbyProvider[]>;

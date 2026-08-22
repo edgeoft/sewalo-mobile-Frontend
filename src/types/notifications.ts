@@ -2,12 +2,9 @@ import { PaginatedResponse } from './common';
 
 export interface Notification {
   id: string;
-  user_id: string;
   title: string;
   message: string;
   notification_type: string;
-  referenceable_id: string | null;
-  referenceable_type: string | null;
   read_at: string | null;
   created_at: string;
   updated_at: string;

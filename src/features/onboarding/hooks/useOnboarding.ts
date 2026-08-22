@@ -14,6 +14,7 @@ import {
   DEFAULT_WORKING_HOURS_START,
   DEFAULT_WORKING_HOURS_END,
   AvailabilityType,
+  asAvailability,
 } from '@/constants/availability';
 import {
   Availability,
@@ -408,7 +409,7 @@ export function useOnboarding() {
             start_date: e.start_date,
             end_date: e.end_date,
           })) || [];
-        payload.availability = currentUser.availability || AVAILABILITY_TYPES.Always;
+        payload.availability = asAvailability(currentUser.availability) ?? AVAILABILITY_TYPES.Always;
         payload.start_time = currentUser.start_time || undefined;
         payload.end_time = currentUser.end_time || undefined;
       }

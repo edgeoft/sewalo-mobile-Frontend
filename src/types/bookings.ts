@@ -1,18 +1,13 @@
+import type { BOOKING_STATUSES } from '@/constants/bookings';
 import type { UserProfile, PaymentMethod } from '@/types';
 import type { Service } from './services';
-import { PaginatedResponse } from './common';
+import type { PaginatedResponse, DataEnvelope } from './common';
 
-export type BookingStatus =
-  | 'all'
-  | 'pending'
-  | 'confirmed'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'rejected'
-  | 'ready_to_pay'
-  | 'payment_initiated'
-  | 'paid';
+/** Real booking statuses as stored on the entity (no filter pseudo-values). */
+export type BookingStatus = Exclude<(typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES], 'all'>;
+
+/** Filter values used by booking list screens ('all' + real statuses). */
+export type BookingFilterStatus = 'all' | BookingStatus;
 
 export interface Booking {
   id: string;
@@ -24,7 +19,6 @@ export interface Booking {
   additional_note: string | null;
   status: BookingStatus;
   cancellation_reason: string | null;
-  cancelled_at: string | null;
   created_at: string;
   updated_at: string;
   address: string;
@@ -36,9 +30,6 @@ export interface Booking {
   service: Service;
   provider: UserProfile;
   invoice: Invoice;
-  has_been_rated?: boolean;
-  can_be_rated?: boolean;
-  rating?: { id: string; rate: number; review: string; created_at: string } | null;
 }
 
 export interface BookServiceFormData {
@@ -100,78 +91,21 @@ export interface Coupon {
   remaining_uses: number;
 }
 
-export interface GetApplicableCouponsResponse {
-  data: Coupon[];
-}
+export type GetApplicableCouponsResponse = DataEnvelope<Coupon[]>;
 
 export interface InvoiceItem {
   id: string;
-  invoice_id: string;
   name: string;
   quantity: number;
   unit_price: string;
   total_amount: string;
-  is_primary_item: boolean;
 }
 
 export interface Invoice {
   id: string;
-  invoice_id: string;
-  booking_id: string;
   additional_note: string | null;
   sub_total: string;
-  discount_amount: string;
-  coupon_discount: string;
-  coupon_id: string | null;
-  vat: string;
-  loyalty_points_used: number;
-  loyalty_points_discount: string;
   total: string;
-  total_amount_paid: string;
-  invoice_items: InvoiceItem[];
-}
-
-export interface InvoiceItemToAdd {
-  name: string;
-  quantity: number;
-  unit_price: number;
-}
-
-export interface InvoiceItemToUpdate {
-  id: string;
-  name: string;
-  quantity: number;
-  unit_price: number;
-}
-
-export interface UpdateInvoiceItemsPayload {
-  id: string;
-  additional_note: string;
-  discount_amount: number;
-  items_to_add: InvoiceItemToAdd[];
-  items_to_update: InvoiceItemToUpdate[];
-  items_to_delete: string[];
-}
-
-export interface MakePaymentPayload {
-  payment_method: PaymentMethod;
-  loyalty_points?: number;
-  coupon_id?: string;
-}
-
-export interface EsewaPaymentDetails {
-  amount: number;
-  tax_amount: number;
-  total_amount: number;
-  transaction_uuid: string;
-  product_code: string;
-  product_service_charge: number;
-  product_delivery_charge: number;
-  success_url: string;
-  failure_url: string;
-  signed_field_names: string;
-  signature: string;
-  api_endpoint: string;
 }
 
 export type MakePaymentResponse =
@@ -203,6 +137,27 @@ export type MakePaymentResponse =
       };
       payment: EsewaPaymentDetails;
     };
+
+export interface MakePaymentPayload {
+  payment_method: PaymentMethod;
+  loyalty_points?: number;
+  coupon_id?: string;
+}
+
+export interface EsewaPaymentDetails {
+  amount: number;
+  tax_amount: number;
+  total_amount: number;
+  transaction_uuid: string;
+  product_code: string;
+  product_service_charge: number;
+  product_delivery_charge: number;
+  success_url: string;
+  failure_url: string;
+  signed_field_names: string;
+  signature: string;
+  api_endpoint: string;
+}
 
 export interface ConfirmPaymentPayload {
   has_received_payment: boolean;
@@ -252,9 +207,7 @@ export interface Rating {
 
 export type GetMyRatingsResponse = PaginatedResponse<Rating>;
 
-export type GetProviderRatingResponse = {
-  data: Rating[];
-};
+export type GetProviderRatingResponse = DataEnvelope<Rating[]>;
 
 export interface GetMyRatingsParams {
   page?: number;

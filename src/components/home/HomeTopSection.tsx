@@ -7,7 +7,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
-import { USER_ROLES, type Category } from '@/types';
+import { USER_ROLES, type Category, type DashboardStats } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 
@@ -15,12 +15,7 @@ type HomeTopSectionVariant = 'guest' | 'customer' | 'provider';
 
 interface HomeTopSectionProps {
   variant: HomeTopSectionVariant;
-  stats?: {
-    pendingOrders: number;
-    completedOrders: number;
-    avgRating: number;
-    completionRate: string;
-  };
+  stats?: DashboardStats;
   categories?: Category[];
 }
 
