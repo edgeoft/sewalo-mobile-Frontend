@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, View, ActivityIndicator } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +12,8 @@ import SearchBar from '@/components/ui/SearchBar';
 import { THEME_COLORS } from '@/constants/colors';
 import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_FILTER_STATUSES } from '@/constants/bookings';
 import type { BookingFilterStatus } from '@/types';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
@@ -31,6 +33,7 @@ export default function CustomerBookingsScreen() {
   const {
     data: bookingsData,
     isLoading,
+    isError,
     refetch,
     isRefetching,
   } = useGetBookingsQuery({ status: statusParam, page: 1, limit: 50 });
@@ -141,9 +144,9 @@ export default function CustomerBookingsScreen() {
         ) : null}
 
         {isLoading ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="flex-1 items-center justify-center py-20" />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} className="py-6 mt-4" />
         ) : (
           <LoadMoreList
             key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}

@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import LoadingState from '@/components/ui/LoadingState';
+import ErrorState from '@/components/ui/ErrorState';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import type { Service } from '@/types';
 import { getAvatarUrl } from '@/utils/image';
@@ -84,7 +85,12 @@ export default function FindServicesScreen() {
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
 
   // Fetch Services with server-side filters
-  const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery({
+  const {
+    data: servicesData,
+    isLoading: isLoadingServices,
+    isError: isServicesError,
+    refetch: refetchServices,
+  } = useGetServicesQuery({
     search: debouncedSearch || undefined,
     category: selectedCategorySlug || undefined,
     min_price: minPriceStore ? Number(minPriceStore) : undefined,
@@ -293,6 +299,8 @@ export default function FindServicesScreen() {
         ListEmptyComponent={
           isLoadingServices ? (
             <LoadingState className="py-20" />
+          ) : isServicesError ? (
+            <ErrorState onRetry={() => refetchServices()} className="py-6 mt-2" />
           ) : (
             <View className="py-12 items-center justify-center">
               <Feather name="search" size={40} color="#64748b" />

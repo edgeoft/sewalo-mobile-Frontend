@@ -17,7 +17,7 @@ import { useAccountActions } from '@/hooks/useAccountActions';
 import AccountMenuSectionCard from '@/features/customer/components/AccountMenuSectionCard';
 import AccountProfileCard from '@/features/customer/components/AccountProfileCard';
 import ProfileCompletionCard from '@/components/common/ProfileCompletionCard';
-import { getProviderAccountMenu } from '../constants/accountMenu';
+import { getProviderAccountMenu } from '@/constants/accountMenu';
 
 export default function ProviderAccountScreen() {
   const router = useRouter();

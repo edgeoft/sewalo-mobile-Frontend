@@ -1,59 +1,22 @@
 import React from 'react';
-import { View, Text, Image, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import Header from '@/components/navigation/Header';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader, LoadMoreList } from '@/components/common';
+import ReviewCard from '@/components/common/ReviewCard';
 import { useGetMyRatingsQuery } from '@/api';
-import type { Rating } from '@/types';
-import { getSource } from '@/utils/image';
-
-import { formatDate } from '@/utils/time';
-import StarRating from '@/components/ui/StarRating';
-
-const cardShadow = {
-  shadowColor: '#0f172a',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.03,
-  shadowRadius: 8,
-  elevation: 0,
-};
-
-function ReviewCard({ rating }: { rating: Rating }) {
-  return (
-    <View style={cardShadow} className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
-      <View className="flex-row items-start justify-between">
-        <View className="flex-row items-center flex-1">
-          <Image
-            source={getSource(rating.user?.avatar, 'avatar')}
-            className="h-10 w-10 rounded-full border border-gray-100 bg-gray-50 mr-3"
-            resizeMode="cover"
-          />
-          <View className="flex-1">
-            <Text className="text-sm font-sans-bold text-gray-900">{rating.user?.name || 'Customer'}</Text>
-            <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
-              {rating.booking?.service?.name || 'Service'}
-            </Text>
-          </View>
-        </View>
-        <Text className="text-[10px] font-sans-medium text-gray-400">{formatDate(rating.created_at)}</Text>
-      </View>
-
-      <StarRating value={rating.rate} readOnly className="flex-row items-center gap-0.5 my-1.5" />
-
-      <Text className="text-xs font-sans-regular text-gray-600 leading-5 mt-1">&ldquo;{rating.review}&rdquo;</Text>
-    </View>
-  );
-}
 
 export default function ProviderReviewsScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
-  const { data: ratingsData, isLoading } = useGetMyRatingsQuery({ limit: 50 });
+  const { data: ratingsData, isLoading, isError, refetch } = useGetMyRatingsQuery({ limit: 50 });
 
   const ratings = ratingsData?.data || [];
 
@@ -77,9 +40,9 @@ export default function ProviderReviewsScreen() {
         />
 
         {isLoading ? (
-          <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="items-center justify-center py-20" />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} className="py-6" />
         ) : (
           <LoadMoreList
             data={ratings}
@@ -101,7 +64,7 @@ export default function ProviderReviewsScreen() {
                 </Text>
               </View>
             }
-            renderItem={(item) => <ReviewCard rating={item} />}
+            renderItem={(item) => <ReviewCard rating={item} counterpart="user" />}
           />
         )}
       </ContentLayout>

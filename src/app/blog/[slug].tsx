@@ -1,13 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
 import React from 'react';
-import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useGetBlogBySlugQuery } from '@/api';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { formatDate } from '@/utils/time';
 
@@ -17,13 +19,24 @@ export default function BlogDetailScreen() {
   const { t } = useTranslation();
   const { slug } = useLocalSearchParams<{ slug: string }>();
 
-  const { data: blogData, isLoading } = useGetBlogBySlugQuery(slug || '');
+  const { data: blogData, isLoading, isError, refetch } = useGetBlogBySlugQuery(slug || '');
   const blog = blogData?.data;
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color="#485aff" />
+      <View className="flex-1 bg-secondary">
+        <LoadingState />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="flex-1 bg-secondary">
+        <Header showBackButton />
+        <View className="flex-1 justify-center p-5">
+          <ErrorState onRetry={() => refetch()} />
+        </View>
       </View>
     );
   }

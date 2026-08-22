@@ -1,11 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { Pressable, View, ActivityIndicator } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList, SectionHeader } from '@/components/common';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import { ProviderOrderCard } from '@/components/home';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -33,6 +35,7 @@ export default function ProviderBookingsScreen() {
   const {
     data: bookingsData,
     isLoading,
+    isError,
     refetch,
     isRefetching,
   } = useGetBookingsQuery({ status: statusParam, limit: 50 });
@@ -170,9 +173,9 @@ export default function ProviderBookingsScreen() {
         ) : null}
 
         {isLoading ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="flex-1 items-center justify-center py-20" />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} className="py-6 mt-4" />
         ) : (
           <LoadMoreList
             key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}

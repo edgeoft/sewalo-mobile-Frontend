@@ -3,9 +3,11 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useGetBlogsQuery } from '@/api';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import LoadMoreList from '@/components/common/LoadMoreList';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -18,7 +20,12 @@ import { getReadTime } from '@/utils/text';
 export default function BlogListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { data: blogsData, isLoading: blogsLoading } = useGetBlogsQuery({ show: 'all' });
+  const {
+    data: blogsData,
+    isLoading: blogsLoading,
+    isError: blogsError,
+    refetch: refetchBlogs,
+  } = useGetBlogsQuery({ show: 'all' });
 
   const handleArticlePress = (blog: Blog) => {
     router.push(ROUTES.blog.detail(blog.slug));
@@ -43,9 +50,9 @@ export default function BlogListScreen() {
 
           {/* Blogs List */}
           {blogsLoading ? (
-            <View className="py-20 justify-center items-center">
-              <ActivityIndicator size="large" color="#485aff" />
-            </View>
+            <LoadingState className="py-20" />
+          ) : blogsError ? (
+            <ErrorState onRetry={() => refetchBlogs()} className="my-4" />
           ) : (
             <LoadMoreList
               data={sorted}

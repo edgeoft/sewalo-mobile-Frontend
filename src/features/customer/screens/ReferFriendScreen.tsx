@@ -12,6 +12,7 @@ import Button from '@/components/ui/Button';
 import { useReferralCodeQuery, useReferralStatsQuery } from '@/api';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import ErrorState from '@/components/ui/ErrorState';
 import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { WEB_URLS } from '@/constants/urls';
 
@@ -21,8 +22,13 @@ export default function ReferFriendScreen() {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
-  const { data: codeData, isLoading: codeLoading } = useReferralCodeQuery();
-  const { data: statsData, isLoading: statsLoading } = useReferralStatsQuery();
+  const { data: codeData, isLoading: codeLoading, isError: codeError, refetch: refetchCode } = useReferralCodeQuery();
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    isError: statsError,
+    refetch: refetchStats,
+  } = useReferralStatsQuery();
 
   const referralCode = codeData?.data?.referral_code || '';
   const referralLink = referralCode ? WEB_URLS.signupReferral(referralCode) : '';
@@ -31,6 +37,11 @@ export default function ReferFriendScreen() {
 
   const { showSnackbar } = useSnackbar();
   const isLoading = codeLoading || statsLoading;
+  const isError = codeError || statsError;
+  const refetchAll = () => {
+    refetchCode();
+    refetchStats();
+  };
 
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -92,7 +103,9 @@ export default function ReferFriendScreen() {
           titleClassName="text-2xl text-gray-950 font-sans-extrabold"
         />
 
-        {isLoading ? (
+        {isError && !isLoading ? (
+          <ErrorState onRetry={refetchAll} className="my-4" />
+        ) : isLoading ? (
           <View className="items-center justify-center py-20">
             <ActivityIndicator size="large" color="#485aff" />
           </View>

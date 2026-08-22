@@ -60,5 +60,8 @@
   "day": "Day",
   "month": "Month",
   "year": "Year",
-  "selectDateOfBirth": "Select Date of Birth"
+  "selectDateOfBirth": "Select Date of Birth",
+  "errorTitle": "Something went wrong",
+  "errorDesc": "We couldn't load this content. Please check your connection and try again.",
+  "tryAgain": "Try Again"
 }

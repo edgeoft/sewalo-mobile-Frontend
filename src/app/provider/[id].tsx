@@ -8,6 +8,7 @@ import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsSc
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
 import LoadingState from '@/components/ui/LoadingState';
+import ErrorState from '@/components/ui/ErrorState';
 import { useGetProviderDetailsQuery, useGetProviderRatingsQuery } from '@/api';
 import { mapApiToProviderDetail, mapRatingToReviewItem } from '@/features/services/utils/providerDetailMapper';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -32,7 +33,12 @@ export default function DynamicProviderDetailRoute() {
       (currentUser.id && (currentUser.id === providerSlug || currentUser.id === slug))),
   );
 
-  const { data: apiData, isLoading: isLoadingProvider } = useGetProviderDetailsQuery(providerSlug, {
+  const {
+    data: apiData,
+    isLoading: isLoadingProvider,
+    isError: isProviderError,
+    refetch: refetchProvider,
+  } = useGetProviderDetailsQuery(providerSlug, {
     enabled: isLoggedIn && Boolean(providerSlug) && !isOwnSlug,
   });
 
@@ -91,6 +97,17 @@ export default function DynamicProviderDetailRoute() {
             />
             <Button title={t('common.goBack')} variant="outline" onPress={() => router.back()} />
           </View>
+        </View>
+      </View>
+    );
+  }
+
+  if (isProviderError && !apiData) {
+    return (
+      <View className="flex-1 bg-secondary">
+        <Header variant="language" showBackButton={true} includeBottomBorder={true} />
+        <View className="flex-1 p-6">
+          <ErrorState onRetry={() => refetchProvider()} className="mt-8" />
         </View>
       </View>
     );

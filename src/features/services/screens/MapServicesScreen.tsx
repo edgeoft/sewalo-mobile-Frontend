@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
@@ -12,6 +12,8 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
 import { useServiceFilters } from '@/hooks/useServiceFilters';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import { MapViewport } from '@/types';
 import { addBoundingBoxBuffer } from '@/utils/geohash';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
@@ -117,7 +119,12 @@ export default function MapServicesScreen() {
 
   const { data: categoriesData } = useGetCategoriesQuery();
 
-  const { data: providersData, isLoading: isLoadingProviders } = useGetNearbyProvidersQuery({
+  const {
+    data: providersData,
+    isLoading: isLoadingProviders,
+    isError: isProvidersError,
+    refetch: refetchProviders,
+  } = useGetNearbyProvidersQuery({
     lat: debouncedViewport.center.lat,
     lng: debouncedViewport.center.lng,
     ...(bufferedBounds
@@ -198,9 +205,9 @@ export default function MapServicesScreen() {
     <View className="flex-1 bg-secondary relative">
       <View className="flex-1" importantForAccessibility="no">
         {isLoadingProviders ? (
-          <View className="flex-1 items-center justify-center bg-gray-150">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="flex-1 items-center justify-center bg-gray-150" />
+        ) : isProvidersError ? (
+          <ErrorState onRetry={() => refetchProviders()} className="m-4" />
         ) : (
           <NearbyServicesMap
             userLat={userLocation.lat}
