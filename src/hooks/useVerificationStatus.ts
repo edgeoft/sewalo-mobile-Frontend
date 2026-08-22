@@ -22,9 +22,8 @@ const MESSAGES: Record<UserStatus, string> = {
 
 export const useVerificationStatus = (): VerificationStatusResult => {
   const { user, role: authRole } = useAuth();
-  const rawStatus = user?.status;
-  const status: UserStatus | null =
-    rawStatus && Object.values(USER_STATUSES).includes(rawStatus as UserStatus) ? (rawStatus as UserStatus) : null;
+  // user.status is already typed as UserStatus — no runtime re-validation needed.
+  const status: UserStatus | null = user?.status ?? null;
 
   const currentRole = authRole || user?.role || USER_ROLES.Customer;
   const isProvider = currentRole === USER_ROLES.Provider;

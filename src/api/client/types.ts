@@ -1,9 +1,7 @@
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-// Params are passed through to axios which accepts any value.
-// Response types are strictly typed via generics on ApiClient methods.
-
-export type RequestParams = any;
+// Query params are plain scalar records passed through to axios.
+export type RequestParams = Record<string, unknown>;
 
 export interface RequestCtx {
   url: string;

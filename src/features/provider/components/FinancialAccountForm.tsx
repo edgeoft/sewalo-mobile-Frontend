@@ -46,7 +46,7 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
             placeholder={t('provider.selectAccountType')}
             title={t('provider.accountType')}
             description={t('provider.accountTypeDesc')}
-            error={errors.type?.message as string}
+            error={errors.type?.message}
           />
         )}
       />
@@ -75,7 +75,7 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
                     placeholder={namePlaceholder}
                     title={isWallet ? 'Select Wallet' : 'Select Bank'}
                     disabled={!currentType}
-                    error={errors.name?.message as string}
+                    error={errors.name?.message}
                   />
                 )}
               />
@@ -91,7 +91,7 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
                     value={holderValue}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    error={errors.account_holder_name?.message as string}
+                    error={errors.account_holder_name?.message}
                   />
                 )}
               />
@@ -108,7 +108,7 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
                     onChangeText={onChange}
                     onBlur={onBlur}
                     keyboardType="numeric"
-                    error={errors.account_no?.message as string}
+                    error={errors.account_no?.message}
                   />
                 )}
               />

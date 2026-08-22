@@ -125,7 +125,7 @@ export default function PersonalInfoStep({
               />
               {errors.avatar?.message && (
                 <Text className="text-xs font-sans-medium text-destructive text-center mt-1">
-                  {errors.avatar.message as string}
+                  {errors.avatar?.message}
                 </Text>
               )}
             </View>
@@ -144,7 +144,7 @@ export default function PersonalInfoStep({
                   keyboardType="email-address"
                   autoCapitalize="none"
                   inputStyle={{ padding: 0 }}
-                  error={errors.email?.message as string}
+                  error={errors.email?.message}
                 />
               )}
             />
@@ -171,7 +171,7 @@ export default function PersonalInfoStep({
                       setValue('state', data.state);
                       setValue('country', data.country);
                     }}
-                    error={errors.location?.message as string}
+                    error={errors.location?.message}
                   />
                 )}
               />
@@ -206,7 +206,7 @@ export default function PersonalInfoStep({
               </Pressable>
               {errors.dateOfBirth && (
                 <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
-                  {errors.dateOfBirth.message as string}
+                  {errors.dateOfBirth?.message}
                 </Text>
               )}
             </View>

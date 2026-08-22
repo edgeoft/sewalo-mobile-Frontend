@@ -12,6 +12,7 @@ import { FALLBACKS, getAvatarUrl, getImageUrl } from '@/utils/image';
 import { getStartingPrice } from '@/utils/currency';
 import { formatProviderLocation } from '@/utils/location';
 import { toStringArray } from '@/utils/text';
+import { getProviderRating } from '@/utils/rating';
 
 export function mapRatingToReviewItem(rating: Rating): ReviewItem {
   return {
@@ -86,8 +87,7 @@ export function mapApiToProviderDetail(
       title: t('services.project', { number: idx + 1 }),
     })) || [];
 
-  const providerRating =
-    provider.average_rating || provider.avg_rating?.toString() || firstService?.average_rating || '0';
+  const providerRating = getProviderRating([firstService, provider]).toFixed(1);
   const providerReviewCount = provider.total_ratings || firstService?.total_ratings || reviews.length || 0;
 
   const availability = provider.availability || t('services.always');

@@ -256,8 +256,9 @@ export default function GoogleNearbyServicesMap({
   const webViewRef = useRef<WebView>(null);
   const apiKey = ENV.GOOGLE_MAPS_API_KEY;
 
-  const safeLat = typeof userLat === 'number' && !isNaN(userLat) ? userLat : 27.700769;
-  const safeLng = typeof userLng === 'number' && !isNaN(userLng) ? userLng : 85.30014;
+  // Coordinates are required numbers; only guard against NaN.
+  const safeLat = Number.isFinite(userLat) ? userLat : 27.700769;
+  const safeLng = Number.isFinite(userLng) ? userLng : 85.30014;
 
   const markersPayload = useMemo(() => {
     return providers.map((p) => {
@@ -267,7 +268,7 @@ export default function GoogleNearbyServicesMap({
         id: p.id,
         name: p.name,
         avatar: getImageUrl(p.avatar) || 'https://avatar.iran.liara.run/public',
-        rating: typeof p.avg_rating === 'number' ? p.avg_rating.toFixed(1) : '0.0',
+        rating: p.avg_rating.toFixed(1),
         lat,
         lng,
       };

@@ -10,12 +10,12 @@ export interface Notification {
   updated_at: string;
 }
 
-export interface GetNotificationsParams {
+export type GetNotificationsParams = {
   page?: number;
   limit?: number;
   type?: string;
   unread_only?: boolean;
-}
+};
 
 export type GetNotificationsResponse = PaginatedResponse<Notification>;
 

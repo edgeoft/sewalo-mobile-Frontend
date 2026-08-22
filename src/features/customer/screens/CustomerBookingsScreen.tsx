@@ -17,6 +17,7 @@ import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
 import { useGetBookingsQuery } from '@/api';
 import { getAvatarUrl } from '@/utils/image';
+import { getProviderRating } from '@/utils/rating';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -164,12 +165,7 @@ export default function CustomerBookingsScreen() {
                 name={booking.provider?.name || 'Service Provider'}
                 serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
                 location={formatLocation(booking)}
-                rating={Number(
-                  booking.service?.average_rating ||
-                    booking.provider?.average_rating ||
-                    booking.provider?.avg_rating ||
-                    0,
-                ).toFixed(1)}
+                rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}

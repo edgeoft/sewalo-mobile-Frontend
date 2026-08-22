@@ -1,3 +1,24 @@
+import type { ApiError } from '@/api/client/types';
+
+/**
+ * Type guard for errors produced by the API client. Use it to narrow `unknown`
+ * values at raw try/catch boundaries; mutation/query hooks already type their
+ * errors as ApiError and don't need this guard.
+ */
+export const isApiError = (err: unknown): err is ApiError =>
+  typeof err === 'object' && err !== null && (err as { name?: unknown }).name === 'ApiError';
+
+/** Safely extracts `missing_fields: string[]` from an ApiError's details payload. */
+export const getMissingFields = (details: unknown): string[] | undefined => {
+  if (typeof details === 'object' && details !== null && 'missing_fields' in details) {
+    const fields = (details as { missing_fields: unknown }).missing_fields;
+    if (Array.isArray(fields) && fields.every((f) => typeof f === 'string')) {
+      return fields;
+    }
+  }
+  return undefined;
+};
+
 export const extractErrorMessage = (error: unknown): string => {
   if (!error) return 'Something went wrong. Please try again.';
 

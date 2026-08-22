@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { isLocalFileUri } from '@/utils/image';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
@@ -232,12 +233,7 @@ export function useOnboarding() {
           try {
             let avatarPath = data.avatar || '';
 
-            if (
-              data.avatar &&
-              (data.avatar.startsWith('file://') ||
-                data.avatar.startsWith('ph://') ||
-                data.avatar.startsWith('content://'))
-            ) {
+            if (isLocalFileUri(data.avatar)) {
               const uploadRes = await uploadFile({ uri: data.avatar, folder: 'profile' });
               avatarPath = uploadRes.path;
             }
@@ -327,12 +323,7 @@ export function useOnboarding() {
       try {
         let documentPath = documentImage || '';
 
-        if (
-          documentImage &&
-          (documentImage.startsWith('file://') ||
-            documentImage.startsWith('ph://') ||
-            documentImage.startsWith('content://'))
-        ) {
+        if (isLocalFileUri(documentImage)) {
           const uploadRes = await uploadFile({ uri: documentImage, folder: 'document' });
           documentPath = uploadRes.path;
         }

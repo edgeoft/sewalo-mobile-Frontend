@@ -4,25 +4,24 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import Header from '@/components/navigation/Header';
 import { useSnackbar } from '@/components/ui/Snackbar';
-import { useSwitchRoleWithDetails, useUploadFile, ApiError } from '@/api';
+import { useSwitchRoleWithDetails, useUploadFile } from '@/api';
 import { convertTimeTo24h } from '@/utils/time';
+import { isLocalFileUri } from '@/utils/image';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES } from '@/constants/roles';
 import { THEME_COLORS } from '@/constants/colors';
-import RadialStepper from '@/components/common/RadialStepper';
 import {
+  AVAILABILITY_WORKING_DAYS,
   AVAILABILITY_TYPES,
   DEFAULT_WORKING_HOURS_START,
   DEFAULT_WORKING_HOURS_END,
   AvailabilityType,
 } from '@/constants/availability';
+import { isApiError, getMissingFields, extractErrorMessage } from '@/api/client/query/errorHandler';
+import RadialStepper from '@/components/common/RadialStepper';
 
 import AvailabilityStep from '@/features/onboarding/components/AvailabilityStep';
 import IdentityVerificationStep from '@/features/onboarding/components/IdentityVerificationStep';
-
-interface MissingFieldsResponse {
-  missing_fields?: string[];
-}
 
 export default function BecomeProviderScreen() {
   const router = useRouter();
@@ -69,25 +68,15 @@ export default function BecomeProviderScreen() {
     try {
       let documentPath = documentImage;
 
-      if (
-        documentImage?.startsWith('file://') ||
-        documentImage?.startsWith('ph://') ||
-        documentImage?.startsWith('content://')
-      ) {
+      if (isLocalFileUri(documentImage)) {
         const uploadRes = await uploadFile({ uri: documentImage, folder: 'document' });
         documentPath = uploadRes.path;
       }
 
-      const daysMap: Record<AvailabilityType, string[]> = {
-        always: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
-        weekdays: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
-        weekends: ['saturday'],
-      };
-
       await switchRoleWithDetails({
         target_role: USER_ROLES.Provider,
         availability: workingDays,
-        availability_days: daysMap[workingDays],
+        availability_days: [...AVAILABILITY_WORKING_DAYS[workingDays]],
         start_time: convertTimeTo24h(workingHoursStart),
         end_time: convertTimeTo24h(workingHoursEnd),
         document: documentPath || null,
@@ -96,11 +85,9 @@ export default function BecomeProviderScreen() {
       showSnackbar({ message: 'Welcome to the partner network!', type: 'success' });
       router.replace(ROUTES.provider.home);
     } catch (err) {
-      const apiError = err as ApiError;
-      const details = apiError?.details as MissingFieldsResponse | undefined;
+      const missing = isApiError(err) ? getMissingFields(err.details) : undefined;
 
-      if (details?.missing_fields && Array.isArray(details.missing_fields)) {
-        const missing = details.missing_fields;
+      if (missing && missing.length > 0) {
         const missingAvailability = ['availability', 'availability_days', 'start_time', 'end_time'].some((f) =>
           missing.includes(f),
         );
@@ -114,8 +101,7 @@ export default function BecomeProviderScreen() {
 
         showSnackbar({ message: `Missing: ${missing.join(', ')}`, type: 'error' });
       } else {
-        const errMsg = apiError?.message || 'Failed to switch role.';
-        showSnackbar({ message: errMsg, type: 'error' });
+        showSnackbar({ message: extractErrorMessage(err), type: 'error' });
       }
     } finally {
       setSubmitting(false);

@@ -12,6 +12,7 @@ import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
 import { getAvatarUrl } from '@/utils/image';
 import { formatProviderLocation } from '@/utils/location';
+import { getProviderRating } from '@/utils/rating';
 import { getReadTime, cleanDescriptionText } from '@/utils/text';
 
 export default function CustomerHomeScreen() {
@@ -47,7 +48,7 @@ export default function CustomerHomeScreen() {
         serviceLabel: service?.category?.name || t('home.service'),
         location: formatProviderLocation(provider, t('home.nepal')),
         ordersCompleted: service ? `${service.total_ratings || 0} ${t('home.ordersCompleted')}` : '',
-        rating: provider?.average_rating || provider?.avg_rating?.toString() || '0',
+        rating: getProviderRating([provider]).toString(),
         bookedPrice,
         status: b.status,
       };

@@ -56,11 +56,11 @@ export interface BookServiceFormData {
 
 export type GetBookingsResponse = PaginatedResponse<Booking>;
 
-export interface GetBookingsParams {
+export type GetBookingsParams = {
   status?: string;
   page?: number;
   limit?: number;
-}
+};
 
 export interface UpdateBookingPayload {
   status?: BookingStatus;
@@ -209,7 +209,7 @@ export type GetMyRatingsResponse = PaginatedResponse<Rating>;
 
 export type GetProviderRatingResponse = DataEnvelope<Rating[]>;
 
-export interface GetMyRatingsParams {
+export type GetMyRatingsParams = {
   page?: number;
   limit?: number;
-}
+};

@@ -102,7 +102,7 @@ export default function BasicInfoSection({
               onChangeText={onChange}
               onBlur={onBlur}
               inputStyle={{ padding: 0 }}
-              error={errors.fullName?.message as string}
+              error={errors.fullName?.message}
             />
           )}
         />
@@ -112,7 +112,7 @@ export default function BasicInfoSection({
           name="mobileNumber"
           label={`${t('common.mobileNumber')} *`}
           placeholder="98XXXXXXX"
-          error={errors.mobileNumber?.message as string}
+          error={errors.mobileNumber?.message}
         />
 
         <View className="w-full">
@@ -142,7 +142,7 @@ export default function BasicInfoSection({
                     setValue('state', data.state, { shouldValidate: true });
                     setValue('country', data.country, { shouldValidate: true });
                   }}
-                  error={errors.location?.message as string}
+                  error={errors.location?.message}
                 />
               );
             }}
@@ -207,7 +207,7 @@ export default function BasicInfoSection({
                 multiline={true}
                 numberOfLines={4}
                 inputStyle={{ height: 90, textAlignVertical: 'top', padding: 0 }}
-                error={errors.bio?.message as string}
+                error={errors.bio?.message}
               />
             );
           }}

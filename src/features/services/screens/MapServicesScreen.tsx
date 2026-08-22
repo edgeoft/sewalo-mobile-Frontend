@@ -384,7 +384,7 @@ export default function MapServicesScreen() {
               </Text>
               <View className="bg-primary/10 px-1.5 py-px rounded">
                 <Text className="text-[9px] font-sans-bold text-primary uppercase tracking-wide">
-                  {selectedProvider.city || 'Provider'}
+                  {selectedProvider.city}
                 </Text>
               </View>
             </View>
@@ -393,7 +393,7 @@ export default function MapServicesScreen() {
               <View className="flex-row items-center" style={{ gap: 2 }}>
                 <Feather name="star" size={10} color="#f59e0b" />
                 <Text className="text-[11px] font-sans-extrabold text-gray-800">
-                  {typeof selectedProvider.avg_rating === 'number' ? selectedProvider.avg_rating.toFixed(1) : '0.0'}
+                  {selectedProvider.avg_rating.toFixed(1)}
                 </Text>
               </View>
               <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>

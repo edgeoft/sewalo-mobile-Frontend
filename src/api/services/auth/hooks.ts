@@ -16,8 +16,8 @@ import {
   USER_STATUSES,
   VerifyOtpInput,
 } from '@/types';
-import { useMutation } from '@tanstack/react-query';
 import { ApiError } from '@/api/client/types';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import {
   forgotPasswordAction,
@@ -32,7 +32,7 @@ export const useSignup = () => {
   const router = useRouter();
   const { showError } = useErrorDialog();
   const { showSnackbar } = useSnackbar();
-  return useMutation<SignupResponse, Error, SignupInput>({
+  return useMutation<SignupResponse, ApiError, SignupInput>({
     mutationFn: (variables) =>
       signupAction({
         ...variables,
@@ -66,7 +66,7 @@ export const useLogin = () => {
   const router = useRouter();
   const { showError } = useErrorDialog();
   const { showSnackbar } = useSnackbar();
-  return useMutation<LoginResponse, Error, LoginInput>({
+  return useMutation<LoginResponse, ApiError, LoginInput>({
     mutationFn: (variables) =>
       loginAction({
         ...variables,
@@ -91,10 +91,9 @@ export const useLogin = () => {
         }
       }, 0);
     },
-    onError: (err: unknown, variables) => {
-      const apiError = err as ApiError;
-      const details = apiError.details as { user?: { role?: string }; otp?: string } | undefined;
-      if (apiError.status === 403) {
+    onError: (err, variables) => {
+      const details = err.details as { user?: { role?: string }; otp?: string } | undefined;
+      if (err.status === 403) {
         router.push({
           pathname: ROUTES.auth.otpVerification,
           params: {

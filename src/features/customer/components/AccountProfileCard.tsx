@@ -1,3 +1,4 @@
+import { getProviderRating } from '@/utils/rating';
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -56,9 +57,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
             <View className="flex-row items-center gap-1.5 mt-1.5">
               <View className="flex-row items-center gap-0.5">
                 <Feather name="star" size={10} color={THEME_COLORS.amberStar} />
-                <Text className="text-[10px] font-sans-bold text-gray-600">
-                  {Number(user?.average_rating || user?.avg_rating || 0).toFixed(1)}
-                </Text>
+                <Text className="text-[10px] font-sans-bold text-gray-600">{getProviderRating([user]).toFixed(1)}</Text>
                 <Text className="text-[10px] font-sans-medium text-gray-400">
                   ({user?.total_ratings || (user?.avg_rating ? 1 : 0)})
                 </Text>

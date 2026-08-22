@@ -1,28 +1,11 @@
 import { useRouter, type Href } from 'expo-router';
-import { useSwitchRole, ApiError } from '@/api';
+import { useSwitchRole } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useAuth } from '@/providers/AuthProvider';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES } from '@/constants/roles';
 import { AccountMenuItemId } from '@/types';
-
-interface SwitchRoleErrorDetails {
-  missing_fields?: string[];
-}
-
-function isApiError(err: unknown): err is ApiError {
-  return typeof err === 'object' && err !== null && 'name' in err && (err as { name: string }).name === 'ApiError';
-}
-
-function getSwitchRoleErrorDetails(details: unknown): SwitchRoleErrorDetails | undefined {
-  if (typeof details === 'object' && details !== null && 'missing_fields' in details) {
-    const fields = (details as { missing_fields: unknown }).missing_fields;
-    if (Array.isArray(fields) && fields.every((f) => typeof f === 'string')) {
-      return { missing_fields: fields };
-    }
-  }
-  return undefined;
-}
+import { getMissingFields } from '@/api/client/query/errorHandler';
 
 export function useAccountActions() {
   const router = useRouter();
@@ -48,22 +31,16 @@ export function useAccountActions() {
           router.replace(nextRoute);
         },
         onError: (err) => {
-          if (isApiError(err)) {
-            if (targetRole === USER_ROLES.Provider && err.status === 422) {
-              const details = getSwitchRoleErrorDetails(err.details);
-              const missing = details?.missing_fields;
-              const params: Record<string, string> = {};
-              if (missing?.length) {
-                params.missingFields = JSON.stringify(missing);
-              }
-              router.push({ pathname: ROUTES.customer.becomeProvider, params });
-              return;
+          if (targetRole === USER_ROLES.Provider && err.status === 422) {
+            const missing = getMissingFields(err.details);
+            const params: Record<string, string> = {};
+            if (missing?.length) {
+              params.missingFields = JSON.stringify(missing);
             }
-            const errMsg = err.message || 'Failed to switch role.';
-            showSnackbar({ message: errMsg, type: 'error' });
-          } else {
-            showSnackbar({ message: 'Failed to switch role.', type: 'error' });
+            router.push({ pathname: ROUTES.customer.becomeProvider, params });
+            return;
           }
+          showSnackbar({ message: err.message || 'Failed to switch role.', type: 'error' });
         },
       },
     );

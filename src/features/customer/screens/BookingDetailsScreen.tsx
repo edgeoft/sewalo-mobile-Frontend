@@ -25,9 +25,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { getProviderRating } from '@/utils/rating';
 import { getImageUrl } from '@/utils/image';
 import { formatDate, formatTime } from '@/utils/time';
-import { PaymentFactory } from '../utils/paymentStrategies';
+import { processPaymentResponse } from '../utils/paymentStrategies';
 
 interface BookingDetailsScreenProps {
   booking: Booking;
@@ -138,9 +139,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
       { bookingId: booking.id, payload },
       {
         onSuccess: (response: MakePaymentResponse) => {
-          PaymentFactory.get(response.type).process(response, showSnackbar, t, (payment) => {
-            setEsewaPaymentDetails(payment);
-            setIsEsewaModalVisible(true);
+          processPaymentResponse(response.type, {
+            response,
+            showSnackbar,
+            t,
+            onInitiateEsewa: (payment) => {
+              setEsewaPaymentDetails(payment);
+              setIsEsewaModalVisible(true);
+            },
           });
         },
       },
@@ -194,9 +200,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || '';
   const categoryName = booking.service?.category?.name || '';
-  const providerRating = Number(
-    booking.service?.average_rating || booking.provider?.average_rating || booking.provider?.avg_rating || 0,
-  ).toFixed(1);
+  const providerRating = Number(getProviderRating([booking.service, booking.provider])).toFixed(1);
   const serviceDate = formatDate(booking.service_date || '');
   const startTime = formatTime(booking.start_time || '');
   const location = booking.address || 'Kathmandu Metropolitan City';

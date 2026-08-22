@@ -57,10 +57,7 @@ function ProviderCard({
   const isBookingVariant = variant === 'booking';
   const statusPresentation = bookingStatus ? BOOKING_STATUS_PRESENTATION[bookingStatus] : null;
 
-  const reviewsText =
-    reviewsCount !== undefined && reviewsCount !== null
-      ? t('services.reviewsCountShort', { count: reviewsCount })
-      : null;
+  const reviewsText = reviewsCount !== undefined ? t('services.reviewsCountShort', { count: reviewsCount }) : null;
 
   return (
     <Pressable

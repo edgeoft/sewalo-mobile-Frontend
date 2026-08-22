@@ -14,6 +14,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
 import { BookServiceFormData, ProviderDetail, USER_ROLES } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -237,15 +238,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           params: { bookingId: result.id },
         });
       },
-      onError: (err: unknown) => {
-        let message = t('services.bookingFailed');
-        if (err && typeof err === 'object' && err !== null && 'response' in err) {
-          const resErr = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
-          if (resErr) message = resErr;
-        } else if (err instanceof Error && err.message) {
-          message = err.message;
-        }
-        showSnackbar({ message, type: 'error' });
+      onError: (err) => {
+        showSnackbar({ message: extractErrorMessage(err) || t('services.bookingFailed'), type: 'error' });
       },
     });
   };

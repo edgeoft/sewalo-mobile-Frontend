@@ -73,12 +73,12 @@ export interface CommissionSummary {
   total_commission_to_be_paid: number;
 }
 
-export interface GetCommissionsParams {
+export type GetCommissionsParams = {
   page?: number;
   limit?: number;
   type?: CommissionType;
   has_paid?: boolean;
-}
+};
 
 export type GetCommissionsResponse = PaginatedResponse<Commission>;
 
@@ -192,7 +192,7 @@ export interface NearbyProvider {
   distance_km: number;
 }
 
-export interface GetNearbyProvidersParams {
+export type GetNearbyProvidersParams = {
   lat?: number;
   lng?: number;
   sw_lat?: number;
@@ -213,6 +213,6 @@ export interface GetNearbyProvidersParams {
   languages?: string;
   service_location?: string;
   search?: string;
-}
+};
 
 export type GetNearbyProvidersResponse = DataEnvelope<NearbyProvider[]>;

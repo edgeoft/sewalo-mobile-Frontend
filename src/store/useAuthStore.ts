@@ -1,5 +1,6 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { queryClient } from '@/api/client/query/queryClient';
+import { isApiError } from '@/api/client/query/errorHandler';
 import { getProfileAction } from '@/api/services/auth/actions';
 import { UserProfile, USER_ROLES, UserRole } from '@/types';
 import { create } from 'zustand';
@@ -99,10 +100,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error: unknown) {
       console.warn('[AuthStore] Initialization session verification failed:', error);
       // Clean up session only if token is invalid or expired (401/403)
-      const status =
-        typeof error === 'object' && error !== null && 'status' in error
-          ? (error as { status: unknown }).status
-          : undefined;
+      const status = isApiError(error) ? error.status : undefined;
       const isAuthError = status === 401 || status === 403;
       if (isAuthError && internalClient.tokenManager) {
         await internalClient.tokenManager.clearTokens();

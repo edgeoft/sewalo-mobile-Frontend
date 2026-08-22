@@ -1,7 +1,8 @@
 import type { TFunction } from 'i18next';
 import { AVAILABILITY_TYPES, WORKING_DAYS_OPTIONS } from '@/constants/availability';
 import type { UserProfile } from '@/types';
-import { formatTime } from '@/utils/time';
+import { formatTime, convertTimeTo24h } from '@/utils/time';
+import { toStringArray } from '@/utils/text';
 
 export type ProviderAvailabilityInfo = Partial<
   Pick<UserProfile, 'availability' | 'availability_days' | 'start_time' | 'end_time'>
@@ -85,23 +86,10 @@ export const parseWorkingHoursFromText = (
   const matches = text.match(/(\d{1,2}:\d{2}\s*(?:AM|PM)?)\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM)?)/i);
   if (!matches) return { startTime: null, endTime: null };
 
-  const convertTo24 = (timeStr: string): string | null => {
-    const trimmed = timeStr.trim();
-    const ampmMatch = trimmed.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (ampmMatch) {
-      let h = parseInt(ampmMatch[1], 10);
-      const m = ampmMatch[2];
-      const period = ampmMatch[3].toUpperCase();
-      if (period === 'PM' && h < 12) h += 12;
-      if (period === 'AM' && h === 12) h = 0;
-      return `${String(h).padStart(2, '0')}:${m}`;
-    }
-    const h24Match = trimmed.match(/^(\d{1,2}):(\d{2})$/);
-    if (h24Match) {
-      return `${String(parseInt(h24Match[1], 10)).padStart(2, '0')}:${h24Match[2]}`;
-    }
-    return null;
-  };
+  // Input is guaranteed by the regex above to be a valid HH:MM( AM/PM)? string.
+  const convertTo24 = (timeStr: string): string =>
+    // convertTimeTo24h returns "HH:MM:00"; this API's shape needs "HH:MM".
+    convertTimeTo24h(timeStr.trim()).split(':').slice(0, 2).join(':');
 
   return {
     startTime: convertTo24(matches[1]),
@@ -124,13 +112,8 @@ export const getSelectedDayIndexes = (provider: ProviderAvailabilityInfo | null 
   if (!provider) return ALL_DAY_INDEXES;
 
   if (provider.availability_days) {
-    const rawDaysList = Array.isArray(provider.availability_days)
-      ? provider.availability_days
-      : typeof provider.availability_days === 'string'
-        ? (provider.availability_days as string).split(',')
-        : [];
-
-    const days = rawDaysList
+    // Wire format may be a CSV string or an array — normalized once here.
+    const days = toStringArray(provider.availability_days)
       .map((value) =>
         value
           .replace(/\[|\]|"/g, '')
