@@ -135,5 +135,11 @@
   "maxRedeemPoints": "You can only redeem up to {{maxPoints}} points for this invoice.",
   "date": "Date",
   "time": "Time",
-  "price": "Price"
+  "price": "Price",
+  "esewaPayment": "eSewa Payment",
+  "paymentFailed": "Payment failed. Please try again.",
+  "paymentCancelled": "Payment was cancelled.",
+  "cancelPaymentTitle": "Cancel Payment",
+  "cancelPaymentConfirm": "Are you sure you want to cancel this payment?",
+  "failedToOpenPayment": "Failed to open payment gateway."
 }

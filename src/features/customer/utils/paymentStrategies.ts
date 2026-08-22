@@ -1,11 +1,12 @@
-import { Platform, Linking } from 'react-native';
-import { PAYMENT_METHODS, type MakePaymentResponse, type PaymentMethod } from '@/types';
+import { Platform } from 'react-native';
+import { PAYMENT_METHODS, type MakePaymentResponse, type PaymentMethod, type EsewaPaymentDetails } from '@/types';
 import type { SnackbarConfig } from '@/components/ui/Snackbar';
 
 export interface PaymentHandlerParams {
   response: MakePaymentResponse;
   showSnackbar: (config: SnackbarConfig) => void;
   t: (key: string) => string;
+  onInitiateEsewa?: (payment: EsewaPaymentDetails) => void;
 }
 
 export type PaymentHandler = (params: PaymentHandlerParams) => void | Promise<void>;
@@ -14,10 +15,16 @@ const handleCashPayment = ({ showSnackbar, t }: PaymentHandlerParams) => {
   showSnackbar({ message: t('customer.paymentCompleted'), type: 'success' });
 };
 
-const handleEsewaPayment = ({ response, showSnackbar, t }: PaymentHandlerParams) => {
+const handleEsewaPayment = ({ response, showSnackbar, t, onInitiateEsewa }: PaymentHandlerParams) => {
   if (response.type !== PAYMENT_METHODS.Esewa) return;
   const { payment } = response;
-  const fields = {
+
+  if (onInitiateEsewa) {
+    onInitiateEsewa(payment);
+    return;
+  }
+
+  const fields: Record<string, string> = {
     amount: payment.amount.toString(),
     tax_amount: payment.tax_amount.toString(),
     total_amount: payment.total_amount.toString(),
@@ -31,7 +38,7 @@ const handleEsewaPayment = ({ response, showSnackbar, t }: PaymentHandlerParams)
     signature: payment.signature,
   };
 
-  if (Platform.OS === 'web') {
+  if (Platform.OS === 'web' && typeof document !== 'undefined') {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = payment.api_endpoint;
@@ -45,13 +52,9 @@ const handleEsewaPayment = ({ response, showSnackbar, t }: PaymentHandlerParams)
     document.body.appendChild(form);
     form.submit();
   } else {
-    const queryParams = Object.entries(fields)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-      .join('&');
-    const paymentUrl = `${payment.api_endpoint}?${queryParams}`;
-    Linking.openURL(paymentUrl).catch((err) => {
-      console.error('Failed to open payment URL', err);
-      showSnackbar({ message: t('customer.failedToOpenPayment') || 'Failed to redirect to payment', type: 'error' });
+    showSnackbar({
+      message: t('customer.failedToOpenPayment'),
+      type: 'error',
     });
   }
 };
@@ -76,6 +79,7 @@ export const PaymentFactory = {
       response: MakePaymentResponse,
       showSnackbar: (config: SnackbarConfig) => void,
       t: (key: string) => string,
-    ) => processPaymentResponse(type, { response, showSnackbar, t }),
+      onInitiateEsewa?: (payment: EsewaPaymentDetails) => void,
+    ) => processPaymentResponse(type, { response, showSnackbar, t, onInitiateEsewa }),
   }),
 };

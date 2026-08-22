@@ -7,13 +7,16 @@ import { useTranslation } from 'react-i18next';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import type { Booking, PaymentMethod, MakePaymentResponse } from '@/types';
+import type { Booking, PaymentMethod, MakePaymentResponse, EsewaPaymentDetails } from '@/types';
 import { BOOKING_STATUSES } from '@/types';
 import RadialStepper from '@/components/common/RadialStepper';
 import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyCard';
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
+import EsewaPaymentModal from '../components/EsewaPaymentModal';
 import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { getImageUrl } from '@/utils/image';
@@ -31,11 +34,14 @@ function SectionDivider() {
 export default function BookingDetailsScreen({ booking }: BookingDetailsScreenProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [loyaltyPoints, setLoyaltyPoints] = useState<string>('');
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
+  const [isEsewaModalVisible, setIsEsewaModalVisible] = useState(false);
+  const [esewaPaymentDetails, setEsewaPaymentDetails] = useState<EsewaPaymentDetails | null>(null);
 
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
@@ -134,10 +140,40 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
       { bookingId: booking.id, payload },
       {
         onSuccess: (response: MakePaymentResponse) => {
-          PaymentFactory.get(response.type).process(response, showSnackbar, t);
+          PaymentFactory.get(response.type).process(response, showSnackbar, t, (payment) => {
+            setEsewaPaymentDetails(payment);
+            setIsEsewaModalVisible(true);
+          });
         },
       },
     );
+  };
+
+  const handleEsewaSuccess = () => {
+    setIsEsewaModalVisible(false);
+    setEsewaPaymentDetails(null);
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(booking.id) });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.BASE });
+    showSnackbar({ message: t('customer.paymentCompleted', 'Payment completed successfully!'), type: 'success' });
+  };
+
+  const handleEsewaFailure = (errorMsg?: string) => {
+    setIsEsewaModalVisible(false);
+    setEsewaPaymentDetails(null);
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(booking.id) });
+    showSnackbar({
+      message: errorMsg || t('customer.paymentFailed', 'Payment failed. Please try again.'),
+      type: 'error',
+    });
+  };
+
+  const handleEsewaClose = () => {
+    setIsEsewaModalVisible(false);
+    setEsewaPaymentDetails(null);
+    showSnackbar({
+      message: t('customer.paymentCancelled', 'Payment was cancelled.'),
+      type: 'info',
+    });
   };
 
   const handleDownloadInvoice = () => {
@@ -556,6 +592,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         providerId={booking.provider?.id || ''}
         providerName={providerName}
         serviceName={serviceName}
+      />
+
+      <EsewaPaymentModal
+        visible={isEsewaModalVisible}
+        paymentDetails={esewaPaymentDetails}
+        onSuccess={handleEsewaSuccess}
+        onFailure={handleEsewaFailure}
+        onClose={handleEsewaClose}
       />
     </View>
   );
