@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { ENV } from '@/constants/env';
 import { FEATURE_FLAGS } from '@/constants/featureFlags';
-import type { NearbyServicesMapProps } from './OSMNearbyServicesMap';
+import type { NearbyServicesMapProps } from './types';
 
 const GoogleNearbyServicesMap = lazy(() => import('./GoogleNearbyServicesMap'));
 const OSMNearbyServicesMap = lazy(() => import('./OSMNearbyServicesMap'));
