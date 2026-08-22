@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, G, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { USER_ROLES } from '@/types';
@@ -113,7 +114,7 @@ export default function OnboardingIllustration({ role }: OnboardingIllustrationP
           </LinearGradient>
           <LinearGradient id="primaryGradP" x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0%" stopColor="#6366f1" />
-            <Stop offset="100%" stopColor="#485aff" />
+            <Stop offset="100%" stopColor={THEME_COLORS.primary} />
           </LinearGradient>
           <LinearGradient id="accentGradP" x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0%" stopColor="#ff8a8a" />

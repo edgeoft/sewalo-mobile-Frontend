@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Modal, View, Text, Pressable, ActivityIndicator, Platform, StyleSheet, Alert } from 'react-native';
 import { WebView, type WebViewNavigation } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
@@ -222,7 +223,7 @@ ${formInputs}
         {/* Progress Bar / Loader */}
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#485aff" />
+            <ActivityIndicator size="small" color={THEME_COLORS.primary} />
             <Text style={styles.loadingText}>{t('common.loading', 'Loading payment gateway...')}</Text>
           </View>
         )}
@@ -243,7 +244,7 @@ ${formInputs}
             onLoadEnd={() => setIsLoading(false)}
             renderLoading={() => (
               <View style={styles.webViewLoader}>
-                <ActivityIndicator size="large" color="#485aff" />
+                <ActivityIndicator size="large" color={THEME_COLORS.primary} />
               </View>
             )}
             style={styles.webView}
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#485aff',
+    color: THEME_COLORS.primary,
     marginTop: 1,
   },
   closeButton: {

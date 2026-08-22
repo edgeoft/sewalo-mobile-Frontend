@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -247,7 +248,12 @@ export default function MapServicesScreen() {
               selectedCategorySlug ? 'bg-primary border-primary' : 'bg-white border-gray-200'
             }`}
           >
-            <Feather name="grid" size={14} color={selectedCategorySlug ? '#ffffff' : '#485aff'} accessible={false} />
+            <Feather
+              name="grid"
+              size={14}
+              color={selectedCategorySlug ? '#ffffff' : THEME_COLORS.primary}
+              accessible={false}
+            />
             <Text
               className={`text-xs font-sans-bold ${selectedCategorySlug ? 'text-white' : 'text-gray-800'}`}
               numberOfLines={1}
@@ -274,7 +280,7 @@ export default function MapServicesScreen() {
             <Feather
               name="sliders"
               size={14}
-              color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'}
+              color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
               accessible={false}
             />
             {activeFiltersCount > 0 && (
@@ -292,7 +298,7 @@ export default function MapServicesScreen() {
           accessibilityLabel={t('services.listView')}
           className="h-10 w-10 rounded-lg border border-gray-200 bg-white items-center justify-center active:opacity-85"
         >
-          <Feather name="list" size={15} color="#485aff" accessible={false} />
+          <Feather name="list" size={15} color={THEME_COLORS.primary} accessible={false} />
         </Pressable>
       </View>
 
@@ -351,7 +357,7 @@ export default function MapServicesScreen() {
               height: 44,
               borderRadius: 22,
               borderWidth: 2,
-              borderColor: '#485aff',
+              borderColor: THEME_COLORS.primary,
               padding: 1.5,
               marginRight: 12,
             }}
@@ -366,7 +372,7 @@ export default function MapServicesScreen() {
 
           <View className="flex-1" style={{ minWidth: 0 }}>
             <View className="flex-row items-center" style={{ gap: 5 }}>
-              <Feather name="user" size={11} color="#485aff" />
+              <Feather name="user" size={11} color={THEME_COLORS.primary} />
               <Text
                 className="text-[13px] font-sans-extrabold text-gray-900"
                 numberOfLines={1}
@@ -402,7 +408,7 @@ export default function MapServicesScreen() {
               width: 30,
               height: 30,
               borderRadius: 15,
-              backgroundColor: '#485aff',
+              backgroundColor: THEME_COLORS.primary,
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 6,
@@ -454,14 +460,14 @@ export default function MapServicesScreen() {
                 }`}
               >
                 <View className="flex-row items-center gap-2">
-                  <Feather name="grid" size={16} color={!selectedCategorySlug ? '#485aff' : '#64748b'} />
+                  <Feather name="grid" size={16} color={!selectedCategorySlug ? THEME_COLORS.primary : '#64748b'} />
                   <Text
                     className={`text-sm font-sans-bold ${!selectedCategorySlug ? 'text-primary' : 'text-gray-800'}`}
                   >
                     {t('common.all')}
                   </Text>
                 </View>
-                {!selectedCategorySlug && <Feather name="check" size={16} color="#485aff" />}
+                {!selectedCategorySlug && <Feather name="check" size={16} color={THEME_COLORS.primary} />}
               </Pressable>
 
               {/* Dynamic Categories */}
@@ -482,7 +488,7 @@ export default function MapServicesScreen() {
                     <Text className={`text-sm font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-800'}`}>
                       {cat.name}
                     </Text>
-                    {isSelected && <Feather name="check" size={16} color="#485aff" />}
+                    {isSelected && <Feather name="check" size={16} color={THEME_COLORS.primary} />}
                   </Pressable>
                 );
               })}

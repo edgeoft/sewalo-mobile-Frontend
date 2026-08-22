@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -118,7 +119,7 @@ export default function NotificationsScreen() {
               accessibilityLabel="Mark all as read"
               className="flex-row items-center rounded-lg bg-primary/10 px-3.5 py-2 active:opacity-80"
             >
-              <Feather name="check-square" size={14} color="#485aff" accessible={false} />
+              <Feather name="check-square" size={14} color={THEME_COLORS.primary} accessible={false} />
               <Text className="text-xs font-sans-bold text-primary ml-1.5">{t('notifications.markAllRead')}</Text>
             </Pressable>
           )}

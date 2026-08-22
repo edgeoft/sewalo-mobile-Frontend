@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -59,7 +60,7 @@ export default function GettingStartedScreen() {
       label={currentStep.label}
       subtitle={currentStep.subtitle}
       iconName={currentStep.icon || 'user'}
-      progressColor="#485aff"
+      progressColor={THEME_COLORS.primary}
       bgColor="#ffffff"
     />
   ) : undefined;
@@ -87,7 +88,7 @@ export default function GettingStartedScreen() {
 
                   {/* Estimate time pill */}
                   <View className="bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-full flex-row items-center flex-shrink-0">
-                    <Feather name="clock" size={12} color="#485aff" />
+                    <Feather name="clock" size={12} color={THEME_COLORS.primary} />
                     <Text className="text-[10px] font-sans-bold text-primary ml-1">
                       {role === USER_ROLES.Provider
                         ? t('onboarding.takesProviderTime')
@@ -217,7 +218,7 @@ export default function GettingStartedScreen() {
       {loading && (
         <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
           <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-semibold text-gray-800 mt-3">{t('onboarding.savingProgress')}</Text>
           </View>
         </View>

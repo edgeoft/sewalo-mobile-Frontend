@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Switch, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -100,7 +101,7 @@ export default function PrivacySettingsScreen() {
         value={value}
         onValueChange={onValueChange}
         trackColor={{ false: '#cbd5e1', true: '#a5b4fc' }}
-        thumbColor={value ? '#485aff' : '#f4f4f5'}
+        thumbColor={value ? THEME_COLORS.primary : '#f4f4f5'}
       />
     </View>
   );

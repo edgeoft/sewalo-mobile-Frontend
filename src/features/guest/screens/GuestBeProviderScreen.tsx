@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -46,7 +47,7 @@ export default function GuestBeProviderScreen() {
   const benefits = [
     {
       icon: 'briefcase' as const,
-      color: '#485aff',
+      color: THEME_COLORS.primary,
       title: t('guest.beYourOwnBoss'),
       description: t('guest.beYourOwnBossDesc'),
     },

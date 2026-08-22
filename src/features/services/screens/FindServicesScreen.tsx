@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter, useSegments, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Pressable, Text, View, FlatList } from 'react-native';
@@ -228,7 +229,12 @@ export default function FindServicesScreen() {
             activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
           }`}
         >
-          <Feather name="sliders" size={16} color={activeFiltersCount > 0 ? '#ffffff' : '#485aff'} accessible={false} />
+          <Feather
+            name="sliders"
+            size={16}
+            color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
+            accessible={false}
+          />
           <Text className={`text-xs font-sans-bold ${activeFiltersCount > 0 ? 'text-white' : 'text-gray-800'}`}>
             {t('services.filterTitle')}
           </Text>
@@ -245,7 +251,7 @@ export default function FindServicesScreen() {
           accessibilityLabel={t('services.mapView')}
           className="flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border border-gray-200 bg-white active:opacity-85"
         >
-          <Feather name="map" size={16} color="#485aff" accessible={false} />
+          <Feather name="map" size={16} color={THEME_COLORS.primary} accessible={false} />
           <Text className="text-xs font-sans-bold text-gray-800">{t('services.mapView')}</Text>
         </Pressable>
       </View>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Image, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +58,7 @@ export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: Re
             accessibilityRole="button"
             className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-indigo-50"
           >
-            <Feather name="edit-2" size={13} color="#485aff" accessible={false} />
+            <Feather name="edit-2" size={13} color={THEME_COLORS.primary} accessible={false} />
             <Text className="text-xs font-sans-semibold text-primary ml-1.5">{t('customer.edit')}</Text>
           </Pressable>
           <Pressable

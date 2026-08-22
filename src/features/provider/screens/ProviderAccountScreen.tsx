@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -89,7 +90,7 @@ export default function ProviderAccountScreen() {
       {isSwitching && (
         <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
           <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Switching profile...</Text>
           </View>
         </View>

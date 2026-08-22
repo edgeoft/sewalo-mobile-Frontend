@@ -1,4 +1,5 @@
 import { memo, ReactNode } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { RefreshControl, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
 
 interface ContentLayoutProps {
@@ -37,7 +38,12 @@ function ContentLayout({
         keyboardShouldPersistTaps="handled"
         refreshControl={
           onRefresh ? (
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#485aff" colors={['#485aff']} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={THEME_COLORS.primary}
+              colors={[THEME_COLORS.primary]}
+            />
           ) : undefined
         }
       >

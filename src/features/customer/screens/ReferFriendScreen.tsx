@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Share, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -107,7 +108,7 @@ export default function ReferFriendScreen() {
           <ErrorState onRetry={refetchAll} className="my-4" />
         ) : isLoading ? (
           <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
           </View>
         ) : (
           <>
@@ -141,7 +142,11 @@ export default function ReferFriendScreen() {
                   variant={copied ? 'outline' : 'primary'}
                   className="flex-1 h-11"
                   leftIcon={
-                    <Feather name={copied ? 'check' : 'copy'} size={14} color={copied ? '#485aff' : '#ffffff'} />
+                    <Feather
+                      name={copied ? 'check' : 'copy'}
+                      size={14}
+                      color={copied ? THEME_COLORS.primary : '#ffffff'}
+                    />
                   }
                 />
                 <Button
@@ -176,7 +181,7 @@ export default function ReferFriendScreen() {
             <View className="gap-y-4 mb-5">
               <View className="flex-row items-start">
                 <View className="h-8 w-8 rounded-full bg-primary/10 items-center justify-center mr-3 mt-0.5">
-                  <Feather name="send" size={14} color="#485aff" />
+                  <Feather name="send" size={14} color={THEME_COLORS.primary} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.shareYourLink')}</Text>
@@ -188,7 +193,7 @@ export default function ReferFriendScreen() {
 
               <View className="flex-row items-start">
                 <View className="h-8 w-8 rounded-full bg-primary/10 items-center justify-center mr-3 mt-0.5">
-                  <Feather name="user-plus" size={14} color="#485aff" />
+                  <Feather name="user-plus" size={14} color={THEME_COLORS.primary} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.theySignUp')}</Text>
@@ -200,7 +205,7 @@ export default function ReferFriendScreen() {
 
               <View className="flex-row items-start">
                 <View className="h-8 w-8 rounded-full bg-primary/10 items-center justify-center mr-3 mt-0.5">
-                  <Feather name="award" size={14} color="#485aff" />
+                  <Feather name="award" size={14} color={THEME_COLORS.primary} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-xs font-sans-bold text-gray-900 leading-4">{t('customer.youBothEarn')}</Text>
@@ -215,17 +220,17 @@ export default function ReferFriendScreen() {
             <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('customer.benefits')}</Text>
             <View className="gap-y-3 mb-5">
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
-                <Feather name="users" size={16} color="#485aff" />
+                <Feather name="users" size={16} color={THEME_COLORS.primary} />
                 <Text className="text-xs font-sans-medium text-gray-700 ml-3">{t('customer.benefitUnlimited')}</Text>
               </View>
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
-                <Feather name="zap" size={16} color="#485aff" />
+                <Feather name="zap" size={16} color={THEME_COLORS.primary} />
                 <Text className="text-xs font-sans-medium text-gray-700 ml-3">
                   {t('customer.benefitInstantRewards')}
                 </Text>
               </View>
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3.5">
-                <Feather name="clock" size={16} color="#485aff" />
+                <Feather name="clock" size={16} color={THEME_COLORS.primary} />
                 <Text className="text-xs font-sans-medium text-gray-700 ml-3">
                   {t('customer.benefitPointsNeverExpire')}
                 </Text>

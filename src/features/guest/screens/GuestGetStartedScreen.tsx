@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { THEME_COLORS } from '@/constants/colors';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -39,7 +40,7 @@ export default function GuestGetStartedScreen() {
     },
     {
       icon: 'lock' as const,
-      color: '#485aff',
+      color: THEME_COLORS.primary,
       title: t('auth.getStarted.safePayoutsTitle'),
       description: t('auth.getStarted.safePayoutsDesc'),
     },

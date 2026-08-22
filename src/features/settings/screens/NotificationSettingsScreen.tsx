@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Switch } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -45,7 +46,7 @@ export default function NotificationSettingsScreen() {
         value={value}
         onValueChange={onValueChange}
         trackColor={{ false: '#cbd5e1', true: '#a5b4fc' }}
-        thumbColor={value ? '#485aff' : '#f4f4f5'}
+        thumbColor={value ? THEME_COLORS.primary : '#f4f4f5'}
       />
     </View>
   );

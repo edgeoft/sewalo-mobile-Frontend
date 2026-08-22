@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { useTranslation } from 'react-i18next';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text } from 'react-native';
@@ -81,16 +82,17 @@ export default function DynamicProviderDetailRoute() {
         <Header variant="language" showBackButton={true} includeBottomBorder={true} />
         <View className="flex-1 items-center justify-center p-6">
           <View className="h-16 w-16 bg-blue-50 rounded-full items-center justify-center mb-4">
-            <Feather name="user" size={30} color="#485aff" />
+            <Feather name="user" size={30} color={THEME_COLORS.primary} />
           </View>
-          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">Your Provider Profile</Text>
+          <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">
+            {t('common.ownProviderProfileTitle')}
+          </Text>
           <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6 leading-5">
-            You are currently in Customer mode. You cannot browse or book your own services. Switch to Provider mode to
-            view and manage your profile.
+            {t('common.ownProviderProfileDesc')}
           </Text>
           <View className="w-full max-w-[240px] gap-3">
             <Button
-              title="Switch to Provider"
+              title={t('common.switchToProvider')}
               variant="primary"
               loading={isSwitching}
               onPress={() => handleSwitchRole(USER_ROLES.Provider)}

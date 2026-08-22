@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { THEME_COLORS } from '@/constants/colors';
 import { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -72,8 +73,8 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
   },
   cardSelected: {
-    borderColor: '#485aff',
-    shadowColor: '#485aff',
+    borderColor: THEME_COLORS.primary,
+    shadowColor: THEME_COLORS.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   cardTitleSelected: {
-    color: '#485aff',
+    color: THEME_COLORS.primary,
   },
   cardSubtitle: {
     fontSize: 13,
@@ -132,12 +133,12 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   radioSelected: {
-    borderColor: '#485aff',
+    borderColor: THEME_COLORS.primary,
   },
   radioDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#485aff',
+    backgroundColor: THEME_COLORS.primary,
   },
 });

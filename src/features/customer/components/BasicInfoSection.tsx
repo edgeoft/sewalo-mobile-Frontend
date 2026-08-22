@@ -72,7 +72,7 @@ export default function BasicInfoSection({
     <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
       <View className="mb-3 flex-row items-center gap-x-2.5">
         <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center">
-          <Feather name="user" size={16} color="#485aff" />
+          <Feather name="user" size={16} color={THEME_COLORS.primary} />
         </View>
         <View className="flex-1">
           <Text className="text-base font-sans-bold text-gray-950">{t('components.basicInfo')}</Text>

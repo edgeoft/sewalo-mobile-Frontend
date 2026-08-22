@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Pressable, Text, View, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -129,7 +130,7 @@ export default function ProviderEarningsScreen() {
             {/* Dashboard Financial Summary Cards */}
             {isSummaryLoading ? (
               <View className="items-center justify-center py-12">
-                <ActivityIndicator size="large" color="#485aff" />
+                <ActivityIndicator size="large" color={THEME_COLORS.primary} />
               </View>
             ) : (
               <View className="gap-3.5 mb-4">
@@ -292,7 +293,7 @@ export default function ProviderEarningsScreen() {
             <View className="flex-1">
               {isCommissionsLoading ? (
                 <View className="flex-1 items-center justify-center py-12">
-                  <ActivityIndicator size="large" color="#485aff" />
+                  <ActivityIndicator size="large" color={THEME_COLORS.primary} />
                 </View>
               ) : activeTab === COMMISSION_TYPE.MyEarnings ? (
                 <PaginationList

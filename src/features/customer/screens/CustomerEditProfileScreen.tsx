@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
@@ -145,7 +146,7 @@ export default function CustomerEditProfileScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#485aff" />
+          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
         <ContentLayout

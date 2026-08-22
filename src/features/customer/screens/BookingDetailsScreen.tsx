@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Image, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -264,7 +265,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
-                <Feather name="user" size={20} color="#485aff" />
+                <Feather name="user" size={20} color={THEME_COLORS.primary} />
               </View>
             )}
             <View className="ml-3 flex-1">
@@ -339,7 +340,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Booking Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="calendar" size={15} color="#485aff" />
+                  <Feather name="calendar" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -373,7 +374,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Service Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="briefcase" size={15} color="#485aff" />
+                  <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -401,7 +402,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Price Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="tag" size={15} color="#485aff" />
+                  <Feather name="tag" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.priceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -449,7 +450,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           <>
             <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
               <View className="flex-row items-center mb-4">
-                <Feather name="file-text" size={15} color="#485aff" />
+                <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
                 <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
               </View>
               <View className="gap-y-2.5 mb-4">
@@ -523,7 +524,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
                 >
                   {downloadInvoice.isPending ? (
-                    <ActivityIndicator size="small" color="#485aff" />
+                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
                   ) : (
                     <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                   )}
@@ -537,7 +538,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {isPaymentCompletedOrInitiated && (
           <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
             <View className="flex-row items-center mb-4">
-              <Feather name="file-text" size={15} color="#485aff" />
+              <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
               <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
             </View>
             <View className="gap-y-2.5 mb-4">
@@ -561,7 +562,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
               >
                 {downloadInvoice.isPending ? (
-                  <ActivityIndicator size="small" color="#485aff" />
+                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
                 ) : (
                   <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                 )}

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
@@ -103,7 +104,16 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
         {/* Device 1 (Left - Customer Booking Request Screen) */}
         <G>
           {/* Phone Shell */}
-          <Rect x="30" y="60" width="70" height="130" rx="10" fill="#ffffff" stroke="#485aff" strokeWidth="3" />
+          <Rect
+            x="30"
+            y="60"
+            width="70"
+            height="130"
+            rx="10"
+            fill="#ffffff"
+            stroke={THEME_COLORS.primary}
+            strokeWidth="3"
+          />
           <Rect x="45" y="65" width="40" height="4" rx="2" fill="#cbd5e1" />
           {/* Status bar items */}
           <Circle cx="39" cy="67" r="1.5" fill="#cbd5e1" />
@@ -112,7 +122,7 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
           {/* Booking Card Form */}
           <Rect x="38" y="78" width="54" height="26" rx="4" fill="#e0e7ff" />
           {/* Map line inside card */}
-          <Path d="M 44 91 C 52 86 58 96 70 88" stroke="#485aff" strokeWidth="1.5" fill="none" />
+          <Path d="M 44 91 C 52 86 58 96 70 88" stroke={THEME_COLORS.primary} strokeWidth="1.5" fill="none" />
           <Circle cx="70" cy="88" r="2" fill="#ef4444" />
 
           {/* Details */}
@@ -124,7 +134,7 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
           <Rect x="38" y="137" width="22" height="7" rx="2.5" fill="#10b981" />
 
           {/* Send Booking Request Button */}
-          <Rect x="38" y="154" width="54" height="18" rx="9" fill="#485aff" />
+          <Rect x="38" y="154" width="54" height="18" rx="9" fill={THEME_COLORS.primary} />
           {/* Tiny paper plane logo in button */}
           <Path d="M 61 160 L 69 163 L 61 166 L 63 163 Z" fill="#ffffff" />
         </G>
@@ -152,8 +162,8 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
         {/* Symmetric Flying Paper Airplane centered at (0, 0) */}
         <AnimatedG animatedProps={planeProps}>
           {/* Centered paper plane at (0, 0) */}
-          <Path d="M -16 -8 L 16 0 L -16 8 L -8 0 Z" fill="#485aff" />
-          <Path d="M -8 0 L 0 3 L -8 6 Z" fill="#e0e7ff" stroke="#485aff" strokeWidth="0.5" />
+          <Path d="M -16 -8 L 16 0 L -16 8 L -8 0 Z" fill={THEME_COLORS.primary} />
+          <Path d="M -8 0 L 0 3 L -8 6 Z" fill="#e0e7ff" stroke={THEME_COLORS.primary} strokeWidth="0.5" />
         </AnimatedG>
 
         {/* Success Popup Confirmation on Device 2 */}

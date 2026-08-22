@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -179,7 +180,7 @@ export default function ServiceFormStandout({
                 importantForAccessibility="no"
                 accessibilityElementsHidden
               >
-                <Feather name="plus" size={15} color="#485aff" />
+                <Feather name="plus" size={15} color={THEME_COLORS.primary} />
               </View>
               <Text className="text-[10px] font-sans-semibold text-gray-400">{t('common.addPhoto')}</Text>
             </Pressable>
@@ -205,7 +206,7 @@ export default function ServiceFormStandout({
                 accessibilityRole="button"
                 accessibilityLabel={t('common.remove')}
               >
-                <Feather name="x" size={10} color="#485aff" />
+                <Feather name="x" size={10} color={THEME_COLORS.primary} />
               </Pressable>
             </View>
           ))}
@@ -215,7 +216,7 @@ export default function ServiceFormStandout({
             <View
               className={`form-input-container form-input-container-single w-full ${isTagFocused ? 'form-input-container-focus' : ''}`}
               style={{
-                shadowColor: isTagFocused ? '#485aff' : '#000',
+                shadowColor: isTagFocused ? THEME_COLORS.primary : '#000',
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: isTagFocused ? 0.08 : 0.015,
                 shadowRadius: isTagFocused ? 4 : 2,
@@ -249,7 +250,7 @@ export default function ServiceFormStandout({
                 accessibilityLabel={t('common.addTag')}
                 className="pl-3 active:opacity-70"
               >
-                <Feather name="plus" size={16} color="#485aff" />
+                <Feather name="plus" size={16} color={THEME_COLORS.primary} />
               </Pressable>
             </View>
           ) : (
@@ -258,7 +259,7 @@ export default function ServiceFormStandout({
               accessibilityRole="button"
               className="border border-dashed border-gray-300 bg-gray-50/50 rounded-full px-3 py-1 flex-row items-center active:bg-gray-100"
             >
-              <Feather name="plus" size={11} color="#485aff" className="mr-1" accessible={false} />
+              <Feather name="plus" size={11} color={THEME_COLORS.primary} className="mr-1" accessible={false} />
               <Text className="text-xs font-sans-semibold text-primary">{t('common.addTag')}</Text>
             </Pressable>
           )}

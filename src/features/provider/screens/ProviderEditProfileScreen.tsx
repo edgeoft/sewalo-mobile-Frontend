@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, ActivityIndicator, ScrollView, Pressable, Text } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -243,7 +244,7 @@ export default function ProviderEditProfileScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#485aff" />
+          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
         <ContentLayout
