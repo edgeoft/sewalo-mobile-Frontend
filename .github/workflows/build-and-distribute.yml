@@ -120,15 +120,19 @@ jobs:
 
       # --- Distribute ---
       - name: Upload to Firebase App Distribution
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
+          FIREBASE_TESTERS: ${{ secrets.FIREBASE_TESTERS }}
+          INPUT_RELEASE_GROUP: ${{ inputs.release_group }}
+        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > gcp-key.json
+          echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          GROUPS="${{ secrets.FIREBASE_GROUPS || inputs.release_group || 'internal-testers' }}"
-          EXTRA="--groups $GROUPS"
-          [ -n "${{ secrets.FIREBASE_TESTERS }}" ] && EXTRA="$EXTRA --testers ${{ secrets.FIREBASE_TESTERS }}"
+          TARGET_GROUPS="${FIREBASE_GROUPS:-${INPUT_RELEASE_GROUP:-internal-testers}}"
+          EXTRA="--groups $TARGET_GROUPS"
+          [ -n "$FIREBASE_TESTERS" ] && EXTRA="$EXTRA --testers $FIREBASE_TESTERS"
           pnpm firebase appdistribution:distribute \
             android/app/build/outputs/apk/release/app-release.apk \
             --app "$FIREBASE_APP_ID" $EXTRA \
