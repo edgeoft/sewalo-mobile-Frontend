@@ -1,20 +1,15 @@
-# git-cliff configuration for Sewalo Mobile Frontend
-# Filters out CI, chores, build, test, docs commits.
-# Only includes user-facing Features, Bug Fixes, Performance, and Breaking Changes.
+# git-cliff — Sewalo Mobile release notes
+# Only includes user-facing changes (feat, fix, perf, breaking).
 
 [changelog]
-header = """
-# Changelog
-"""
+header = "# Changelog\n"
 body = """
 {% for group, commits in commits | group_by(attribute="group") %}
-    ### {{ group | upper_first }}
-    {% for commit in commits %}
-        - {{ commit.message | upper_first }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/commit/{{ commit.id }}))
-    {% endfor %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | upper_first }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/commit/{{ commit.id }}))
 {% endfor %}
-"""
-footer = """
+{% endfor %}
 """
 trim = true
 
@@ -27,16 +22,8 @@ commit_parsers = [
   { message = "^fix", group = "🐛 Bug Fixes" },
   { message = "^perf", group = "⚡ Performance" },
   { message = "^.*!", group = "⚠️ Breaking Changes" },
-  # Explicitly skip non-user-facing commits
-  { message = "^ci", skip = true },
-  { message = "^chore", skip = true },
-  { message = "^build", skip = true },
-  { message = "^test", skip = true },
-  { message = "^docs", skip = true },
-  { message = "^refactor", skip = true },
-  { message = "^style", skip = true },
-  { message = "Merge branch", skip = true },
-  { message = "Merge pull request", skip = true },
+  { message = "^(ci|chore|build|test|docs|refactor|style):", skip = true },
+  { message = "^Merge ", skip = true },
 ]
 filter_commits = true
 tag_pattern = "v[0-9]*"

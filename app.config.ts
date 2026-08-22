@@ -1,33 +1,14 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
-import { execSync } from 'child_process';
 import packageJson from './package.json';
-
-/**
- * Calculates monotonic build number based on total git commit count.
- * Safe fallback to 1 if git command is unavailable or fails.
- */
-function getGitCommitCount(): number {
-  try {
-    const stdout = execSync('git rev-list --count HEAD', { stdio: ['ignore', 'pipe', 'ignore'] });
-    const count = parseInt(stdout.toString().trim(), 10);
-    return isNaN(count) || count <= 0 ? 1 : count;
-  } catch {
-    return 1;
-  }
-}
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const env = (process.env.EXPO_PUBLIC_ENV || process.env.APP_ENV || 'dev').toLowerCase();
   const isProd = env === 'prod' || env === 'production';
 
-  const rawBuildNumber = process.env.BUILD_NUMBER ? parseInt(process.env.BUILD_NUMBER, 10) : getGitCommitCount();
-  const buildNumber = isNaN(rawBuildNumber) || rawBuildNumber <= 0 ? 1 : rawBuildNumber;
-
+  const buildNumber = Math.max(parseInt(process.env.BUILD_NUMBER || '1', 10) || 1, 1);
   const baseVersion = process.env.APP_VERSION || packageJson.version || '0.1.0';
 
-  // Environment-to-Version Rule:
-  // dev/staging -> vX.Y.Z-beta.BUILD_NUMBER (e.g. 0.1.0-beta.12)
-  // prod/production -> Clean proper release number (e.g. 1.0.0)
+  // dev/staging → vX.Y.Z-beta.BUILD_NUMBER | prod → vX.Y.Z
   const dynamicVersion = isProd ? baseVersion : `${baseVersion}-beta.${buildNumber}`;
 
   return {

@@ -10,10 +10,13 @@ import { ENV } from '@/constants/env';
  */
 export class FirebaseDistributionProvider implements IDistributionService {
   getVersionInfo(): DistributionVersionInfo {
-    const version = Constants.expoConfig?.version || Application.nativeApplicationVersion || '0.1.0';
-    const buildNumber =
-      Application.nativeBuildVersion ||
-      String(Constants.expoConfig?.android?.versionCode || Constants.expoConfig?.extra?.buildNumber || 1);
+    const version = Constants.expoConfig?.version || Application.nativeApplicationVersion || '0.3.0';
+    const buildNumber = String(
+      Constants.expoConfig?.extra?.buildNumber ||
+        Constants.expoConfig?.android?.versionCode ||
+        Application.nativeBuildVersion ||
+        1,
+    );
     const envVariant =
       (Constants.expoConfig?.extra?.envVariant as string) ||
       (ENV.APP_ENV === 'prod' || ENV.APP_ENV === 'production' ? 'production' : 'beta');
@@ -45,7 +48,7 @@ export class FirebaseDistributionProvider implements IDistributionService {
       }
 
       // 2. Fallback check against GitHub Releases API
-      const currentVersion = Constants.expoConfig?.version || Application.nativeApplicationVersion || '0.1.0';
+      const currentVersion = Constants.expoConfig?.version || Application.nativeApplicationVersion || '0.3.0';
       const response = await fetch('https://api.github.com/repos/Edgeoft/sewalo-mobile-Frontend/releases/latest', {
         headers: { Accept: 'application/vnd.github.v3+json' },
       });

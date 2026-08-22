@@ -1,13 +1,12 @@
-name: Android Build & Firebase App Distribution
+name: Build & Distribute
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
     inputs:
       release_group:
-        description: 'Firebase App Distribution Release Group'
+        description: 'Firebase App Distribution release group'
         required: false
         default: ''
 
@@ -23,13 +22,13 @@ env:
 
 jobs:
   build-and-distribute:
-    name: Build APK & Distribute via Firebase
+    name: Build APK & Distribute
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -37,7 +36,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.2.0
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
@@ -45,129 +44,96 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup Java 17 JDK
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Gradle with Caching
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: false
 
-      - name: Decode google-services.json
-        env:
-          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
-        if: ${{ env.GOOGLE_SERVICES_JSON_BASE64 != '' }}
+      # --- Secrets ---
+      - name: Decode secrets
         run: |
-          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > android/app/google-services.json
+          [ -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ] && echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > android/app/google-services.json
+          [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ] && echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.jks
+          [ -n "${{ secrets.ENV_FILE_BASE64 }}" ] && echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 -d > .env
 
-      - name: Configure Android Signing Keystore
+      # --- Version (single source of truth) ---
+      - name: Calculate version
+        id: version
+        run: node scripts/bump-version.js --write --ci
+
+      - name: Build Android APK
         env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
-        run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.jks
-
-      - name: Configure .env Environment Variables
-        env:
-          ENV_FILE_BASE64: ${{ secrets.ENV_FILE_BASE64 }}
-          EXPO_PUBLIC_ENV: ${{ secrets.EXPO_PUBLIC_ENV || 'dev' }}
-          EXPO_PUBLIC_API_BASE_URL: ${{ secrets.EXPO_PUBLIC_API_BASE_URL }}
-          EXPO_PUBLIC_S3_BASE_URL: ${{ secrets.EXPO_PUBLIC_S3_BASE_URL }}
-          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-          EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ secrets.EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-          EXPO_PUBLIC_POSTHOG_HOST: ${{ secrets.EXPO_PUBLIC_POSTHOG_HOST }}
-        run: |
-          if [ -n "$ENV_FILE_BASE64" ]; then
-            echo "$ENV_FILE_BASE64" | base64 -d > .env
-          else
-            echo "EXPO_PUBLIC_ENV=$EXPO_PUBLIC_ENV" > .env
-            [ -n "$EXPO_PUBLIC_API_BASE_URL" ] && echo "EXPO_PUBLIC_API_BASE_URL=$EXPO_PUBLIC_API_BASE_URL" >> .env
-            [ -n "$EXPO_PUBLIC_S3_BASE_URL" ] && echo "EXPO_PUBLIC_S3_BASE_URL=$EXPO_PUBLIC_S3_BASE_URL" >> .env
-            [ -n "$GOOGLE_MAPS_API_KEY" ] && echo "GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY" >> .env
-            [ -n "$EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN" ] && echo "EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN=$EXPO_PUBLIC_POSTHOG_PROJECT_TOKEN" >> .env
-            [ -n "$POSTHOG_API_KEY" ] && echo "POSTHOG_API_KEY=$POSTHOG_API_KEY" >> .env
-            [ -n "$EXPO_PUBLIC_POSTHOG_HOST" ] && echo "EXPO_PUBLIC_POSTHOG_HOST=$EXPO_PUBLIC_POSTHOG_HOST" >> .env
-          fi
-
-      - name: Calculate and Apply Automated SemVer Version
-        run: |
-          pnpm version:bump --write
-
-      - name: Fast Compile Android Release APK
-        env:
-          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"
+          GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC'
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          BUILD_NUMBER: ${{ steps.version.outputs.BUILD_NUMBER }}
         run: |
-          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
-          BUILD_NUM=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.android?.versionCode || 1);")
-          echo "Building APK for Version $VERSION (versionCode: $BUILD_NUM)..."
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a -PversionCode=$BUILD_NUM -PversionName="$VERSION"
+          ./gradlew assembleRelease --no-daemon \
+            -PreactNativeArchitectures=arm64-v8a \
+            -PversionCode=${{ steps.version.outputs.BUILD_NUMBER }} \
+            -PversionName="${{ steps.version.outputs.VERSION }}"
 
-      - name: Generate Automated Release Notes
+      # --- Release notes ---
+      - name: Generate release notes
         run: |
-          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
-          BUILD_NUM=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.android?.versionCode || 1);")
-
-          echo "## Sewalo ${VERSION} (Build #${BUILD_NUM})" > RELEASE_NOTES.md
+          echo "## Sewalo ${{ steps.version.outputs.VERSION }} (Build #${{ steps.version.outputs.BUILD_NUMBER }})" > RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
-          echo "### User Changes:" >> RELEASE_NOTES.md
-
           pnpm git-cliff --unreleased --strip header >> RELEASE_NOTES.md 2>/dev/null || true
-
-          if [ $(wc -l < RELEASE_NOTES.md) -le 4 ]; then
-            git log -n 15 --pretty=format:"- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))" | grep -E "^- (feat|fix|perf)(\(.*\))?:" >> RELEASE_NOTES.md || true
+          # Fallback if git-cliff produces nothing
+          if [ $(wc -l < RELEASE_NOTES.md) -le 3 ]; then
+            echo "### Changes:" >> RELEASE_NOTES.md
+            git log -n 15 --pretty=format:"- %s" | grep -E "^- (feat|fix|perf)(\(.*\))?:" >> RELEASE_NOTES.md || true
           fi
-          echo "" >> RELEASE_NOTES.md
 
-      - name: Create and Push Automated Release Tag
+      # --- Tag & sync version ---
+      - name: Tag and sync version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(npx expo config --json | node -e "const c=JSON.parse(require('fs').readFileSync(0,'utf-8')); console.log(c.version);")
-          BASE_TAG="v${VERSION#v}"
-          TAG_NAME="$BASE_TAG"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          TAG="v${VERSION}"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch --tags --force || true
 
-          if git rev-parse "$TAG_NAME" >/dev/null 2>&1 || git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
-            TAG_NAME="${BASE_TAG}-build${GITHUB_RUN_NUMBER}"
+          # Commit updated package.json
+          if [ -n "$(git status --porcelain package.json)" ]; then
+            git add package.json
+            git commit -m "chore(release): v${VERSION} [skip ci]"
+            git push origin main
           fi
 
-          echo "Creating automated release tag: $TAG_NAME"
-          git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
-          git push origin "$TAG_NAME"
+          # Tag (skip if tag already exists)
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git tag -a "$TAG" -m "Release $TAG"
+            git push origin "$TAG"
+          fi
 
-      - name: Upload APK to Firebase App Distribution
+      # --- Distribute ---
+      - name: Upload to Firebase App Distribution
+        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         env:
-          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_GROUPS: ${{ secrets.FIREBASE_GROUPS }}
-          FIREBASE_TESTERS: ${{ secrets.FIREBASE_TESTERS }}
-          INPUT_RELEASE_GROUP: ${{ inputs.release_group }}
-        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         run: |
-          echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > gcp-key.json
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > gcp-key.json
           export GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
-          TARGET_GROUPS="${FIREBASE_GROUPS:-${INPUT_RELEASE_GROUP}}"
-          TARGET_GROUPS="${TARGET_GROUPS:-internal-testers}"
-          EXTRA_FLAGS="--groups $TARGET_GROUPS"
-          if [ -n "$FIREBASE_TESTERS" ]; then
-            EXTRA_FLAGS="$EXTRA_FLAGS --testers $FIREBASE_TESTERS"
-          fi
-          echo "Distributing APK to group: $TARGET_GROUPS"
-          pnpm firebase appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk --app "$FIREBASE_APP_ID" $EXTRA_FLAGS --release-notes-file RELEASE_NOTES.md
+          GROUPS="${{ secrets.FIREBASE_GROUPS || inputs.release_group || 'internal-testers' }}"
+          EXTRA="--groups $GROUPS"
+          [ -n "${{ secrets.FIREBASE_TESTERS }}" ] && EXTRA="$EXTRA --testers ${{ secrets.FIREBASE_TESTERS }}"
+          pnpm firebase appdistribution:distribute \
+            android/app/build/outputs/apk/release/app-release.apk \
+            --app "$FIREBASE_APP_ID" $EXTRA \
+            --release-notes-file RELEASE_NOTES.md
 
-      - name: Security Cleanup of Credentials
+      - name: Cleanup
         if: always()
-        run: |
-          rm -f .env gcp-key.json android/app/release.jks android/app/google-services.json RELEASE_NOTES.md
+        run: rm -f .env gcp-key.json android/app/release.jks android/app/google-services.json RELEASE_NOTES.md
