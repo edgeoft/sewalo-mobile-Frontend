@@ -61,7 +61,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const invoice = booking.invoice;
   const basePriceValue = invoice ? Number(invoice.sub_total) || 0 : 0;
   const platformFeeValue = 0;
-  const vatValue = invoice ? Number(invoice.vat) || 0 : 0;
 
   let couponDiscountValue = 0;
   if (selectedCoupon) {
@@ -173,7 +172,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const descriptionText = booking.service?.description;
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
   const basePrice = invoice?.sub_total ? Number(invoice.sub_total) : 0;
-  const vat = invoice?.vat ? Number(invoice.vat) : 0;
 
   const showDetailsCards =
     booking.status === BOOKING_STATUSES.Pending ||

@@ -52,7 +52,6 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const descriptionText = initialBooking.service?.description;
   const invoiceData = initialBooking.invoice;
   const basePriceValue = invoiceData ? Number(invoiceData.sub_total) || 0 : 0;
-  const vatValue = invoiceData ? Number(invoiceData.vat) || 0 : 0;
   const totalPrice = invoiceData ? Number(invoiceData.total) || 0 : 0;
   const cancelReason = initialBooking.cancellation_reason;
 

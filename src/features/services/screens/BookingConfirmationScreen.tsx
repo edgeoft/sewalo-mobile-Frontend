@@ -44,7 +44,6 @@ export default function BookingConfirmationScreen() {
   const serviceName = booking?.service?.name || '';
 
   const subTotal = invoice?.sub_total ? Number(invoice.sub_total) : 0;
-  const vatAmount = invoice?.vat ? Number(invoice.vat) : 0;
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
 
   const isConfirmed = status !== BOOKING_STATUSES.Pending && status !== BOOKING_STATUSES.Rejected;
