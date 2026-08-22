@@ -54,20 +54,20 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
           title: t('navigation.language'),
           subtitle: t('navigation.language'),
         },
-        {
-          id: 'notification-settings',
-          icon: 'bell',
-          title: t('settings.notificationSettingsTitle'),
-          subtitle: t('navigation.notificationSettingsSubtitle'),
-          route: ROUTES.customer.notificationSettings,
-        },
-        {
-          id: 'privacy-settings',
-          icon: 'shield',
-          title: t('settings.privacySettingsTitle'),
-          subtitle: t('navigation.privacySettingsSubtitle'),
-          route: ROUTES.customer.privacySettings,
-        },
+        // {
+        //   id: 'notification-settings',
+        //   icon: 'bell',
+        //   title: t('settings.notificationSettingsTitle'),
+        //   subtitle: t('navigation.notificationSettingsSubtitle'),
+        //   route: ROUTES.customer.notificationSettings,
+        // },
+        // {
+        //   id: 'privacy-settings',
+        //   icon: 'shield',
+        //   title: t('settings.privacySettingsTitle'),
+        //   subtitle: t('navigation.privacySettingsSubtitle'),
+        //   route: ROUTES.customer.privacySettings,
+        // },
         {
           id: 'change-password',
           icon: 'lock',
@@ -81,13 +81,13 @@ export function getCustomerAccountMenu(t: TFunction, user: UserProfile | null): 
       id: 'support-and-info',
       title: t('navigation.supportAndInfo'),
       items: [
-        {
-          id: 'help-faq',
-          icon: 'help-circle',
-          title: t('settings.helpFaqTitle'),
-          subtitle: t('navigation.helpAndFaqSubtitle'),
-          route: ROUTES.customer.helpFaq,
-        },
+        // {
+        //   id: 'help-faq',
+        //   icon: 'help-circle',
+        //   title: t('settings.helpFaqTitle'),
+        //   subtitle: t('navigation.helpAndFaqSubtitle'),
+        //   route: ROUTES.customer.helpFaq,
+        // },
         {
           id: 'contact-support',
           icon: 'message-circle',
