@@ -6,6 +6,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import SheetContainer from '@/components/ui/SheetContainer';
 import { AVAILABILITY_TYPES, type AvailabilityType } from '@/constants/availability';
+import { HOURS_12 as HOURS, MINUTES_15 as MINUTES, PERIODS } from '@/constants/calendar';
 
 export interface AvailabilityEditorProps {
   workingDays: AvailabilityType | string;
@@ -19,10 +20,6 @@ export interface AvailabilityEditorProps {
   saveButtonTitle?: string;
   loading?: boolean;
 }
-
-const HOURS = Array.from({ length: 12 }, (_, i) => String(i === 0 ? 12 : i).padStart(2, '0'));
-const MINUTES = ['00', '15', '30', '45'];
-const PERIODS = ['AM', 'PM'];
 
 export default function AvailabilityEditor({
   workingDays,

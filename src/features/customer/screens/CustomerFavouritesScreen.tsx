@@ -11,7 +11,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
 import type { FavoriteItem } from '@/types';
-import { FALLBACKS, getImageUrl } from '@/features/auth/utils/image';
+import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 

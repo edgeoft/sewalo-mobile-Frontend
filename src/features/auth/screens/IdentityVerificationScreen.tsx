@@ -15,7 +15,7 @@ import { useVerificationStatus } from '@/hooks/useVerificationStatus';
 import { useUploadFile, useUpdateProfile } from '@/api';
 import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { USER_ROLES, USER_STATUSES } from '@/types';
-import { getImageUrl } from '@/features/auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { useTranslation } from 'react-i18next';

@@ -16,7 +16,7 @@ import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../compo
 import AvailabilitySection from '../components/AvailabilitySection';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { getImageUrl } from '../../auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import type { UpdateProfilePayload } from '@/types';

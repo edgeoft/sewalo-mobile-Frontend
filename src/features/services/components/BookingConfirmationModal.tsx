@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
+import { MONTHS, HOURS_12 as HOURS, MINUTES_15 as MINUTES, PERIODS } from '@/constants/calendar';
 import { ServiceItem } from '@/types';
 import {
   getProviderAvailabilityError,
@@ -53,27 +54,8 @@ interface BookingConfirmationModalProps {
   onConfirm: (details: BookingDetails) => void;
 }
 
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
-const MINUTES = ['00', '15', '30', '45'];
-const PERIODS = ['AM', 'PM'];
-
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 5 }, (_, i) => String(currentYear + i));
-
 export default function BookingConfirmationModal({
   visible,
   onClose,

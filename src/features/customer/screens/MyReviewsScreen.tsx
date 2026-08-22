@@ -13,18 +13,9 @@ import { getSource } from '@/utils/image';
 import RatingModal from '../components/RatingModal';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import StarRating from '@/components/ui/StarRating';
 
 import { formatDate } from '@/utils/time';
-
-function StarDisplay({ rate }: { rate: number }) {
-  return (
-    <View className="flex-row items-center gap-0.5 my-1.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Feather key={star} name="star" size={14} color={star <= rate ? '#f59e0b' : '#cbd5e1'} />
-      ))}
-    </View>
-  );
-}
 
 const cardShadow = {
   shadowColor: '#0f172a',
@@ -63,7 +54,7 @@ function ReviewCard({
         <Text className="text-[10px] font-sans-medium text-gray-400">{formatDate(rating.created_at)}</Text>
       </View>
 
-      <StarDisplay rate={rating.rate} />
+      <StarRating value={rating.rate} readOnly className="flex-row items-center gap-0.5 my-1.5" />
 
       <Text className="text-xs font-sans-regular text-gray-600 leading-5 mt-1">&ldquo;{rating.review}&rdquo;</Text>
 

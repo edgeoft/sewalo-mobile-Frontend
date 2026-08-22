@@ -11,7 +11,7 @@ import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSection';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { getImageUrl } from '../../auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { UserProfile } from '@/types';
 import { USER_ROLES, USER_STATUSES } from '@/constants/roles';
 import { THEME_COLORS } from '@/constants/colors';
-import { getImageUrl } from '../../auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 
 interface AccountProfileCardProps {
   user: UserProfile | null;

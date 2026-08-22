@@ -20,6 +20,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { THEME_COLORS } from '@/constants/colors';
+import { MONTHS } from '@/constants/calendar';
 import LocationSelector from '@/components/ui/LocationSelector';
 
 import { PersonalInfoData } from '@/types';
@@ -34,21 +35,6 @@ interface PersonalInfoStepProps {
   loading?: boolean;
   stepper?: React.ReactNode;
 }
-
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
 
 export default function PersonalInfoStep({
   control,

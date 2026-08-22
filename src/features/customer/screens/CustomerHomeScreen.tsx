@@ -10,8 +10,8 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import DashboardTopBar from '@/components/navigation/DashboardTopBar';
 import { ROUTES } from '@/constants/routes';
 import { useScroll } from '@/hooks/useScroll';
-import type { UserProfile } from '@/types';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { getAvatarUrl } from '@/utils/image';
+import { formatProviderLocation } from '@/utils/location';
 import { getReadTime, cleanDescriptionText } from '@/utils/text';
 
 export default function CustomerHomeScreen() {
@@ -38,26 +38,14 @@ export default function CustomerHomeScreen() {
       const provider = b.provider;
       const service = b.service;
 
-      const getAvatarUri = (avatar: string | null | undefined) => {
-        return getImageUrl(avatar) || FALLBACKS.avatar;
-      };
-
-      const formatLocation = (prov: UserProfile | null | undefined) => {
-        if (!prov) return t('home.nepal');
-        const city = prov.city;
-        const address = prov.address;
-        if (city && address) return `${address}, ${city}`;
-        return city || address || t('home.nepal');
-      };
-
       const bookedPrice = b.invoice?.total ? `Rs. ${parseFloat(b.invoice.total).toFixed(0)}` : t('home.na');
 
       return {
         id: b.id,
-        avatarUri: getAvatarUri(provider?.avatar),
+        avatarUri: getAvatarUrl(provider?.avatar),
         name: provider?.name || t('home.provider'),
         serviceLabel: service?.category?.name || t('home.service'),
-        location: formatLocation(provider),
+        location: formatProviderLocation(provider, t('home.nepal')),
         ordersCompleted: service ? `${service.total_ratings || 0} ${t('home.ordersCompleted')}` : '',
         rating: provider?.average_rating || provider?.avg_rating?.toString() || '0',
         bookedPrice,
