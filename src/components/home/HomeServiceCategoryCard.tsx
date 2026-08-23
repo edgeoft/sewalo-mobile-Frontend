@@ -1,7 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { Image } from 'expo-image';
+import { Image, Pressable, Text, View } from 'react-native';
 import { getImageUrl } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -30,8 +29,8 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
           <Image
             source={{ uri: getImageUrl(imageUrl) }}
             className="h-8 w-8"
-            contentFit="contain"
-            cachePolicy="memory-disk"
+            style={{ width: 32, height: 32 }}
+            resizeMode="contain"
           />
         ) : (
           <Feather name={icon || 'grid'} size={20} color={THEME_COLORS.primary} />

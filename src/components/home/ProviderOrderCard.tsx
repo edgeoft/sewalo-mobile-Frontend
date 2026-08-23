@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { Image } from 'expo-image';
+import React, { useState } from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { BOOKING_STATUSES } from '@/types';
 import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
+import { FALLBACKS, getAvatarUrl } from '@/utils/image';
 
 interface ProviderOrderCardProps {
   order: ProviderBookingItem;
@@ -18,8 +18,10 @@ interface ProviderOrderCardProps {
 
 export default function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrderCardProps) {
   const { t } = useTranslation();
+  const [imgError, setImgError] = useState(false);
   const statusPresentation = BOOKING_STATUS_PRESENTATION[order.status];
   const isPending = order.status === BOOKING_STATUSES.Pending;
+  const resolvedAvatar = imgError ? FALLBACKS.avatar : getAvatarUrl(order.customerAvatar);
 
   return (
     <Pressable
@@ -31,11 +33,11 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
       <View className="flex-row gap-3">
         {/* Customer Avatar */}
         <Image
-          source={{ uri: order.customerAvatar }}
-          className="h-16 w-16 rounded-lg bg-gray-50"
-          contentFit="cover"
-          transition={150}
-          cachePolicy="memory-disk"
+          source={{ uri: resolvedAvatar }}
+          onError={() => setImgError(true)}
+          className="h-16 w-16 rounded-lg bg-gray-50 shrink-0"
+          style={{ width: 64, height: 64, borderRadius: 8 }}
+          resizeMode="cover"
         />
 
         {/* Customer & Order Details */}

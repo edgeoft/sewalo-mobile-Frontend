@@ -1,19 +1,29 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
+import { FALLBACKS, getAvatarUrl } from '@/utils/image';
 
 interface BookingProviderCardProps {
   booking: CustomerBookingItem;
 }
 
 function BookingProviderCard({ booking }: BookingProviderCardProps) {
+  const [imgError, setImgError] = useState(false);
+  const resolvedAvatar = imgError ? FALLBACKS.avatar : getAvatarUrl(booking.avatarUri);
+
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4">
       {/* Header Info: Avatar, Name, Rating, Service */}
       <View className="flex-row gap-4 mb-4">
-        <Image source={{ uri: booking.avatarUri }} resizeMode="cover" className="h-16 w-16 rounded-xl bg-gray-50" />
+        <Image
+          source={{ uri: resolvedAvatar }}
+          onError={() => setImgError(true)}
+          resizeMode="cover"
+          style={{ width: 64, height: 64, borderRadius: 12 }}
+          className="h-16 w-16 rounded-xl bg-gray-50 shrink-0"
+        />
         <View className="flex-1 gap-1">
           <View className="flex-row items-center gap-1">
             <Text className="text-base font-sans-bold text-gray-900">{booking.name}</Text>
