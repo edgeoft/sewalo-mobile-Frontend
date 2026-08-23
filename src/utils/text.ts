@@ -16,3 +16,18 @@ export function cleanDescriptionText(text: string | null | undefined): string {
   if (!text) return '';
   return text.replace(/<[^>]*>?/gm, '').trim();
 }
+
+/**
+ * Normalizes an API list field that may arrive as an array or as a CSV string
+ * (e.g. "a, b" / ["a","b"]) into a clean string array.
+ */
+export function toStringArray(value: string[] | string | null | undefined): string[] {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+  }
+  return [];
+}

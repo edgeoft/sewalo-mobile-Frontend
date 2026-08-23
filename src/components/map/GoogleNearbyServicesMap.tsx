@@ -1,19 +1,9 @@
-import { useRef, useEffect, useMemo } from 'react';
-import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import { ENV } from '@/constants/env';
-import { NearbyServicesMapProps } from './OSMNearbyServicesMap';
-import { getImageUrl } from '@/utils/image';
-import { SharedWebViewMap } from './SharedWebViewMap';
-import { MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
+import { useCallback } from 'react';
 
-export interface MapMarkerPayload {
-  id: string;
-  name: string;
-  avatar: string;
-  rating: string;
-  lat: number;
-  lng: number;
-}
+import { ENV } from '@/constants/env';
+import { MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
+import type { MapMarkerPayload, NearbyServicesMapProps } from './types';
+import NearbyServicesMapBase from './NearbyServicesMapBase';
 
 function generateGoogleNearbyMapHTML(
   userLat: number,
@@ -100,10 +90,10 @@ function generateGoogleNearbyMapHTML(
     div.style.justifyContent = 'center';
     div.style.cursor = 'pointer';
 
-    div.innerHTML = 
+    div.innerHTML =
       '<!-- Circular Avatar -->' +
       '<div style="width: ' + size + '; height: ' + size + '; border-radius: 50%; border: ' + borderSize + ' solid ' + color + '; overflow: hidden; background-color: white; box-shadow: ' + shadow + '; display: flex; align-items: center; justify-content: center;">' +
-        '<img src="' + p.avatar + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\\'https://avatar.iran.liara.run/public\\\';"/>' +
+        '<img src="' + p.avatar + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\'https://avatar.iran.liara.run/public\\';"/>' +
       '</div>' +
       '<!-- Rating Badge -->' +
       '<div style="background-color: ' + color + '; color: #ffffff; padding: 2px 6px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; margin-top: ' + marginOffset + '; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); white-space: nowrap;">' +
@@ -194,7 +184,7 @@ function generateGoogleNearbyMapHTML(
 
   function renderMarkers() {
     if (typeof map === 'undefined' || !map) return;
-    
+
     // Clear existing
     for (var id in overlays) {
       overlays[id].setMap(null);
@@ -208,7 +198,7 @@ function generateGoogleNearbyMapHTML(
       var isSelected = p.id === selectedId;
       var latlng = new google.maps.LatLng(p.lat, p.lng);
       var element = createCustomMarkerElement(p, isSelected);
-      
+
       var overlay = new CustomOverlay(latlng, map, element, p.id);
       overlays[p.id] = overlay;
 
@@ -244,72 +234,11 @@ function generateGoogleNearbyMapHTML(
 </html>`;
 }
 
-export default function GoogleNearbyServicesMap({
-  userLat,
-  userLng,
-  providers,
-  selectedProviderId,
-  onSelectProvider,
-  onMapCenterChange,
-  onMapViewportChange,
-}: NearbyServicesMapProps) {
-  const webViewRef = useRef<WebView>(null);
-  const apiKey = ENV.GOOGLE_MAPS_API_KEY;
+export default function GoogleNearbyServicesMap(props: NearbyServicesMapProps) {
+  const generateHtml = useCallback(
+    (safeLat: number, safeLng: number) => generateGoogleNearbyMapHTML(safeLat, safeLng, [], ENV.GOOGLE_MAPS_API_KEY),
+    [],
+  );
 
-  const safeLat = typeof userLat === 'number' && !isNaN(userLat) ? userLat : 27.700769;
-  const safeLng = typeof userLng === 'number' && !isNaN(userLng) ? userLng : 85.30014;
-
-  const markersPayload = useMemo(() => {
-    return providers.map((p) => {
-      const lat = p.coordinates?.lat ?? safeLat;
-      const lng = p.coordinates?.lng ?? safeLng;
-      return {
-        id: p.id,
-        name: p.name,
-        avatar: getImageUrl(p.avatar) || 'https://avatar.iran.liara.run/public',
-        rating: typeof p.avg_rating === 'number' ? p.avg_rating.toFixed(1) : '0.0',
-        lat,
-        lng,
-      };
-    });
-  }, [providers, safeLat, safeLng]);
-
-  useEffect(() => {
-    webViewRef.current?.postMessage(
-      JSON.stringify({
-        type: 'updateData',
-        providers: markersPayload,
-        selectedId: selectedProviderId,
-      }),
-    );
-  }, [markersPayload, selectedProviderId]);
-
-  const onMessage = (event: WebViewMessageEvent) => {
-    try {
-      const data = JSON.parse(event.nativeEvent.data);
-      if (data.type === 'providerSelected') {
-        onSelectProvider(data.id);
-      } else if (data.type === 'mapMoved') {
-        if (data.center) {
-          onMapCenterChange?.(data.center.lat, data.center.lng);
-          onMapViewportChange?.({
-            center: data.center,
-            bounds: data.bounds,
-            zoom: data.zoom,
-          });
-        } else if (typeof data.lat === 'number' && typeof data.lng === 'number') {
-          onMapCenterChange?.(data.lat, data.lng);
-          onMapViewportChange?.({
-            center: { lat: data.lat, lng: data.lng },
-          });
-        }
-      }
-    } catch (err) {
-      console.warn('Failed to parse message from GoogleWebView:', err);
-    }
-  };
-
-  const mapHtml = useMemo(() => generateGoogleNearbyMapHTML(safeLat, safeLng, [], apiKey), [safeLat, safeLng, apiKey]);
-
-  return <SharedWebViewMap ref={webViewRef} html={mapHtml} onMessage={onMessage} />;
+  return <NearbyServicesMapBase {...props} generateHtml={generateHtml} label="GoogleWebView" />;
 }

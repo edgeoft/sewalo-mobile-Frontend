@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View } from 'react-native';
 import Animated, {
   useAnimatedProps,
@@ -68,7 +69,7 @@ export default function BookingAnimatedCheckmark() {
         <Svg width={80} height={80} viewBox="0 0 100 100">
           <Circle cx="50" cy="50" r="44" fill="#eff2fe" />
           <Circle cx="50" cy="50" r="36" fill="#e0e7ff" />
-          <Circle cx="50" cy="50" r="30" fill="#485aff" />
+          <Circle cx="50" cy="50" r="30" fill={THEME_COLORS.primary} />
           <AnimatedPath
             d="M38 50 L46 58 L62 42"
             fill="none"

@@ -1,7 +1,6 @@
-import { type BookingStatus } from '@/types';
+import type { BookingFilterStatus } from '@/types';
 
 export const BOOKING_STATUSES = {
-  All: 'all',
   Pending: 'pending',
   Confirmed: 'confirmed',
   InProgress: 'in_progress',
@@ -13,6 +12,11 @@ export const BOOKING_STATUSES = {
   Paid: 'paid',
 } as const;
 
+export const BOOKING_FILTER_STATUSES = {
+  All: 'all',
+  ...BOOKING_STATUSES,
+} as const;
+
 export interface BookingStatusPresentation {
   label: string;
   dotColor: string;
@@ -20,8 +24,8 @@ export interface BookingStatusPresentation {
   textColor: string;
 }
 
-export const BOOKING_STATUS_PRESENTATION: Record<BookingStatus, BookingStatusPresentation> = {
-  [BOOKING_STATUSES.All]: {
+export const BOOKING_STATUS_PRESENTATION: Record<BookingFilterStatus, BookingStatusPresentation> = {
+  [BOOKING_FILTER_STATUSES.All]: {
     label: 'All bookings',
     dotColor: '#6b7280',
     backgroundColor: '#f3f4f6',
@@ -83,8 +87,8 @@ export const BOOKING_STATUS_PRESENTATION: Record<BookingStatus, BookingStatusPre
   },
 };
 
-export const BOOKING_STATUS_FILTER_OPTIONS: BookingStatus[] = [
-  BOOKING_STATUSES.All,
+export const BOOKING_STATUS_FILTER_OPTIONS: BookingFilterStatus[] = [
+  BOOKING_FILTER_STATUSES.All,
   BOOKING_STATUSES.Pending,
   BOOKING_STATUSES.Confirmed,
   BOOKING_STATUSES.InProgress,

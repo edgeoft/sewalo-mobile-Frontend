@@ -17,6 +17,7 @@ import { Feather } from '@expo/vector-icons';
 import { useCreateRating, useUpdateRating } from '@/api';
 import type { Rating } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import StarRating from '@/components/ui/StarRating';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -133,25 +134,18 @@ export default function RatingModal({
               <Text className="text-sm font-sans-bold text-gray-900 mb-3">
                 {t('customer.ratingLabel')} <Text className="text-red-500">*</Text>
               </Text>
-              <View className="flex-row items-center gap-1 mb-5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Pressable
-                    key={star}
-                    onPress={() => setRating(star)}
-                    onPressIn={() => setHoveredRating(star)}
-                    onPressOut={() => setHoveredRating(0)}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Rate ${star} ${star === 1 ? 'star' : 'stars'}`}
-                    accessibilityState={{ selected: (hoveredRating || rating) >= star }}
-                    className="p-1"
-                  >
-                    <Feather
-                      name="star"
-                      size={32}
-                      color={(hoveredRating || rating) >= star ? THEME_COLORS.amberStar : THEME_COLORS.slate300}
-                    />
-                  </Pressable>
-                ))}
+              <View className="flex-row items-center mb-5">
+                <StarRating
+                  value={hoveredRating || rating}
+                  size={32}
+                  activeColor={THEME_COLORS.amberStar}
+                  inactiveColor={THEME_COLORS.slate300}
+                  starClassName="p-1"
+                  className="flex-row items-center gap-1"
+                  onPress={setRating}
+                  onPressIn={setHoveredRating}
+                  onPressOut={() => setHoveredRating(0)}
+                />
                 {rating > 0 && (
                   <Text className="ml-2 text-sm font-sans-medium text-gray-700">
                     {rating} {rating === 1 ? t('common.star') : t('common.stars')}

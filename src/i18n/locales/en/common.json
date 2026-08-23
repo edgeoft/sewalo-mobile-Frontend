@@ -60,5 +60,11 @@
   "day": "Day",
   "month": "Month",
   "year": "Year",
-  "selectDateOfBirth": "Select Date of Birth"
+  "selectDateOfBirth": "Select Date of Birth",
+  "errorTitle": "Something went wrong",
+  "errorDesc": "We couldn't load this content. Please check your connection and try again.",
+  "tryAgain": "Try Again",
+  "ownProviderProfileTitle": "Your Provider Profile",
+  "ownProviderProfileDesc": "You are currently in Customer mode. You cannot browse or book your own services. Switch to Provider mode to view and manage your profile.",
+  "switchToProvider": "Switch to Provider"
 }

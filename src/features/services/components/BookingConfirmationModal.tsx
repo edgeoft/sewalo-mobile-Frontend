@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Modal,
   View,
@@ -16,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
+import { MONTHS, HOURS_12 as HOURS, MINUTES_15 as MINUTES, PERIODS } from '@/constants/calendar';
 import { ServiceItem } from '@/types';
 import {
   getProviderAvailabilityError,
@@ -23,15 +26,8 @@ import {
   isPastDate,
   type ProviderAvailabilityInfo,
 } from '../utils/providerAvailability';
-
-interface LocationData {
-  address: string;
-  lat: number;
-  lng: number;
-  city?: string;
-  state?: string;
-  country?: string;
-}
+import type { LocationData } from '@/types';
+import { getBookingDetailsSchema, type BookingDetailsFormData } from '@/schemas/booking';
 
 export interface BookingDetails {
   serviceDate: string;
@@ -53,27 +49,8 @@ interface BookingConfirmationModalProps {
   onConfirm: (details: BookingDetails) => void;
 }
 
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-const HOURS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
-const MINUTES = ['00', '15', '30', '45'];
-const PERIODS = ['AM', 'PM'];
-
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 5 }, (_, i) => String(currentYear + i));
-
 export default function BookingConfirmationModal({
   visible,
   onClose,
@@ -84,16 +61,36 @@ export default function BookingConfirmationModal({
   onConfirm,
 }: BookingConfirmationModalProps) {
   const { t } = useTranslation();
-  const [serviceDate, setServiceDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [location, setLocation] = useState('');
-  const [locationLat, setLocationLat] = useState(27.700769);
-  const [locationLng, setLocationLng] = useState(85.30014);
-  const [locationCity, setLocationCity] = useState('');
-  const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [timePickerVisible, setTimePickerVisible] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm<BookingDetailsFormData>({
+    resolver: zodResolver(getBookingDetailsSchema(t)),
+    defaultValues: {
+      serviceDate: '',
+      startTime: '',
+      location: '',
+      locationLat: 27.700769,
+      locationLng: 85.30014,
+      locationCity: '',
+      notes: '',
+    },
+    mode: 'onSubmit',
+  });
+
+  const serviceDate = useWatch({ control, name: 'serviceDate' }) || '';
+  const startTime = useWatch({ control, name: 'startTime' }) || '';
+  const location = useWatch({ control, name: 'location' }) || '';
+  const locationLat = useWatch({ control, name: 'locationLat' });
+  const locationLng = useWatch({ control, name: 'locationLng' });
 
   const [tempYear, setTempYear] = useState(String(currentYear));
   const [tempMonth, setTempMonth] = useState(MONTHS[new Date().getMonth()]);
@@ -108,12 +105,12 @@ export default function BookingConfirmationModal({
     const monthIndex = String(MONTHS.indexOf(tempMonth) + 1).padStart(2, '0');
     const formattedDate = `${tempYear}-${monthIndex}-${tempDay}`;
     if (isPastDate(formattedDate)) {
-      setErrors((prev) => ({ ...prev, serviceDate: t('services.pastDateNotAllowed') }));
+      setError('serviceDate', { message: t('services.pastDateNotAllowed') });
       setDatePickerVisible(false);
       return;
     }
-    setServiceDate(formattedDate);
-    setErrors((prev) => ({ ...prev, serviceDate: '' }));
+    setValue('serviceDate', formattedDate);
+    clearErrors('serviceDate');
     setDatePickerVisible(false);
   };
 
@@ -121,62 +118,52 @@ export default function BookingConfirmationModal({
     const hour = parseInt(tempHour, 10);
     const hour24 = tempPeriod === 'PM' && hour !== 12 ? hour + 12 : tempPeriod === 'AM' && hour === 12 ? 0 : hour;
     const formattedTime = `${String(hour24).padStart(2, '0')}:${tempMinute}`;
-    setStartTime(formattedTime);
-    setErrors((prev) => ({ ...prev, startTime: '' }));
+    setValue('startTime', formattedTime);
+    clearErrors('startTime');
     setTimePickerVisible(false);
   };
 
   const handleLocationChange = (data: LocationData) => {
-    setLocation(data.address);
-    setLocationLat(data.lat);
-    setLocationLng(data.lng);
-    setLocationCity(data.city || '');
+    setValue('location', data.address);
+    setValue('locationLat', data.lat);
+    setValue('locationLng', data.lng);
+    setValue('locationCity', data.city || '');
   };
 
-  const handleConfirm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!serviceDate.trim()) {
-      newErrors.serviceDate = t('services.serviceDateRequired');
+  const onValid = (data: BookingDetailsFormData) => {
+    // Provider-specific availability validation needs runtime context — checked after base schema.
+    const availErrors = getProviderAvailabilityError(t, provider, data.serviceDate, data.startTime);
+    if (availErrors.serviceDateError) {
+      setError('serviceDate', { message: availErrors.serviceDateError });
+      return;
     }
-    if (!startTime.trim()) {
-      newErrors.startTime = t('services.startTimeRequired');
-    }
-
-    if (serviceDate.trim() && startTime.trim()) {
-      const availErrors = getProviderAvailabilityError(t, provider, serviceDate, startTime);
-      if (availErrors.serviceDateError) {
-        newErrors.serviceDate = availErrors.serviceDateError;
-      }
-      if (availErrors.startTimeError) {
-        newErrors.startTime = availErrors.startTimeError;
-      }
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (availErrors.startTimeError) {
+      setError('startTime', { message: availErrors.startTimeError });
       return;
     }
 
-    setErrors({});
     onConfirm({
-      serviceDate,
-      startTime,
-      location: location || 'Kathmandu Metropolitan City',
-      city: locationCity || 'Kathmandu',
-      lat: locationLat,
-      lng: locationLng,
-      notes,
+      serviceDate: data.serviceDate,
+      startTime: data.startTime,
+      location: data.location || 'Kathmandu Metropolitan City',
+      city: data.locationCity || 'Kathmandu',
+      lat: data.locationLat,
+      lng: data.locationLng,
+      notes: data.notes,
     });
 
-    setServiceDate('');
-    setStartTime('');
-    setLocation('');
-    setLocationLat(27.700769);
-    setLocationLng(85.30014);
-    setLocationCity('');
-    setNotes('');
+    reset({
+      serviceDate: '',
+      startTime: '',
+      location: '',
+      locationLat: 27.700769,
+      locationLng: 85.30014,
+      locationCity: '',
+      notes: '',
+    });
   };
+
+  const handleConfirm = handleSubmit(onValid);
 
   const servicesDisplay = selectedServices.map((s) => s.title).join(', ');
   const durationDisplay = selectedServices.length > 0 ? selectedServices[0].durationLabel : '1 Day';
@@ -275,7 +262,7 @@ export default function BookingConfirmationModal({
                     placeholder={t('services.selectServiceDatePlaceholder')}
                     value={serviceDate}
                     onChangeText={() => {}}
-                    error={errors.serviceDate}
+                    error={errors.serviceDate?.message}
                     rightIcon={<Feather name="calendar" size={16} color="#898f8f" />}
                   />
                 </View>
@@ -289,7 +276,7 @@ export default function BookingConfirmationModal({
                       placeholder={t('services.selectStartTimePlaceholder')}
                       value={startTime}
                       onChangeText={() => {}}
-                      error={errors.startTime}
+                      error={errors.startTime?.message}
                       rightIcon={<Feather name="clock" size={16} color="#898f8f" />}
                     />
                   </View>
@@ -317,14 +304,20 @@ export default function BookingConfirmationModal({
                 />
               </View>
 
-              <Input
-                label={t('services.additionalNotes')}
-                placeholder={t('services.specialInstructions')}
-                value={notes}
-                onChangeText={setNotes}
-                multiline={true}
-                numberOfLines={4}
-                style={{ height: 100, textAlignVertical: 'top' }}
+              <Controller
+                control={control}
+                name="notes"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('services.additionalNotes')}
+                    placeholder={t('services.specialInstructions')}
+                    value={value}
+                    onChangeText={onChange}
+                    multiline={true}
+                    numberOfLines={4}
+                    style={{ height: 100, textAlignVertical: 'top' }}
+                  />
+                )}
               />
             </View>
 

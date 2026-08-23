@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -28,7 +29,7 @@ export default function BookingConfirmationScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color="#485aff" />
+        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
       </View>
     );
   }
@@ -101,7 +102,7 @@ export default function BookingConfirmationScreen() {
                 <Image source={{ uri: providerAvatar }} className="h-11 w-11 rounded-full bg-gray-100" />
               ) : (
                 <View className="h-11 w-11 rounded-full bg-primary/10 items-center justify-center">
-                  <Feather name="user" size={18} color="#485aff" />
+                  <Feather name="user" size={18} color={THEME_COLORS.primary} />
                 </View>
               )}
               <View className="ml-3 flex-1">

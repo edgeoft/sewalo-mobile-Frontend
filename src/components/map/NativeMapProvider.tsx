@@ -1,4 +1,5 @@
 import { usePostHog } from 'posthog-react-native';
+import { THEME_COLORS } from '@/constants/colors';
 import React, { lazy, Suspense } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { ENV } from '@/constants/env';
@@ -11,7 +12,7 @@ const OpenStreetMapSelector = lazy(() => import('./OpenStreetMapSelector'));
 function MapLoader() {
   return (
     <View className="flex-1 bg-gray-50 items-center justify-center">
-      <ActivityIndicator size="large" color="#485aff" />
+      <ActivityIndicator size="large" color={THEME_COLORS.primary} />
     </View>
   );
 }

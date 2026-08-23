@@ -1,10 +1,13 @@
-import { useMemo, useState } from 'react';
-import { Pressable, Text, View, ActivityIndicator } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
+import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { LoadMoreList } from '@/components/common';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { SegmentedControl } from '@/components/ui';
@@ -24,7 +27,12 @@ export default function NotificationsScreen() {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>(NOTIFICATION_FILTERS.All);
 
-  const { data: notificationsData, isLoading } = useGetNotificationsQuery({
+  const {
+    data: notificationsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetNotificationsQuery({
     limit: 50,
     unread_only: activeFilter === NOTIFICATION_FILTERS.Unread || undefined,
   });
@@ -37,19 +45,20 @@ export default function NotificationsScreen() {
   const notifications = notificationsData?.data || [];
   const unreadCount = unreadData?.unread_count || 0;
 
-  const handleMarkRead = (id: string) => {
-    markRead.mutate(id);
-  };
+  const handleMarkRead = useCallback((id: string) => markRead.mutate(id), [markRead]);
 
-  const handleDelete = (id: string) => {
-    deleteNotif.mutate(id);
-  };
+  const handleDelete = useCallback((id: string) => deleteNotif.mutate(id), [deleteNotif]);
 
-  const handleMarkAllAsRead = () => {
-    markAllRead.mutate();
-  };
+  const handleMarkAllAsRead = useCallback(() => markAllRead.mutate(), [markAllRead]);
 
-  const handlePress = (item: Notification) => {};
+  const handlePress = useCallback((_item: Notification) => {}, []);
+
+  const renderItem = useCallback(
+    (item: Notification) => (
+      <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
+    ),
+    [handleMarkRead, handleDelete, handlePress],
+  );
 
   const filterOptions = useMemo<SegmentedControlOption<NotificationFilter>[]>(
     () => [
@@ -110,7 +119,7 @@ export default function NotificationsScreen() {
               accessibilityLabel="Mark all as read"
               className="flex-row items-center rounded-lg bg-primary/10 px-3.5 py-2 active:opacity-80"
             >
-              <Feather name="check-square" size={14} color="#485aff" accessible={false} />
+              <Feather name="check-square" size={14} color={THEME_COLORS.primary} accessible={false} />
               <Text className="text-xs font-sans-bold text-primary ml-1.5">{t('notifications.markAllRead')}</Text>
             </Pressable>
           )}
@@ -124,12 +133,12 @@ export default function NotificationsScreen() {
         />
 
         {isLoading ? (
-          <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="items-center justify-center py-20" />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} className="py-6 mt-2" />
         ) : (
           <LoadMoreList
-            key={`${activeFilter}-${notifications.length}`}
+            key={activeFilter}
             data={notifications}
             keyExtractor={(item) => item.id}
             initialVisibleCount={6}
@@ -138,9 +147,7 @@ export default function NotificationsScreen() {
             endReachedLabel={t('common.allCaughtUp')}
             emptyContent={emptyContent}
             listClassName="gap-1"
-            renderItem={(item) => (
-              <NotificationCard item={item} onMarkRead={handleMarkRead} onDelete={handleDelete} onPress={handlePress} />
-            )}
+            renderItem={renderItem}
           />
         )}
       </ContentLayout>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -22,7 +23,7 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
       style={
         selected
           ? {
-              shadowColor: '#485aff',
+              shadowColor: THEME_COLORS.primary,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.03,
               shadowRadius: 2,
@@ -37,7 +38,7 @@ export default function DeliveryOptionCard({ label, sublabel, selected, onPress,
             selected ? 'bg-primary/10' : 'bg-gray-50'
           }`}
         >
-          <Feather name={iconName} size={14} color={selected ? '#485aff' : '#64748b'} accessible={false} />
+          <Feather name={iconName} size={14} color={selected ? THEME_COLORS.primary : '#64748b'} accessible={false} />
         </View>
         <View className="flex-1">
           <Text className="text-xs font-sans-bold text-gray-950">{label}</Text>

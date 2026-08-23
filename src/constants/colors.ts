@@ -17,11 +17,3 @@ export const THEME_COLORS = {
   surfaceIndigoSubtle: '#eef2ff',
   surfaceMuted: '#f1f5f9',
 } as const;
-
-export const STATUS_COLOR_MAP: Record<string, { bg: string; text: string; icon: string }> = {
-  pending: { bg: 'bg-amber-50', text: 'text-amber-700', icon: THEME_COLORS.amberStar },
-  confirmed: { bg: 'bg-blue-50', text: 'text-blue-700', icon: THEME_COLORS.infoBlue },
-  in_progress: { bg: 'bg-indigo-50', text: 'text-indigo-700', icon: THEME_COLORS.primary },
-  completed: { bg: 'bg-emerald-50', text: 'text-emerald-700', icon: THEME_COLORS.emeraldSuccess },
-  cancelled: { bg: 'bg-rose-50', text: 'text-rose-700', icon: THEME_COLORS.dangerRed },
-};

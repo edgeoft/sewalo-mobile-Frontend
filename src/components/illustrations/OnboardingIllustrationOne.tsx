@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Path, Circle, G } from 'react-native-svg';
 import Animated, {
@@ -60,7 +61,7 @@ export default function OnboardingIllustrationOne() {
           <Path
             d="M 76 135 C 65 142 60 152 58 162"
             fill="none"
-            stroke="#485aff"
+            stroke={THEME_COLORS.primary}
             strokeWidth="18"
             strokeLinecap="round"
           />
@@ -74,7 +75,7 @@ export default function OnboardingIllustrationOne() {
           />
 
           {/* Body / Shirt */}
-          <Path d="M70 200 C70 140 170 140 170 200 Z" fill="#485aff" />
+          <Path d="M70 200 C70 140 170 140 170 200 Z" fill={THEME_COLORS.primary} />
 
           {/* Safety Vest */}
           <Path d="M 90 138 L 120 160 L 150 138 L 165 200 H 75 Z" fill="#f97316" />
@@ -130,7 +131,7 @@ export default function OnboardingIllustrationOne() {
           {/* Arm Sleeve */}
           <Path
             d="M 165 145 C 175 135 185 125 180 110"
-            stroke="#485aff"
+            stroke={THEME_COLORS.primary}
             strokeWidth="16"
             strokeLinecap="round"
             fill="none"
@@ -167,7 +168,7 @@ export default function OnboardingIllustrationOne() {
           <Path
             d="M 37 110 L 52 101 L 67 110 V 124 C 67 132 59 139 52 142 C 45 139 37 132 37 124 Z"
             fill="none"
-            stroke="#485aff"
+            stroke={THEME_COLORS.primary}
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

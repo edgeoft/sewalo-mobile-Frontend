@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,7 +12,7 @@ import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
 import { useGetFavoritesQuery, useAddRemoveFavorite } from '@/api';
 import type { FavoriteItem } from '@/types';
-import { FALLBACKS, getImageUrl } from '@/features/auth/utils/image';
+import { FALLBACKS, getAvatarUrl, getImageUrl } from '@/utils/image';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 
@@ -79,7 +80,7 @@ export default function CustomerFavouritesScreen() {
           </View>
         ) : isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
           </View>
         ) : (
           <LoadMoreList
@@ -93,7 +94,7 @@ export default function CustomerFavouritesScreen() {
             renderItem={(item: FavoriteItem) => {
               const service = item.service;
               const provider = service?.provider;
-              const imageUri = getImageUrl(provider?.avatar) || FALLBACKS.image;
+              const imageUri = getAvatarUrl(provider?.avatar);
               const startingPrice = service?.service_offerings?.[0]?.price
                 ? `Rs. ${parseInt(service.service_offerings[0].price, 10)}`
                 : 'N/A';

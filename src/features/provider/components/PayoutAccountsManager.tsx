@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 import { View, Text, Pressable, Modal, ScrollView, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
@@ -72,7 +74,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       { id, is_default: true },
       {
         onSuccess: () => {
-          return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
+          return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS }).then(() => {
             showSnackbar({ message: t('provider.accountSetAsPrimary'), type: 'success' });
           });
         },
@@ -92,7 +94,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           onPress: () => {
             deleteAccount(id, {
               onSuccess: () => {
-                return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] });
+                return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS });
               },
             });
           },
@@ -112,7 +114,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       },
       {
         onSuccess: () => {
-          return queryClient.invalidateQueries({ queryKey: ['financeAccounts'] }).then(() => {
+          return queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FINANCE_ACCOUNTS }).then(() => {
             setShowAddForm(false);
             reset();
             showSnackbar({ message: t('provider.accountAddedSuccess'), type: 'success' });
@@ -131,7 +133,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           accessibilityRole="button"
           className="flex-row items-center active:opacity-60 bg-primary/10 px-3 py-2 rounded-xl mt-1"
         >
-          <Feather name="plus" size={16} color="#485aff" accessible={false} />
+          <Feather name="plus" size={16} color={THEME_COLORS.primary} accessible={false} />
           <Text className="text-sm font-sans-bold text-primary ml-1.5">{t('provider.addAccount')}</Text>
         </Pressable>
       </View>
@@ -204,7 +206,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <View className="gap-y-4 mb-6">
         {isLoading ? (
           <View className="items-center justify-center py-8">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
           </View>
         ) : wallets.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
@@ -277,7 +279,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <View className="gap-y-4 mb-6">
         {isLoading ? (
           <View className="items-center justify-center py-8">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
           </View>
         ) : banks.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
@@ -341,7 +343,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           style={{ margin: -16 }}
         >
           <View className="bg-white p-4 rounded-xl items-center shadow-lg">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-bold text-gray-800 mt-3">{t('components.processingEllipsis')}</Text>
           </View>
         </View>

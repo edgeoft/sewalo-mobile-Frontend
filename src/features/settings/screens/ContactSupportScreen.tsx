@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Linking, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -152,7 +153,7 @@ export default function ContactSupportScreen() {
             className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
           >
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="message-circle" size={20} color="#485aff" accessible={false} />
+              <Feather name="message-circle" size={20} color={THEME_COLORS.primary} accessible={false} />
             </View>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.liveChat')}</Text>
             <Text className="text-[10px] font-sans-medium text-emerald-500 text-center mt-1">
@@ -168,7 +169,7 @@ export default function ContactSupportScreen() {
             className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
           >
             <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="phone-call" size={18} color="#485aff" accessible={false} />
+              <Feather name="phone-call" size={18} color={THEME_COLORS.primary} accessible={false} />
             </View>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.callSupport')}</Text>
             <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">9744985161 / 9713969243</Text>

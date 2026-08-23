@@ -1,6 +1,8 @@
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Image, Linking, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
@@ -48,7 +50,7 @@ export default function ProviderServicesScreen() {
         <Header variant="menu" showNotifications={false} />
         <ContentLayout scrollable className="flex-1">
           <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
+            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
           </View>
         </ContentLayout>
       </View>
@@ -178,13 +180,19 @@ export default function ProviderServicesScreen() {
                   hitSlop={8}
                   className="h-8 w-8 rounded-full bg-gray-50 border border-gray-200 items-center justify-center active:bg-gray-150"
                 >
-                  <Feather name="edit-2" size={13} color="#485aff" />
+                  <Feather name="edit-2" size={13} color={THEME_COLORS.primary} />
                 </Pressable>
               </View>
 
               {/* Preview Image */}
               <View className="rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
-                <Image source={{ uri: portfolioPhotos[0] }} className="h-52 w-full" resizeMode="cover" />
+                <Image
+                  source={{ uri: portfolioPhotos[0] }}
+                  className="h-52 w-full"
+                  contentFit="cover"
+                  transition={150}
+                  cachePolicy="memory-disk"
+                />
               </View>
             </View>
 
@@ -276,7 +284,7 @@ export default function ProviderServicesScreen() {
                       accessibilityRole="button"
                       className="flex-row items-center gap-1"
                     >
-                      <Feather name="link" size={10} color="#485aff" accessible={false} />
+                      <Feather name="link" size={10} color={THEME_COLORS.primary} accessible={false} />
                       <Text className="text-[10px] font-sans-bold text-primary underline">{t('provider.website')}</Text>
                     </Pressable>
                   ) : null}
@@ -290,7 +298,12 @@ export default function ProviderServicesScreen() {
                   autoplayInterval={6000}
                   renderItem={({ item: photo }) => (
                     <View className="h-44 w-full rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
-                      <Image source={{ uri: photo }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                      <Image
+                        source={{ uri: photo }}
+                        style={{ width: '100%', height: '100%' }}
+                        contentFit="cover"
+                        cachePolicy="memory-disk"
+                      />
                     </View>
                   )}
                 />
@@ -316,7 +329,7 @@ export default function ProviderServicesScreen() {
                           loc.active ? 'bg-indigo-50' : 'bg-gray-50'
                         }`}
                       >
-                        <Feather name={loc.icon} size={12} color={loc.active ? '#485aff' : '#94a3b8'} />
+                        <Feather name={loc.icon} size={12} color={loc.active ? THEME_COLORS.primary : '#94a3b8'} />
                       </View>
                       <Text className={`text-xs font-sans-semibold ${loc.active ? 'text-gray-700' : 'text-gray-400'}`}>
                         {loc.type}
@@ -359,8 +372,13 @@ export default function ProviderServicesScreen() {
             <View className="flex-1 justify-center items-center px-4 py-12">
               <Svg width={120} height={120} viewBox="0 0 120 120">
                 <Circle cx="60" cy="60" r="50" fill="#eef2ff" />
-                <Rect x="40" y="45" width="40" height="32" rx="6" fill="#485aff" />
-                <Path d="M48 45v-6a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v6" stroke="#485aff" strokeWidth="2.5" fill="none" />
+                <Rect x="40" y="45" width="40" height="32" rx="6" fill={THEME_COLORS.primary} />
+                <Path
+                  d="M48 45v-6a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v6"
+                  stroke={THEME_COLORS.primary}
+                  strokeWidth="2.5"
+                  fill="none"
+                />
                 <Circle cx="60" cy="61" r="5" fill="#ffffff" />
                 <Circle cx="30" cy="80" r="10" fill="#f1f5f9" />
                 <Path d="M26 80h8M30 76v8" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />

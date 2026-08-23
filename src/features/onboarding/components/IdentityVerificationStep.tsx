@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Image, Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -125,7 +126,7 @@ export default function IdentityVerificationStep({
                   importantForAccessibility="no"
                   accessibilityElementsHidden
                 >
-                  <Feather name="camera" size={20} color="#485aff" />
+                  <Feather name="camera" size={20} color={THEME_COLORS.primary} />
                 </View>
                 <Text className="text-sm font-sans-semibold text-gray-800">{t('onboarding.uploadIdImage')}</Text>
                 <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{t('onboarding.uploadFormat')}</Text>

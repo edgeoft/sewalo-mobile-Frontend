@@ -65,21 +65,5 @@ export const PAYMENT_HANDLERS: Record<PaymentMethod, PaymentHandler> = {
 };
 
 export function processPaymentResponse(method: PaymentMethod, params: PaymentHandlerParams): void | Promise<void> {
-  const handler = PAYMENT_HANDLERS[method];
-  if (!handler) {
-    throw new Error(`Unsupported payment method: ${method}`);
-  }
-  return handler(params);
+  return PAYMENT_HANDLERS[method](params);
 }
-
-// Backward compatibility alias for migration
-export const PaymentFactory = {
-  get: (type: PaymentMethod) => ({
-    process: (
-      response: MakePaymentResponse,
-      showSnackbar: (config: SnackbarConfig) => void,
-      t: (key: string) => string,
-      onInitiateEsewa?: (payment: EsewaPaymentDetails) => void,
-    ) => processPaymentResponse(type, { response, showSnackbar, t, onInitiateEsewa }),
-  }),
-};

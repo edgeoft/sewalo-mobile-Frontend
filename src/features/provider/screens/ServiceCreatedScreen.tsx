@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -33,7 +34,7 @@ export default function ServiceCreatedScreen() {
       title: t('provider.searchStep'),
       description: t('provider.searchStepDesc'),
       icon: 'search' as const,
-      color: '#485aff',
+      color: THEME_COLORS.primary,
       bg: 'bg-primary/10',
     },
     {
@@ -100,7 +101,7 @@ export default function ServiceCreatedScreen() {
             <View className="flex-row items-center justify-between mb-3.5">
               <View className="flex-row items-center gap-2.5">
                 <View className="h-6 w-6 rounded-full bg-primary/10 items-center justify-center">
-                  <Feather name="shield" size={12} color="#485aff" />
+                  <Feather name="shield" size={12} color={THEME_COLORS.primary} />
                 </View>
                 <Text className="text-xs font-sans-bold text-gray-900">{t('provider.adminReview')}</Text>
               </View>

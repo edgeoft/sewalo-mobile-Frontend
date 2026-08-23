@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
-import { type ProviderBookingItem } from '../constants/providerBookings';
+import type { ProviderBookingItem } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 interface ProviderInvoiceEditorCardProps {

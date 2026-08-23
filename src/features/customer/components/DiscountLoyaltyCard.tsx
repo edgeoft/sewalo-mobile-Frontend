@@ -13,16 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
-
-export interface Coupon {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  discountType: 'fixed' | 'percent';
-  value: number;
-  remaining_uses: number;
-}
+import type { Coupon } from '@/types';
 
 interface DiscountLoyaltyCardProps {
   selectedCoupon: Coupon | null;
@@ -74,7 +65,9 @@ export default function DiscountLoyaltyCard({
               <Text className="text-sm font-sans-semibold text-gray-900">{selectedCoupon.name}</Text>
               <Text className="text-xs font-sans-medium text-gray-500">
                 {selectedCoupon.code} -{' '}
-                {selectedCoupon.discountType === 'percent' ? `${selectedCoupon.value}%` : `Rs. ${selectedCoupon.value}`}{' '}
+                {selectedCoupon.discount_type === 'percent'
+                  ? `${selectedCoupon.discount_value}%`
+                  : `Rs. ${selectedCoupon.discount_value}`}{' '}
                 off
               </Text>
             </View>
@@ -150,7 +143,9 @@ export default function DiscountLoyaltyCard({
                             </View>
                           </View>
                           <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">
-                            {coupon.discountType === 'percent' ? `${coupon.value}% off` : `Rs. ${coupon.value} off`}
+                            {coupon.discount_type === 'percent'
+                              ? `${coupon.discount_value}% off`
+                              : `Rs. ${coupon.discount_value} off`}
                             {coupon.remaining_uses > 0 && ` (${coupon.remaining_uses} uses left)`}
                           </Text>
                         </View>

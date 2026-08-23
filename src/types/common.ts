@@ -1,3 +1,5 @@
+import type { UserProfile } from './user';
+
 export interface PaginatedResponse<T> {
   current_page: number;
   data: T[];
@@ -11,4 +13,20 @@ export interface PaginatedResponse<T> {
   prev_page_url: string | null;
   to: number;
   total: number;
+}
+
+/** Standard `{ data: T }` API envelope. */
+export interface DataEnvelope<T> {
+  data: T;
+}
+
+/** Standard `{ message }` API envelope. */
+export interface MessageResponse {
+  message: string;
+}
+
+/** Standard `{ message, user }` profile-mutation envelope. */
+export interface MessageUserResponse {
+  message: string;
+  user: UserProfile;
 }

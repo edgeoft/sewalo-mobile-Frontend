@@ -17,7 +17,6 @@ export {
 
 // Re-export Helper Types from Constants
 export type NotificationFilter = (typeof NOTIFICATION_FILTERS)[keyof typeof NOTIFICATION_FILTERS];
-export type ServiceLocation = (typeof SERVICE_LOCATIONS)[keyof typeof SERVICE_LOCATIONS];
 export type DeliveryType = (typeof DELIVERY_TYPES)[keyof typeof DELIVERY_TYPES];
 export type PaymentMethod = (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
 

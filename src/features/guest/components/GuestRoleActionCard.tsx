@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 import { Pressable, Text, View } from 'react-native';
 
 interface GuestRoleActionCardProps {
@@ -27,7 +28,7 @@ export default function GuestRoleActionCard({ title, description, variant, onPre
       <View
         className={`w-8 h-8 rounded-full items-center justify-center ${isPrimary ? 'bg-white/20' : 'bg-primary/10'}`}
       >
-        <Feather name="chevron-right" size={18} color={isPrimary ? 'white' : '#485aff'} />
+        <Feather name="chevron-right" size={18} color={isPrimary ? 'white' : THEME_COLORS.primary} />
       </View>
     </Pressable>
   );

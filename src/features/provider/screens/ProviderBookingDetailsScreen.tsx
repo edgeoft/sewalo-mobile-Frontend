@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Image, View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
+import { Image } from 'expo-image';
+import { View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -185,10 +187,15 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           {/* Customer Section */}
           <View className="flex-row items-center">
             {customerAvatar ? (
-              <Image source={{ uri: customerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
+              <Image
+                source={{ uri: customerAvatar }}
+                className="h-12 w-12 rounded-full"
+                contentFit="cover"
+                cachePolicy="memory-disk"
+              />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
-                <Feather name="user" size={20} color="#485aff" />
+                <Feather name="user" size={20} color={THEME_COLORS.primary} />
               </View>
             )}
             <View className="ml-3 flex-1">
@@ -227,7 +234,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               {/* Booking Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="calendar" size={15} color="#485aff" />
+                  <Feather name="calendar" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -261,7 +268,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               {/* Service Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="briefcase" size={15} color="#485aff" />
+                  <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -289,7 +296,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               {/* Price Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="tag" size={15} color="#485aff" />
+                  <Feather name="tag" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('provider.priceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">

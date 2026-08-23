@@ -1,20 +1,8 @@
-import { useRef, useEffect, useMemo } from 'react';
-import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import { NearbyProvider, MapViewport } from '@/types';
-import { getImageUrl } from '@/utils/image';
-import { SharedWebViewMap } from './SharedWebViewMap';
-import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE, safeJsonStringify } from './mapShared';
-import type { MapMarkerPayload } from './GoogleNearbyServicesMap';
+import { useCallback } from 'react';
 
-export interface NearbyServicesMapProps {
-  userLat: number;
-  userLng: number;
-  providers: NearbyProvider[];
-  selectedProviderId: string | null;
-  onSelectProvider: (providerId: string | null) => void;
-  onMapCenterChange?: (lat: number, lng: number) => void;
-  onMapViewportChange?: (viewport: MapViewport) => void;
-}
+import { MAP_CONSOLE_BRIDGE, CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, safeJsonStringify } from './mapShared';
+import type { MapMarkerPayload, NearbyServicesMapProps } from './types';
+import NearbyServicesMapBase from './NearbyServicesMapBase';
 
 function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersData: MapMarkerPayload[]) {
   const safeJson = safeJsonStringify(providersData);
@@ -125,12 +113,12 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
     var imgSize = isSelected ? '40px' : '34px';
     var borderSize = isSelected ? '3px' : '3px';
     var marginOffset = isSelected ? '-6px' : '-5px';
-    
+
     return L.divIcon({
       html: '<div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 70px;">' +
               '<!-- Circular Avatar -->' +
               '<div style="width: ' + size + '; height: ' + size + '; border-radius: 50%; border: ' + borderSize + ' solid ' + color + '; overflow: hidden; background-color: white; box-shadow: ' + shadow + '; display: flex; align-items: center; justify-content: center;">' +
-                '<img src="' + avatarUrl + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\\'https://avatar.iran.liara.run/public\\\';"/>' +
+                '<img src="' + avatarUrl + '" style="width: ' + imgSize + '; height: ' + imgSize + '; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src=\\'https://avatar.iran.liara.run/public\\';"/>' +
               '</div>' +
               '<!-- Rating Badge -->' +
               '<div style="background-color: ' + color + '; color: white; padding: 2px 6px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; margin-top: ' + marginOffset + '; border: 1.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); white-space: nowrap;">' +
@@ -146,7 +134,7 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
   function renderMarkers(selectedId) {
     if (typeof map === 'undefined' || !map) return;
     map.invalidateSize();
-    
+
     markerClusterGroup.clearLayers();
     markers = {};
 
@@ -157,14 +145,14 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
       var isSelected = p.id === selectedId;
       var icon = createProviderIcon(p.avatar, p.rating, isSelected);
       var m = L.marker([p.lat, p.lng], { icon: icon });
-      
+
       m.on('click', function() {
         sendMessage('providerSelected', { id: p.id });
       });
-      
+
       markers[p.id] = m;
       markerClusterGroup.addLayer(m);
-      
+
       if (isSelected) {
         map.panTo([p.lat, p.lng]);
       }
@@ -200,71 +188,11 @@ function generateOSMNearbyMapHTML(userLat: number, userLng: number, providersDat
 </html>`;
 }
 
-export default function OSMNearbyServicesMap({
-  userLat,
-  userLng,
-  providers,
-  selectedProviderId,
-  onSelectProvider,
-  onMapCenterChange,
-  onMapViewportChange,
-}: NearbyServicesMapProps) {
-  const webViewRef = useRef<WebView>(null);
+export default function OSMNearbyServicesMap(props: NearbyServicesMapProps) {
+  const generateHtml = useCallback(
+    (safeLat: number, safeLng: number) => generateOSMNearbyMapHTML(safeLat, safeLng, []),
+    [],
+  );
 
-  const safeLat = typeof userLat === 'number' && !isNaN(userLat) ? userLat : 27.700769;
-  const safeLng = typeof userLng === 'number' && !isNaN(userLng) ? userLng : 85.30014;
-
-  const markersPayload = useMemo(() => {
-    return providers.map((p) => {
-      const lat = p.coordinates?.lat ?? safeLat;
-      const lng = p.coordinates?.lng ?? safeLng;
-      return {
-        id: p.id,
-        name: p.name,
-        avatar: getImageUrl(p.avatar) || 'https://avatar.iran.liara.run/public',
-        rating: typeof p.avg_rating === 'number' ? p.avg_rating.toFixed(1) : '0.0',
-        lat,
-        lng,
-      };
-    });
-  }, [providers, safeLat, safeLng]);
-
-  useEffect(() => {
-    webViewRef.current?.postMessage(
-      JSON.stringify({
-        type: 'updateData',
-        providers: markersPayload,
-        selectedId: selectedProviderId,
-      }),
-    );
-  }, [markersPayload, selectedProviderId]);
-
-  const onMessage = (event: WebViewMessageEvent) => {
-    try {
-      const data = JSON.parse(event.nativeEvent.data);
-      if (data.type === 'providerSelected') {
-        onSelectProvider(data.id);
-      } else if (data.type === 'mapMoved') {
-        if (data.center) {
-          onMapCenterChange?.(data.center.lat, data.center.lng);
-          onMapViewportChange?.({
-            center: data.center,
-            bounds: data.bounds,
-            zoom: data.zoom,
-          });
-        } else if (typeof data.lat === 'number' && typeof data.lng === 'number') {
-          onMapCenterChange?.(data.lat, data.lng);
-          onMapViewportChange?.({
-            center: { lat: data.lat, lng: data.lng },
-          });
-        }
-      }
-    } catch (err) {
-      console.warn('Failed to parse message from OSMWebView:', err);
-    }
-  };
-
-  const mapHtml = useMemo(() => generateOSMNearbyMapHTML(safeLat, safeLng, []), [safeLat, safeLng]);
-
-  return <SharedWebViewMap ref={webViewRef} html={mapHtml} onMessage={onMessage} />;
+  return <NearbyServicesMapBase {...props} generateHtml={generateHtml} label="OSMWebView" />;
 }

@@ -5,6 +5,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from '@/components/ui/Snackbar';
+import { isLocalFileUri } from '@/utils/image';
+import { buildPersonalInfoPayload, buildAvailabilityPayload, buildCompleteProfilePayload } from '../utils/payloads';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
@@ -15,22 +17,13 @@ import {
   DEFAULT_WORKING_HOURS_END,
   AvailabilityType,
 } from '@/constants/availability';
-import {
-  Availability,
-  CompleteProfilePayload,
-  EducationItemPayload,
-  ExperienceItemPayload,
-  PersonalInfoData,
-  UpdateProfilePayload,
-  UserRole,
-  USER_ROLES,
-} from '@/types';
+import { Availability, PersonalInfoData, UserRole, USER_ROLES } from '@/types';
 
 import { personalInfoSchema } from '@/schemas/onboarding';
 
 import { useCompleteProfile, useGetProfileQuery, useUpdateProfile, useUploadFile } from '@/api';
 
-import { convertTimeTo24h, parseTime12h } from '@/utils/time';
+import { parseTime12h } from '@/utils/time';
 
 export interface StepInfo {
   key: string;
@@ -231,54 +224,12 @@ export function useOnboarding() {
           try {
             let avatarPath = data.avatar || '';
 
-            if (
-              data.avatar &&
-              (data.avatar.startsWith('file://') ||
-                data.avatar.startsWith('ph://') ||
-                data.avatar.startsWith('content://'))
-            ) {
+            if (isLocalFileUri(data.avatar)) {
               const uploadRes = await uploadFile({ uri: data.avatar, folder: 'profile' });
               avatarPath = uploadRes.path;
             }
 
-            let lat = data.lat || 27.700769;
-            let lng = data.lng || 85.30014;
-            let address = data.location;
-            let city = data.city || '';
-            let state = data.state || '';
-            let country = data.country || '';
-
-            const cleanVal = (val: string, fallback: string) => {
-              if (!val || val.trim() === '' || val.toLowerCase() === 'n/a') {
-                return fallback;
-              }
-              return val;
-            };
-
-            city = cleanVal(city, 'Kathmandu');
-            state = cleanVal(state, 'Bagmati');
-            country = cleanVal(country, 'Nepal');
-
-            if (!data.lat || !data.lng) {
-              const parts = data.location.split(',').map((p: string) => p.trim());
-              address = parts[0] || 'Kathmandu';
-              city = parts[1] || parts[0] || 'Kathmandu';
-              state = parts[2] || 'Bagmati';
-              country = parts[3] || 'Nepal';
-            }
-
-            const payload: UpdateProfilePayload = {
-              email: data.email,
-              address,
-              city,
-              state,
-              country,
-              dob: data.dateOfBirth,
-              coordinates: { lat, lng },
-            };
-            if (avatarPath) {
-              payload.avatar = avatarPath;
-            }
+            const payload = buildPersonalInfoPayload(data, avatarPath || undefined);
 
             await updateProfile(payload);
             setActiveIndex((prev) => prev + 1);
@@ -302,13 +253,7 @@ export function useOnboarding() {
     if (currentStepKey === 'availability') {
       setLoading(true);
       try {
-        const availability: Availability = workingDays;
-
-        const payload: UpdateProfilePayload = {
-          availability,
-          start_time: convertTimeTo24h(workingHoursStart),
-          end_time: convertTimeTo24h(workingHoursEnd),
-        };
+        const payload = buildAvailabilityPayload(workingDays as Availability, workingHoursStart, workingHoursEnd);
 
         await updateProfile(payload);
         setActiveIndex((prev) => prev + 1);
@@ -326,12 +271,7 @@ export function useOnboarding() {
       try {
         let documentPath = documentImage || '';
 
-        if (
-          documentImage &&
-          (documentImage.startsWith('file://') ||
-            documentImage.startsWith('ph://') ||
-            documentImage.startsWith('content://'))
-        ) {
+        if (isLocalFileUri(documentImage)) {
           const uploadRes = await uploadFile({ uri: documentImage, folder: 'document' });
           documentPath = uploadRes.path;
         }
@@ -373,45 +313,7 @@ export function useOnboarding() {
       const currentUser = useAuthStore.getState().user;
       if (!currentUser) throw new Error('User session not found.');
 
-      const payload: CompleteProfilePayload = {
-        email: currentUser.email || '',
-        address: currentUser.address || 'Kathmandu',
-        city: currentUser.city || 'Kathmandu',
-        state: currentUser.state || 'Bagmati',
-        country: currentUser.country || 'Nepal',
-        dob: currentUser.dob || '',
-        coordinates: currentUser.coordinates || { lat: 27.700769, lng: 85.30014 },
-        language: currentUser.language || [],
-      };
-
-      if (currentUser.avatar) {
-        payload.avatar = currentUser.avatar;
-      }
-      if (currentUser.document) {
-        payload.document = currentUser.document;
-      }
-
-      if (role === USER_ROLES.Provider) {
-        payload.education =
-          currentUser.education?.map((e: EducationItemPayload) => ({
-            id: e.id,
-            degree: e.degree,
-            institute: e.institute,
-            start_date: e.start_date,
-            end_date: e.end_date,
-          })) || [];
-        payload.experience =
-          currentUser.experience?.map((e: ExperienceItemPayload) => ({
-            id: e.id,
-            title: e.title,
-            company_name: e.company_name,
-            start_date: e.start_date,
-            end_date: e.end_date,
-          })) || [];
-        payload.availability = currentUser.availability || AVAILABILITY_TYPES.Always;
-        payload.start_time = currentUser.start_time || undefined;
-        payload.end_time = currentUser.end_time || undefined;
-      }
+      const payload = buildCompleteProfilePayload(currentUser, role);
 
       await completeProfile(payload);
       setRole(role as UserRole);

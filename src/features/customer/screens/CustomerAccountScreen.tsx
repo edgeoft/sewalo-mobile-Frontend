@@ -19,7 +19,7 @@ import AccountMenuSectionCard from '../components/AccountMenuSectionCard';
 import LoyaltyPointsCard from '../components/LoyaltyPointsCard';
 import AccountProfileCard from '../components/AccountProfileCard';
 import ProfileCompletionCard from '@/components/common/ProfileCompletionCard';
-import { getCustomerAccountMenu } from '../constants/accountMenu';
+import { getCustomerAccountMenu } from '@/constants/accountMenu';
 
 export default function CustomerAccountScreen() {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function CustomerAccountScreen() {
             <AccountMenuSectionCard
               key={section.title}
               section={section}
-              onItemPress={(id) => handleItemPress(id as AccountMenuItemId)}
+              onItemPress={handleItemPress}
               rightContentMap={{
                 language: <LanguageSelector />,
               }}

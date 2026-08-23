@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { THEME_COLORS } from '@/constants/colors';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, Pressable, Text, TextInput, TextInputKeyPressEventData, View } from 'react-native';
@@ -126,7 +127,7 @@ export default function OtpVerificationScreen() {
               digit ? 'border-primary' : 'border-gray-200'
             }`}
             style={{
-              shadowColor: digit ? '#485aff' : '#000',
+              shadowColor: digit ? THEME_COLORS.primary : '#000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: digit ? 0.05 : 0.015,
               shadowRadius: digit ? 4 : 2,

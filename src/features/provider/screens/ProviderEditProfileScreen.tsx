@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, ActivityIndicator, ScrollView, Pressable, Text } from 'react-native';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,12 +17,12 @@ import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../compo
 import AvailabilitySection from '../components/AvailabilitySection';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { getImageUrl } from '../../auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import type { UpdateProfilePayload } from '@/types';
 import { Availability } from '@/types';
-import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END } from '@/constants/availability';
+import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END, asAvailability } from '@/constants/availability';
 
 type EditProfileTab = 'basic' | 'skills' | 'availability';
 
@@ -65,6 +66,21 @@ export default function ProviderEditProfileScreen() {
     formState: { errors },
   } = useForm<BasicInfoFormData>({
     defaultValues: {
+      fullName: '',
+      mobileNumber: '',
+      location: '',
+      lat: undefined,
+      lng: undefined,
+      city: '',
+      state: '',
+      country: '',
+      dateOfBirth: '',
+      languages: [],
+      bio: '',
+      avatar: null,
+    },
+    // Hydrate reactively once the profile loads (fixes empty-form race on deep links).
+    values: {
       fullName: user?.name || '',
       mobileNumber: unformatPhone(user?.phone) || '',
       location: user?.address || '',
@@ -128,30 +144,9 @@ export default function ProviderEditProfileScreen() {
     }
   };
 
-  // 2. Skills & Experience State
-  const [educationList, setEducationList] = useState<EducationItem[]>(
-    user?.education && user.education.length > 0
-      ? user.education.map((edu) => ({
-          id: edu.id,
-          degree: edu.degree || '',
-          institution: edu.institute || '',
-          startYear: edu.start_date ? edu.start_date.split('-')[0] : '',
-          endYear: edu.end_date ? edu.end_date.split('-')[0] : 'Present',
-        }))
-      : [],
-  );
-
-  const [experienceList, setExperienceList] = useState<ExperienceItem[]>(
-    user?.experience && user.experience.length > 0
-      ? user.experience.map((exp) => ({
-          id: exp.id,
-          title: exp.title || '',
-          company: exp.company_name || '',
-          startYear: exp.start_date ? exp.start_date.split('-')[0] : '',
-          endYear: exp.end_date ? exp.end_date.split('-')[0] : 'Present',
-        }))
-      : [],
-  );
+  // 2. Skills & Experience State — hydrated in the profile effect below
+  const [educationList, setEducationList] = useState<EducationItem[]>([]);
+  const [experienceList, setExperienceList] = useState<ExperienceItem[]>([]);
 
   const handleAddEducation = (item: EducationItem) => {
     setEducationList((prev) => [...prev, item]);
@@ -193,12 +188,42 @@ export default function ProviderEditProfileScreen() {
     );
   };
 
-  // 3. Availability State
-  const [workingDays, setWorkingDays] = useState<Availability>(
-    (user?.availability as Availability) || AVAILABILITY_TYPES.Weekdays,
-  );
-  const [workingHoursStart, setWorkingHoursStart] = useState(user?.start_time || '10:00 AM');
-  const [workingHoursEnd, setWorkingHoursEnd] = useState(user?.end_time || DEFAULT_WORKING_HOURS_END);
+  // 3. Availability State — hydrated from the profile once it loads
+  const [workingDays, setWorkingDays] = useState<Availability>(AVAILABILITY_TYPES.Weekdays);
+  const [workingHoursStart, setWorkingHoursStart] = useState('10:00 AM');
+  const [workingHoursEnd, setWorkingHoursEnd] = useState(DEFAULT_WORKING_HOURS_END);
+
+  // Hydrate local drafts exactly once when the profile lands (deep-link race fix).
+  const hasHydratedProfileRef = useRef(false);
+  useEffect(() => {
+    if (!user || hasHydratedProfileRef.current) return;
+    hasHydratedProfileRef.current = true;
+    setEducationList(
+      user.education && user.education.length > 0
+        ? user.education.map((edu) => ({
+            id: edu.id,
+            degree: edu.degree || '',
+            institution: edu.institute || '',
+            startYear: edu.start_date ? edu.start_date.split('-')[0] : '',
+            endYear: edu.end_date ? edu.end_date.split('-')[0] : 'Present',
+          }))
+        : [],
+    );
+    setExperienceList(
+      user.experience && user.experience.length > 0
+        ? user.experience.map((exp) => ({
+            id: exp.id,
+            title: exp.title || '',
+            company: exp.company_name || '',
+            startYear: exp.start_date ? exp.start_date.split('-')[0] : '',
+            endYear: exp.end_date ? exp.end_date.split('-')[0] : 'Present',
+          }))
+        : [],
+    );
+    setWorkingDays(asAvailability(user.availability) ?? AVAILABILITY_TYPES.Weekdays);
+    setWorkingHoursStart(user.start_time || '10:00 AM');
+    setWorkingHoursEnd(user.end_time || DEFAULT_WORKING_HOURS_END);
+  }, [user]);
 
   const handleSaveAvailability = () => {
     updateProfile(
@@ -219,7 +244,7 @@ export default function ProviderEditProfileScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#485aff" />
+          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
         <ContentLayout

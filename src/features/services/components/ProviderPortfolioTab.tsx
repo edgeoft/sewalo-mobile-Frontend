@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { Image } from 'expo-image';
 
 import { FALLBACKS } from '@/utils/image';
 
@@ -48,7 +49,9 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
             source={{ uri: erroredIds.has(item.id) ? FALLBACKS.image : item.uri }}
             onError={() => handleImageError(item.id)}
             style={{ height: 110, width: '100%' }}
-            resizeMode="cover"
+            contentFit="cover"
+            transition={150}
+            cachePolicy="memory-disk"
             accessible={false}
           />
           {item.title && (

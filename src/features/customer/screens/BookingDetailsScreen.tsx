@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Image, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -7,10 +8,16 @@ import { useTranslation } from 'react-i18next';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
-import type { Booking, PaymentMethod, MakePaymentResponse, EsewaPaymentDetails } from '@/types';
+import type {
+  Booking,
+  PaymentMethod,
+  MakePaymentResponse,
+  EsewaPaymentDetails,
+  Coupon as BookingCoupon,
+} from '@/types';
 import { BOOKING_STATUSES } from '@/types';
 import RadialStepper from '@/components/common/RadialStepper';
-import DiscountLoyaltyCard, { type Coupon } from '../components/DiscountLoyaltyCard';
+import DiscountLoyaltyCard from '../components/DiscountLoyaltyCard';
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
 import EsewaPaymentModal from '../components/EsewaPaymentModal';
@@ -19,9 +26,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { getProviderRating } from '@/utils/rating';
 import { getImageUrl } from '@/utils/image';
 import { formatDate, formatTime } from '@/utils/time';
-import { PaymentFactory } from '../utils/paymentStrategies';
+import { processPaymentResponse } from '../utils/paymentStrategies';
 
 interface BookingDetailsScreenProps {
   booking: Booking;
@@ -36,7 +44,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [selectedCoupon, setSelectedCoupon] = useState<BookingCoupon | null>(null);
   const [loyaltyPoints, setLoyaltyPoints] = useState<string>('');
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
@@ -51,15 +59,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const cancelBooking = useCancelBooking();
   const downloadInvoice = useDownloadInvoice();
 
-  const availableCoupons: Coupon[] = (couponsData?.data || []).map((c) => ({
-    id: c.id,
-    code: c.code,
-    name: c.name,
-    description: c.discount_type === 'percent' ? `${c.discount_value}% off` : `Rs. ${c.discount_value} off`,
-    discountType: c.discount_type,
-    value: c.discount_value,
-    remaining_uses: c.remaining_uses,
-  }));
+  const availableCoupons = useMemo(() => couponsData?.data || [], [couponsData]);
 
   const loyaltyBalance = booking.user?.loyalty_points || 0;
   const pointsRate = 2;
@@ -70,10 +70,10 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
   let couponDiscountValue = 0;
   if (selectedCoupon) {
-    if (selectedCoupon.discountType === 'percent') {
-      couponDiscountValue = basePriceValue * (selectedCoupon.value / 100);
+    if (selectedCoupon.discount_type === 'percent') {
+      couponDiscountValue = basePriceValue * (selectedCoupon.discount_value / 100);
     } else {
-      couponDiscountValue = selectedCoupon.value;
+      couponDiscountValue = selectedCoupon.discount_value;
     }
   }
 
@@ -140,9 +140,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
       { bookingId: booking.id, payload },
       {
         onSuccess: (response: MakePaymentResponse) => {
-          PaymentFactory.get(response.type).process(response, showSnackbar, t, (payment) => {
-            setEsewaPaymentDetails(payment);
-            setIsEsewaModalVisible(true);
+          processPaymentResponse(response.type, {
+            response,
+            showSnackbar,
+            t,
+            onInitiateEsewa: (payment) => {
+              setEsewaPaymentDetails(payment);
+              setIsEsewaModalVisible(true);
+            },
           });
         },
       },
@@ -196,9 +201,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || '';
   const categoryName = booking.service?.category?.name || '';
-  const providerRating = Number(
-    booking.service?.average_rating || booking.provider?.average_rating || booking.provider?.avg_rating || 0,
-  ).toFixed(1);
+  const providerRating = Number(getProviderRating([booking.service, booking.provider])).toFixed(1);
   const serviceDate = formatDate(booking.service_date || '');
   const startTime = formatTime(booking.start_time || '');
   const location = booking.address || 'Kathmandu Metropolitan City';
@@ -262,7 +265,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
-                <Feather name="user" size={20} color="#485aff" />
+                <Feather name="user" size={20} color={THEME_COLORS.primary} />
               </View>
             )}
             <View className="ml-3 flex-1">
@@ -337,7 +340,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Booking Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="calendar" size={15} color="#485aff" />
+                  <Feather name="calendar" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -371,7 +374,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Service Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="briefcase" size={15} color="#485aff" />
+                  <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -399,7 +402,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
               {/* Price Details Section */}
               <View>
                 <View className="flex-row items-center mb-3">
-                  <Feather name="tag" size={15} color="#485aff" />
+                  <Feather name="tag" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.priceDetails')}</Text>
                 </View>
                 <View className="gap-y-2.5">
@@ -447,7 +450,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           <>
             <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
               <View className="flex-row items-center mb-4">
-                <Feather name="file-text" size={15} color="#485aff" />
+                <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
                 <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
               </View>
               <View className="gap-y-2.5 mb-4">
@@ -521,7 +524,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
                 >
                   {downloadInvoice.isPending ? (
-                    <ActivityIndicator size="small" color="#485aff" />
+                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
                   ) : (
                     <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                   )}
@@ -535,7 +538,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {isPaymentCompletedOrInitiated && (
           <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-4">
             <View className="flex-row items-center mb-4">
-              <Feather name="file-text" size={15} color="#485aff" />
+              <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
               <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
             </View>
             <View className="gap-y-2.5 mb-4">
@@ -559,7 +562,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
               >
                 {downloadInvoice.isPending ? (
-                  <ActivityIndicator size="small" color="#485aff" />
+                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
                 ) : (
                   <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
                 )}

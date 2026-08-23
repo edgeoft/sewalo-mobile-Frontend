@@ -127,7 +127,7 @@ export default function SkillsExperienceSection({
             <View className="mb-3 gap-y-2">
               {educationList.map((item, idx) => (
                 <View
-                  key={idx}
+                  key={item.id ?? `edu-${idx}`}
                   className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
                 >
                   <View className="flex-1 pr-2">
@@ -170,7 +170,7 @@ export default function SkillsExperienceSection({
             <View className="mb-3 gap-y-2">
               {experienceList.map((item, idx) => (
                 <View
-                  key={idx}
+                  key={item.id ?? `exp-${idx}`}
                   className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
                 >
                   <View className="flex-1 pr-2">

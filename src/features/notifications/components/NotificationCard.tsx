@@ -1,4 +1,5 @@
 import { memo, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Feather } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ function getTypeIcon(type: string): keyof typeof Feather.glyphMap {
 }
 
 function getTypeColor(type: string): string {
-  if (type.includes('booking')) return '#485aff';
+  if (type.includes('booking')) return THEME_COLORS.primary;
   if (type.includes('payment') || type.includes('payout')) return '#10b981';
   if (type.includes('rating') || type.includes('review')) return '#f59e0b';
   if (type.includes('coupon') || type.includes('promo')) return '#8b5cf6';
@@ -145,7 +146,7 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
               accessibilityLabel="Mark as read"
               className="flex-row items-center rounded-lg bg-blue-50 border border-blue-100 px-3 py-1.5 active:opacity-80"
             >
-              <Feather name="check" size={13} color="#485aff" accessible={false} />
+              <Feather name="check" size={13} color={THEME_COLORS.primary} accessible={false} />
               <Text className="text-[11px] font-sans-semibold text-primary ml-1.5">{t('notifications.markRead')}</Text>
             </Pressable>
           )}

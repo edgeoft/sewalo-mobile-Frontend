@@ -7,13 +7,15 @@ import {
   type QueryKey,
 } from '@tanstack/react-query';
 
-export function createQueryHook<TData, TParams = void>(
+import type { ApiError } from '@/api/client/types';
+
+export function createQueryHook<TData, TParams = void, TError = ApiError>(
   getKey: (params: TParams) => QueryKey,
   fetcher: (params: TParams) => Promise<TData>,
-  defaultOptions?: Partial<UseQueryOptions<TData, Error>>,
+  defaultOptions?: Partial<UseQueryOptions<TData, TError>>,
 ) {
-  return function useGeneratedQuery(params: TParams, options?: Partial<UseQueryOptions<TData, Error>>) {
-    return useQuery<TData, Error>({
+  return function useGeneratedQuery(params: TParams, options?: Partial<UseQueryOptions<TData, TError>>) {
+    return useQuery<TData, TError>({
       queryKey: getKey(params),
       queryFn: () => fetcher(params),
       ...defaultOptions,
@@ -22,15 +24,15 @@ export function createQueryHook<TData, TParams = void>(
   };
 }
 
-export function createMutationHook<TData, TVariables>(
+export function createMutationHook<TData, TVariables, TError = ApiError>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   options?: {
     invalidateKeys?: (data: TData, variables: TVariables) => QueryKey[];
-  } & Partial<UseMutationOptions<TData, Error, TVariables>>,
+  } & Partial<UseMutationOptions<TData, TError, TVariables>>,
 ) {
-  return function useGeneratedMutation(customOptions?: Partial<UseMutationOptions<TData, Error, TVariables>>) {
+  return function useGeneratedMutation(customOptions?: Partial<UseMutationOptions<TData, TError, TVariables>>) {
     const queryClient = useQueryClient();
-    return useMutation<TData, Error, TVariables>({
+    return useMutation<TData, TError, TVariables>({
       mutationFn,
       onSuccess: (data, variables, context) => {
         if (options?.invalidateKeys) {

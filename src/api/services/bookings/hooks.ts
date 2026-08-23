@@ -35,13 +35,14 @@ import {
   GetMyRatingsResponse,
   GetMyRatingsParams,
   GetProviderRatingResponse,
+  GetProviderRatingsParams,
 } from '@/types';
 
 export const invalidateBookingDetail = (queryClient: QueryClient, bookingId: string, booking?: Booking) => {
   if (booking) {
     queryClient.setQueryData(QUERY_KEYS.BOOKINGS.DETAIL(booking.id), booking);
   }
-  queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(bookingId), refetchType: 'all' });
+  queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(bookingId) });
   queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
 };
 
@@ -126,11 +127,15 @@ export const useCreateRating = createMutationHook<Rating, CreateRatingPayload>(c
 const providerRatingsQueryHook = createQueryHook<GetProviderRatingResponse, string>(
   (providerId) => QUERY_KEYS.PROVIDER_RATINGS(providerId),
   (providerId) => getProviderRatingsAction(providerId),
-  { staleTime: 1000 * 60 * 5 },
 );
 
-export const useGetProviderRatingsQuery = (providerId: string, options?: { enabled?: boolean }) =>
-  providerRatingsQueryHook(providerId, { enabled: (options?.enabled ?? true) && Boolean(providerId) });
+export const useGetProviderRatingsQuery = (
+  providerId: string,
+  options?: { enabled?: boolean; params?: GetProviderRatingsParams },
+) =>
+  providerRatingsQueryHook(providerId, {
+    enabled: (options?.enabled ?? true) && Boolean(providerId),
+  });
 
 const myRatingsQueryHook = createQueryHook<GetMyRatingsResponse, GetMyRatingsParams | undefined>(
   (params) => QUERY_KEYS.MY_RATINGS.LIST(params ?? {}),

@@ -4,6 +4,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import SheetContainer from '@/components/ui/SheetContainer';
+import { MONTHS } from '@/constants/calendar';
 
 export interface DateOfBirthPickerModalProps {
   visible: boolean;
@@ -11,21 +12,6 @@ export interface DateOfBirthPickerModalProps {
   onConfirm: (dateString: string) => void;
   initialDate?: string;
 }
-
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
 
 export default function DateOfBirthPickerModal({
   visible,

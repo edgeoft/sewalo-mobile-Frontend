@@ -4,7 +4,7 @@ import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
-import { FALLBACKS } from '@/utils/image';
+import { FALLBACKS, getAvatarUrl } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
 import type { BookingStatus } from '@/types';
 
@@ -57,10 +57,8 @@ function ProviderCard({
   const isBookingVariant = variant === 'booking';
   const statusPresentation = bookingStatus ? BOOKING_STATUS_PRESENTATION[bookingStatus] : null;
 
-  const reviewsText =
-    reviewsCount !== undefined && reviewsCount !== null
-      ? t('services.reviewsCountShort', { count: reviewsCount })
-      : null;
+  const reviewsText = reviewsCount !== undefined ? t('services.reviewsCountShort', { count: reviewsCount }) : null;
+  const resolvedAvatar = imgError ? FALLBACKS.avatar : getAvatarUrl(avatarUri);
 
   return (
     <Pressable
@@ -98,10 +96,11 @@ function ProviderCard({
       {/* Top Row: Avatar, Name + Verified, Category + Rating */}
       <View className="flex-row items-center gap-3 pr-7">
         <Image
-          source={{ uri: imgError ? FALLBACKS.avatar : avatarUri || FALLBACKS.avatar }}
+          source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
+          style={{ width: 56, height: 56, borderRadius: 28 }}
+          className="h-14 w-14 rounded-full bg-slate-100 shrink-0"
           resizeMode="cover"
-          className="h-14 w-14 rounded-full bg-slate-100"
         />
 
         <View className="flex-1 justify-center gap-1">

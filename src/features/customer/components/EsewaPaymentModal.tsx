@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Modal, View, Text, Pressable, ActivityIndicator, Platform, StyleSheet, Alert } from 'react-native';
 import { WebView, type WebViewNavigation } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
@@ -44,29 +45,29 @@ export default function EsewaPaymentModal({
     }
   }, [visible]);
 
-  if (!visible || !paymentDetails) {
-    return null;
-  }
+  // Memoized so loading-state re-renders never rebuild the html (which reloads the WebView).
+  const htmlContent = useMemo(() => {
+    if (!paymentDetails) return '';
 
-  const fields: Record<string, string> = {
-    amount: paymentDetails.amount.toString(),
-    tax_amount: paymentDetails.tax_amount.toString(),
-    total_amount: paymentDetails.total_amount.toString(),
-    transaction_uuid: paymentDetails.transaction_uuid,
-    product_code: paymentDetails.product_code,
-    product_service_charge: paymentDetails.product_service_charge.toString(),
-    product_delivery_charge: paymentDetails.product_delivery_charge.toString(),
-    success_url: paymentDetails.success_url,
-    failure_url: paymentDetails.failure_url,
-    signed_field_names: paymentDetails.signed_field_names,
-    signature: paymentDetails.signature,
-  };
+    const fields: Record<string, string> = {
+      amount: paymentDetails.amount.toString(),
+      tax_amount: paymentDetails.tax_amount.toString(),
+      total_amount: paymentDetails.total_amount.toString(),
+      transaction_uuid: paymentDetails.transaction_uuid,
+      product_code: paymentDetails.product_code,
+      product_service_charge: paymentDetails.product_service_charge.toString(),
+      product_delivery_charge: paymentDetails.product_delivery_charge.toString(),
+      success_url: paymentDetails.success_url,
+      failure_url: paymentDetails.failure_url,
+      signed_field_names: paymentDetails.signed_field_names,
+      signature: paymentDetails.signature,
+    };
 
-  const formInputs = Object.entries(fields)
-    .map(([key, value]) => `      <input type="hidden" name="${escapeHtml(key)}" value="${escapeHtml(value)}" />`)
-    .join('\n');
+    const formInputs = Object.entries(fields)
+      .map(([key, value]) => `      <input type="hidden" name="${escapeHtml(key)}" value="${escapeHtml(value)}" />`)
+      .join('\n');
 
-  const htmlContent = `
+    return `
 <!DOCTYPE html>
 <html>
   <head>
@@ -123,6 +124,11 @@ ${formInputs}
   </body>
 </html>
   `;
+  }, [paymentDetails]);
+
+  if (!visible || !paymentDetails || !htmlContent) {
+    return null;
+  }
 
   const handleConfirmClose = () => {
     Alert.alert(
@@ -217,7 +223,7 @@ ${formInputs}
         {/* Progress Bar / Loader */}
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color="#485aff" />
+            <ActivityIndicator size="small" color={THEME_COLORS.primary} />
             <Text style={styles.loadingText}>{t('common.loading', 'Loading payment gateway...')}</Text>
           </View>
         )}
@@ -238,7 +244,7 @@ ${formInputs}
             onLoadEnd={() => setIsLoading(false)}
             renderLoading={() => (
               <View style={styles.webViewLoader}>
-                <ActivityIndicator size="large" color="#485aff" />
+                <ActivityIndicator size="large" color={THEME_COLORS.primary} />
               </View>
             )}
             style={styles.webView}
@@ -290,7 +296,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#485aff',
+    color: THEME_COLORS.primary,
     marginTop: 1,
   },
   closeButton: {

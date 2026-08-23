@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -18,7 +19,7 @@ export default function ProviderBookingDetailRoute() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color="#485aff" />
+        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
       </View>
     );
   }

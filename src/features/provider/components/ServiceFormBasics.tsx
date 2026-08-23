@@ -48,7 +48,7 @@ export default function ServiceFormBasics({
 
   // Get active category details
   const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
-  const activeCategorySlug = (activeCategory && 'slug' in activeCategory ? activeCategory.slug : '') as string;
+  const activeCategorySlug = activeCategory?.slug ?? '';
 
   const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug || '', !!activeCategorySlug);
 

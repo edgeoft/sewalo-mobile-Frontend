@@ -20,6 +20,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { THEME_COLORS } from '@/constants/colors';
+import { MONTHS } from '@/constants/calendar';
 import LocationSelector from '@/components/ui/LocationSelector';
 
 import { PersonalInfoData } from '@/types';
@@ -34,21 +35,6 @@ interface PersonalInfoStepProps {
   loading?: boolean;
   stepper?: React.ReactNode;
 }
-
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
 
 export default function PersonalInfoStep({
   control,
@@ -139,7 +125,7 @@ export default function PersonalInfoStep({
               />
               {errors.avatar?.message && (
                 <Text className="text-xs font-sans-medium text-destructive text-center mt-1">
-                  {errors.avatar.message as string}
+                  {errors.avatar?.message}
                 </Text>
               )}
             </View>
@@ -158,7 +144,7 @@ export default function PersonalInfoStep({
                   keyboardType="email-address"
                   autoCapitalize="none"
                   inputStyle={{ padding: 0 }}
-                  error={errors.email?.message as string}
+                  error={errors.email?.message}
                 />
               )}
             />
@@ -185,7 +171,7 @@ export default function PersonalInfoStep({
                       setValue('state', data.state);
                       setValue('country', data.country);
                     }}
-                    error={errors.location?.message as string}
+                    error={errors.location?.message}
                   />
                 )}
               />
@@ -220,7 +206,7 @@ export default function PersonalInfoStep({
               </Pressable>
               {errors.dateOfBirth && (
                 <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
-                  {errors.dateOfBirth.message as string}
+                  {errors.dateOfBirth?.message}
                 </Text>
               )}
             </View>

@@ -3,27 +3,7 @@ import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
-
-interface ExperienceItem {
-  id: number;
-  title: string;
-  company_name: string;
-  start_date: string;
-  end_date: string | null;
-}
-
-interface EducationItem {
-  id: number;
-  degree: string;
-  institute: string;
-  start_date: string;
-  end_date?: string | null;
-}
-
-interface CertificateItem {
-  id: number;
-  value: string;
-}
+import type { EducationItem, ExperienceItem } from '@/types';
 
 interface ProviderOverviewTabProps {
   bio: string;
@@ -32,7 +12,7 @@ interface ProviderOverviewTabProps {
   skills: string[];
   education?: EducationItem[] | null;
   experienceList?: ExperienceItem[] | null;
-  certificates?: CertificateItem[] | string[] | null;
+  certificates?: string[] | null;
 }
 
 export default function ProviderOverviewTab({
@@ -65,7 +45,7 @@ export default function ProviderOverviewTab({
   const hasExperienceList = validExperienceList.length > 0;
   const hasEducation = validEducation.length > 0;
   const hasSkills = skills && skills.length > 0;
-  const hasCertificates = certificates && (Array.isArray(certificates) ? certificates.length > 0 : false);
+  const hasCertificates = certificates && certificates.length > 0;
 
   return (
     <View className="gap-y-4">
@@ -193,11 +173,10 @@ export default function ProviderOverviewTab({
           <Text className="text-sm font-sans-bold text-gray-950 mb-3">{t('services.certificatesDocuments')}</Text>
           <View className="gap-y-2">
             {certificates.map((cert, index) => {
-              const val = typeof cert === 'string' ? cert : cert.value;
               return (
                 <View key={index} className="flex-row items-center gap-2">
                   <Feather name="award" size={14} color={THEME_COLORS.amberStar} />
-                  <Text className="text-xs font-sans-medium text-gray-600">{val}</Text>
+                  <Text className="text-xs font-sans-medium text-gray-600">{cert}</Text>
                 </View>
               );
             })}

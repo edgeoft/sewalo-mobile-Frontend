@@ -30,7 +30,7 @@ export default function ProviderServicesTab({
     <View className="gap-y-5">
       {isOwnProfile && (
         <View className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex-row items-center gap-2">
-          <Feather name="info" size={16} color="#485aff" />
+          <Feather name="info" size={16} color={THEME_COLORS.primary} />
           <Text className="text-xs font-sans-medium text-blue-800 flex-1">
             You cannot book your own services. Switch to Provider mode to manage pricing and offerings.
           </Text>

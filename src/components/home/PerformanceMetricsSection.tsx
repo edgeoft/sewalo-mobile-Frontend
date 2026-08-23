@@ -6,16 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '@/components/common';
 import { THEME_COLORS } from '@/constants/colors';
 
+import type { DashboardMetrics } from '@/types';
+
 export interface PerformanceMetricsSectionProps {
   title?: string;
   actionLabel?: string;
   onActionPress?: () => void;
-  metrics?: {
-    totalEarnings: string;
-    profileViews: string;
-    acceptanceRate: string;
-    acceptanceRating: string;
-  };
+  metrics?: DashboardMetrics;
 }
 
 export default function PerformanceMetricsSection({

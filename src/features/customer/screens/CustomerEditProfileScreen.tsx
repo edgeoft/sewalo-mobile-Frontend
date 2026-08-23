@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
@@ -11,7 +12,7 @@ import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSection';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { getImageUrl } from '../../auth/utils/image';
+import { getImageUrl } from '@/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -46,9 +47,10 @@ export default function CustomerEditProfileScreen() {
 
     const targetY = sectionLayouts[targetKey];
     if (targetY !== undefined) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         scrollRef.current?.scrollTo({ y: Math.max(0, targetY - 12), animated: true });
       }, 100);
+      return () => clearTimeout(timeout);
     }
   }, [section, sectionLayouts]);
 
@@ -60,6 +62,21 @@ export default function CustomerEditProfileScreen() {
     formState: { errors },
   } = useForm<BasicInfoFormData>({
     defaultValues: {
+      fullName: '',
+      mobileNumber: '',
+      location: '',
+      lat: undefined,
+      lng: undefined,
+      city: '',
+      state: '',
+      country: '',
+      dateOfBirth: '',
+      languages: [],
+      bio: '',
+      avatar: null,
+    },
+    // Hydrate reactively once the profile loads (fixes empty-form race on deep links).
+    values: {
       fullName: user?.name || '',
       mobileNumber: unformatPhone(user?.phone) || '',
       location: user?.address || '',
@@ -129,7 +146,7 @@ export default function CustomerEditProfileScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#485aff" />
+          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
         <ContentLayout

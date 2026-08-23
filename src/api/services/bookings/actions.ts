@@ -10,7 +10,6 @@ import type {
   GetBookingsParams,
   UpdateBookingPayload,
   GetApplicableCouponsResponse,
-  UpdateInvoiceItemsPayload,
   MakePaymentPayload,
   MakePaymentResponse,
   ConfirmPaymentPayload,
@@ -20,6 +19,7 @@ import type {
   GetMyRatingsResponse,
   GetMyRatingsParams,
   GetProviderRatingResponse,
+  GetProviderRatingsParams,
 } from '@/types';
 
 // Booking Actions
@@ -81,11 +81,6 @@ export const downloadInvoiceAction = async (invoiceId: string): Promise<string> 
   return result.uri;
 };
 
-// Invoice Actions
-export const updateInvoiceItemsAction = async (payload: UpdateInvoiceItemsPayload): Promise<void> => {
-  return internalClient.post(API_ENDPOINTS.INVOICES.UPDATE_WITH_ITEMS(payload.id), payload);
-};
-
 // Payment Actions
 export const processPaymentAction = async (
   bookingId: string,
@@ -107,8 +102,13 @@ export const getMyRatingsAction = async (params: GetMyRatingsParams = {}): Promi
   return internalClient.get<GetMyRatingsResponse>(API_ENDPOINTS.RATINGS.MY_RATINGS, { params });
 };
 
-export const getProviderRatingsAction = async (providerId: string): Promise<GetProviderRatingResponse> => {
-  return internalClient.get<GetProviderRatingResponse>(API_ENDPOINTS.RATINGS.PROVIDER_RATINGS(providerId));
+export const getProviderRatingsAction = async (
+  providerId: string,
+  params?: GetProviderRatingsParams,
+): Promise<GetProviderRatingResponse> => {
+  return internalClient.get<GetProviderRatingResponse>(API_ENDPOINTS.RATINGS.PROVIDER_RATINGS(providerId), {
+    params,
+  });
 };
 
 export const updateRatingAction = async ({ id, ...payload }: UpdateRatingPayload): Promise<Rating> => {

@@ -31,3 +31,11 @@ export function getSource(url: string | null | undefined, type: 'image' | 'avata
   const resolved = type === 'avatar' ? getAvatarUrl(url) : getImageSource(url);
   return { uri: resolved };
 }
+
+const LOCAL_URI_PREFIXES = ['file://', 'ph://', 'content://'] as const;
+
+/** True when the uri points at a local device asset that must be uploaded before use. */
+export function isLocalFileUri(uri: string | null | undefined): uri is string {
+  if (!uri) return false;
+  return LOCAL_URI_PREFIXES.some((prefix) => uri.startsWith(prefix));
+}

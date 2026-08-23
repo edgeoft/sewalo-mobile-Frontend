@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, View, ActivityIndicator } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -10,13 +10,16 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import SearchBar from '@/components/ui/SearchBar';
 import { THEME_COLORS } from '@/constants/colors';
-import { BOOKING_STATUS_FILTER_OPTIONS } from '@/constants/bookings';
-import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_FILTER_STATUSES } from '@/constants/bookings';
+import type { BookingFilterStatus } from '@/types';
+import ErrorState from '@/components/ui/ErrorState';
+import LoadingState from '@/components/ui/LoadingState';
 import BookingStatusFilter from '../components/BookingStatusFilter';
 import EmptyBookingsState from '../components/EmptyBookingsState';
 import { ROUTES } from '@/constants/routes';
 import { useGetBookingsQuery } from '@/api';
-import { FALLBACKS, getImageUrl } from '@/utils/image';
+import { getAvatarUrl } from '@/utils/image';
+import { getProviderRating } from '@/utils/rating';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -24,12 +27,13 @@ export default function CustomerBookingsScreen() {
   const { t } = useTranslation();
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<BookingStatus>(BOOKING_STATUSES.All);
+  const [selectedStatus, setSelectedStatus] = useState<BookingFilterStatus>(BOOKING_FILTER_STATUSES.All);
 
-  const statusParam = selectedStatus === BOOKING_STATUSES.All ? undefined : selectedStatus;
+  const statusParam = selectedStatus === BOOKING_FILTER_STATUSES.All ? undefined : selectedStatus;
   const {
     data: bookingsData,
     isLoading,
+    isError,
     refetch,
     isRefetching,
   } = useGetBookingsQuery({ status: statusParam, page: 1, limit: 50 });
@@ -37,22 +41,16 @@ export default function CustomerBookingsScreen() {
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
   const countsByStatus = useMemo(() => {
-    const counts = BOOKING_STATUS_FILTER_OPTIONS.reduce(
-      (acc, status) => ({ ...acc, [status]: 0 }),
-      {} as Record<BookingStatus, number>,
-    );
+    const counts = {} as Record<BookingFilterStatus, number>;
+    for (const status of BOOKING_STATUS_FILTER_OPTIONS) counts[status] = 0;
 
-    counts[BOOKING_STATUSES.All] = bookings.length;
+    counts[BOOKING_FILTER_STATUSES.All] = bookings.length;
     bookings.forEach((booking) => {
-      if (counts[booking.status] !== undefined) counts[booking.status] += 1;
+      counts[booking.status] += 1;
     });
 
     return counts;
   }, [bookings]);
-
-  const getAvatarUri = (avatar: string | null | undefined) => {
-    return getImageUrl(avatar) || FALLBACKS.avatar;
-  };
 
   const formatLocation = (b: (typeof bookings)[0]) => {
     if (b.provider?.city && b.provider?.address) return `${b.provider.address}, ${b.provider.city}`;
@@ -146,9 +144,9 @@ export default function CustomerBookingsScreen() {
         ) : null}
 
         {isLoading ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#485aff" />
-          </View>
+          <LoadingState className="flex-1 items-center justify-center py-20" />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} className="py-6 mt-4" />
         ) : (
           <LoadMoreList
             key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
@@ -166,16 +164,11 @@ export default function CustomerBookingsScreen() {
             }
             renderItem={(booking) => (
               <ProviderCard
-                avatarUri={getAvatarUri(booking.provider?.avatar)}
+                avatarUri={getAvatarUrl(booking.provider?.avatar)}
                 name={booking.provider?.name || 'Service Provider'}
                 serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
                 location={formatLocation(booking)}
-                rating={Number(
-                  booking.service?.average_rating ||
-                    booking.provider?.average_rating ||
-                    booking.provider?.avg_rating ||
-                    0,
-                ).toFixed(1)}
+                rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
                 ordersCompleted=""
                 startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}

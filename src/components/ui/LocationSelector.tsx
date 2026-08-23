@@ -4,15 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import NativeMapProvider from '../map/NativeMapProvider';
 import { THEME_COLORS } from '@/constants/colors';
-
-interface LocationData {
-  address: string;
-  lat: number;
-  lng: number;
-  city?: string;
-  state?: string;
-  country?: string;
-}
+import type { LocationData } from '@/types';
 
 interface LocationSelectorProps {
   value: string;

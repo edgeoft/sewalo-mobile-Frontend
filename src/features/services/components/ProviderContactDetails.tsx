@@ -1,4 +1,5 @@
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
@@ -32,7 +33,7 @@ export default function ProviderContactDetails({
         className="flex-row items-center active:opacity-75"
       >
         <View className="h-8 w-8 bg-gray-50 rounded-xl items-center justify-center mr-3">
-          <Feather name="map-pin" size={14} color="#485aff" accessible={false} />
+          <Feather name="map-pin" size={14} color={THEME_COLORS.primary} accessible={false} />
         </View>
         <View className="flex-1">
           <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
@@ -48,7 +49,7 @@ export default function ProviderContactDetails({
       {/* Phone */}
       <Pressable onPress={onCallPress} accessibilityRole="button" className="flex-row items-center active:opacity-75">
         <View className="h-8 w-8 bg-gray-50 rounded-xl items-center justify-center mr-3">
-          <Feather name="phone" size={14} color="#485aff" accessible={false} />
+          <Feather name="phone" size={14} color={THEME_COLORS.primary} accessible={false} />
         </View>
         <View className="flex-1">
           <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
@@ -64,7 +65,7 @@ export default function ProviderContactDetails({
       {/* Email */}
       <Pressable onPress={onEmailPress} accessibilityRole="button" className="flex-row items-center active:opacity-75">
         <View className="h-8 w-8 bg-gray-50 rounded-xl items-center justify-center mr-3">
-          <Feather name="mail" size={14} color="#485aff" accessible={false} />
+          <Feather name="mail" size={14} color={THEME_COLORS.primary} accessible={false} />
         </View>
         <View className="flex-1">
           <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">
@@ -80,7 +81,7 @@ export default function ProviderContactDetails({
       {/* Working Hours */}
       <View className="flex-row items-center">
         <View className="h-8 w-8 bg-gray-50 rounded-xl items-center justify-center mr-3">
-          <Feather name="clock" size={14} color="#485aff" />
+          <Feather name="clock" size={14} color={THEME_COLORS.primary} />
         </View>
         <View className="flex-1">
           <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider mb-0.5">

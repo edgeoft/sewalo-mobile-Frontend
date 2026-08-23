@@ -1,4 +1,5 @@
 import { ROUTES } from '@/constants/routes';
+import { THEME_COLORS } from '@/constants/colors';
 import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 import { Redirect, Stack } from 'expo-router';
@@ -13,7 +14,7 @@ export default function ProviderLayout() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color="#485aff" />
+        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
       </View>
     );
   }

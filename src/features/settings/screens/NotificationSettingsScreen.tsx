@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { View, Text, Switch } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -7,29 +8,22 @@ import { useTranslation } from 'react-i18next';
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
+import { cardShadow } from '@/constants/shadows';
+import { useNotificationSettingsStore } from '@/store/useNotificationSettingsStore';
 
 export default function NotificationSettingsScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
-  const [pushBookings, setPushBookings] = useState(true);
-  const [pushOffers, setPushOffers] = useState(false);
-  const [pushChat, setPushChat] = useState(true);
-
-  const [emailWeekly, setEmailWeekly] = useState(true);
-  const [emailReceipts, setEmailReceipts] = useState(true);
-
-  const [smsStatus, setSmsStatus] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [vibrateEnabled, setVibrateEnabled] = useState(true);
-
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
+  const pushBookings = useNotificationSettingsStore((s) => s.pushBookings);
+  const pushOffers = useNotificationSettingsStore((s) => s.pushOffers);
+  const pushChat = useNotificationSettingsStore((s) => s.pushChat);
+  const emailWeekly = useNotificationSettingsStore((s) => s.emailWeekly);
+  const emailReceipts = useNotificationSettingsStore((s) => s.emailReceipts);
+  const smsStatus = useNotificationSettingsStore((s) => s.smsStatus);
+  const soundEnabled = useNotificationSettingsStore((s) => s.soundEnabled);
+  const vibrateEnabled = useNotificationSettingsStore((s) => s.vibrateEnabled);
+  const setToggle = useNotificationSettingsStore((s) => s.setToggle);
 
   const renderToggleItem = (
     icon: keyof typeof Feather.glyphMap,
@@ -52,7 +46,7 @@ export default function NotificationSettingsScreen() {
         value={value}
         onValueChange={onValueChange}
         trackColor={{ false: '#cbd5e1', true: '#a5b4fc' }}
-        thumbColor={value ? '#485aff' : '#f4f4f5'}
+        thumbColor={value ? THEME_COLORS.primary : '#f4f4f5'}
       />
     </View>
   );
@@ -85,21 +79,21 @@ export default function NotificationSettingsScreen() {
             t('settings.serviceBookings'),
             t('settings.serviceBookingsDesc'),
             pushBookings,
-            setPushBookings,
+            (val) => setToggle('pushBookings', val),
           )}
           {renderToggleItem(
             'message-square',
             t('settings.inAppChatMessages'),
             t('settings.inAppChatMessagesDesc'),
             pushChat,
-            setPushChat,
+            (val) => setToggle('pushChat', val),
           )}
           {renderToggleItem(
             'gift',
             t('settings.promotionsDiscounts'),
             t('settings.promotionsDiscountsDesc'),
             pushOffers,
-            setPushOffers,
+            (val) => setToggle('pushOffers', val),
           )}
         </View>
 
@@ -111,14 +105,14 @@ export default function NotificationSettingsScreen() {
             t('settings.transactionReceipts'),
             t('settings.transactionReceiptsDesc'),
             emailReceipts,
-            setEmailReceipts,
+            (val) => setToggle('emailReceipts', val),
           )}
           {renderToggleItem(
             'file-text',
             t('settings.weeklyPerformanceDigest'),
             t('settings.weeklyPerformanceDigestDesc'),
             emailWeekly,
-            setEmailWeekly,
+            (val) => setToggle('emailWeekly', val),
           )}
         </View>
 
@@ -130,14 +124,14 @@ export default function NotificationSettingsScreen() {
             t('settings.soundEffects'),
             t('settings.soundEffectsDesc'),
             soundEnabled,
-            setSoundEnabled,
+            (val) => setToggle('soundEnabled', val),
           )}
           {renderToggleItem(
             'activity',
             t('settings.vibrationAlerts'),
             t('settings.vibrationAlertsDesc'),
             vibrateEnabled,
-            setVibrateEnabled,
+            (val) => setToggle('vibrateEnabled', val),
           )}
         </View>
 
@@ -149,7 +143,7 @@ export default function NotificationSettingsScreen() {
             t('settings.smsBookingUpdates'),
             t('settings.smsBookingUpdatesDesc'),
             smsStatus,
-            setSmsStatus,
+            (val) => setToggle('smsStatus', val),
           )}
         </View>
       </ContentLayout>

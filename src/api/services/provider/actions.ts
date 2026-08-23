@@ -1,13 +1,10 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
 import {
+  CommissionSummary,
   GetCommissionsParams,
   GetCommissionsResponse,
-  GetCommissionSummaryResponse,
   ProviderDashboardResponse,
-  GetEarningSummaryResponse,
-  GetMyTransactionsParams,
-  GetMyTransactionsResponse,
   CreateFinanceAccountPayload,
   FinanceAccount,
   GetFinanceAccountsResponse,
@@ -21,8 +18,8 @@ import {
 } from '@/types';
 
 // Commissions
-export const getCommissionSummaryAction = async (): Promise<GetCommissionSummaryResponse> => {
-  return internalClient.get<GetCommissionSummaryResponse>(API_ENDPOINTS.COMMISSIONS.SUMMARY);
+export const getCommissionSummaryAction = async (): Promise<CommissionSummary> => {
+  return internalClient.get<CommissionSummary>(API_ENDPOINTS.COMMISSIONS.SUMMARY);
 };
 
 export const getCommissionsAction = async (params: GetCommissionsParams): Promise<GetCommissionsResponse> => {
@@ -34,23 +31,6 @@ export const getCommissionsAction = async (params: GetCommissionsParams): Promis
 // Dashboard
 export const getProviderDashboardStatsAction = async (): Promise<ProviderDashboardResponse> => {
   return internalClient.get<ProviderDashboardResponse>(API_ENDPOINTS.PROVIDER.DASHBOARD_STATS);
-};
-
-// Earnings
-export const getEarningSummaryAction = async (): Promise<GetEarningSummaryResponse> => {
-  return internalClient.get<GetEarningSummaryResponse>(API_ENDPOINTS.TRANSACTIONS.EARNINGS_SUMMARY);
-};
-
-export const getMyTransactionsAction = async ({
-  page = 1,
-  limit = 10,
-}: GetMyTransactionsParams): Promise<GetMyTransactionsResponse> => {
-  return internalClient.get<GetMyTransactionsResponse>(API_ENDPOINTS.TRANSACTIONS.LIST, {
-    params: {
-      page,
-      limit,
-    },
-  });
 };
 
 // Finance Accounts

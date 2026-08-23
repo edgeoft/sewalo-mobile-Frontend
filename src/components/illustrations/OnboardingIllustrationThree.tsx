@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -120,7 +121,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
         {/* Provider Character peeking from behind rating card */}
         <G>
           {/* Shoulders */}
-          <Path d="M 70 120 C 70 80 170 80 170 120 Z" fill="#485aff" />
+          <Path d="M 70 120 C 70 80 170 80 170 120 Z" fill={THEME_COLORS.primary} />
 
           {/* Neck */}
           <Rect x="110" y="70" width="20" height="15" fill="#ffd8a8" />
@@ -217,7 +218,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
         <Svg width="100%" height="100%" viewBox="0 0 240 240" fill="none">
           <G x="175" y="155">
             <Circle cx="0" cy="-25" r="3" fill="#10b981" />
-            <Circle cx="20" cy="-15" r="2" fill="#485aff" />
+            <Circle cx="20" cy="-15" r="2" fill={THEME_COLORS.primary} />
             <Circle cx="-20" cy="-15" r="2.5" fill="#fbbf24" />
           </G>
         </Svg>
@@ -227,8 +228,8 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
       <View style={StyleSheet.absoluteFill}>
         <Svg width="100%" height="100%" viewBox="0 0 240 240" fill="none">
           <AnimatedG animatedProps={rippleProps} origin="175, 155">
-            <Circle cx="175" cy="155" r="15" fill="none" stroke="#485aff" strokeWidth="3" opacity="0.6" />
-            <Circle cx="175" cy="155" r="8" fill="none" stroke="#485aff" strokeWidth="2" opacity="0.4" />
+            <Circle cx="175" cy="155" r="15" fill="none" stroke={THEME_COLORS.primary} strokeWidth="3" opacity="0.6" />
+            <Circle cx="175" cy="155" r="8" fill="none" stroke={THEME_COLORS.primary} strokeWidth="2" opacity="0.4" />
           </AnimatedG>
         </Svg>
       </View>
@@ -240,7 +241,7 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
           <G x="175" y="155" transform="rotate(-15 0 0)">
             <Path
               d="M 0 0 L 12 12 L 5.5 12 L 9.5 20 L 6.5 21 L 2.5 13 L -2.5 15.5 Z"
-              fill="#485aff"
+              fill={THEME_COLORS.primary}
               stroke="#ffffff"
               strokeWidth="1.5"
               strokeLinejoin="round"

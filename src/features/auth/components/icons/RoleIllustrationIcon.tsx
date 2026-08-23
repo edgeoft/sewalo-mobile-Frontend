@@ -1,4 +1,5 @@
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+import { THEME_COLORS } from '@/constants/colors';
 import { USER_ROLES } from '@/types';
 
 export interface RoleIllustrationIconProps {
@@ -7,7 +8,7 @@ export interface RoleIllustrationIconProps {
 }
 
 export default function RoleIllustrationIcon({ variant, active }: RoleIllustrationIconProps) {
-  const primary = active ? '#485aff' : '#94a3b8';
+  const primary = active ? THEME_COLORS.primary : '#94a3b8';
   const soft = active ? '#c7cbff' : '#e2e8f0';
   const accent = active ? '#8b97ff' : '#b0bec5';
   const bg = active ? '#e8eaff' : '#f1f5f9';

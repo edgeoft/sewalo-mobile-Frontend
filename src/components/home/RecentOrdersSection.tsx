@@ -5,7 +5,7 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { EmptyStateCard, SectionHeader } from '@/components/common';
 import ProviderOrderCard from './ProviderOrderCard';
-import type { ProviderBookingItem } from '@/features/provider/constants/providerBookings';
+import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 import { WEB_BASE_URL, WEB_URLS } from '@/constants/urls';
 

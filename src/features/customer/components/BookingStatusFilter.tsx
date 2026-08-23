@@ -5,12 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { THEME_COLORS } from '@/constants/colors';
-import type { BookingStatus } from '@/types';
+import type { BookingFilterStatus } from '@/types';
 
 interface BookingStatusFilterProps {
-  selectedStatus: BookingStatus;
-  countsByStatus: Record<BookingStatus, number>;
-  onStatusChange: (status: BookingStatus) => void;
+  selectedStatus: BookingFilterStatus;
+  countsByStatus: Record<BookingFilterStatus, number>;
+  onStatusChange: (status: BookingFilterStatus) => void;
 }
 
 export default function BookingStatusFilter({
