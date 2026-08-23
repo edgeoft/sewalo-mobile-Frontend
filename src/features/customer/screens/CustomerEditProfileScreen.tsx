@@ -10,6 +10,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '../components/BasicInfoSection';
+import ServiceStickyFooter from '@/features/provider/components/ServiceStickyFooter';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '@/utils/image';
@@ -101,7 +102,7 @@ export default function CustomerEditProfileScreen() {
     const saveProfileData = (avatarPath: string | null) => {
       const payload: UpdateProfilePayload = {
         name: data.fullName,
-        phone: formatPhone(data.mobileNumber),
+        phone: user?.phone || formatPhone(data.mobileNumber),
         address: data.location,
         city: data.city,
         state: data.state,
@@ -149,36 +150,43 @@ export default function CustomerEditProfileScreen() {
           <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
-        <ContentLayout
-          scrollable
-          scrollRef={scrollRef}
-          className="flex-1"
-          contentContainerStyle={{
-            paddingTop: 20,
-            paddingBottom: Math.max(insets.bottom, 24),
-          }}
-        >
-          <SectionHeader
-            title={t('customer.editProfileTitle')}
-            description={t('customer.editProfileDesc')}
-            className="mb-6"
-            titleClassName="text-2xl text-gray-950 font-sans-extrabold"
-          />
-
-          <View onLayout={(e) => handleSectionLayout('basic', e.nativeEvent.layout.y)}>
-            <BasicInfoSection
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-              watchLanguages={watchLanguages}
-              watchDateOfBirth={watchDateOfBirth}
-              watchAvatar={watchAvatar}
-              onSave={handleSubmit(handleSaveProfile)}
-              loading={isUpdating || isUploading}
+        <>
+          <ContentLayout
+            scrollable
+            scrollRef={scrollRef}
+            className="flex-1"
+            contentContainerStyle={{
+              paddingTop: 20,
+              paddingBottom: Math.max(insets.bottom + 80, 100),
+            }}
+          >
+            <SectionHeader
+              title={t('customer.editProfileTitle')}
+              description={t('customer.editProfileDesc')}
+              className="mb-6"
+              titleClassName="text-2xl text-gray-950 font-sans-extrabold"
             />
-          </View>
-        </ContentLayout>
+
+            <View onLayout={(e) => handleSectionLayout('basic', e.nativeEvent.layout.y)}>
+              <BasicInfoSection
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+                watchLanguages={watchLanguages}
+                watchDateOfBirth={watchDateOfBirth}
+                watchAvatar={watchAvatar}
+              />
+            </View>
+          </ContentLayout>
+
+          <ServiceStickyFooter
+            title={t('common.save')}
+            onSave={handleSubmit(handleSaveProfile)}
+            loading={isUpdating || isUploading}
+            disabled={isUpdating || isUploading}
+          />
+        </>
       )}
     </View>
   );

@@ -15,6 +15,7 @@ import { SectionHeader } from '@/components/common';
 import BasicInfoSection, { BasicInfoFormData } from '@/features/customer/components/BasicInfoSection';
 import SkillsExperienceSection, { EducationItem, ExperienceItem } from '../components/SkillsExperienceSection';
 import AvailabilitySection from '../components/AvailabilitySection';
+import ServiceStickyFooter from '../components/ServiceStickyFooter';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '@/utils/image';
@@ -105,7 +106,7 @@ export default function ProviderEditProfileScreen() {
     const saveProfileData = (avatarPath: string | null) => {
       const payload: UpdateProfilePayload = {
         name: data.fullName,
-        phone: formatPhone(data.mobileNumber),
+        phone: user?.phone || formatPhone(data.mobileNumber),
         address: data.location,
         city: data.city,
         state: data.state,
@@ -247,104 +248,113 @@ export default function ProviderEditProfileScreen() {
           <ActivityIndicator size="large" color={THEME_COLORS.primary} />
         </View>
       ) : (
-        <ContentLayout
-          scrollable
-          className="flex-1"
-          contentContainerStyle={{
-            paddingTop: 20,
-            paddingBottom: Math.max(insets.bottom, 24),
-          }}
-        >
-          <SectionHeader
-            title={t('navigation.editProfile')}
-            description={t('provider.editProfileDesc')}
-            className="mb-4"
-            titleClassName="text-xl text-gray-950 font-sans-bold"
-          />
+        <>
+          <ContentLayout
+            scrollable
+            className="flex-1"
+            contentContainerStyle={{
+              paddingTop: 20,
+              paddingBottom: Math.max(insets.bottom + 80, 100),
+            }}
+          >
+            <SectionHeader
+              title={t('navigation.editProfile')}
+              description={t('provider.editProfileDesc')}
+              className="mb-4"
+              titleClassName="text-xl text-gray-950 font-sans-bold"
+            />
 
-          {/* Horizontal Scrollable Pill Tab Navigation Bar */}
-          <View className="mb-5">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingRight: 16 }}
-              className="flex-row"
-            >
-              {tabItems.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <Pressable
-                    key={tab.id}
-                    onPress={() => setUserTab({ section, tab: tab.id })}
-                    accessibilityRole="tab"
-                    accessibilityState={{ selected: isActive }}
-                    className={`flex-row items-center px-4 py-2.5 rounded-xl border mr-2.5 ${
-                      isActive ? 'bg-primary border-primary shadow-sm' : 'bg-white border-gray-200 active:bg-gray-50'
-                    }`}
-                  >
-                    <Feather
-                      name={tab.icon}
-                      size={15}
-                      color={isActive ? '#ffffff' : '#64748b'}
-                      style={{ marginRight: 6 }}
-                    />
-                    <Text
-                      className={`text-xs ${
-                        isActive ? 'font-sans-bold text-white' : 'font-sans-semibold text-gray-700'
+            {/* Horizontal Scrollable Pill Tab Navigation Bar */}
+            <View className="mb-5">
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingRight: 16 }}
+                className="flex-row"
+              >
+                {tabItems.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <Pressable
+                      key={tab.id}
+                      onPress={() => setUserTab({ section, tab: tab.id })}
+                      accessibilityRole="tab"
+                      accessibilityState={{ selected: isActive }}
+                      className={`flex-row items-center px-4 py-2.5 rounded-xl border mr-2.5 ${
+                        isActive ? 'bg-primary border-primary shadow-sm' : 'bg-white border-gray-200 active:bg-gray-50'
                       }`}
                     >
-                      {tab.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          </View>
+                      <Feather
+                        name={tab.icon}
+                        size={15}
+                        color={isActive ? '#ffffff' : '#64748b'}
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text
+                        className={`text-xs ${
+                          isActive ? 'font-sans-bold text-white' : 'font-sans-semibold text-gray-700'
+                        }`}
+                      >
+                        {tab.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
 
-          {/* Active Tab Form Content */}
+            {/* Active Tab Form Content */}
+            {activeTab === 'basic' && (
+              <BasicInfoSection
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                getValues={getValues}
+                watchLanguages={watchLanguages}
+                watchDateOfBirth={watchDateOfBirth}
+                watchAvatar={watchAvatar}
+                isProvider={true}
+              />
+            )}
+
+            {activeTab === 'skills' && (
+              <SkillsExperienceSection
+                educationList={educationList}
+                experienceList={experienceList}
+                onAddEducation={handleAddEducation}
+                onRemoveEducation={handleRemoveEducation}
+                onAddExperience={handleAddExperience}
+                onRemoveExperience={handleRemoveExperience}
+                onSave={handleSaveSkills}
+                loading={isUpdating}
+              />
+            )}
+
+            {activeTab === 'availability' && (
+              <AvailabilitySection
+                workingDays={workingDays}
+                onChangeWorkingDays={setWorkingDays}
+                workingHoursStart={workingHoursStart}
+                workingHoursEnd={workingHoursEnd}
+                onChangeHours={(start, end) => {
+                  setWorkingHoursStart(start);
+                  setWorkingHoursEnd(end);
+                }}
+                onSave={handleSaveAvailability}
+                loading={isUpdating}
+              />
+            )}
+          </ContentLayout>
+
           {activeTab === 'basic' && (
-            <BasicInfoSection
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              getValues={getValues}
-              watchLanguages={watchLanguages}
-              watchDateOfBirth={watchDateOfBirth}
-              watchAvatar={watchAvatar}
+            <ServiceStickyFooter
+              title={t('common.save')}
               onSave={handleSubmit(handleSaveBasicInfo)}
               loading={isUpdating || isUploading}
-              isProvider={true}
+              disabled={isUpdating || isUploading}
             />
           )}
-
-          {activeTab === 'skills' && (
-            <SkillsExperienceSection
-              educationList={educationList}
-              experienceList={experienceList}
-              onAddEducation={handleAddEducation}
-              onRemoveEducation={handleRemoveEducation}
-              onAddExperience={handleAddExperience}
-              onRemoveExperience={handleRemoveExperience}
-              onSave={handleSaveSkills}
-              loading={isUpdating}
-            />
-          )}
-
-          {activeTab === 'availability' && (
-            <AvailabilitySection
-              workingDays={workingDays}
-              onChangeWorkingDays={setWorkingDays}
-              workingHoursStart={workingHoursStart}
-              workingHoursEnd={workingHoursEnd}
-              onChangeHours={(start, end) => {
-                setWorkingHoursStart(start);
-                setWorkingHoursEnd(end);
-              }}
-              onSave={handleSaveAvailability}
-              loading={isUpdating}
-            />
-          )}
-        </ContentLayout>
+        </>
       )}
     </View>
   );

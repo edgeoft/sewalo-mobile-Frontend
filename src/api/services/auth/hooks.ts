@@ -39,7 +39,11 @@ export const useSignup = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
-      showSnackbar({ message: 'Account created successfully!', type: 'success' });
+      if (res.otp) {
+        showSnackbar({ message: `OTP Code: ${res.otp}`, type: 'info' });
+      } else {
+        showSnackbar({ message: 'Account created successfully!', type: 'success' });
+      }
       setTimeout(() => {
         router.push({
           pathname: ROUTES.auth.otpVerification,
@@ -161,8 +165,11 @@ export const useResendOtp = (onSuccess?: () => void) => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res) => {
-      const msg = res.otp ? `A new OTP has been sent successfully!` : 'A new OTP has been sent successfully!';
-      showSnackbar({ message: msg, type: 'success' });
+      if (res.otp) {
+        showSnackbar({ message: `OTP Code: ${res.otp}`, type: 'info' });
+      } else {
+        showSnackbar({ message: 'A new OTP has been sent successfully!', type: 'success' });
+      }
       onSuccess?.();
     },
     onError: (err, variables) => {
@@ -186,7 +193,11 @@ export const useForgotPassword = () => {
         phone: formatPhone(variables.phone),
       }),
     onSuccess: (res, variables) => {
-      showSnackbar({ message: 'OTP sent to your phone!', type: 'success' });
+      if (res.otp) {
+        showSnackbar({ message: `OTP Code: ${res.otp}`, type: 'info' });
+      } else {
+        showSnackbar({ message: 'OTP sent to your phone!', type: 'success' });
+      }
       router.push({
         pathname: ROUTES.auth.otpVerification,
         params: {

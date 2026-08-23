@@ -119,11 +119,11 @@ export default function OtpVerificationScreen() {
       subtitle={t('auth.otpVerificationSubtitle', { phone: phone || '' })}
       showBackButton
     >
-      <View className="flex-row justify-center items-center mb-6 -mx-1">
+      <View className="flex-row items-center w-full gap-x-2 mb-6">
         {otp.map((digit, idx) => (
           <View
             key={idx}
-            className={`flex-1 aspect-square max-w-[48px] mx-1 border rounded-lg bg-white items-center justify-center ${
+            className={`flex-1 aspect-square border rounded-lg bg-white items-center justify-center ${
               digit ? 'border-primary' : 'border-gray-200'
             }`}
             style={{

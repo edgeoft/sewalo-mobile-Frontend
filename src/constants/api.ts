@@ -14,6 +14,8 @@ export const API_ENDPOINTS = {
     COMPLETE_PROFILE: '/user/complete',
     UPDATE_PROFILE: '/user',
     CHANGE_PASSWORD: '/user/change-password',
+    REQUEST_PHONE_CHANGE: '/user/request-phone-change',
+    VERIFY_PHONE_CHANGE: '/user/verify-phone-change',
     SWITCH_ROLE: '/user/switch-role',
     SWITCH_ROLE_WITH_DETAILS: '/user/switch-role-with-details',
     APPLICABLE_COUPONS: '/user/applicable-coupons',

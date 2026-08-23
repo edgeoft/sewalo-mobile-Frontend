@@ -11,6 +11,8 @@ import {
   switchRoleAction,
   switchRoleWithDetailsAction,
   getNearbyProvidersAction,
+  requestPhoneChangeAction,
+  verifyPhoneChangeAction,
 } from './actions';
 import { getProfileAction } from '../auth/actions';
 import type {
@@ -31,9 +33,16 @@ import type {
   SwitchRoleWithDetailsResponse,
   GetNearbyProvidersParams,
   GetNearbyProvidersResponse,
+  RequestPhoneChangePayload,
+  RequestPhoneChangeResponse,
+  VerifyPhoneChangePayload,
+  VerifyPhoneChangeResponse,
 } from '@/types';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useSnackbar } from '@/components/ui/Snackbar';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
+import { formatPhone } from '@/features/auth/utils/phone';
 
 // Favourite Hooks
 const favoritesQueryHook = createQueryHook<GetFavoritesResponse, { page?: number; limit?: number } | undefined>(
@@ -144,3 +153,46 @@ export const useSwitchRoleWithDetails = createMutationHook<SwitchRoleWithDetails
     invalidateKeys: roleSwitchInvalidations,
   },
 );
+
+// Phone Change Hooks
+export const useRequestPhoneChange = (onSuccess?: (res: RequestPhoneChangeResponse) => void) => {
+  const { showSnackbar } = useSnackbar();
+  return useMutation({
+    mutationFn: (variables: RequestPhoneChangePayload) =>
+      requestPhoneChangeAction({
+        new_phone: formatPhone(variables.new_phone),
+      }),
+    onSuccess: (res) => {
+      if (res.otp) {
+        showSnackbar({ message: `OTP Code: ${res.otp}`, type: 'info' });
+      } else {
+        showSnackbar({ message: res.message || 'OTP sent to your new phone number!', type: 'success' });
+      }
+      onSuccess?.(res);
+    },
+    onError: (err) => {
+      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
+    },
+  });
+};
+
+export const useVerifyPhoneChange = (onSuccess?: (res: VerifyPhoneChangeResponse) => void) => {
+  const { showSnackbar } = useSnackbar();
+  return useMutation({
+    mutationFn: (variables: VerifyPhoneChangePayload) =>
+      verifyPhoneChangeAction({
+        ...variables,
+        new_phone: formatPhone(variables.new_phone),
+      }),
+    onSuccess: (res) => {
+      showSnackbar({
+        message: 'Phone updated. Please log in again.',
+        type: 'success',
+      });
+      onSuccess?.(res);
+    },
+    onError: (err) => {
+      showSnackbar({ message: extractErrorMessage(err), type: 'error' });
+    },
+  });
+};

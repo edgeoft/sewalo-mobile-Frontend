@@ -1,17 +1,20 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
-import { Pressable, Text, View } from 'react-native';
+import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AvatarPicker, DateOfBirthPickerModal } from '@/components/common';
-import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import LocationSelector from '@/components/ui/LocationSelector';
 import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 import LanguageSelectionModal from './LanguageSelectionModal';
+import ChangePhoneSheet from './ChangePhoneSheet';
 import { AVAILABLE_LANGUAGES } from '@/constants/languages';
 import { THEME_COLORS } from '@/constants/colors';
+import { useAuth } from '@/providers/AuthProvider';
+import { useRequestPhoneChange } from '@/api';
+import { unformatPhone } from '@/features/auth/utils/phone';
 
 export interface BasicInfoFormData {
   fullName: string;
@@ -36,8 +39,6 @@ interface BasicInfoSectionProps {
   watchLanguages: string[];
   watchDateOfBirth: string;
   watchAvatar: string | null;
-  onSave: () => void;
-  loading?: boolean;
   isProvider?: boolean;
 }
 
@@ -49,13 +50,29 @@ export default function BasicInfoSection({
   watchLanguages = [],
   watchDateOfBirth = '',
   watchAvatar = null,
-  onSave,
-  loading = false,
   isProvider = false,
 }: BasicInfoSectionProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [langModalVisible, setLangModalVisible] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
+  const [changePhoneSheetVisible, setChangePhoneSheetVisible] = useState(false);
+
+  const watchMobile = useWatch({ control, name: 'mobileNumber' }) || '';
+  const currentPhone = unformatPhone(user?.phone) || '';
+  const cleanMobile = unformatPhone(watchMobile);
+  const isPhoneChanged = Boolean(
+    cleanMobile && currentPhone && cleanMobile !== currentPhone && cleanMobile.length === 10,
+  );
+
+  const requestPhoneOtpMutation = useRequestPhoneChange(() => {
+    setChangePhoneSheetVisible(true);
+  });
+
+  const handleRequestPhoneChange = () => {
+    if (!cleanMobile || cleanMobile === currentPhone) return;
+    requestPhoneOtpMutation.mutate({ new_phone: cleanMobile });
+  };
 
   const handleLanguageToggle = (langId: string) => {
     const currentSelected = [...watchLanguages];
@@ -107,13 +124,53 @@ export default function BasicInfoSection({
           )}
         />
 
-        <PhoneNumberField
-          control={control}
-          name="mobileNumber"
-          label={`${t('common.mobileNumber')} *`}
-          placeholder="98XXXXXXX"
-          error={errors.mobileNumber?.message}
-        />
+        <View>
+          <PhoneNumberField
+            control={control}
+            name="mobileNumber"
+            label={`${t('common.mobileNumber')} *`}
+            placeholder="98XXXXXXX"
+            error={errors.mobileNumber?.message}
+          />
+          {isPhoneChanged && (
+            <View className="flex-row items-center justify-between mt-2 px-0.5">
+              <Pressable
+                onPress={() => setValue('mobileNumber', currentPhone, { shouldValidate: true })}
+                style={{ borderRadius: 6, height: 28 }}
+                className="flex-row items-center justify-center bg-gray-100 border border-gray-200 px-2.5 active:bg-gray-200"
+                accessibilityRole="button"
+              >
+                <View className="w-3.5 h-3.5 items-center justify-center mr-1">
+                  <Feather name="rotate-ccw" size={11} color="#64748b" />
+                </View>
+                <Text className="text-[11px] font-sans-medium text-gray-700">{t('common.revert')}</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={handleRequestPhoneChange}
+                disabled={requestPhoneOtpMutation.isPending}
+                style={{ borderRadius: 6, height: 28 }}
+                className="flex-row items-center justify-center bg-primary/10 border border-primary/30 px-2.5 active:bg-primary/20"
+                accessibilityRole="button"
+              >
+                <View className="w-3.5 h-3.5 items-center justify-center mr-1">
+                  {requestPhoneOtpMutation.isPending ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={THEME_COLORS.primary}
+                      style={{ transform: [{ scale: 0.6 }] }}
+                    />
+                  ) : (
+                    <Feather name="smartphone" size={11} color={THEME_COLORS.primary} />
+                  )}
+                </View>
+                <Text className="text-[11px] font-sans-semibold text-primary">
+                  {t('customer.verifyAndChange') || 'Verify & Change'}
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
 
         <View className="w-full">
           <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{`${t('services.location')} *`}</Text>
@@ -212,15 +269,6 @@ export default function BasicInfoSection({
             );
           }}
         />
-
-        <Button
-          title={t('common.save')}
-          onPress={onSave}
-          loading={loading}
-          variant="primary"
-          size="md"
-          className="mt-4 w-full bg-primary"
-        />
       </View>
 
       <LanguageSelectionModal
@@ -235,6 +283,12 @@ export default function BasicInfoSection({
         onClose={() => setDobModalVisible(false)}
         onConfirm={(dateString) => setValue('dateOfBirth', dateString, { shouldValidate: true })}
         initialDate={watchDateOfBirth}
+      />
+
+      <ChangePhoneSheet
+        visible={changePhoneSheetVisible}
+        onClose={() => setChangePhoneSheetVisible(false)}
+        newPhone={cleanMobile}
       />
     </View>
   );

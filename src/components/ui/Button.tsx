@@ -85,24 +85,26 @@ export default function Button({
       } ${sizeStyles[size]} ${isDisabled ? 'opacity-50' : ''} ${className}`}
       {...props}
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === 'light' ? THEME_COLORS.primary : THEME_COLORS.primaryForeground}
-          className="mr-2"
-        />
-      ) : (
-        <View className="flex-row items-center justify-center">
-          {leftIcon && <View className="mr-1">{leftIcon}</View>}
-          <Text
-            style={textStyle}
-            className={`${textVariantStyles[variant]} ${textSizeStyles[size]} text-center ${textClassName}`}
-          >
-            {title}
-          </Text>
-          {rightIcon && <View className="ml-1">{rightIcon}</View>}
-        </View>
-      )}
+      <View className="flex-row items-center justify-center">
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={variant === 'light' ? THEME_COLORS.primary : THEME_COLORS.primaryForeground}
+            style={{ marginRight: 8 }}
+          />
+        ) : leftIcon ? (
+          <View className="mr-1.5">{leftIcon}</View>
+        ) : null}
+
+        <Text
+          style={textStyle}
+          className={`${textVariantStyles[variant]} ${textSizeStyles[size]} text-center ${textClassName}`}
+        >
+          {title}
+        </Text>
+
+        {!loading && rightIcon ? <View className="ml-1.5">{rightIcon}</View> : null}
+      </View>
     </Pressable>
   );
 }

@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 
 interface ServiceStickyFooterProps {
   onSave: () => void;
+  title?: string;
   disabled?: boolean;
   loading?: boolean;
   infoMessage?: string;
@@ -15,6 +16,7 @@ interface ServiceStickyFooterProps {
 
 export default function ServiceStickyFooter({
   onSave,
+  title,
   disabled = false,
   loading = false,
   infoMessage,
@@ -46,7 +48,7 @@ export default function ServiceStickyFooter({
       ) : null}
 
       <Button
-        title={t('provider.saveDetails')}
+        title={title || t('common.save')}
         variant="primary"
         loading={loading}
         disabled={disabled}

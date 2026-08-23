@@ -271,6 +271,7 @@ export default function ServiceEditScreen() {
 
       {/* Sticky footer saving orchestrator */}
       <ServiceStickyFooter
+        title={t('provider.saveDetails')}
         onSave={handleSubmit(onSubmit)}
         disabled={loading}
         loading={loading}

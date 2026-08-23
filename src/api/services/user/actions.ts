@@ -8,6 +8,10 @@ import {
   ChangePasswordPayload,
   ChangePasswordResponse,
   UpdateProfilePayload,
+  RequestPhoneChangePayload,
+  RequestPhoneChangeResponse,
+  VerifyPhoneChangePayload,
+  VerifyPhoneChangeResponse,
   ProviderDetailsResponse,
   GetServiceListParams,
   GetServiceListResponse,
@@ -90,4 +94,15 @@ export const switchRoleWithDetailsAction = async (
     throw new Error('Invalid target role. Only switching to provider is allowed with details.');
   }
   return internalClient.post<SwitchRoleWithDetailsResponse>(API_ENDPOINTS.USER.SWITCH_ROLE_WITH_DETAILS, data);
+};
+
+// Phone Change Actions
+export const requestPhoneChangeAction = async (
+  data: RequestPhoneChangePayload,
+): Promise<RequestPhoneChangeResponse> => {
+  return internalClient.post<RequestPhoneChangeResponse>(API_ENDPOINTS.USER.REQUEST_PHONE_CHANGE, data);
+};
+
+export const verifyPhoneChangeAction = async (data: VerifyPhoneChangePayload): Promise<VerifyPhoneChangeResponse> => {
+  return internalClient.post<VerifyPhoneChangeResponse>(API_ENDPOINTS.USER.VERIFY_PHONE_CHANGE, data);
 };

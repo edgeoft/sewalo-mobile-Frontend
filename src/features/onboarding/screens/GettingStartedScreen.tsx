@@ -197,12 +197,12 @@ export default function GettingStartedScreen() {
             <LanguageSelector />
             <Pressable
               onPress={handleLogout}
-              className="flex-row items-center bg-gray-100 active:bg-gray-200 px-2.5 py-1.5 rounded-lg border border-gray-200"
+              className="w-9 h-9 items-center justify-center rounded-lg active:bg-red-50"
               accessibilityRole="button"
               accessibilityLabel={t('navigation.logout')}
+              hitSlop={8}
             >
-              <Feather name="log-out" size={14} color="#64748b" />
-              <Text className="text-xs font-sans-semibold text-gray-700 ml-1.5">{t('navigation.logout')}</Text>
+              <Feather name="log-out" size={18} color="#ef4444" />
             </Pressable>
           </View>
         }
