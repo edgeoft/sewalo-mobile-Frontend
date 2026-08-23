@@ -1,4 +1,9 @@
 {
+  "phoneChangeTitle": "फोन नम्बर प्रमाणीकरण आवश्यक",
+  "phoneChangeNotice": "परिवर्तनहरू लागू गर्न तपाईंले यो नयाँ नम्बर OTP मार्फत प्रमाणित गर्नुपर्छ।",
+  "verifyAndChange": "प्रमाणीकरण र परिवर्तन",
+  "verifyNewPhoneTitle": "मोबाइल नम्बर प्रमाणीकरण",
+  "verifyNewPhoneDesc": "हामीले +977 {{phone}} मा पठाएको ६-अङ्कको कोड राख्नुहोस्",
   "emptyFavouritesTitle": "कुनै मनपर्ने सूची छैन",
   "emptyFavouritesDesc": "कृपया कुनै सेवा वा प्रदायकमा मुटु आइकन ट्याप गर्नुहोस् तिनलाई यहाँ सुरक्षित गर्न।",
   "emptyBookingsTitle": "कुनै बुकिङ छैन",

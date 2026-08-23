@@ -1,4 +1,9 @@
 {
+  "phoneChangeTitle": "Phone Number Verification Required",
+  "phoneChangeNotice": "You must verify this new phone number with an OTP before changes take effect.",
+  "verifyAndChange": "Verify & Change",
+  "verifyNewPhoneTitle": "Verify Mobile Number",
+  "verifyNewPhoneDesc": "Enter the 6-digit verification code sent to +977 {{phone}}",
   "emptyFavouritesTitle": "No saved favourites yet",
   "emptyFavouritesDesc": "Tap the heart icon on any service or provider to save them here.",
   "emptyBookingsTitle": "No bookings yet",

@@ -179,3 +179,19 @@ export interface SwitchRoleWithDetailsPayload {
 }
 
 export type SwitchRoleWithDetailsResponse = MessageUserResponse;
+
+export interface RequestPhoneChangePayload {
+  new_phone: string;
+}
+
+export interface RequestPhoneChangeResponse {
+  message: string;
+  otp?: string;
+}
+
+export interface VerifyPhoneChangePayload {
+  new_phone: string;
+  otp: string;
+}
+
+export type VerifyPhoneChangeResponse = MessageUserResponse;
