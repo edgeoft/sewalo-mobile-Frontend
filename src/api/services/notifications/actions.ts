@@ -1,6 +1,12 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { GetNotificationsParams, GetNotificationsResponse, UnreadCountResponse } from '@/types';
+import type {
+  DeviceTokenPayload,
+  GetNotificationsParams,
+  GetNotificationsResponse,
+  UnreadCountResponse,
+  UnregisterDeviceTokenPayload,
+} from '@/types';
 
 export const getNotificationsAction = async (
   params: GetNotificationsParams = {},
@@ -24,9 +30,10 @@ export const deleteNotificationAction = async (id: string): Promise<void> => {
   return internalClient.delete(API_ENDPOINTS.NOTIFICATIONS.DELETE(id));
 };
 
-export const registerDeviceTokenAction = async (payload: {
-  device_token: string;
-  platform: 'ios' | 'android';
-}): Promise<void> => {
+export const registerDeviceTokenAction = async (payload: DeviceTokenPayload): Promise<void> => {
   return internalClient.post(API_ENDPOINTS.DEVICE_TOKENS.REGISTER, payload);
+};
+
+export const unregisterDeviceTokenAction = async (payload: UnregisterDeviceTokenPayload): Promise<void> => {
+  return internalClient.post(API_ENDPOINTS.DEVICE_TOKENS.UNREGISTER, payload);
 };

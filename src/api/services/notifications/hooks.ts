@@ -7,8 +7,15 @@ import {
   markAllNotificationsReadAction,
   deleteNotificationAction,
   registerDeviceTokenAction,
+  unregisterDeviceTokenAction,
 } from './actions';
-import type { GetNotificationsParams, GetNotificationsResponse, UnreadCountResponse } from '@/types';
+import type {
+  DeviceTokenPayload,
+  GetNotificationsParams,
+  GetNotificationsResponse,
+  UnreadCountResponse,
+  UnregisterDeviceTokenPayload,
+} from '@/types';
 
 const notificationsQueryHook = createQueryHook<GetNotificationsResponse, GetNotificationsParams | undefined>(
   (params) => QUERY_KEYS.NOTIFICATIONS.LIST(params ?? {}),
@@ -21,7 +28,7 @@ const unreadCountQueryHook = createQueryHook<UnreadCountResponse, void>(
   () => QUERY_KEYS.NOTIFICATIONS.UNREAD_COUNT,
   getUnreadCountAction,
   {
-    refetchInterval: 60000, // 60 seconds (P5 fix)
+    refetchInterval: 60000,
   },
 );
 
@@ -42,6 +49,8 @@ export const useDeleteNotification = createMutationHook<void, string>(deleteNoti
   invalidateKeys: notificationInvalidationKeys,
 });
 
-export const useRegisterDeviceToken = createMutationHook<void, { device_token: string; platform: 'ios' | 'android' }>(
-  registerDeviceTokenAction,
+export const useRegisterDeviceToken = createMutationHook<void, DeviceTokenPayload>(registerDeviceTokenAction);
+
+export const useUnregisterDeviceToken = createMutationHook<void, UnregisterDeviceTokenPayload>(
+  unregisterDeviceTokenAction,
 );

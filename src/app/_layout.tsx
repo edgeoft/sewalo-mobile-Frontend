@@ -7,6 +7,7 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { queryClient } from '@/api/client/query/queryClient';
 import { ErrorDialogProvider } from '@/components/ui/ErrorDialog';
 import { SnackbarProvider } from '@/components/ui/Snackbar';
+import { PushRegistration } from '@/components/notifications/PushRegistration';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { FontProvider } from '@/providers/FontProvider';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -28,6 +29,7 @@ export default function RootLayout() {
             <ErrorDialogProvider>
               <FontProvider>
                 <AuthProvider>
+                  <PushRegistration />
                   <Stack
                     screenOptions={{
                       headerShown: false,

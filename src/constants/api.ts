@@ -83,6 +83,7 @@ export const API_ENDPOINTS = {
   },
   DEVICE_TOKENS: {
     REGISTER: '/device-tokens',
+    UNREGISTER: '/device-tokens/unregister',
   },
   CONTACT_US: '/contact-us',
   COMMISSIONS: {

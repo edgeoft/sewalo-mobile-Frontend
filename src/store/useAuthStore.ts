@@ -1,7 +1,9 @@
+import * as SecureStore from 'expo-secure-store';
 import { internalClient } from '@/api/client/instances/internal';
 import { queryClient } from '@/api/client/query/queryClient';
 import { isApiError } from '@/api/client/query/errorHandler';
 import { getProfileAction } from '@/api/services/auth/actions';
+import { unregisterDeviceTokenAction } from '@/api/services/notifications/actions';
 import { UserProfile, USER_ROLES, UserRole } from '@/types';
 import { create } from 'zustand';
 
@@ -53,6 +55,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
+    // Unregister device push token with backend before wiping credentials
+    try {
+      const fcmToken = await SecureStore.getItemAsync('SEWALO_LAST_REGISTERED_FCM_TOKEN').catch(() => null);
+      if (fcmToken) {
+        await unregisterDeviceTokenAction({ device_token: fcmToken }).catch(() => {});
+        await SecureStore.deleteItemAsync('SEWALO_LAST_REGISTERED_FCM_TOKEN').catch(() => {});
+        await SecureStore.deleteItemAsync('SEWALO_LAST_REGISTERED_USER_ID').catch(() => {});
+      }
+    } catch (err) {
+      console.warn('[AuthStore] Failed to unregister device push token on logout:', err);
+    }
+
     // Clear tokens from secure store immediately
     if (internalClient.tokenManager) {
       try {
