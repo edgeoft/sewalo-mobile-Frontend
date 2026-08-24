@@ -33,7 +33,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       icon: './assets/app_icons/ios_icon.png',
       predictiveBackGestureEnabled: false,
       package: 'com.edgeoft.sewalo',
-      googleServicesFile: './google-services.json',
+      googleServicesFile: './android/app/google-services.json',
       versionCode: buildNumber,
     },
     web: {
