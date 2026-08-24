@@ -4,10 +4,7 @@
  * Provides safe defaults for development.
  */
 export const ENV = {
-  /**
-   * The base URL for the REST API endpoints (e.g. http://localhost:8000/api).
-   */
-  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/',
+  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'https://devapi.sewalo.com/api',
 
   /**
    * The base URL for the S3 bucket hosting profile avatars and other uploaded resources.
