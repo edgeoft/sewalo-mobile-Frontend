@@ -33,6 +33,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       icon: './assets/app_icons/ios_icon.png',
       predictiveBackGestureEnabled: false,
       package: 'com.edgeoft.sewalo',
+      googleServicesFile: './google-services.json',
       versionCode: buildNumber,
     },
     web: {
@@ -40,6 +41,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       favicon: './assets/images/favicon.png',
     },
     plugins: [
+      '@react-native-firebase/app',
       'expo-router',
       [
         'expo-splash-screen',
@@ -55,7 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         'expo-notifications',
         {
-          icon: './assets/app_icons/android_adaptive_foreground.png',
+          icon: './assets/notification_icon.png',
           color: '#485aff',
         },
       ],
