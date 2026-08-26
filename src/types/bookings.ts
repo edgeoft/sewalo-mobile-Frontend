@@ -187,19 +187,28 @@ export interface Rating {
   booking_id: string;
   created_at: string;
   updated_at: string;
-  provider: {
+  provider?: {
     id: string;
     name: string;
     avatar: string | null;
+    email?: string | null;
   };
   user: {
     id: string;
     name: string;
     avatar: string | null;
+    email?: string | null;
   };
-  booking: {
+  booking?: {
     id: string;
-    service: {
+    provider?: {
+      id: string;
+      name: string;
+      avatar: string | null;
+      email?: string | null;
+    };
+    service?: {
+      id?: string;
       name: string;
     };
   };

@@ -109,7 +109,7 @@ export default function MyReviewsScreen() {
           onClose={() => setEditingRating(null)}
           bookingId={editingRating.booking_id}
           providerId={editingRating.provider_id}
-          providerName={editingRating.provider?.name || 'Provider'}
+          providerName={editingRating.provider?.name || editingRating.booking?.provider?.name || 'Provider'}
           serviceName={editingRating.booking?.service?.name || 'Service'}
           existingRating={editingRating}
         />

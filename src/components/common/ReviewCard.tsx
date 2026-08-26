@@ -25,7 +25,7 @@ export interface ReviewCardProps {
 export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: ReviewCardProps) {
   const { t } = useTranslation();
 
-  const person = counterpart === 'provider' ? rating.provider : rating.user;
+  const person = counterpart === 'provider' ? (rating.provider ?? rating.booking?.provider) : rating.user;
   const nameFallback = counterpart === 'provider' ? 'Provider' : 'Customer';
 
   return (
