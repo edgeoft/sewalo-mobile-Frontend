@@ -68,6 +68,7 @@ export default function ProviderEditProfileScreen() {
   } = useForm<BasicInfoFormData>({
     defaultValues: {
       fullName: '',
+      email: '',
       mobileNumber: '',
       location: '',
       lat: undefined,
@@ -83,6 +84,7 @@ export default function ProviderEditProfileScreen() {
     // Hydrate reactively once the profile loads (fixes empty-form race on deep links).
     values: {
       fullName: user?.name || '',
+      email: user?.email || '',
       mobileNumber: unformatPhone(user?.phone) || '',
       location: user?.address || '',
       lat: user?.coordinates?.lat || 27.700769,
@@ -106,6 +108,7 @@ export default function ProviderEditProfileScreen() {
     const saveProfileData = (avatarPath: string | null) => {
       const payload: UpdateProfilePayload = {
         name: data.fullName,
+        email: data.email?.trim() || undefined,
         phone: user?.phone || formatPhone(data.mobileNumber),
         address: data.location,
         city: data.city,

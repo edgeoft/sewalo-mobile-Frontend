@@ -18,6 +18,7 @@ import { unformatPhone } from '@/features/auth/utils/phone';
 
 export interface BasicInfoFormData {
   fullName: string;
+  email?: string;
   mobileNumber: string;
   location: string;
   lat?: number;
@@ -120,6 +121,26 @@ export default function BasicInfoSection({
               onBlur={onBlur}
               inputStyle={{ padding: 0 }}
               error={errors.fullName?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label={`${t('common.email')} (${t('common.optional')})`}
+              placeholder="user@example.com"
+              value={value ?? ''}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="email"
+              inputStyle={{ padding: 0 }}
+              error={errors.email?.message}
             />
           )}
         />
