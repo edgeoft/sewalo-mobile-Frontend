@@ -17,7 +17,7 @@ import Button from '@/components/ui/Button';
 
 import type { Booking } from '@/types';
 import { useUpdateBooking, useConfirmPayment } from '@/api';
-import { BOOKING_STATUSES } from '@/types';
+import { BOOKING_STATUSES } from '@/constants/bookings';
 import { getImageUrl } from '@/utils/image';
 
 import { formatDate, formatTime } from '@/utils/time';
@@ -36,7 +36,9 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const updateBooking = useUpdateBooking();
   const confirmPayment = useConfirmPayment();
 
-  const [currentStatus, setCurrentStatus] = useState(initialBooking.status);
+  const [optimisticStatus, setOptimisticStatus] = useState<Booking['status'] | null>(null);
+  const currentStatus = optimisticStatus ?? initialBooking.status;
+  const [isEditingInvoice, setIsEditingInvoice] = useState(false);
   const [invoiceTotal, setInvoiceTotal] = useState(0);
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
@@ -66,11 +68,11 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     currentStatus === BOOKING_STATUSES.Paid;
 
   const statusMessages: Record<string, string> = {
-    confirmed: t('provider.bookingAccepted'),
-    rejected: t('provider.bookingRejected'),
-    in_progress: t('provider.jobMarkedInProgress'),
-    completed: t('provider.jobMarkedCompleted'),
-    ready_to_pay: t('provider.invoiceSent'),
+    [BOOKING_STATUSES.Confirmed]: t('provider.bookingAccepted'),
+    [BOOKING_STATUSES.Rejected]: t('provider.bookingRejected'),
+    [BOOKING_STATUSES.InProgress]: t('provider.jobMarkedInProgress'),
+    [BOOKING_STATUSES.Completed]: t('provider.jobMarkedCompleted'),
+    [BOOKING_STATUSES.ReadyToPay]: t('provider.invoiceSent'),
   };
 
   const handleStatusUpdate = (status: Booking['status'], options?: { cancellation_reason?: string }) => {
@@ -78,7 +80,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
       { id: initialBooking.id, data: { status, ...options } },
       {
         onSuccess: (result: Booking) => {
-          setCurrentStatus(result.status);
+          setOptimisticStatus(result.status);
           const msg = statusMessages[status];
           if (msg) showSnackbar({ message: msg, type: 'success' });
         },
@@ -124,13 +126,14 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   };
 
   const handleSendInvoice = () => {
-    if (invoiceTotal <= 0) {
+    const amountToSend = invoiceTotal > 0 ? invoiceTotal : totalPrice;
+    if (amountToSend <= 0) {
       showSnackbar({ message: t('provider.validInvoiceAmount'), type: 'error' });
       return;
     }
     showError({
       title: t('provider.sendInvoiceTitle'),
-      message: t('provider.sendInvoiceConfirm', { amount: invoiceTotal.toFixed(2) }),
+      message: t('provider.sendInvoiceConfirm', { amount: amountToSend.toLocaleString() }),
       actions: [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('provider.send'), onPress: () => handleStatusUpdate(BOOKING_STATUSES.ReadyToPay) },
@@ -151,7 +154,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               { bookingId: initialBooking.id, payload: { has_received_payment: true } },
               {
                 onSuccess: (result: Booking) => {
-                  setCurrentStatus(result.status);
+                  setOptimisticStatus(result.status);
                   showSnackbar({ message: t('provider.paymentConfirmed'), type: 'success' });
                 },
               },
@@ -337,21 +340,16 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             )}
         </View>
 
-        {/* Invoice Editor for Completed status */}
-        {currentStatus === BOOKING_STATUSES.Completed && (
+        {/* Invoice Section for Completed, ReadyToPay, PaymentInitiated, Paid statuses */}
+        {(currentStatus === BOOKING_STATUSES.Completed ||
+          currentStatus === BOOKING_STATUSES.ReadyToPay ||
+          currentStatus === BOOKING_STATUSES.PaymentInitiated ||
+          currentStatus === BOOKING_STATUSES.Paid) && (
           <ProviderInvoiceEditorCard
-            booking={{
-              id: initialBooking.id,
-              customerName,
-              customerAvatar,
-              serviceLabel: serviceName || categoryName,
-              location,
-              bookingDate: [serviceDate, startTime].filter(Boolean).join(' • '),
-              bookedPrice: totalPrice ? `Rs. ${totalPrice.toLocaleString()}` : '',
-              status: currentStatus,
-            }}
-            initialBasePrice={basePriceValue}
-            platformFee={0}
+            key={`${initialBooking.id}-${initialBooking.invoice?.id || 'inv'}-${initialBooking.invoice?.updated_at || 'date'}`}
+            booking={initialBooking}
+            isEditing={currentStatus === BOOKING_STATUSES.Completed ? isEditingInvoice : false}
+            onToggleEdit={currentStatus === BOOKING_STATUSES.Completed ? setIsEditingInvoice : () => {}}
             onTotalCalculated={setInvoiceTotal}
           />
         )}
@@ -376,7 +374,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               variant="outline"
               onPress={handleReject}
               className="flex-1 border-gray-300"
-              textClassName="text-gray-600"
+              textClassName="text-gray-600 font-sans-semibold"
             />
             <Button title={t('provider.accept')} variant="primary" onPress={handleAccept} className="flex-1" />
           </View>
@@ -393,12 +391,24 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           />
         )}
         {currentStatus === BOOKING_STATUSES.Completed && (
-          <Button
-            title={t('provider.sendToCustomer')}
-            variant="primary"
-            onPress={handleSendInvoice}
-            className="w-full"
-          />
+          <View className="flex-row gap-3">
+            <Button
+              title={t('provider.editInvoice')}
+              variant="outline"
+              onPress={() => setIsEditingInvoice(true)}
+              className="flex-1 border-gray-300 bg-white"
+              textClassName="text-gray-700 font-sans-semibold"
+              leftIcon={<Feather name="edit-3" size={14} color={THEME_COLORS.slate700} />}
+            />
+            <Button
+              title={t('provider.sendInvoice')}
+              variant="primary"
+              onPress={handleSendInvoice}
+              loading={updateBooking.isPending}
+              className="flex-1"
+              leftIcon={!updateBooking.isPending ? <Feather name="send" size={14} color="#ffffff" /> : null}
+            />
+          </View>
         )}
         {currentStatus === BOOKING_STATUSES.PaymentInitiated && (
           <Button

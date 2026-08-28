@@ -125,6 +125,38 @@ export interface Invoice {
   invoice_items?: InvoiceItem[];
 }
 
+export interface InvoiceItemToAdd {
+  name: string;
+  quantity: number;
+  unit_price: number;
+}
+
+export interface InvoiceItemToUpdate {
+  id: string;
+  name?: string;
+  quantity?: number;
+  unit_price?: number;
+}
+
+export interface UpdateInvoiceItemsPayload {
+  id: string;
+  additional_note?: string;
+  discount_amount?: number;
+  items_to_add?: InvoiceItemToAdd[];
+  items_to_update?: InvoiceItemToUpdate[];
+  items_to_delete?: string[];
+}
+
+export interface UpdateInvoiceResponse {
+  message: string;
+  invoice: Invoice;
+  primary_items?: InvoiceItem[];
+  additional_items?: InvoiceItem[];
+  added_items?: InvoiceItem[];
+  updated_items?: InvoiceItem[];
+  deleted_items?: InvoiceItem[];
+}
+
 export type MakePaymentResponse =
   | {
       message: string;

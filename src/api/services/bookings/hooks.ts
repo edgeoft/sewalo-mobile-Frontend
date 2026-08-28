@@ -9,6 +9,7 @@ import {
   cancelBookingAction,
   getApplicableCouponsAction,
   downloadInvoiceAction,
+  updateInvoiceItemsAction,
   processPaymentAction,
   confirmPaymentAction,
   createRatingAction,
@@ -36,6 +37,8 @@ import {
   GetMyRatingsParams,
   GetProviderRatingResponse,
   GetProviderRatingsParams,
+  UpdateInvoiceItemsPayload,
+  UpdateInvoiceResponse,
 } from '@/types';
 
 export const invalidateBookingDetail = (queryClient: QueryClient, bookingId: string, booking?: Booking) => {
@@ -94,8 +97,18 @@ const applicableCouponsQueryHook = createQueryHook<GetApplicableCouponsResponse,
 export const useGetApplicableCoupons = (bookingId?: string, options?: { enabled?: boolean }) =>
   applicableCouponsQueryHook(bookingId, { enabled: options?.enabled ?? true });
 
-// Download Hooks
+// Invoice Hooks
 export const useDownloadInvoice = createMutationHook<string, string>(downloadInvoiceAction);
+
+export const useUpdateInvoiceItems = () => {
+  const queryClient = useQueryClient();
+  return useMutation<UpdateInvoiceResponse, Error, { bookingId: string; payload: UpdateInvoiceItemsPayload }>({
+    mutationFn: ({ payload }) => updateInvoiceItemsAction(payload),
+    onSuccess: (_result, variables) => {
+      invalidateBookingDetail(queryClient, variables.bookingId);
+    },
+  });
+};
 
 // Payment Hooks
 export const useProcessPayment = () => {

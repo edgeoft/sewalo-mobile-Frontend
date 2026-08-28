@@ -20,6 +20,8 @@ import type {
   GetMyRatingsParams,
   GetProviderRatingResponse,
   GetProviderRatingsParams,
+  UpdateInvoiceItemsPayload,
+  UpdateInvoiceResponse,
 } from '@/types';
 
 // Booking Actions
@@ -50,6 +52,11 @@ export const cancelBookingAction = async (
   return internalClient.delete<{ message: string; booking: Booking }>(API_ENDPOINTS.BOOKINGS.CANCEL(id), {
     data: cancellation_reason ? { cancellation_reason } : undefined,
   });
+};
+
+// Invoice Actions
+export const updateInvoiceItemsAction = async (payload: UpdateInvoiceItemsPayload): Promise<UpdateInvoiceResponse> => {
+  return internalClient.post<UpdateInvoiceResponse>(API_ENDPOINTS.INVOICES.UPDATE_WITH_ITEMS(payload.id), payload);
 };
 
 // Coupon Actions
