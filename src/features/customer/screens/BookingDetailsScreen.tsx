@@ -496,12 +496,6 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
                 <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.invoiceSummary')}</Text>
               </View>
-              <View className="gap-y-2.5 mb-4">
-                <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
-                  <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
-                </View>
-              </View>
 
               <DiscountLoyaltyCard
                 selectedCoupon={selectedCoupon}
@@ -512,11 +506,12 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 loyaltyBalance={currentLoyaltyPoints}
                 pointsRate={pointsValue}
                 availableCoupons={availableCoupons}
+                subtotal={subtotal}
               />
 
               <View className="border-t border-gray-100 pt-4 gap-y-2.5 mb-4">
                 <View className="flex-row justify-between">
-                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
+                  <Text className="text-xs font-sans-medium text-gray-500">{t('customer.subtotal')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subtotal.toLocaleString()}</Text>
                 </View>
                 {discountAmount > 0 && (

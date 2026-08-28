@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  Modal,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  ScrollView,
-  useWindowDimensions,
-} from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
 import { DISCOUNT_TYPES } from '@/constants/loyalty';
 import type { Coupon } from '@/types';
+import ApplyCouponModal from './ApplyCouponModal';
 
 interface DiscountLoyaltyCardProps {
   selectedCoupon: Coupon | null;
@@ -25,6 +19,7 @@ interface DiscountLoyaltyCardProps {
   loyaltyBalance: number;
   pointsRate: number;
   availableCoupons: Coupon[];
+  subtotal: number;
 }
 
 export default function DiscountLoyaltyCard({
@@ -36,12 +31,73 @@ export default function DiscountLoyaltyCard({
   loyaltyBalance,
   pointsRate,
   availableCoupons,
+  subtotal,
 }: DiscountLoyaltyCardProps) {
   const { t } = useTranslation();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { height } = useWindowDimensions();
+  const { showSnackbar } = useSnackbar();
+
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
 
   const pointsValue = ((parseInt(loyaltyPoints, 10) || 0) * pointsRate).toFixed(2);
+
+  const validateAndApply = (coupon: Coupon): boolean => {
+    const now = new Date();
+
+    if (coupon.end_date && new Date(coupon.end_date) < now) {
+      setCouponError(t('customer.couponExpired'));
+      return false;
+    }
+
+    if (coupon.start_date && new Date(coupon.start_date) > now) {
+      setCouponError(t('customer.couponNotYetActive'));
+      return false;
+    }
+
+    if (coupon.remaining_uses !== null && coupon.remaining_uses !== undefined && coupon.remaining_uses <= 0) {
+      setCouponError(t('customer.couponLimitReached'));
+      return false;
+    }
+
+    const discount =
+      coupon.discount_type === DISCOUNT_TYPES.PERCENT
+        ? (Number(coupon.discount_value) / 100) * subtotal
+        : Number(coupon.discount_value);
+
+    if (subtotal > 0 && discount >= subtotal) {
+      setCouponError(t('customer.couponExceedsSubtotal'));
+      return false;
+    }
+
+    setCouponError('');
+    setCouponInput('');
+    onSelectCoupon(coupon);
+    showSnackbar({ message: t('customer.couponApplied'), type: 'success' });
+    return true;
+  };
+
+  const handleManualApply = () => {
+    const cleanCode = couponInput.trim().toUpperCase();
+    if (!cleanCode) {
+      setCouponError(t('customer.enterCouponCode'));
+      return;
+    }
+
+    const foundCoupon = availableCoupons.find((c) => c.code.trim().toUpperCase() === cleanCode);
+    if (!foundCoupon) {
+      setCouponError(t('customer.invalidCoupon'));
+      return;
+    }
+
+    validateAndApply(foundCoupon);
+  };
+
+  const handleRemoveCoupon = () => {
+    onSelectCoupon(null);
+    setCouponInput('');
+    setCouponError('');
+  };
 
   return (
     <View className="gap-y-4">
@@ -50,121 +106,96 @@ export default function DiscountLoyaltyCard({
         <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">
           {t('customer.applyCoupon')}
         </Text>
-        <Pressable
-          onPress={() => setDropdownOpen(true)}
-          accessibilityRole="button"
-          accessibilityState={{ expanded: dropdownOpen }}
-          className="form-input-container form-input-container-single"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.015,
-            shadowRadius: 2,
-            elevation: 0,
-          }}
-        >
-          {selectedCoupon ? (
+
+        {selectedCoupon ? (
+          /* Applied Coupon State */
+          <View className="p-3 rounded-xl border border-green-200 bg-green-50/70 flex-row items-center justify-between">
             <View className="flex-1 mr-2">
-              <Text className="text-sm font-sans-semibold text-gray-900">{selectedCoupon.name}</Text>
-              <Text className="text-xs font-sans-medium text-gray-500">
-                {selectedCoupon.code} -{' '}
+              <View className="flex-row items-center gap-1.5 flex-wrap">
+                <Feather name="check-circle" size={14} color="#16a34a" />
+                <View className="bg-green-100 border border-green-200 rounded px-1.5 py-0.5">
+                  <Text className="text-[10px] font-sans-extrabold text-green-800 tracking-wider">
+                    {selectedCoupon.code}
+                  </Text>
+                </View>
+                <Text className="text-xs font-sans-bold text-gray-900" numberOfLines={1}>
+                  {selectedCoupon.name}
+                </Text>
+              </View>
+              <Text className="text-xs font-sans-semibold text-green-700 mt-1 ml-5">
                 {selectedCoupon.discount_type === DISCOUNT_TYPES.PERCENT
-                  ? `${selectedCoupon.discount_value}%`
-                  : `Rs. ${selectedCoupon.discount_value}`}{' '}
-                off
+                  ? `${selectedCoupon.discount_value}% OFF`
+                  : `Rs. ${Number(selectedCoupon.discount_value).toLocaleString()} OFF`}
               </Text>
             </View>
-          ) : (
-            <Text className="form-input-text flex-1 text-slate-400">{t('components.selectCoupon')}</Text>
-          )}
-          <View className="ml-3">
-            <Feather name="chevron-down" size={16} color={THEME_COLORS.slate400} accessible={false} />
+
+            <Pressable
+              onPress={handleRemoveCoupon}
+              accessibilityRole="button"
+              accessibilityLabel={t('components.removeCoupon')}
+              hitSlop={8}
+              className="p-2 rounded-full bg-white border border-red-100 active:bg-red-50"
+            >
+              <Feather name="trash-2" size={13} color={THEME_COLORS.dangerRed} />
+            </Pressable>
           </View>
-        </Pressable>
-        {selectedCoupon && (
-          <Pressable
-            onPress={() => onSelectCoupon(null)}
-            accessibilityRole="button"
-            className="flex-row items-center mt-2"
-          >
-            <Feather name="x" size={12} color={THEME_COLORS.dangerRed} accessible={false} />
-            <Text className="text-xs font-sans-medium text-red-500 ml-1">{t('components.removeCoupon')}</Text>
-          </Pressable>
-        )}
-
-        {/* Coupon Selection Bottom Sheet */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={dropdownOpen}
-          onRequestClose={() => setDropdownOpen(false)}
-        >
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback onPress={() => setDropdownOpen(false)}>
-              <View style={styles.backdrop} />
-            </TouchableWithoutFeedback>
-
-            <View style={[styles.drawerContainer, { maxHeight: height * 0.7 }]} className="bg-white px-5 pb-7 pt-4">
-              <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
-
-              <View className="flex-row items-center justify-between mb-1">
-                <Text className="text-gray-900 text-xl font-sans-extrabold">{t('components.availableCoupons')}</Text>
-                <Pressable
-                  onPress={() => setDropdownOpen(false)}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('common.close')}
-                  hitSlop={8}
-                  className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
-                >
-                  <Feather name="x" size={16} color={THEME_COLORS.slate500} />
-                </Pressable>
+        ) : (
+          /* Unapplied Coupon Input State */
+          <View>
+            <View className="flex-row items-center gap-2">
+              <View className="flex-1">
+                <Input
+                  placeholder={t('customer.enterCouponCode')}
+                  value={couponInput}
+                  onChangeText={(text) => {
+                    setCouponInput(text.toUpperCase());
+                    if (couponError) setCouponError('');
+                  }}
+                  autoCapitalize="characters"
+                  className="h-11"
+                  inputClassName="text-sm font-sans-semibold text-gray-900 tracking-wider"
+                />
               </View>
-
-              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
-                <View className="gap-y-2.5 mt-2">
-                  {availableCoupons.map((coupon) => (
-                    <Pressable
-                      key={coupon.id}
-                      onPress={() => {
-                        onSelectCoupon(selectedCoupon?.code === coupon.code ? null : coupon);
-                        setDropdownOpen(false);
-                      }}
-                      accessibilityRole="button"
-                      accessibilityState={{ checked: selectedCoupon?.code === coupon.code }}
-                      className={`px-4 py-3.5 border rounded-xl ${
-                        selectedCoupon?.code === coupon.code
-                          ? 'border-primary bg-surface-indigo-subtle'
-                          : 'border-gray-200 bg-white'
-                      }`}
-                    >
-                      <View className="flex-row items-start justify-between">
-                        <View className="flex-1 mr-3">
-                          <View className="flex-row items-center gap-1.5">
-                            <Text className="text-sm font-sans-bold text-gray-900">{coupon.name}</Text>
-                            <View className="bg-primary/10 rounded px-1.5 py-0.5">
-                              <Text className="text-[10px] font-sans-bold text-primary">{coupon.code}</Text>
-                            </View>
-                          </View>
-                          <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">
-                            {coupon.discount_type === DISCOUNT_TYPES.PERCENT
-                              ? `${coupon.discount_value}% off`
-                              : `Rs. ${coupon.discount_value} off`}
-                            {coupon.remaining_uses > 0 && ` (${coupon.remaining_uses} uses left)`}
-                          </Text>
-                        </View>
-                        {selectedCoupon?.code === coupon.code && (
-                          <View className="h-6 w-6 rounded-full bg-primary items-center justify-center mt-0.5">
-                            <Feather name="check" size={12} color={THEME_COLORS.primaryForeground} accessible={false} />
-                          </View>
-                        )}
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-              </ScrollView>
+              <Button
+                title={t('customer.apply')}
+                variant="primary"
+                size="sm"
+                onPress={handleManualApply}
+                className="h-11 px-4 min-w-[76px]"
+                disabled={!couponInput.trim()}
+              />
             </View>
+
+            {couponError ? (
+              <View className="flex-row items-center mt-1.5 ml-1 gap-1">
+                <Feather name="alert-circle" size={12} color={THEME_COLORS.dangerRed} />
+                <Text className="text-xs font-sans-medium text-red-500 flex-1">{couponError}</Text>
+              </View>
+            ) : null}
+
+            {/* View Available Offers Banner */}
+            {availableCoupons.length > 0 && (
+              <Pressable
+                onPress={() => setIsOffersModalOpen(true)}
+                accessibilityRole="button"
+                className="mt-2.5 px-3 py-2.5 rounded-lg border border-primary/20 bg-primary/5 flex-row items-center justify-between active:bg-primary/10"
+              >
+                <View className="flex-row items-center gap-2 flex-1 mr-2">
+                  <View className="w-6 h-6 rounded-full bg-primary/10 items-center justify-center">
+                    <Feather name="tag" size={12} color={THEME_COLORS.primary} />
+                  </View>
+                  <Text className="text-xs font-sans-semibold text-primary flex-1" numberOfLines={1}>
+                    {t('customer.availableOffersCount', { count: availableCoupons.length })}
+                  </Text>
+                </View>
+                <View className="flex-row items-center gap-1">
+                  <Text className="text-xs font-sans-bold text-primary">{t('customer.viewAllOffers')}</Text>
+                  <Feather name="chevron-right" size={13} color={THEME_COLORS.primary} />
+                </View>
+              </Pressable>
+            )}
           </View>
-        </Modal>
+        )}
       </View>
 
       {/* Loyalty Points */}
@@ -196,36 +227,28 @@ export default function DiscountLoyaltyCard({
               value={loyaltyPoints}
               onChangeText={onChangeLoyaltyPoints}
               editable={loyaltyBalance > 0}
-              className="h-12"
+              className="h-11"
               inputClassName="text-sm font-sans-medium text-gray-900"
             />
           </View>
-          <View className="h-12 px-3 border border-gray-200 rounded-lg bg-gray-50 justify-center min-w-[90px]">
-            <Text className="text-xs font-sans-medium text-gray-500 text-center">{t('common.value')}</Text>
+          <View className="h-11 px-3 border border-gray-200 rounded-lg bg-gray-50 justify-center min-w-[90px]">
+            <Text className="text-[10px] font-sans-medium text-gray-500 text-center">{t('common.value')}</Text>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">Rs. {pointsValue}</Text>
           </View>
         </View>
       </View>
+
+      {/* Dedicated Offers Sheet Modal */}
+      <ApplyCouponModal
+        visible={isOffersModalOpen}
+        onClose={() => setIsOffersModalOpen(false)}
+        availableCoupons={availableCoupons}
+        selectedCoupon={selectedCoupon}
+        onApplyCoupon={(coupon) => {
+          validateAndApply(coupon);
+        }}
+        subtotal={subtotal}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(7, 17, 31, 0.4)',
-  },
-  drawerContainer: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 24,
-  },
-});
