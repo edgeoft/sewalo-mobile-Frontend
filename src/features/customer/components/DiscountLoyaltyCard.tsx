@@ -13,6 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import Input from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
+import { DISCOUNT_TYPES } from '@/constants/loyalty';
 import type { Coupon } from '@/types';
 
 interface DiscountLoyaltyCardProps {
@@ -20,6 +21,7 @@ interface DiscountLoyaltyCardProps {
   onSelectCoupon: (coupon: Coupon | null) => void;
   loyaltyPoints: string;
   onChangeLoyaltyPoints: (points: string) => void;
+  onApplyMaxPoints?: () => void;
   loyaltyBalance: number;
   pointsRate: number;
   availableCoupons: Coupon[];
@@ -30,6 +32,7 @@ export default function DiscountLoyaltyCard({
   onSelectCoupon,
   loyaltyPoints,
   onChangeLoyaltyPoints,
+  onApplyMaxPoints,
   loyaltyBalance,
   pointsRate,
   availableCoupons,
@@ -38,7 +41,7 @@ export default function DiscountLoyaltyCard({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { height } = useWindowDimensions();
 
-  const pointsValue = (parseInt(loyaltyPoints) || 0) * pointsRate;
+  const pointsValue = ((parseInt(loyaltyPoints, 10) || 0) * pointsRate).toFixed(2);
 
   return (
     <View className="gap-y-4">
@@ -65,7 +68,7 @@ export default function DiscountLoyaltyCard({
               <Text className="text-sm font-sans-semibold text-gray-900">{selectedCoupon.name}</Text>
               <Text className="text-xs font-sans-medium text-gray-500">
                 {selectedCoupon.code} -{' '}
-                {selectedCoupon.discount_type === 'percent'
+                {selectedCoupon.discount_type === DISCOUNT_TYPES.PERCENT
                   ? `${selectedCoupon.discount_value}%`
                   : `Rs. ${selectedCoupon.discount_value}`}{' '}
                 off
@@ -143,7 +146,7 @@ export default function DiscountLoyaltyCard({
                             </View>
                           </View>
                           <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">
-                            {coupon.discount_type === 'percent'
+                            {coupon.discount_type === DISCOUNT_TYPES.PERCENT
                               ? `${coupon.discount_value}% off`
                               : `Rs. ${coupon.discount_value} off`}
                             {coupon.remaining_uses > 0 && ` (${coupon.remaining_uses} uses left)`}
@@ -170,9 +173,20 @@ export default function DiscountLoyaltyCard({
           <Text className="text-xs font-sans-bold text-gray-950 uppercase tracking-wide ml-0.5">
             {t('components.redeemLoyaltyPoints')}
           </Text>
-          <Text className="text-xs font-sans-bold text-primary">
-            {t('components.balancePts', { balance: loyaltyBalance })}
-          </Text>
+          <View className="flex-row items-center gap-x-2">
+            <Text className="text-xs font-sans-bold text-primary">
+              {t('components.balancePts', { balance: loyaltyBalance })}
+            </Text>
+            {onApplyMaxPoints && loyaltyBalance > 0 && (
+              <Pressable
+                onPress={onApplyMaxPoints}
+                accessibilityRole="button"
+                className="bg-primary/10 px-2 py-0.5 rounded border border-primary/20 active:bg-primary/20"
+              >
+                <Text className="text-[10px] font-sans-bold text-primary">{t('customer.applyMax', 'Max')}</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
@@ -181,6 +195,7 @@ export default function DiscountLoyaltyCard({
               keyboardType="numeric"
               value={loyaltyPoints}
               onChangeText={onChangeLoyaltyPoints}
+              editable={loyaltyBalance > 0}
               className="h-12"
               inputClassName="text-sm font-sans-medium text-gray-900"
             />

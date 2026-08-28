@@ -39,7 +39,7 @@ export default function CustomerHomeScreen() {
       const provider = b.provider;
       const service = b.service;
 
-      const bookedPrice = b.invoice?.total ? `Rs. ${parseFloat(b.invoice.total).toFixed(0)}` : t('home.na');
+      const bookedPrice = b.invoice?.total ? `Rs. ${Number(b.invoice.total).toFixed(0)}` : t('home.na');
 
       return {
         id: b.id,

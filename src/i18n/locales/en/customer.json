@@ -146,5 +146,16 @@
   "paymentCancelled": "Payment was cancelled.",
   "cancelPaymentTitle": "Cancel Payment",
   "cancelPaymentConfirm": "Are you sure you want to cancel this payment?",
-  "failedToOpenPayment": "Failed to open payment gateway."
+  "failedToOpenPayment": "Failed to open payment gateway.",
+  "reviewInvoice": "Review Invoice",
+  "invoiceDetails": "Invoice Details",
+  "itemizedCharges": "Itemized Charges",
+  "itemName": "Item",
+  "qty": "Qty",
+  "unitPrice": "Unit Price",
+  "amount": "Amount",
+  "proceedToPay": "Proceed to Pay",
+  "applyMax": "Max",
+  "invoiceNumber": "Invoice #",
+  "subtotal": "Subtotal"
 }

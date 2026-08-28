@@ -53,8 +53,9 @@ export const cancelBookingAction = async (
 };
 
 // Coupon Actions
-export const getApplicableCouponsAction = async (): Promise<GetApplicableCouponsResponse> => {
-  return internalClient.get<GetApplicableCouponsResponse>(API_ENDPOINTS.USER.APPLICABLE_COUPONS);
+export const getApplicableCouponsAction = async (bookingId?: string): Promise<GetApplicableCouponsResponse> => {
+  const params = bookingId ? { booking_id: bookingId } : undefined;
+  return internalClient.get<GetApplicableCouponsResponse>(API_ENDPOINTS.USER.APPLICABLE_COUPONS, { params });
 };
 
 // Download Actions

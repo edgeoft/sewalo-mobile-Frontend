@@ -9,7 +9,7 @@ export const QUERY_KEYS = {
     DETAIL: (id: string) => ['booking', id] as const,
     BASE: ['booking'],
   },
-  APPLICABLE_COUPONS: ['applicable-coupons'],
+  APPLICABLE_COUPONS: (bookingId?: string) => ['applicable-coupons', bookingId] as const,
   MY_RATINGS: {
     ALL: ['my-ratings'],
     LIST: (params?: QueryParams) => ['my-ratings', params] as const,

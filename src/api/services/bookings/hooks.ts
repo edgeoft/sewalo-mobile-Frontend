@@ -86,10 +86,13 @@ export const useCancelBooking = () => {
 };
 
 // Coupon Hooks
-export const useGetApplicableCoupons = createQueryHook<GetApplicableCouponsResponse, void>(
-  () => QUERY_KEYS.APPLICABLE_COUPONS,
-  getApplicableCouponsAction,
+const applicableCouponsQueryHook = createQueryHook<GetApplicableCouponsResponse, string | undefined>(
+  (bookingId) => QUERY_KEYS.APPLICABLE_COUPONS(bookingId),
+  (bookingId) => getApplicableCouponsAction(bookingId),
 );
+
+export const useGetApplicableCoupons = (bookingId?: string, options?: { enabled?: boolean }) =>
+  applicableCouponsQueryHook(bookingId, { enabled: options?.enabled ?? true });
 
 // Download Hooks
 export const useDownloadInvoice = createMutationHook<string, string>(downloadInvoiceAction);

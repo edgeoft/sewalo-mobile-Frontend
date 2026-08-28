@@ -21,7 +21,16 @@ import DiscountLoyaltyCard from '../components/DiscountLoyaltyCard';
 import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
 import EsewaPaymentModal from '../components/EsewaPaymentModal';
-import { useGetApplicableCoupons, useProcessPayment, useCancelBooking, useDownloadInvoice } from '@/api';
+import InvoiceReviewModal from '../components/InvoiceReviewModal';
+import {
+  useGetApplicableCoupons,
+  useProcessPayment,
+  useCancelBooking,
+  useDownloadInvoice,
+  useGetProfileQuery,
+} from '@/api';
+import { useAuth } from '@/providers/AuthProvider';
+import { LOYALTY_POINTS_VALUE, MAX_LOYALTY_POINTS_REDEMPTION_PERCENTAGE, DISCOUNT_TYPES } from '@/constants/loyalty';
 import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useSnackbar } from '@/components/ui/Snackbar';
@@ -43,10 +52,13 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { user: authUser } = useAuth();
+  const { data: profileData } = useGetProfileQuery();
 
   const [selectedCoupon, setSelectedCoupon] = useState<BookingCoupon | null>(null);
   const [loyaltyPoints, setLoyaltyPoints] = useState<string>('');
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
+  const [isReviewInvoiceModalVisible, setIsReviewInvoiceModalVisible] = useState(false);
   const [isRatingModalVisible, setIsRatingModalVisible] = useState(false);
   const [isEsewaModalVisible, setIsEsewaModalVisible] = useState(false);
   const [esewaPaymentDetails, setEsewaPaymentDetails] = useState<EsewaPaymentDetails | null>(null);
@@ -54,55 +66,84 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
 
-  const { data: couponsData } = useGetApplicableCoupons();
+  const { data: couponsData } = useGetApplicableCoupons(booking.id);
   const processPayment = useProcessPayment();
   const cancelBooking = useCancelBooking();
   const downloadInvoice = useDownloadInvoice();
 
   const availableCoupons = useMemo(() => couponsData?.data || [], [couponsData]);
 
-  const loyaltyBalance = booking.user?.loyalty_points || 0;
-  const pointsRate = 2;
+  const user = profileData?.user ?? authUser;
+  const currentLoyaltyPoints = user?.loyalty_points || 0;
+  const pointsValue = LOYALTY_POINTS_VALUE;
 
   const invoice = booking.invoice;
-  const basePriceValue = invoice ? Number(invoice.sub_total) || 0 : 0;
-  const platformFeeValue = 0;
+  const subtotal = Number(invoice?.sub_total || 0);
 
-  let couponDiscountValue = 0;
+  let discountAmount = 0;
   if (selectedCoupon) {
-    if (selectedCoupon.discount_type === 'percent') {
-      couponDiscountValue = basePriceValue * (selectedCoupon.discount_value / 100);
+    if (selectedCoupon.discount_type === DISCOUNT_TYPES.PERCENT) {
+      discountAmount = (Number(selectedCoupon.discount_value) / 100) * subtotal;
     } else {
-      couponDiscountValue = selectedCoupon.discount_value;
+      discountAmount = Number(selectedCoupon.discount_value);
     }
   }
 
-  const loyaltyPointsNum = parseInt(loyaltyPoints) || 0;
-  const loyaltyDiscountValue = loyaltyPointsNum * pointsRate;
+  const maxPayableWithPoints = (subtotal - discountAmount) * MAX_LOYALTY_POINTS_REDEMPTION_PERCENTAGE;
+  const maxPointsAllowed = Math.max(0, Math.floor(maxPayableWithPoints / pointsValue));
+  const effectiveMaxPoints = Math.min(currentLoyaltyPoints, maxPointsAllowed);
 
-  const subtotal = Math.max(0, basePriceValue + platformFeeValue - couponDiscountValue - loyaltyDiscountValue);
-  const totalPayableValue = subtotal;
+  const resolvedPoints = parseInt(loyaltyPoints, 10) || 0;
+  const pointsDiscount = resolvedPoints * pointsValue;
+  const totalDiscount = discountAmount + pointsDiscount;
+  const totalPayableValue = Math.max(subtotal - totalDiscount, 0);
 
-  const handleLoyaltyPointsChange = (text: string) => {
-    const numericText = text.replace(/[^0-9]/g, '');
-    const points = parseInt(numericText) || 0;
-
-    if (points > loyaltyBalance) {
-      showSnackbar({ message: t('customer.onlyLoyaltyPoints', { balance: loyaltyBalance }), type: 'info' });
-      setLoyaltyPoints(loyaltyBalance.toString());
+  const handleLoyaltyPointsChange = (val: string) => {
+    const numericText = val.replace(/[^0-9]/g, '');
+    if (numericText === '') {
+      setLoyaltyPoints('');
       return;
     }
 
-    const pointsVal = points * pointsRate;
-    const maxAllowedDiscount = basePriceValue + platformFeeValue - couponDiscountValue;
-    if (pointsVal > maxAllowedDiscount) {
-      const maxPoints = Math.floor(maxAllowedDiscount / pointsRate);
-      showSnackbar({ message: t('customer.maxRedeemPoints', { maxPoints }), type: 'info' });
-      setLoyaltyPoints(maxPoints.toString());
+    const num = Number(numericText);
+    if (num > currentLoyaltyPoints) {
+      showSnackbar({ message: t('customer.onlyLoyaltyPoints', { balance: currentLoyaltyPoints }), type: 'info' });
+      setLoyaltyPoints(effectiveMaxPoints > 0 ? effectiveMaxPoints.toString() : '');
+      return;
+    }
+
+    if (num > maxPointsAllowed) {
+      showSnackbar({ message: t('customer.maxRedeemPoints', { maxPoints: maxPointsAllowed }), type: 'info' });
+      setLoyaltyPoints(maxPointsAllowed.toString());
       return;
     }
 
     setLoyaltyPoints(numericText);
+  };
+
+  const handleApplyMaxPoints = () => {
+    if (effectiveMaxPoints > 0) {
+      setLoyaltyPoints(effectiveMaxPoints.toString());
+    }
+  };
+
+  const handleSelectCoupon = (coupon: BookingCoupon | null) => {
+    setSelectedCoupon(coupon);
+    if (loyaltyPoints) {
+      let newDiscount = 0;
+      if (coupon) {
+        newDiscount =
+          coupon.discount_type === DISCOUNT_TYPES.PERCENT
+            ? (Number(coupon.discount_value) / 100) * subtotal
+            : Number(coupon.discount_value);
+      }
+      const newMaxPayable = (subtotal - newDiscount) * MAX_LOYALTY_POINTS_REDEMPTION_PERCENTAGE;
+      const newMaxPoints = Math.max(0, Math.floor(newMaxPayable / pointsValue));
+      const currentPts = parseInt(loyaltyPoints, 10) || 0;
+      if (currentPts > newMaxPoints) {
+        setLoyaltyPoints(newMaxPoints > 0 ? newMaxPoints.toString() : '');
+      }
+    }
   };
 
   const handleCancel = () => {
@@ -132,14 +173,15 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
     const payload = {
       payment_method: option,
-      ...(selectedCoupon ? { coupon_id: couponsData?.data.find((c) => c.code === selectedCoupon.code)?.id } : {}),
-      ...(loyaltyPointsNum > 0 ? { loyalty_points: loyaltyPointsNum } : {}),
+      ...(selectedCoupon ? { coupon_id: selectedCoupon.id } : {}),
+      ...(resolvedPoints > 0 ? { loyalty_points: resolvedPoints } : {}),
     };
 
     processPayment.mutate(
       { bookingId: booking.id, payload },
       {
         onSuccess: (response: MakePaymentResponse) => {
+          queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROFILE });
           processPaymentResponse(response.type, {
             response,
             showSnackbar,
@@ -159,6 +201,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     setEsewaPaymentDetails(null);
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(booking.id) });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.BASE });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROFILE });
     showSnackbar({ message: t('customer.paymentCompleted', 'Payment completed successfully!'), type: 'success' });
   };
 
@@ -462,40 +505,33 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
               <DiscountLoyaltyCard
                 selectedCoupon={selectedCoupon}
-                onSelectCoupon={setSelectedCoupon}
+                onSelectCoupon={handleSelectCoupon}
                 loyaltyPoints={loyaltyPoints}
                 onChangeLoyaltyPoints={handleLoyaltyPointsChange}
-                loyaltyBalance={loyaltyBalance}
-                pointsRate={pointsRate}
+                onApplyMaxPoints={handleApplyMaxPoints}
+                loyaltyBalance={currentLoyaltyPoints}
+                pointsRate={pointsValue}
                 availableCoupons={availableCoupons}
               />
 
               <View className="border-t border-gray-100 pt-4 gap-y-2.5 mb-4">
                 <View className="flex-row justify-between">
                   <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
-                  <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
+                  <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subtotal.toLocaleString()}</Text>
                 </View>
-                {platformFeeValue > 0 && (
-                  <View className="flex-row justify-between">
-                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.platformFee')}</Text>
-                    <Text className="text-xs font-sans-semibold text-gray-800">
-                      Rs. {platformFeeValue.toLocaleString()}
-                    </Text>
-                  </View>
-                )}
-                {couponDiscountValue > 0 && (
+                {discountAmount > 0 && (
                   <View className="flex-row justify-between">
                     <Text className="text-xs font-sans-medium text-green-600">{t('customer.couponDiscount')}</Text>
                     <Text className="text-xs font-sans-semibold text-green-600">
-                      - Rs. {couponDiscountValue.toLocaleString()}
+                      - Rs. {discountAmount.toLocaleString()}
                     </Text>
                   </View>
                 )}
-                {loyaltyDiscountValue > 0 && (
+                {pointsDiscount > 0 && (
                   <View className="flex-row justify-between">
                     <Text className="text-xs font-sans-medium text-green-600">{t('customer.loyaltyDiscount')}</Text>
                     <Text className="text-xs font-sans-semibold text-green-600">
-                      - Rs. {loyaltyDiscountValue.toLocaleString()}
+                      - Rs. {pointsDiscount.toLocaleString()}
                     </Text>
                   </View>
                 )}
@@ -510,24 +546,20 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
               <View className="gap-y-2.5">
                 <Pressable
-                  onPress={handlePayNow}
+                  onPress={() => setIsReviewInvoiceModalVisible(true)}
                   accessibilityRole="button"
-                  className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
+                  className="border border-primary/40 bg-surface-indigo-subtle/60 py-3.5 rounded-lg items-center active:bg-surface-indigo-subtle flex-row justify-center gap-x-2"
                 >
-                  <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
+                  <Feather name="file-text" size={16} color={THEME_COLORS.primary} />
+                  <Text className="text-sm font-sans-bold text-primary">{t('customer.reviewInvoice')}</Text>
                 </Pressable>
                 <Pressable
-                  onPress={handleDownloadInvoice}
-                  disabled={downloadInvoice.isPending}
+                  onPress={handlePayNow}
                   accessibilityRole="button"
-                  accessibilityState={{ disabled: downloadInvoice.isPending }}
-                  className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
+                  className="bg-primary py-3.5 rounded-lg items-center active:opacity-90 flex-row justify-center gap-x-2"
                 >
-                  {downloadInvoice.isPending ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
-                  ) : (
-                    <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
-                  )}
+                  <Feather name="credit-card" size={16} color="#ffffff" />
+                  <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
                 </Pressable>
               </View>
             </View>
@@ -544,7 +576,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             <View className="gap-y-2.5 mb-4">
               <View className="flex-row justify-between">
                 <Text className="text-xs font-sans-medium text-gray-500">{t('customer.basePrice')}</Text>
-                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
+                <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subtotal.toLocaleString()}</Text>
               </View>
             </View>
 
@@ -580,6 +612,22 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           </View>
         )}
       </ContentLayout>
+
+      <InvoiceReviewModal
+        visible={isReviewInvoiceModalVisible}
+        onClose={() => setIsReviewInvoiceModalVisible(false)}
+        onProceedToPay={() => {
+          setIsReviewInvoiceModalVisible(false);
+          setIsPaymentModalVisible(true);
+        }}
+        booking={booking}
+        couponDiscountValue={discountAmount}
+        loyaltyDiscountValue={pointsDiscount}
+        platformFeeValue={0}
+        totalPayableValue={totalPayableValue}
+        onDownloadInvoice={handleDownloadInvoice}
+        isDownloadingInvoice={downloadInvoice.isPending}
+      />
 
       <PaymentOptionsModal
         visible={isPaymentModalVisible}

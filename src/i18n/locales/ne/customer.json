@@ -146,5 +146,16 @@
   "paymentCancelled": "भुक्तानी रद्द गरियो।",
   "cancelPaymentTitle": "भुक्तानी रद्द गर्नुहोस्",
   "cancelPaymentConfirm": "के तपाईं साँच्चै यो भुक्तानी रद्द गर्न चाहनुहुन्छ?",
-  "failedToOpenPayment": "भुक्तानी गेटवे खोल्न असफल भयो।"
+  "failedToOpenPayment": "भुक्तानी गेटवे खोल्न असफल भयो।",
+  "reviewInvoice": "इनभ्वाइस समीक्षा गर्नुहोस्",
+  "invoiceDetails": "इनभ्वाइस विवरण",
+  "itemizedCharges": "विस्तृत शुल्कहरू",
+  "itemName": "विवरण",
+  "qty": "परिमाण",
+  "unitPrice": "एकाइ मूल्य",
+  "amount": "रकम",
+  "proceedToPay": "भुक्तानीमा जानुहोस्",
+  "applyMax": "अधिकतम",
+  "invoiceNumber": "इनभ्वाइस नं",
+  "subtotal": "उप-कुल"
 }

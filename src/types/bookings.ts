@@ -1,7 +1,10 @@
 import type { BOOKING_STATUSES } from '@/constants/bookings';
+import type { DiscountType } from '@/constants/loyalty';
 import type { UserProfile, PaymentMethod } from '@/types';
 import type { Service } from './services';
 import type { PaginatedResponse, DataEnvelope } from './common';
+
+export type { DiscountType };
 
 /** Real booking statuses as stored on the entity (no filter pseudo-values). */
 export type BookingStatus = Exclude<(typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES], 'all'>;
@@ -75,8 +78,6 @@ export interface UpdateBookingPayload {
   coordinates?: { lat: number; lng: number };
 }
 
-export type DiscountType = 'percent' | 'fixed';
-
 export interface Coupon {
   id: string;
   name: string;
@@ -95,17 +96,33 @@ export type GetApplicableCouponsResponse = DataEnvelope<Coupon[]>;
 
 export interface InvoiceItem {
   id: string;
+  invoice_id?: string;
   name: string;
   quantity: number;
-  unit_price: string;
-  total_amount: string;
+  unit_price: string | number;
+  total_amount: string | number;
+  is_primary_item?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Invoice {
   id: string;
+  invoice_id?: string;
+  booking_id?: string;
   additional_note: string | null;
-  sub_total: string;
-  total: string;
+  sub_total: string | number;
+  discount_amount?: string | number;
+  coupon_discount?: string | number;
+  coupon_id?: string | null;
+  vat?: string | number;
+  loyalty_points_used?: number;
+  loyalty_points_discount?: string | number;
+  total: string | number;
+  total_amount_paid?: string | number;
+  created_at?: string;
+  updated_at?: string;
+  invoice_items?: InvoiceItem[];
 }
 
 export type MakePaymentResponse =
