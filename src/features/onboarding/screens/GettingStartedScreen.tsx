@@ -3,18 +3,17 @@ import { THEME_COLORS } from '@/constants/colors';
 import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import TopBar from '@/components/navigation/TopBar';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import RadialStepper from '@/components/common/RadialStepper';
-import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { USER_ROLES } from '@/types';
 
 // Step components
 import OnboardingIllustration from '../components/OnboardingIllustration';
+import OnboardingStickyFooter from '../components/OnboardingStickyFooter';
 import PersonalInfoStep from '../components/PersonalInfoStep';
 import AvailabilityStep from '../components/AvailabilityStep';
 import IdentityVerificationStep from '../components/IdentityVerificationStep';
@@ -25,7 +24,6 @@ import { useOnboarding } from '../hooks/useOnboarding';
 
 export default function GettingStartedScreen() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const {
     activeIndex,
     loading,
@@ -115,27 +113,11 @@ export default function GettingStartedScreen() {
             </ContentLayout>
 
             {/* Sticky Bottom Button */}
-            <View
-              className="bg-white border-t border-gray-100 px-5"
-              style={{
-                paddingTop: 12,
-                paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: -3 },
-                shadowOpacity: 0.04,
-                shadowRadius: 6,
-                elevation: Platform.OS === 'android' ? 0 : 10,
-              }}
-            >
-              <Button
-                title={t('onboarding.getStartedNow')}
-                rightIcon={<Feather name="arrow-right" size={16} color="white" />}
-                onPress={handleNext}
-                variant="primary"
-                size="sm"
-                className="w-full bg-primary"
-              />
-            </View>
+            <OnboardingStickyFooter
+              primaryTitle={t('onboarding.getStartedNow')}
+              primaryRightIcon={<Feather name="arrow-right" size={16} color="white" />}
+              onPrimaryPress={handleNext}
+            />
           </View>
         );
 

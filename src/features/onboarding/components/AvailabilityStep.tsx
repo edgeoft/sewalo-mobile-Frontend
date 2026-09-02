@@ -1,11 +1,10 @@
 import React from 'react';
-import { Platform, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
 import AvailabilityEditor from '@/components/common/AvailabilityEditor';
+import OnboardingStickyFooter from './OnboardingStickyFooter';
 
 import type { AvailabilityType } from '@/constants/availability';
 
@@ -29,7 +28,6 @@ export default function AvailabilityStep({
   stepper,
 }: AvailabilityStepProps) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
 
   return (
     <View className="flex-1 justify-between bg-transparent">
@@ -65,26 +63,7 @@ export default function AvailabilityStep({
       </ContentLayout>
 
       {/* Sticky Bottom Actions Container */}
-      <View
-        className="bg-white border-t border-gray-100 px-5"
-        style={{
-          paddingTop: 12,
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.04,
-          shadowRadius: 6,
-          elevation: Platform.OS === 'android' ? 0 : 10,
-        }}
-      >
-        <Button
-          title={t('onboarding.save')}
-          onPress={onNext}
-          variant="primary"
-          size="md"
-          className="w-full bg-primary"
-        />
-      </View>
+      <OnboardingStickyFooter primaryTitle={t('onboarding.save')} onPrimaryPress={onNext} />
     </View>
   );
 }

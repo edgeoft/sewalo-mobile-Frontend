@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form';
 import {
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,13 +11,13 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { AvatarPicker } from '@/components/common';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import OnboardingStickyFooter from './OnboardingStickyFooter';
 import { THEME_COLORS } from '@/constants/colors';
 import { MONTHS } from '@/constants/calendar';
 import LocationSelector from '@/components/ui/LocationSelector';
@@ -48,7 +47,6 @@ export default function PersonalInfoStep({
 }: PersonalInfoStepProps) {
   const { t } = useTranslation();
   const { height } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const [dobModalVisible, setDobModalVisible] = useState(false);
 
   const watchLat = useWatch({ control, name: 'lat' }) || 27.700769;
@@ -215,27 +213,7 @@ export default function PersonalInfoStep({
       </ContentLayout>
 
       {/* Sticky Bottom Actions Container */}
-      <View
-        className="bg-white border-t border-gray-100 px-5"
-        style={{
-          paddingTop: 12,
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.04,
-          shadowRadius: 6,
-          elevation: Platform.OS === 'android' ? 0 : 10,
-        }}
-      >
-        <Button
-          title={t('onboarding.save')}
-          onPress={onNext}
-          loading={loading}
-          variant="primary"
-          size="sm"
-          className="w-full bg-primary"
-        />
-      </View>
+      <OnboardingStickyFooter primaryTitle={t('onboarding.save')} onPrimaryPress={onNext} primaryLoading={loading} />
 
       {/* Custom DOB Selector Modal */}
       <Modal

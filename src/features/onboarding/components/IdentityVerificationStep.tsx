@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Image, Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import Button from '@/components/ui/Button';
 import ContentLayout from '@/components/layout/ContentLayout';
+import OnboardingStickyFooter from './OnboardingStickyFooter';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { USER_ROLES } from '@/types';
 
@@ -31,7 +30,6 @@ export default function IdentityVerificationStep({
   const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
   const [previewVisible, setPreviewVisible] = useState(false);
-  const insets = useSafeAreaInsets();
   const isProvider = role === USER_ROLES.Provider;
 
   const handlePickImage = async () => {
@@ -137,37 +135,13 @@ export default function IdentityVerificationStep({
       </ContentLayout>
 
       {/* Sticky Bottom Actions Container */}
-      <View
-        className="bg-white border-t border-gray-100 px-5 gap-y-1.5"
-        style={{
-          paddingTop: 12,
-          paddingBottom: insets.bottom > 0 ? insets.bottom + 12 : 12,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.04,
-          shadowRadius: 6,
-          elevation: Platform.OS === 'android' ? 0 : 10,
-        }}
-      >
-        <Button
-          title={t('onboarding.save')}
-          onPress={onNext}
-          disabled={!documentImage}
-          variant="primary"
-          size="sm"
-          className="w-full bg-primary"
-        />
-        {onSkip && (
-          <Button
-            title={t('onboarding.skipStep')}
-            onPress={onSkip}
-            variant="ghost"
-            size="sm"
-            className="w-full border border-gray-200 active:bg-gray-50"
-            textClassName="text-gray-600 font-sans-bold"
-          />
-        )}
-      </View>
+      <OnboardingStickyFooter
+        primaryTitle={t('onboarding.save')}
+        onPrimaryPress={onNext}
+        primaryDisabled={!documentImage}
+        secondaryTitle={onSkip ? t('onboarding.skipStep') : undefined}
+        onSecondaryPress={onSkip}
+      />
 
       {/* Full screen modal preview */}
       <Modal
