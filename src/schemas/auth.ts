@@ -62,6 +62,10 @@ export const getChangePasswordSchema = (t: (key: string) => string) =>
       newPassword: z.string().regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/, t('auth.passwordValidationFailed')),
       confirmPassword: z.string().min(1, t('auth.enterConfirmPassword')),
     })
+    .refine((data) => data.currentPassword !== data.newPassword, {
+      message: t('auth.cannotReusePreviousPassword'),
+      path: ['newPassword'],
+    })
     .refine((data) => data.newPassword === data.confirmPassword, {
       message: t('auth.enterConfirmPassword'),
       path: ['confirmPassword'],

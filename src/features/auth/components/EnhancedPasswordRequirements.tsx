@@ -53,48 +53,48 @@ export default function EnhancedPasswordRequirements({ password, labels }: Enhan
   }
 
   return (
-    <View className="mt-2.5 px-0.5">
-      {/* Strength indicator header */}
-      <View className="flex-row items-center justify-between mb-1.5">
-        <Text className="text-xs font-sans-bold text-gray-500">{labels.title}</Text>
-        {isStarted && (
-          <View className="flex-row items-center gap-1">
-            <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider">
-              {labels.strength}:
-            </Text>
-            <Text className={`text-xs font-sans-extrabold ${strengthTextColorClass}`}>{strengthText}</Text>
+    <View className="mt-3 px-0.5">
+      {/* Password Strength Section */}
+      {isStarted && (
+        <View className="mb-3">
+          <View className="flex-row items-center justify-between mb-1.5">
+            <Text className="text-xs font-sans-medium text-gray-500">{labels.strength}</Text>
+            <Text className={`text-xs font-sans-bold ${strengthTextColorClass}`}>{strengthText}</Text>
           </View>
-        )}
-      </View>
+          <View className="flex-row items-center gap-1.5">
+            {segments.map((active, index) => (
+              <View
+                key={index}
+                className={`h-1.5 flex-1 rounded-full ${active ? strengthColorClass : 'bg-gray-200'}`}
+              />
+            ))}
+          </View>
+        </View>
+      )}
 
-      {/* Segmented Progress Bar */}
-      <View className="flex-row items-center gap-1.5 mb-2.5">
-        {segments.map((active, index) => (
-          <View key={index} className={`h-1.5 flex-1 rounded-full ${active ? strengthColorClass : 'bg-gray-200'}`} />
-        ))}
-      </View>
+      {/* Password Requirements Title */}
+      <Text className="text-xs font-sans-bold text-gray-700 mb-2">{labels.title}</Text>
 
       {/* Requirements bullet list */}
-      <View className="gap-y-1.5">
+      <View className="gap-y-2">
         {requirements.map((req) => {
           const isMet = req.test(password);
 
-          let bulletColorClass = 'bg-gray-400';
-          let textColorClass = 'text-gray-500 font-sans-medium';
+          let bulletColorClass = 'bg-gray-300';
+          let textColorClass = 'text-gray-500 font-sans-regular';
 
           if (isStarted) {
             if (isMet) {
               bulletColorClass = 'bg-emerald-500';
-              textColorClass = 'text-emerald-600 font-sans-semibold';
+              textColorClass = 'text-emerald-700 font-sans-medium';
             } else {
               bulletColorClass = 'bg-destructive';
-              textColorClass = 'text-destructive font-sans-medium';
+              textColorClass = 'text-destructive font-sans-regular';
             }
           }
 
           return (
             <View key={req.key} className="flex-row items-center pl-1">
-              {/* Bullet Dot */}
               <View className={`w-1.5 h-1.5 rounded-full mr-2.5 ${bulletColorClass}`} />
               <Text className={`text-xs ${textColorClass}`}>{labels[req.key]}</Text>
             </View>

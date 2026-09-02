@@ -52,9 +52,16 @@ export default function ChangePasswordScreen() {
           showSnackbar({ message: t('auth.passwordChangedSuccess'), type: 'success' });
           router.back();
         },
-        onError: (error) => {
+        onError: (error: any) => {
+          const message =
+            error?.response?.data?.message ||
+            error?.response?.data?.errors?.new_password?.[0] ||
+            error?.response?.data?.errors?.password?.[0] ||
+            error?.message ||
+            t('auth.passwordChangeFailed') ||
+            'Failed to change password';
           showSnackbar({
-            message: error.message || t('auth.passwordChangeFailed') || 'Failed to change password',
+            message,
             type: 'error',
           });
         },
