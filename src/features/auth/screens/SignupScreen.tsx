@@ -16,14 +16,12 @@ import PasswordRequirements from '../components/PasswordRequirements';
 import PhoneNumberField from '../components/PhoneNumberField';
 import { getSignupSchema, SignupFormData } from '@/schemas/auth';
 import { useSignup } from '@/api';
-import { useSnackbar } from '@/components/ui/Snackbar';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { role } = useLocalSearchParams<{ role: UserRole }>();
 
-  const { showSnackbar } = useSnackbar();
   const selectedRole = role || USER_ROLES.Customer;
   const signupMutation = useSignup();
 
@@ -126,17 +124,11 @@ export default function SignupScreen() {
                 label={
                   <Text className="text-sm font-sans-semibold text-gray-800 leading-5">
                     {t('auth.agreeToTermsPrefix')}
-                    <Text
-                      onPress={() => showSnackbar({ message: 'Terms of Service pressed', type: 'info' })}
-                      className="text-primary underline"
-                    >
+                    <Text onPress={() => router.push(ROUTES.guest.termsOfService)} className="text-primary underline">
                       {t('auth.termsOfService')}
                     </Text>
                     {` ${t('auth.and')} `}
-                    <Text
-                      onPress={() => showSnackbar({ message: 'Privacy Policy pressed', type: 'info' })}
-                      className="text-primary underline"
-                    >
+                    <Text onPress={() => router.push(ROUTES.guest.privacyPolicy)} className="text-primary underline">
                       {t('auth.privacyPolicy')}
                     </Text>
                   </Text>
