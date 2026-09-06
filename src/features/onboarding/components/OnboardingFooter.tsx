@@ -47,22 +47,24 @@ export default function OnboardingFooter({
             </View>
           </View>
         ) : (
-          <View className="flex-row justify-between items-center w-full -mb-0.5">
+          <View className="flex-row justify-between items-center w-full">
             <Button
               variant="ghost"
               size="none"
               title={t('onboarding.skip')}
               onPress={onFinish}
-              textClassName="opacity-95 text-white text-base"
-              className="py-1"
+              textClassName="opacity-95 text-white text-base px-1"
+              className="py-2 px-3"
+              hitSlop={8}
             />
             <Button
               variant="ghost"
               size="none"
               title={t('onboarding.next')}
               onPress={onNext}
-              textClassName="text-white text-base"
-              className="py-1"
+              textClassName="text-white text-base px-1"
+              className="py-2 px-3"
+              hitSlop={8}
             />
           </View>
         )}
