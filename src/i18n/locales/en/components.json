@@ -5,7 +5,7 @@
   "selectedLocation": "Selected location: {{address}}",
   "dragMarker": "Please drag the marker to pick a location",
   "initializingMap": "Please wait, initializing map...",
-  "confirmLocation": "Confirm Location",
+  "confirmLocation": "Confirm",
   "requestSent": "Request Sent",
   "requestSentCustomer": "Sending request to provider. Kindly wait for confirmation.",
   "requestSentProvider": "New booking request received! Please review and accept it.",

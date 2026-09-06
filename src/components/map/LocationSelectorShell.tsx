@@ -139,7 +139,7 @@ export default function LocationSelector({
           textClassName="text-gray-700"
         />
         <Button
-          title={t('components.confirmLocation')}
+          title={t('common.confirm')}
           variant="primary"
           onPress={selector.handleConfirm}
           disabled={selector.isReverseGeocoding}
