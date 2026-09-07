@@ -48,6 +48,7 @@ export default function MapServicesScreen() {
     minRatingStore,
     serviceLocationStore,
     radiusStore,
+    sortByStore,
     isFilterModalOpen,
     setIsFilterModalOpen,
     minPrice,
@@ -55,11 +56,13 @@ export default function MapServicesScreen() {
     minRating,
     serviceLocation,
     radius,
+    sortBy,
     setRadius,
     setMinPrice,
     setMaxPrice,
     setMinRating,
     setServiceLocation,
+    setSortBy,
     handleApplyFilters,
     handleResetFilters,
     activeFiltersCount,
@@ -145,6 +148,7 @@ export default function MapServicesScreen() {
     max_price: maxPriceStore ? Number(maxPriceStore) : undefined,
     service_location: serviceLocationStore || undefined,
     search: debouncedSearch || undefined,
+    sort_by: sortByStore,
   });
 
   const providers = useMemo(() => {
@@ -511,6 +515,8 @@ export default function MapServicesScreen() {
         setServiceLocation={setServiceLocation}
         radius={radius}
         setRadius={setRadius}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
       />

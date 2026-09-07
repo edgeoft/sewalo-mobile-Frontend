@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { SERVICE_LOCATIONS } from '@/types';
+import { SERVICE_SORT, SORT_OPTIONS } from '@/constants/services';
 
 export interface ServiceFilterModalProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ export interface ServiceFilterModalProps {
   setServiceLocation: (val: string) => void;
   radius?: string;
   setRadius?: (val: string) => void;
+  sortBy?: string;
+  setSortBy?: (val: string) => void;
   onApply: () => void;
   onReset: () => void;
 }
@@ -35,6 +38,8 @@ export default function ServiceFilterModal({
   setServiceLocation,
   radius = '25',
   setRadius,
+  sortBy = SERVICE_SORT.ALPHABETICAL,
+  setSortBy,
   onApply,
   onReset,
 }: ServiceFilterModalProps) {
@@ -58,6 +63,34 @@ export default function ServiceFilterModal({
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 18 }}>
+            {/* Sort By */}
+            <View className="gap-2">
+              <Text className="text-sm font-sans-bold text-gray-800">{t('services.sortBy')}</Text>
+              <View className="flex-row gap-2">
+                {SORT_OPTIONS.map((opt) => {
+                  const isSelected = (sortBy || SERVICE_SORT.ALPHABETICAL) === opt.value;
+                  return (
+                    <Pressable
+                      key={opt.value}
+                      onPress={() => setSortBy?.(opt.value)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isSelected }}
+                      className={`flex-1 py-2.5 px-2 rounded-xl border items-center justify-center ${
+                        isSelected ? 'bg-primary/10 border-primary' : 'bg-white border-gray-200'
+                      }`}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        className={`text-xs font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-700'}`}
+                      >
+                        {t(opt.labelKey)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+
             {/* Price Range */}
             <View className="gap-2">
               <Text className="text-sm font-sans-bold text-gray-800">{t('services.priceRange')}</Text>

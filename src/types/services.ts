@@ -63,6 +63,7 @@ export interface GetServiceListParams {
   provider_status?: string;
   provider_available?: boolean;
   search?: string;
+  sort_by?: string;
 }
 
 export type GetServiceListResponse = PaginatedResponse<Service>;

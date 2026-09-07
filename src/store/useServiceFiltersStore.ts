@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { SERVICE_SORT } from '@/constants/services';
 
 export interface ServiceFiltersState {
   searchQuery: string;
@@ -8,6 +9,7 @@ export interface ServiceFiltersState {
   minRating: string;
   serviceLocation: string;
   radius: string;
+  sortBy: string;
   setSearchQuery: (query: string) => void;
   setSelectedCategorySlug: (slug: string | undefined) => void;
   setFilters: (filters: {
@@ -16,6 +18,7 @@ export interface ServiceFiltersState {
     minRating?: string;
     serviceLocation?: string;
     radius?: string;
+    sortBy?: string;
   }) => void;
   resetFilters: () => void;
   clearAll: () => void;
@@ -29,6 +32,7 @@ const initialFilters = {
   minRating: '',
   serviceLocation: '',
   radius: '25',
+  sortBy: SERVICE_SORT.ALPHABETICAL,
 };
 
 export const useServiceFiltersStore = create<ServiceFiltersState>()((set) => ({
@@ -43,6 +47,7 @@ export const useServiceFiltersStore = create<ServiceFiltersState>()((set) => ({
       minRating: '',
       serviceLocation: '',
       radius: '25',
+      sortBy: SERVICE_SORT.ALPHABETICAL,
     }),
   clearAll: () => set(initialFilters),
 }));

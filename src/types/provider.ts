@@ -213,6 +213,8 @@ export type GetNearbyProvidersParams = {
   languages?: string;
   service_location?: string;
   search?: string;
+  page?: number;
+  sort_by?: string;
 };
 
 export type GetNearbyProvidersResponse = DataEnvelope<NearbyProvider[]>;
