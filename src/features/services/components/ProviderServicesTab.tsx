@@ -159,7 +159,6 @@ export default function ProviderServicesTab({
           t('services.pricingBullet2'),
           t('services.pricingBullet3'),
           t('services.pricingBullet4'),
-          t('services.pricingBullet5'),
         ].map((bullet, idx) => (
           <View key={idx} className="flex-row items-start mb-1.5">
             <Text className="text-[8px] text-amber-600 mr-2 mt-1">•</Text>
