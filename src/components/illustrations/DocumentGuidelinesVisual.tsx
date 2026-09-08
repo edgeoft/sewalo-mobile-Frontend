@@ -9,7 +9,7 @@ export default function DocumentGuidelinesVisual() {
   const { t } = useTranslation();
 
   return (
-    <View style={{ borderRadius: 10 }} className="rounded-lg border border-gray-200 bg-white p-4 mb-6">
+    <View className="rounded-lg border border-gray-200 bg-white p-4 mb-6">
       <View className="flex-row items-center mb-1">
         <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
         <Text className="text-sm font-sans-bold text-gray-950 ml-2">{t('components.verificationGuidelines')}</Text>
@@ -21,10 +21,7 @@ export default function DocumentGuidelinesVisual() {
       {/* Visual Good vs Avoid Comparison Cards */}
       <View className="flex-row gap-3 mb-5">
         {/* Correct Card */}
-        <View
-          style={{ borderRadius: 10 }}
-          className="flex-1 rounded-lg bg-emerald-50/60 border border-emerald-200/80 p-3 items-center"
-        >
+        <View className="flex-1 rounded-lg bg-emerald-50/60 border border-emerald-200/80 p-3 items-center">
           <View className="h-16 w-24 items-center justify-center mb-2">
             <Svg width="96" height="60" viewBox="0 0 96 60" fill="none">
               {/* Card outline */}
@@ -116,10 +113,7 @@ export default function DocumentGuidelinesVisual() {
         </View>
 
         {/* Avoid Card */}
-        <View
-          style={{ borderRadius: 10 }}
-          className="flex-1 rounded-lg bg-rose-50/60 border border-rose-200/80 p-3 items-center"
-        >
+        <View className="flex-1 rounded-lg bg-rose-50/60 border border-rose-200/80 p-3 items-center">
           <View className="h-16 w-24 items-center justify-center mb-2">
             <Svg width="96" height="60" viewBox="0 0 96 60" fill="none">
               {/* Cropped / cut off card */}

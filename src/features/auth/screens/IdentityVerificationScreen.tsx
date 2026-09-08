@@ -107,7 +107,6 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     shadowOpacity: 0.03,
     shadowRadius: 8,
     elevation: 0,
-    borderRadius: 10,
   };
 
   const renderStatusInfoBanner = () => {
@@ -228,16 +227,12 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
 
           {documentImage ? (
             <View>
-              <View
-                style={{ borderRadius: 10 }}
-                className="relative h-56 w-full rounded-lg border border-gray-200 bg-gray-50 overflow-hidden"
-              >
+              <View className="relative h-56 w-full rounded-lg border border-gray-200 bg-gray-50 overflow-hidden">
                 <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="cover" />
 
                 {/* Full screen view action */}
                 <Pressable
                   onPress={() => setPreviewImage(documentImage)}
-                  style={{ borderRadius: 8 }}
                   className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-black/60 rounded-lg flex-row items-center active:opacity-75"
                   accessibilityRole="button"
                   accessibilityLabel={t('services.viewImage')}
@@ -253,7 +248,6 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                   onPress={handlePickImage}
                   accessibilityRole="button"
                   accessibilityLabel={t('components.changeDocument')}
-                  style={{ borderRadius: 10 }}
                   className="flex-1 h-10 flex-row items-center justify-center px-3 rounded-lg border border-gray-200 bg-gray-50 active:bg-gray-100"
                 >
                   <Feather name="refresh-cw" size={13} color={THEME_COLORS.primary} style={{ marginRight: 6 }} />
@@ -264,7 +258,6 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
                   onPress={handleRemoveImage}
                   accessibilityRole="button"
                   accessibilityLabel={t('components.removeDocument')}
-                  style={{ borderRadius: 10 }}
                   className="h-10 px-3.5 flex-row items-center justify-center rounded-lg border border-rose-200 bg-rose-50/70 active:bg-rose-100/70"
                 >
                   <Feather name="trash-2" size={13} color={THEME_COLORS.dangerRed} style={{ marginRight: 6 }} />
@@ -275,12 +268,10 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
           ) : (
             <Pressable
               onPress={handlePickImage}
-              style={{ borderRadius: 10 }}
               className="h-56 w-full rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 items-center justify-center active:bg-gray-100 p-4"
               accessibilityRole="button"
             >
               <View
-                style={{ borderRadius: 10 }}
                 className="h-12 w-12 rounded-lg bg-surface-indigo-subtle items-center justify-center mb-2.5"
                 importantForAccessibility="no"
                 accessibilityElementsHidden
@@ -335,14 +326,10 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
             accessibilityRole="button"
             accessibilityLabel={t('common.close')}
           />
-          <View
-            style={{ borderRadius: 10 }}
-            className="relative w-full max-w-[92%] aspect-[4/3] rounded-lg bg-white overflow-hidden shadow-2xl"
-          >
+          <View className="relative w-full max-w-[92%] aspect-[4/3] rounded-lg bg-white overflow-hidden shadow-2xl">
             {previewImage && <Image source={{ uri: previewImage }} className="w-full h-full" resizeMode="contain" />}
             <Pressable
               onPress={() => setPreviewImage(null)}
-              style={{ borderRadius: 8 }}
               className="absolute top-3.5 right-3.5 h-9 w-9 bg-black/60 rounded-lg items-center justify-center active:opacity-75"
               accessibilityRole="button"
               accessibilityLabel={t('common.close')}
