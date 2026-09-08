@@ -104,7 +104,7 @@ export default function ReferFriendScreen() {
   const renderHowItWorksAndBenefits = () => (
     <>
       {/* How it Works Card */}
-      <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4 mb-5">
+      <View style={cardShadow} className="rounded-lg border border-gray-200 bg-white p-4 mb-5">
         <Text className="text-sm font-sans-bold text-gray-900 mb-3.5">{t('customer.howItWorks')}</Text>
 
         <View className="gap-y-3.5">
@@ -150,7 +150,7 @@ export default function ReferFriendScreen() {
       </View>
 
       {/* Benefits Card */}
-      <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-4 mb-5">
+      <View style={cardShadow} className="rounded-lg border border-gray-200 bg-white p-4 mb-5">
         <Text className="text-sm font-sans-bold text-gray-900 mb-1">{t('customer.benefits')}</Text>
 
         <View className="divide-y divide-gray-100">
@@ -223,7 +223,7 @@ export default function ReferFriendScreen() {
         {!isVerified ? (
           <>
             {/* Verification Required Card */}
-            <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-5 mb-5 items-center">
+            <View style={cardShadow} className="rounded-lg border border-gray-200 bg-white p-5 mb-5 items-center">
               <ReferralVerificationIllustration />
 
               <Text className="text-base font-sans-bold text-gray-900 text-center mt-2 mb-1">
@@ -259,7 +259,7 @@ export default function ReferFriendScreen() {
         ) : (
           <>
             {/* 1. Hero Promo Card */}
-            <View style={cardShadow} className="rounded-2xl bg-primary overflow-hidden p-6 mb-5 relative">
+            <View style={cardShadow} className="rounded-lg bg-primary overflow-hidden p-6 mb-5 relative">
               <View className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10" />
               <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/10" />
 
@@ -270,12 +270,12 @@ export default function ReferFriendScreen() {
             </View>
 
             {/* 2. Referral Link Section */}
-            <View style={cardShadow} className="rounded-xl border border-gray-200 bg-white p-5 mb-5">
+            <View style={cardShadow} className="rounded-lg border border-gray-200 bg-white p-5 mb-5">
               <Text className="text-xs font-sans-bold text-gray-400 uppercase tracking-wider mb-3">
                 {t('customer.yourReferralLink')}
               </Text>
 
-              <View className="flex-row items-center border border-gray-200 rounded-xl px-3 py-3 mb-4 bg-gray-50">
+              <View className="flex-row items-center border border-gray-200 rounded-lg px-3 py-3 mb-4 bg-gray-50">
                 <Text className="flex-1 text-xs font-sans-medium text-gray-600" numberOfLines={1}>
                   {referralLink || t('customer.noReferralCode')}
                 </Text>
@@ -307,14 +307,14 @@ export default function ReferFriendScreen() {
 
             {/* 3. Stats Cards */}
             <View className="flex-row gap-x-3 mb-5">
-              <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-xl p-4 items-center">
+              <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-lg p-4 items-center">
                 <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">
                   {t('customer.friendsReferred')}
                 </Text>
                 <Text className="text-lg font-sans-extrabold text-gray-900 mt-1">{totalReferred}</Text>
               </View>
 
-              <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-xl p-4 items-center">
+              <View style={cardShadow} className="flex-1 bg-white border border-gray-200 rounded-lg p-4 items-center">
                 <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase">
                   {t('customer.loyaltyPoints')}
                 </Text>
