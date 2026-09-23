@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "code-review": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/code-review/SKILL.md",
+      "computedHash": "caa9a086baaf9e0f7cd71f64edfa83da6821c05e826b083221f3d02e3d6a1905"
+    },
+    "sentry-react-native-sdk": {
+      "source": "getsentry/sentry-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/sentry-react-native-sdk/SKILL.md",
+      "computedHash": "e3fdf618d50b38ea457987bdcf4a928f9afe999c8e5e7180b814bceb723f0e52"
+    },
+    "sentry-setup-ai-monitoring": {
+      "source": "getsentry/sentry-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/sentry-setup-ai-monitoring/SKILL.md",
+      "computedHash": "91959d0839b0399b395c2a6200c457b99571050481a44894559cb2a5f3d8c165"
+    },
+    "typescript-pro": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-pro/SKILL.md",
+      "computedHash": "b53b57340243eab4b75acee9096f0444319bb1b9e8530fdab4d1d75e1568fa6c"
+    }
+  }
+}

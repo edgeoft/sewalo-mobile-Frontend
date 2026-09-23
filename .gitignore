@@ -46,6 +46,3 @@ example
 
 .env
 
-# Agent configs/skills
-.agents/
-skills-lock.json
