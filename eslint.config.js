@@ -24,6 +24,6 @@ module.exports = defineConfig([
     },
   },
   {
-    ignores: ['dist/*'],
+    ignores: ['dist/*', '.agents/**', 'skills-lock.json'],
   },
 ]);
