@@ -1,5 +1,6 @@
 import { memo, useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
@@ -8,6 +9,8 @@ import { FALLBACKS, getAvatarUrl } from '@/utils/image';
 interface BookingProviderCardProps {
   booking: CustomerBookingItem;
 }
+
+const AVATAR_STYLE = { width: 64, height: 64, borderRadius: 12 };
 
 function BookingProviderCard({ booking }: BookingProviderCardProps) {
   const [imgError, setImgError] = useState(false);
@@ -20,8 +23,8 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
         <Image
           source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
-          resizeMode="cover"
-          style={{ width: 64, height: 64, borderRadius: 12 }}
+          contentFit="cover"
+          style={AVATAR_STYLE}
           className="h-16 w-16 rounded-xl bg-gray-50 shrink-0"
         />
         <View className="flex-1 gap-1">

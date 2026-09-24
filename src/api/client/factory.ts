@@ -1,4 +1,4 @@
-import { create, InternalAxiosRequestConfig } from 'axios';
+import { create, type InternalAxiosRequestConfig } from 'axios';
 import { ApiClient, ApiClientConfig, RequestCtx, TokenManager, createApiError } from './types';
 import { extractErrorMessage } from './query/errorHandler';
 import { createSingleTokenManager } from './auth/singleTokenManager';

@@ -45,6 +45,7 @@ export default function Carousel<T>({
   const activeIndexRef = useRef(isInfinite ? 1 : 0);
 
   const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const layoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInteractingRef = useRef(false);
   const reducesMotion = useAppReducedMotion();
 
@@ -84,21 +85,30 @@ export default function Carousel<T>({
       return;
     }
     startAutoplay();
-    return () => stopAutoplay();
+    return () => {
+      stopAutoplay();
+      if (layoutTimerRef.current) {
+        clearTimeout(layoutTimerRef.current);
+      }
+    };
   }, [startAutoplay, stopAutoplay, reducesMotion]);
 
   // Adjust scroll position after layout to align with item at index 1 if infinite looping is on
   const handleLayout = (e: LayoutChangeEvent) => {
     const width = e.nativeEvent.layout.width;
     setContainerWidth(width);
+    if (layoutTimerRef.current) {
+      clearTimeout(layoutTimerRef.current);
+    }
     if (isInfinite) {
       // Scroll to index 1 (the first real item) silently
-      setTimeout(() => {
+      layoutTimerRef.current = setTimeout(() => {
         scrollRef.current?.scrollTo({
           x: 1 * (width + gap),
           animated: false,
         });
         activeIndexRef.current = 1;
+        layoutTimerRef.current = null;
       }, 50);
     }
   };

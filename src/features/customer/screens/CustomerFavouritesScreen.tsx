@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { View, Text, ActivityIndicator } from 'react-native';
@@ -30,11 +30,67 @@ export default function CustomerFavouritesScreen() {
   const addRemoveFav = useAddRemoveFavorite();
   const { showSnackbar } = useSnackbar();
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     refetch();
-  };
+  }, [refetch]);
 
   const favoritesList = favoritesData?.data || [];
+
+  const keyExtractor = useCallback((item: FavoriteItem) => item.id, []);
+
+  const handleFavouritePress = useCallback(
+    (item: FavoriteItem) => {
+      const serviceId = item.service?.id || item.service_id;
+      addRemoveFav.mutate(
+        { service_id: serviceId },
+        {
+          onSuccess: () => showSnackbar({ message: t('customer.removedFromFavourites'), type: 'success' }),
+        },
+      );
+      refetch();
+    },
+    [addRemoveFav, refetch, showSnackbar, t],
+  );
+
+  const handleProviderPress = useCallback(
+    (item: FavoriteItem) => {
+      const slug = item.service?.provider?.slug || item.service?.id || item.service_id;
+      router.push(ROUTES.providerDetail(slug));
+    },
+    [router],
+  );
+
+  const renderItem = useCallback(
+    (item: FavoriteItem) => {
+      const service = item.service;
+      const provider = service?.provider;
+      const imageUri = getAvatarUrl(provider?.avatar);
+      const startingPrice = service?.service_offerings?.[0]?.price
+        ? `Rs. ${parseInt(service.service_offerings[0].price, 10)}`
+        : 'N/A';
+
+      return (
+        <ProviderCard
+          avatarUri={imageUri}
+          name={provider?.name || 'Service Partner'}
+          isVerified={true}
+          serviceLabel={service?.category?.name || 'Service'}
+          location={provider?.address || provider?.city || 'Kathmandu, Nepal'}
+          ordersCompleted={t('services.ordersCompletedCount', { count: service?.total_ratings || 0 })}
+          rating={Number(service?.average_rating || 0).toFixed(1)}
+          reviewsCount={service?.total_ratings}
+          startingFromPrice={startingPrice}
+          schedule={formatProviderSchedule(provider, t)}
+          availabilityStatus={getProviderAvailabilityBadge(provider, t)}
+          isFavourite={true}
+          onFavouritePress={() => handleFavouritePress(item)}
+          variant="details"
+          onPress={() => handleProviderPress(item)}
+        />
+      );
+    },
+    [handleFavouritePress, handleProviderPress, t],
+  );
 
   return (
     <View className="flex-1 bg-secondary">
@@ -68,7 +124,7 @@ export default function CustomerFavouritesScreen() {
         {isError ? (
           <View className="flex-1 justify-center items-center py-10 px-6 bg-white rounded-xl border border-gray-200 my-4">
             <View className="h-12 w-12 rounded-full bg-red-50 items-center justify-center mb-4">
-              <Feather name="alert-triangle" size={24} color="#dc2626" />
+              <Feather name="alert-triangle" size={24} color={THEME_COLORS.dangerRed} />
             </View>
             <Text className="text-base font-sans-bold text-gray-900 mb-1">{t('customer.failedToLoadFavorites')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 text-center mb-6 leading-5">
@@ -85,53 +141,13 @@ export default function CustomerFavouritesScreen() {
         ) : (
           <LoadMoreList
             data={favoritesList}
-            keyExtractor={(item: FavoriteItem) => item.id}
+            keyExtractor={keyExtractor}
             initialVisibleCount={4}
             pageSize={4}
             loadMoreLabel={t('customer.loadMoreFavourites')}
             endReachedLabel={t('customer.noMoreFavourites')}
             emptyContent={<EmptyFavouritesState />}
-            renderItem={(item: FavoriteItem) => {
-              const service = item.service;
-              const provider = service?.provider;
-              const imageUri = getAvatarUrl(provider?.avatar);
-              const startingPrice = service?.service_offerings?.[0]?.price
-                ? `Rs. ${parseInt(service.service_offerings[0].price, 10)}`
-                : 'N/A';
-
-              return (
-                <ProviderCard
-                  avatarUri={imageUri}
-                  name={provider?.name || 'Service Partner'}
-                  isVerified={true}
-                  serviceLabel={service?.category?.name || 'Service'}
-                  location={provider?.address || provider?.city || 'Kathmandu, Nepal'}
-                  ordersCompleted={t('services.ordersCompletedCount', { count: service?.total_ratings || 0 })}
-                  rating={Number(service?.average_rating || 0).toFixed(1)}
-                  reviewsCount={service?.total_ratings}
-                  startingFromPrice={startingPrice}
-                  schedule={formatProviderSchedule(provider, t)}
-                  availabilityStatus={getProviderAvailabilityBadge(provider, t)}
-                  isFavourite={true}
-                  onFavouritePress={() => {
-                    const serviceId = service?.id || item.service_id;
-                    addRemoveFav.mutate(
-                      { service_id: serviceId },
-                      {
-                        onSuccess: () =>
-                          showSnackbar({ message: t('customer.removedFromFavourites'), type: 'success' }),
-                      },
-                    );
-                    refetch();
-                  }}
-                  variant="details"
-                  onPress={() => {
-                    const slug = provider?.slug || service?.id || item.service_id;
-                    router.push(ROUTES.providerDetail(slug));
-                  }}
-                />
-              );
-            }}
+            renderItem={renderItem}
           />
         )}
 

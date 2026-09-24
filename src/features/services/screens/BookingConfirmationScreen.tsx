@@ -1,6 +1,7 @@
 import React from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -53,7 +54,7 @@ export default function BookingConfirmationScreen() {
   if (!booking && !isProviderNotFound) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center px-6">
-        <Feather name="alert-triangle" size={40} color="#ef4444" />
+        <Feather name="alert-triangle" size={40} color={THEME_COLORS.dangerRed} />
         <Text className="text-lg font-sans-bold text-gray-950 mt-4 mb-2">{t('services.bookingNotFound')}</Text>
         <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6">
           {t('services.bookingNotFoundDesc')}
@@ -99,7 +100,11 @@ export default function BookingConfirmationScreen() {
           <View className="flex-row items-center justify-between mb-5 border-b border-gray-100 pb-4">
             <View className="flex-row items-center flex-1">
               {providerAvatar ? (
-                <Image source={{ uri: providerAvatar }} className="h-11 w-11 rounded-full bg-gray-100" />
+                <Image
+                  source={{ uri: providerAvatar }}
+                  className="h-11 w-11 rounded-full bg-gray-100"
+                  contentFit="cover"
+                />
               ) : (
                 <View className="h-11 w-11 rounded-full bg-primary/10 items-center justify-center">
                   <Feather name="user" size={18} color={THEME_COLORS.primary} />
@@ -121,7 +126,7 @@ export default function BookingConfirmationScreen() {
           <View className="gap-y-3.5 mb-5">
             <View className="flex-row justify-between items-center">
               <View className="flex-row items-center">
-                <Feather name="briefcase" size={15} color="#94a3b8" />
+                <Feather name="briefcase" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.service')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800">{serviceName || providerCategory}</Text>
@@ -129,7 +134,7 @@ export default function BookingConfirmationScreen() {
 
             <View className="flex-row justify-between items-center">
               <View className="flex-row items-center">
-                <Feather name="calendar" size={15} color="#94a3b8" />
+                <Feather name="calendar" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.dateTime')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800">
@@ -140,7 +145,7 @@ export default function BookingConfirmationScreen() {
 
             <View className="flex-row justify-between items-start">
               <View className="flex-row items-center mt-0.5">
-                <Feather name="map-pin" size={15} color="#94a3b8" />
+                <Feather name="map-pin" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.location')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>
@@ -191,7 +196,7 @@ export default function BookingConfirmationScreen() {
 
 const styles = StyleSheet.create({
   cardShadow: {
-    shadowColor: '#0f172a',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 8,

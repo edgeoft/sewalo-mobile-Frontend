@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
@@ -30,8 +31,18 @@ export default function ServiceFormStandout({
   const [isTagFocused, setIsTagFocused] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const uploadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { showSnackbar } = useSnackbar();
   const { t } = useTranslation();
+
+  // Clear timer on unmount
+  useEffect(() => {
+    return () => {
+      if (uploadIntervalRef.current) {
+        clearInterval(uploadIntervalRef.current);
+      }
+    };
+  }, []);
 
   // 1. Photo Grid Handlers
   const handlePickImage = async () => {
@@ -61,15 +72,21 @@ export default function ServiceFormStandout({
         setValue('workSamples', updatedSamples, { shouldValidate: true });
 
         // Start simulated upload progress
+        if (uploadIntervalRef.current) {
+          clearInterval(uploadIntervalRef.current);
+        }
         setUploadingIndex(newIndex);
         setUploadProgress(0);
 
         let progress = 0;
-        const interval = setInterval(() => {
+        uploadIntervalRef.current = setInterval(() => {
           progress += 20;
           setUploadProgress(progress);
           if (progress >= 100) {
-            clearInterval(interval);
+            if (uploadIntervalRef.current) {
+              clearInterval(uploadIntervalRef.current);
+              uploadIntervalRef.current = null;
+            }
             setUploadingIndex(null);
 
             // Mark as uploaded: true
@@ -88,6 +105,10 @@ export default function ServiceFormStandout({
     const updated = watchWorkSamples.filter((_, i) => i !== index);
     setValue('workSamples', updated, { shouldValidate: true });
     if (uploadingIndex === index) {
+      if (uploadIntervalRef.current) {
+        clearInterval(uploadIntervalRef.current);
+        uploadIntervalRef.current = null;
+      }
       setUploadingIndex(null);
     }
   };
@@ -114,7 +135,7 @@ export default function ServiceFormStandout({
   return (
     <View
       style={{
-        shadowColor: '#0f172a',
+        shadowColor: THEME_COLORS.slate900,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.02,
         shadowRadius: 8,
@@ -142,7 +163,7 @@ export default function ServiceFormStandout({
             const isUploading = uploadingIndex === index;
             return (
               <View key={sample.uri} className="w-32 h-24 rounded-lg overflow-hidden bg-gray-50 relative">
-                <Image source={{ uri: sample.uri }} className="w-full h-full" resizeMode="cover" />
+                <Image source={{ uri: sample.uri }} className="w-full h-full" contentFit="cover" />
 
                 {/* Uploading progress overlay */}
                 {isUploading && (
@@ -162,7 +183,7 @@ export default function ServiceFormStandout({
                   hitSlop={8}
                   className="absolute top-1 right-1 h-6 w-6 rounded-full bg-black/50 flex items-center justify-center active:bg-black/75"
                 >
-                  <Feather name="trash-2" size={11} color="white" />
+                  <Feather name="trash-2" size={11} color={THEME_COLORS.primaryForeground} />
                 </Pressable>
               </View>
             );
@@ -216,7 +237,7 @@ export default function ServiceFormStandout({
             <View
               className={`form-input-container form-input-container-single w-full ${isTagFocused ? 'form-input-container-focus' : ''}`}
               style={{
-                shadowColor: isTagFocused ? THEME_COLORS.primary : '#000',
+                shadowColor: isTagFocused ? THEME_COLORS.primary : THEME_COLORS.slate900,
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: isTagFocused ? 0.08 : 0.015,
                 shadowRadius: isTagFocused ? 4 : 2,
@@ -237,7 +258,7 @@ export default function ServiceFormStandout({
                     setShowTagInput(false);
                   }
                 }}
-                placeholderTextColor="#898f8f"
+                placeholderTextColor={THEME_COLORS.slate400}
                 className="form-input-text"
                 style={{
                   includeFontPadding: false,
@@ -279,7 +300,7 @@ export default function ServiceFormStandout({
             onBlur={onBlur}
             inputStyle={{ padding: 0 }}
             error={errors.portfolioUrl?.message}
-            leftIcon={<Feather name="link" size={16} color="#898f8f" />}
+            leftIcon={<Feather name="link" size={16} color={THEME_COLORS.slate400} />}
           />
         )}
       />

@@ -2,12 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Dimensions, Image, Linking, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Linking, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Animated, { SlideInRight } from 'react-native-reanimated';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
+import { THEME_COLORS } from '@/constants/colors';
 import { ROUTES } from '@/constants/routes';
 import { WEB_URLS } from '@/constants/urls';
 import { useAuth } from '@/providers/AuthProvider';
@@ -421,14 +423,14 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
             accessibilityLabel="Close"
             className="absolute top-12 right-6 h-10 w-10 bg-white/10 rounded-full items-center justify-center z-50 active:bg-white/20"
           >
-            <Feather name="x" size={24} color="#ffffff" accessible={false} />
+            <Feather name="x" size={24} color={THEME_COLORS.primaryForeground} accessible={false} />
           </Pressable>
 
           {zoomedImage && (
             <Image
               source={{ uri: zoomedImage }}
               style={{ width: SCREEN_WIDTH - 24, height: SCREEN_HEIGHT * 0.6 }}
-              resizeMode="contain"
+              contentFit="contain"
             />
           )}
 
@@ -454,7 +456,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
 const styles = StyleSheet.create({
   shadowMin: {
-    shadowColor: '#0f172a',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 4,

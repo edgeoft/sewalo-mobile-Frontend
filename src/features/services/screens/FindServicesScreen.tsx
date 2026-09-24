@@ -112,10 +112,10 @@ export default function FindServicesScreen() {
     [isGuest, router, setSelectedCategorySlug],
   );
 
-  const handleSwitchToMap = () => {
+  const handleSwitchToMap = useCallback(() => {
     const route = isGuest ? ROUTES.guest.mapServices : ROUTES.customer.mapServices;
     router.replace(route);
-  };
+  }, [isGuest, router]);
 
   // Fetch Categories
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategoriesQuery();
@@ -233,80 +233,94 @@ export default function FindServicesScreen() {
     [favouriteIds, handleFavouritePress, handleProviderPress, isGuest, t],
   );
 
-  const listHeader = (
-    <View>
-      {/* Page Header (Title + Subtitle) */}
-      <View className="mb-6">
-        <Text className="text-2xl font-sans-extrabold text-left text-gray-950 mb-1.5 tracking-tight">
-          {t('services.findServicesTitle')}
-        </Text>
-        <Text className="text-sm font-sans-medium text-gray-500 leading-relaxed">
-          {t('services.findServicesSubtitle')}
-        </Text>
-      </View>
-
-      {/* Full-width Search Bar */}
-      <View className="mb-3">
-        <SearchBar
-          placeholder={t('services.searchPlaceholder2')}
-          value={searchQuery}
-          onChangeText={handleSearchChange}
-          onClear={() => handleSearchChange('')}
-          iconPosition="right"
-        />
-      </View>
-
-      {/* Filters & Map Action Toolbar */}
-      <View className="flex-row items-center justify-between gap-3 mb-6">
-        <Pressable
-          onPress={() => setIsFilterModalOpen(true)}
-          accessibilityRole="button"
-          accessibilityLabel={t('services.filterTitle')}
-          className={`flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border active:opacity-85 ${
-            activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
-          }`}
-        >
-          <Feather
-            name="sliders"
-            size={16}
-            color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
-            accessible={false}
-          />
-          <Text className={`text-xs font-sans-bold ${activeFiltersCount > 0 ? 'text-white' : 'text-gray-800'}`}>
-            {t('services.filterTitle')}
+  const listHeader = useMemo(
+    () => (
+      <View>
+        {/* Page Header (Title + Subtitle) */}
+        <View className="mb-6">
+          <Text className="text-2xl font-sans-extrabold text-left text-gray-950 mb-1.5 tracking-tight">
+            {t('services.findServicesTitle')}
           </Text>
-          {activeFiltersCount > 0 && (
-            <View className="bg-red-500 rounded-full h-5 px-1.5 items-center justify-center min-w-[20px]">
-              <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
-            </View>
-          )}
-        </Pressable>
+          <Text className="text-sm font-sans-medium text-gray-500 leading-relaxed">
+            {t('services.findServicesSubtitle')}
+          </Text>
+        </View>
 
-        <Pressable
-          onPress={handleSwitchToMap}
-          accessibilityRole="button"
-          accessibilityLabel={t('services.mapView')}
-          className="flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border border-gray-200 bg-white active:opacity-85"
-        >
-          <Feather name="map" size={16} color={THEME_COLORS.primary} accessible={false} />
-          <Text className="text-xs font-sans-bold text-gray-800">{t('services.mapView')}</Text>
-        </Pressable>
+        {/* Full-width Search Bar */}
+        <View className="mb-3">
+          <SearchBar
+            placeholder={t('services.searchPlaceholder2')}
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+            onClear={() => handleSearchChange('')}
+            iconPosition="right"
+          />
+        </View>
+
+        {/* Filters & Map Action Toolbar */}
+        <View className="flex-row items-center justify-between gap-3 mb-6">
+          <Pressable
+            onPress={() => setIsFilterModalOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.filterTitle')}
+            className={`flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border active:opacity-85 ${
+              activeFiltersCount > 0 ? 'bg-primary border-primary' : 'bg-white border-gray-200'
+            }`}
+          >
+            <Feather
+              name="sliders"
+              size={16}
+              color={activeFiltersCount > 0 ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
+              accessible={false}
+            />
+            <Text className={`text-xs font-sans-bold ${activeFiltersCount > 0 ? 'text-white' : 'text-gray-800'}`}>
+              {t('services.filterTitle')}
+            </Text>
+            {activeFiltersCount > 0 && (
+              <View className="bg-red-500 rounded-full h-5 px-1.5 items-center justify-center min-w-[20px]">
+                <Text className="text-[10px] font-sans-bold text-white">{activeFiltersCount}</Text>
+              </View>
+            )}
+          </Pressable>
+
+          <Pressable
+            onPress={handleSwitchToMap}
+            accessibilityRole="button"
+            accessibilityLabel={t('services.mapView')}
+            className="flex-1 flex-row items-center justify-center gap-2 h-11 px-4 rounded-xl border border-gray-200 bg-white active:opacity-85"
+          >
+            <Feather name="map" size={16} color={THEME_COLORS.primary} accessible={false} />
+            <Text className="text-xs font-sans-bold text-gray-800">{t('services.mapView')}</Text>
+          </Pressable>
+        </View>
+
+        {/* Categories Horizontal Scroll */}
+        <CategoryScrollSelector
+          selectedCategorySlug={selectedCategorySlug}
+          onSelectCategory={handleCategorySelect}
+          categories={categoriesData?.data}
+          isLoading={isLoadingCategories}
+          horizontalPaddingClass="px-0"
+        />
+
+        {/* Section title */}
+        <Text className="text-lg font-sans-bold text-gray-950 mb-4 mt-6 tracking-tight">
+          {t('services.serviceProviders')}
+        </Text>
       </View>
-
-      {/* Categories Horizontal Scroll */}
-      <CategoryScrollSelector
-        selectedCategorySlug={selectedCategorySlug}
-        onSelectCategory={handleCategorySelect}
-        categories={categoriesData?.data}
-        isLoading={isLoadingCategories}
-        horizontalPaddingClass="px-0"
-      />
-
-      {/* Section title */}
-      <Text className="text-lg font-sans-bold text-gray-950 mb-4 mt-6 tracking-tight">
-        {t('services.serviceProviders')}
-      </Text>
-    </View>
+    ),
+    [
+      t,
+      searchQuery,
+      handleSearchChange,
+      activeFiltersCount,
+      handleSwitchToMap,
+      selectedCategorySlug,
+      handleCategorySelect,
+      categoriesData?.data,
+      isLoadingCategories,
+      setIsFilterModalOpen,
+    ],
   );
 
   const totalPages = servicesData?.last_page || 1;
@@ -386,6 +400,7 @@ export default function FindServicesScreen() {
         initialNumToRender={8}
         maxToRenderPerBatch={5}
         windowSize={5}
+        removeClippedSubviews={true}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -401,7 +416,7 @@ export default function FindServicesScreen() {
             <ErrorState onRetry={() => refetchServices()} className="py-6 mt-2" />
           ) : (
             <View className="py-12 items-center justify-center">
-              <Feather name="search" size={40} color="#64748b" />
+              <Feather name="search" size={40} color={THEME_COLORS.slate500} />
               <Text className="text-sm font-sans-semibold text-gray-900 mt-4">{t('services.noProvidersFound')}</Text>
               <Text className="text-xs font-sans-medium text-gray-400 mt-1 text-center px-6">
                 {t('services.noProvidersFoundDesc')}

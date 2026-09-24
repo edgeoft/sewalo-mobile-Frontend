@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import React, { memo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
@@ -21,7 +22,7 @@ interface ProviderHeaderCardProps {
   onFavoritePress?: () => void;
 }
 
-export default function ProviderHeaderCard({
+function ProviderHeaderCard({
   avatarUri,
   name,
   isVerified,
@@ -46,7 +47,7 @@ export default function ProviderHeaderCard({
           source={{ uri: imgError ? FALLBACKS.avatar : avatarUri }}
           onError={() => setImgError(true)}
           className="h-20 w-20 rounded-2xl bg-gray-50 shrink-0"
-          resizeMode="cover"
+          contentFit="cover"
         />
 
         <View className="flex-1 min-w-0 justify-center">
@@ -153,3 +154,5 @@ export default function ProviderHeaderCard({
     </View>
   );
 }
+
+export default memo(ProviderHeaderCard);

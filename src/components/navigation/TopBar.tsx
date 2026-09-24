@@ -1,9 +1,12 @@
+import React, { memo } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { Animated, Image, Pressable, View, ViewStyle } from 'react-native';
+import { Animated, Pressable, View, ViewStyle } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { LOGO } from '@/constants/images';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface TopBarProps {
   leadingContent?: React.ReactNode;
@@ -16,7 +19,7 @@ interface TopBarProps {
   style?: Animated.WithAnimatedValue<ViewStyle>;
 }
 
-export default function TopBar({
+function TopBar({
   leadingContent,
   showBackButton = false,
   rightContent,
@@ -45,19 +48,19 @@ export default function TopBar({
         {showBackButton && (
           <Pressable
             onPress={onBackPress}
-            className="-ml-1.5 mr-1.5 p-1.5 active:opacity-75"
+            className="mr-2 p-1.5 active:opacity-75"
             hitSlop={6}
             accessibilityRole="button"
             accessibilityLabel={t('common.back')}
           >
-            <Feather name="arrow-left" size={20} color="#0f172a" />
+            <Feather name="arrow-left" size={20} color={THEME_COLORS.slate900} />
           </Pressable>
         )}
         {!showBackButton && (
           <Image
             source={LOGO.secondary}
-            className="w-28 h-11 -ml-1"
-            resizeMode="contain"
+            className="w-28 h-11"
+            contentFit="contain"
             accessible={false}
             importantForAccessibility="no"
           />
@@ -68,3 +71,5 @@ export default function TopBar({
     </Animated.View>
   );
 }
+
+export default memo(TopBar);

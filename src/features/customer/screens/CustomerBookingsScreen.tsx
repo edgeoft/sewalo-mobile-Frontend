@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import Header from '@/components/navigation/Header';
 import SearchBar from '@/components/ui/SearchBar';
 import { THEME_COLORS } from '@/constants/colors';
 import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_FILTER_STATUSES } from '@/constants/bookings';
-import type { BookingFilterStatus } from '@/types';
+import type { BookingFilterStatus, Booking } from '@/types';
 import ErrorState from '@/components/ui/ErrorState';
 import LoadingState from '@/components/ui/LoadingState';
 import BookingStatusFilter from '../components/BookingStatusFilter';
@@ -20,6 +20,19 @@ import { ROUTES } from '@/constants/routes';
 import { useGetBookingsQuery } from '@/api';
 import { getAvatarUrl } from '@/utils/image';
 import { getProviderRating } from '@/utils/rating';
+
+const formatLocation = (b: {
+  provider?: { city?: string | null; address?: string | null } | null;
+  city?: string | null;
+}) => {
+  if (b.provider?.city && b.provider?.address) return `${b.provider.address}, ${b.provider.city}`;
+  return b.provider?.city || b.city || 'Nepal';
+};
+
+const formatPrice = (invoice?: { total?: number | string | null } | null) => {
+  if (!invoice?.total) return '';
+  return `Rs. ${Number(invoice.total).toLocaleString()}`;
+};
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -52,16 +65,6 @@ export default function CustomerBookingsScreen() {
     return counts;
   }, [bookings]);
 
-  const formatLocation = (b: (typeof bookings)[0]) => {
-    if (b.provider?.city && b.provider?.address) return `${b.provider.address}, ${b.provider.city}`;
-    return b.provider?.city || b.city || 'Nepal';
-  };
-
-  const formatPrice = (invoice: (typeof bookings)[0]['invoice']) => {
-    if (!invoice?.total) return '';
-    return `Rs. ${Number(invoice.total).toLocaleString()}`;
-  };
-
   const filteredBookings = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
     if (!normalizedQuery) return bookings;
@@ -76,6 +79,33 @@ export default function CustomerBookingsScreen() {
       );
     });
   }, [searchQuery, bookings]);
+
+  const keyExtractor = useCallback((booking: Booking) => booking.id, []);
+
+  const handleBookingPress = useCallback(
+    (id: string) => {
+      router.push(ROUTES.customer.bookingDetail(id));
+    },
+    [router],
+  );
+
+  const renderBookingItem = useCallback(
+    (booking: Booking) => (
+      <ProviderCard
+        avatarUri={getAvatarUrl(booking.provider?.avatar)}
+        name={booking.provider?.name || 'Service Provider'}
+        serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
+        location={formatLocation(booking)}
+        rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
+        ordersCompleted=""
+        startingFromPrice={formatPrice(booking.invoice)}
+        bookingStatus={booking.status}
+        variant="booking"
+        onPress={() => handleBookingPress(booking.id)}
+      />
+    ),
+    [handleBookingPress],
+  );
 
   return (
     <View className="flex-1 bg-secondary">
@@ -151,7 +181,7 @@ export default function CustomerBookingsScreen() {
           <LoadMoreList
             key={`${selectedStatus}-${searchQuery.trim().toLowerCase()}`}
             data={filteredBookings}
-            keyExtractor={(booking) => booking.id}
+            keyExtractor={keyExtractor}
             initialVisibleCount={4}
             pageSize={4}
             loadMoreLabel={t('customer.loadMoreBookings')}
@@ -162,22 +192,7 @@ export default function CustomerBookingsScreen() {
                 description={t('customer.noBookingsMatchFilterDesc')}
               />
             }
-            renderItem={(booking) => (
-              <ProviderCard
-                avatarUri={getAvatarUrl(booking.provider?.avatar)}
-                name={booking.provider?.name || 'Service Provider'}
-                serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
-                location={formatLocation(booking)}
-                rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
-                ordersCompleted=""
-                startingFromPrice={formatPrice(booking.invoice)}
-                bookingStatus={booking.status}
-                variant="booking"
-                onPress={() => {
-                  router.push(ROUTES.customer.bookingDetail(booking.id));
-                }}
-              />
-            )}
+            renderItem={renderBookingItem}
           />
         )}
 

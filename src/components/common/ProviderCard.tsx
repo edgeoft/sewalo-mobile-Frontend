@@ -1,7 +1,8 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { FALLBACKS, getAvatarUrl } from '@/utils/image';
@@ -29,6 +30,17 @@ export interface ProviderCardProps {
   variant?: 'details' | 'booking';
   isGuest?: boolean;
 }
+
+const BASE_CARD_STYLE = {
+  borderCurve: 'continuous' as const,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+};
+
+const AVATAR_STYLE = {
+  width: 56,
+  height: 56,
+  borderRadius: 28,
+};
 
 function ProviderCard({
   avatarUri,
@@ -63,13 +75,7 @@ function ProviderCard({
   return (
     <Pressable
       onPress={onPress}
-      style={[
-        {
-          borderCurve: 'continuous',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-        },
-        width ? { width } : {},
-      ]}
+      style={[BASE_CARD_STYLE, width ? { width } : undefined]}
       className="shrink-0 rounded-2xl border border-gray-200 bg-white p-3.5"
       accessibilityRole="button"
       accessibilityLabel={name}
@@ -98,9 +104,9 @@ function ProviderCard({
         <Image
           source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
-          style={{ width: 56, height: 56, borderRadius: 28 }}
+          style={AVATAR_STYLE}
           className="h-14 w-14 rounded-full bg-slate-100 shrink-0"
-          resizeMode="cover"
+          contentFit="cover"
         />
 
         <View className="flex-1 justify-center gap-1">

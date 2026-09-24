@@ -22,9 +22,9 @@ export default function EmptyBookingsState({ title, description }: EmptyBookings
       <Rect x="33" y="42" width="60" height="6" rx="3" fill="#edf0f6" />
       <Rect x="33" y="54" width="45" height="6" rx="3" fill="#edf0f6" />
       <Circle cx="98" cy="26" r="12" fill={THEME_COLORS.primary} />
-      <Path d="M93 26h10" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+      <Path d="M93 26h10" stroke={THEME_COLORS.primaryForeground} strokeWidth="2" strokeLinecap="round" />
       <Circle cx="18" cy="68" r="10" fill="#f1f5f9" />
-      <Path d="M15 68h6" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" />
+      <Path d="M15 68h6" stroke={THEME_COLORS.slate400} strokeWidth="1.6" strokeLinecap="round" />
       <Path d="M50 10c3-3 8-3 11 0" stroke="#bfc8ff" strokeWidth="2" strokeLinecap="round" fill="none" />
     </Svg>
   );

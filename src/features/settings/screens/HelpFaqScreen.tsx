@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, Text, Pressable, FlatList, type ListRenderItemInfo } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import SearchBar from '@/components/ui/SearchBar';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface FaqItem {
   id: string;
@@ -15,6 +16,19 @@ interface FaqItem {
   question: string;
   answer: string;
 }
+
+interface CategoryItem {
+  key: string;
+  label: string;
+}
+
+const CARD_SHADOW = {
+  shadowColor: THEME_COLORS.slate900,
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.03,
+  shadowRadius: 8,
+  elevation: 0,
+};
 
 export default function HelpFaqScreen() {
   const insets = useSafeAreaInsets();
@@ -68,7 +82,7 @@ export default function HelpFaqScreen() {
     [t],
   );
 
-  const CATEGORIES = useMemo(
+  const CATEGORIES: CategoryItem[] = useMemo(
     () => [
       { key: 'all', label: t('settings.allFaqs') },
       { key: 'general', label: t('settings.general') },
@@ -83,12 +97,12 @@ export default function HelpFaqScreen() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
 
-  const toggleExpand = (id: string) => {
+  const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
-  };
+  }, []);
 
   const filteredFaqs = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -104,13 +118,68 @@ export default function HelpFaqScreen() {
     });
   }, [FAQ_ITEMS, searchQuery, selectedCategory]);
 
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
+  const renderCategoryItem = useCallback(
+    ({ item }: ListRenderItemInfo<CategoryItem>) => {
+      const active = selectedCategory === item.key;
+      return (
+        <Pressable
+          onPress={() => setSelectedCategory(item.key)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: active }}
+          className={`px-4 py-2 rounded-full mr-2 border ${
+            active ? 'bg-primary border-primary' : 'bg-white border-gray-200'
+          }`}
+        >
+          <Text className={`text-xs font-sans-semibold ${active ? 'text-white' : 'text-gray-600'}`}>{item.label}</Text>
+        </Pressable>
+      );
+    },
+    [selectedCategory],
+  );
+
+  const renderFaqItem = useCallback(
+    ({ item }: ListRenderItemInfo<FaqItem>) => {
+      const isExpanded = !!expandedIds[item.id];
+      return (
+        <View style={CARD_SHADOW} className="bg-white rounded-xl mb-3 overflow-hidden">
+          <Pressable
+            onPress={() => toggleExpand(item.id)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: isExpanded }}
+            className="flex-row justify-between items-center p-4 active:bg-gray-50/50"
+          >
+            <Text className="text-xs font-sans-bold text-gray-900 flex-1 mr-4">{item.question}</Text>
+            <Feather
+              name={isExpanded ? 'chevron-up' : 'chevron-down'}
+              size={16}
+              color={THEME_COLORS.slate400}
+              accessible={false}
+            />
+          </Pressable>
+
+          {isExpanded && (
+            <View className="px-4 pb-4 border-t border-gray-50 pt-3">
+              <Text className="text-xs font-sans-regular text-gray-500 leading-5">{item.answer}</Text>
+            </View>
+          )}
+        </View>
+      );
+    },
+    [expandedIds, toggleExpand],
+  );
+
+  const renderEmptyComponent = useMemo(
+    () => (
+      <View className="items-center justify-center py-12 px-6">
+        <View className="h-12 w-12 bg-gray-100 rounded-full items-center justify-center mb-3">
+          <Feather name="help-circle" size={20} color={THEME_COLORS.slate400} />
+        </View>
+        <Text className="text-sm font-sans-bold text-gray-900 mb-1 text-center">{t('settings.noResultsFound')}</Text>
+        <Text className="text-xs font-sans-medium text-gray-400 text-center">{t('settings.tryDifferentKeyword')}</Text>
+      </View>
+    ),
+    [t],
+  );
 
   return (
     <View className="flex-1 bg-secondary">
@@ -143,23 +212,7 @@ export default function HelpFaqScreen() {
             keyExtractor={(item) => item.key}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingRight: 8 }}
-            renderItem={({ item }) => {
-              const active = selectedCategory === item.key;
-              return (
-                <Pressable
-                  onPress={() => setSelectedCategory(item.key)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: active }}
-                  className={`px-4 py-2 rounded-full mr-2 border ${
-                    active ? 'bg-primary border-primary' : 'bg-white border-gray-200'
-                  }`}
-                >
-                  <Text className={`text-xs font-sans-semibold ${active ? 'text-white' : 'text-gray-600'}`}>
-                    {item.label}
-                  </Text>
-                </Pressable>
-              );
-            }}
+            renderItem={renderCategoryItem}
           />
         </View>
 
@@ -172,46 +225,12 @@ export default function HelpFaqScreen() {
             contentContainerStyle={{
               paddingBottom: Math.max(insets.bottom, 24),
             }}
-            ListEmptyComponent={
-              <View className="items-center justify-center py-12 px-6">
-                <View className="h-12 w-12 bg-gray-100 rounded-full items-center justify-center mb-3">
-                  <Feather name="help-circle" size={20} color="var(--muted-foreground)" />
-                </View>
-                <Text className="text-sm font-sans-bold text-gray-900 mb-1 text-center">
-                  {t('settings.noResultsFound')}
-                </Text>
-                <Text className="text-xs font-sans-medium text-gray-400 text-center">
-                  {t('settings.tryDifferentKeyword')}
-                </Text>
-              </View>
-            }
-            renderItem={({ item }) => {
-              const isExpanded = !!expandedIds[item.id];
-              return (
-                <View style={cardShadow} className="bg-white rounded-xl mb-3 overflow-hidden">
-                  <Pressable
-                    onPress={() => toggleExpand(item.id)}
-                    accessibilityRole="button"
-                    accessibilityState={{ expanded: isExpanded }}
-                    className="flex-row justify-between items-center p-4 active:bg-gray-50/50"
-                  >
-                    <Text className="text-xs font-sans-bold text-gray-900 flex-1 mr-4">{item.question}</Text>
-                    <Feather
-                      name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                      size={16}
-                      color="var(--muted-foreground)"
-                      accessible={false}
-                    />
-                  </Pressable>
-
-                  {isExpanded && (
-                    <View className="px-4 pb-4 border-t border-gray-50 pt-3">
-                      <Text className="text-xs font-sans-regular text-gray-500 leading-5">{item.answer}</Text>
-                    </View>
-                  )}
-                </View>
-              );
-            }}
+            initialNumToRender={8}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            removeClippedSubviews={true}
+            ListEmptyComponent={renderEmptyComponent}
+            renderItem={renderFaqItem}
           />
         </View>
       </ContentLayout>

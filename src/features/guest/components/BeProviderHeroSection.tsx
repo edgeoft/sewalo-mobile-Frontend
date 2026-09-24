@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { Image } from 'expo-image';
 
 import { BECOME_PROVIDER } from '@/constants/images';
 
-export default function BeProviderHeroSection() {
+function BeProviderHeroSection() {
   const { t } = useTranslation();
 
   return (
@@ -22,19 +23,19 @@ export default function BeProviderHeroSection() {
         <View className="flex-row gap-3 mt-1">
           {/* Main Featured Card (Left Column) */}
           <View className="w-[56%] h-[224px] rounded-xl overflow-hidden border border-white/25 bg-blue-950/40">
-            <Image source={BECOME_PROVIDER.hero} className="h-full w-full rounded-xl" resizeMode="cover" />
+            <Image source={BECOME_PROVIDER.hero} className="h-full w-full rounded-xl" contentFit="cover" />
           </View>
 
           {/* Secondary Stack (Right Column) */}
           <View className="flex-1 justify-between gap-3">
             {/* Top Right Card */}
             <View className="h-[106px] rounded-xl overflow-hidden border border-white/25 bg-blue-950/40">
-              <Image source={BECOME_PROVIDER.process} className="h-full w-full rounded-xl" resizeMode="cover" />
+              <Image source={BECOME_PROVIDER.process} className="h-full w-full rounded-xl" contentFit="cover" />
             </View>
 
             {/* Bottom Right Card */}
             <View className="h-[106px] rounded-xl overflow-hidden border border-white/25 bg-blue-950/40">
-              <Image source={BECOME_PROVIDER.benefits} className="h-full w-full rounded-xl" resizeMode="cover" />
+              <Image source={BECOME_PROVIDER.benefits} className="h-full w-full rounded-xl" contentFit="cover" />
             </View>
           </View>
         </View>
@@ -42,3 +43,5 @@ export default function BeProviderHeroSection() {
     </View>
   );
 }
+
+export default memo(BeProviderHeroSection);

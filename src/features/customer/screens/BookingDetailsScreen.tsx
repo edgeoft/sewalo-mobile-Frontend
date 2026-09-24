@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Image, View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -296,7 +297,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             accessibilityRole="button"
             className="flex-row items-center justify-center gap-2 mb-4 py-3 rounded-lg border border-red-200 bg-red-50 active:bg-red-100"
           >
-            <Feather name="x-circle" size={16} color="#ef4444" accessible={false} />
+            <Feather name="x-circle" size={16} color={THEME_COLORS.dangerRed} accessible={false} />
             <Text className="text-sm font-sans-semibold text-red-600">{t('customer.cancelBooking')}</Text>
           </Pressable>
         )}
@@ -305,7 +306,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           {/* Provider Section */}
           <View className="flex-row items-center">
             {providerAvatar ? (
-              <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" resizeMode="cover" />
+              <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" contentFit="cover" />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
                 <Feather name="user" size={20} color={THEME_COLORS.primary} />
@@ -319,7 +320,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 </View>
               </View>
               <View className="flex-row items-center mt-0.5">
-                <Feather name="star" size={11} color="#f59e0b" />
+                <Feather name="star" size={11} color={THEME_COLORS.amberStar} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-1">{providerRating}</Text>
               </View>
             </View>
@@ -334,20 +335,20 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="phone" size={13} color="#94a3b8" accessible={false} />
+                  <Feather name="phone" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{phoneNumber || '-'}</Text>
                   {phoneNumber ? (
                     <Feather
                       name="external-link"
                       size={10}
-                      color="#94a3b8"
+                      color={THEME_COLORS.slate400}
                       style={{ marginLeft: 4 }}
                       accessible={false}
                     />
                   ) : null}
                 </Pressable>
                 <View className="flex-row items-center">
-                  <Feather name="mail" size={13} color="#94a3b8" />
+                  <Feather name="mail" size={13} color={THEME_COLORS.slate400} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{booking.provider?.email || '-'}</Text>
                 </View>
                 <Pressable
@@ -364,14 +365,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="map-pin" size={13} color="#94a3b8" accessible={false} />
+                  <Feather name="map-pin" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2 flex-1" numberOfLines={1}>
                     {location}
                   </Text>
                   <Feather
                     name="external-link"
                     size={10}
-                    color="#94a3b8"
+                    color={THEME_COLORS.slate400}
                     style={{ marginLeft: 4 }}
                     accessible={false}
                   />
@@ -471,7 +472,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 <SectionDivider />
                 <View>
                   <View className="flex-row items-center mb-3">
-                    <Feather name="alert-circle" size={15} color="#ef4444" />
+                    <Feather name="alert-circle" size={15} color={THEME_COLORS.dangerRed} />
                     <Text className="text-sm font-sans-bold text-gray-900 ml-2">
                       {booking.status === BOOKING_STATUSES.Cancelled
                         ? t('customer.cancellationDetails')
@@ -553,7 +554,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   accessibilityRole="button"
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90 flex-row justify-center gap-x-2"
                 >
-                  <Feather name="credit-card" size={16} color="#ffffff" />
+                  <Feather name="credit-card" size={16} color={THEME_COLORS.primaryForeground} />
                   <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
                 </Pressable>
               </View>
@@ -653,7 +654,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
 const styles = StyleSheet.create({
   cardShadow: {
-    shadowColor: '#0f172a',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 8,

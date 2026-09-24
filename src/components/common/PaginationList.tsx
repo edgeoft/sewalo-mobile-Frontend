@@ -88,7 +88,7 @@ export default function PaginationList<T>({
           accessibilityLabel={t('components.previousPage')}
           accessibilityState={{ disabled: isFirstPage }}
           hitSlop={8}
-          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
+          className={`h-11 w-11 rounded-xl border items-center justify-center bg-white ${
             isFirstPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}
         >
@@ -106,7 +106,7 @@ export default function PaginationList<T>({
           accessibilityLabel={t('components.nextPage')}
           accessibilityState={{ disabled: isLastPage }}
           hitSlop={8}
-          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
+          className={`h-11 w-11 rounded-xl border items-center justify-center bg-white ${
             isLastPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
           }`}
         >

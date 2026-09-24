@@ -23,8 +23,8 @@ export function getImageSource(url: string | null | undefined): string {
 }
 
 export const FALLBACKS = {
-  image: FALLBACK_IMAGE_URI as string,
-  avatar: FALLBACK_AVATAR_URI as string,
+  image: FALLBACK_IMAGE_URI,
+  avatar: FALLBACK_AVATAR_URI,
 } as const;
 
 export function getSource(url: string | null | undefined, type: 'image' | 'avatar' = 'image'): { uri: string } {

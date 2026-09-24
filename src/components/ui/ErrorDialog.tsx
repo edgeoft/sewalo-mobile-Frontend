@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface ErrorDialogAction {
   text: string;
@@ -68,8 +69,10 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
     [animateIn],
   );
 
+  const contextValue = useMemo(() => ({ showError, hideError }), [showError, hideError]);
+
   return (
-    <ErrorDialogContext.Provider value={{ showError, hideError }}>
+    <ErrorDialogContext value={contextValue}>
       {children}
       <Modal visible={visible} transparent animationType="none" onRequestClose={hideError}>
         <Animated.View className="flex-1 bg-black/50 justify-center items-center px-6" style={{ opacity }}>
@@ -79,7 +82,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
           >
             <View className="items-center mb-4">
               <View className="h-14 w-14 rounded-full bg-destructive/10 items-center justify-center mb-3">
-                <Feather name="alert-triangle" size={28} color="#dc2626" />
+                <Feather name="alert-triangle" size={28} color={THEME_COLORS.dangerRed} />
               </View>
               <Text className="text-lg font-sans-bold text-gray-900 text-center">{config?.title ?? ''}</Text>
             </View>
@@ -122,6 +125,6 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
           </Animated.View>
         </Animated.View>
       </Modal>
-    </ErrorDialogContext.Provider>
+    </ErrorDialogContext>
   );
 }

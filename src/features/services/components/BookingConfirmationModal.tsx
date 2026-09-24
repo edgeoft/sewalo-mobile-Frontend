@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Modal,
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Modal, View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -236,7 +227,7 @@ export default function BookingConfirmationModal({
               hitSlop={8}
               className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
             >
-              <Feather name="x" size={18} color="#64748b" />
+              <Feather name="x" size={18} color={THEME_COLORS.slate500} />
             </Pressable>
           </View>
 
@@ -263,7 +254,7 @@ export default function BookingConfirmationModal({
                     value={serviceDate}
                     onChangeText={() => {}}
                     error={errors.serviceDate?.message}
-                    rightIcon={<Feather name="calendar" size={16} color="#898f8f" />}
+                    rightIcon={<Feather name="calendar" size={16} color={THEME_COLORS.slate400} />}
                   />
                 </View>
               </Pressable>
@@ -277,7 +268,7 @@ export default function BookingConfirmationModal({
                       value={startTime}
                       onChangeText={() => {}}
                       error={errors.startTime?.message}
-                      rightIcon={<Feather name="clock" size={16} color="#898f8f" />}
+                      rightIcon={<Feather name="clock" size={16} color={THEME_COLORS.slate400} />}
                     />
                   </View>
                 </Pressable>
@@ -352,9 +343,12 @@ export default function BookingConfirmationModal({
         onRequestClose={() => setDatePickerVisible(false)}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setDatePickerVisible(false)}>
-            <View style={styles.backdrop} />
-          </TouchableWithoutFeedback>
+          <Pressable
+            onPress={() => setDatePickerVisible(false)}
+            style={styles.backdrop}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          />
 
           <View className="bg-white rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
@@ -368,7 +362,7 @@ export default function BookingConfirmationModal({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -520,9 +514,12 @@ export default function BookingConfirmationModal({
         onRequestClose={() => setTimePickerVisible(false)}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setTimePickerVisible(false)}>
-            <View style={styles.backdrop} />
-          </TouchableWithoutFeedback>
+          <Pressable
+            onPress={() => setTimePickerVisible(false)}
+            style={styles.backdrop}
+            accessibilityRole="button"
+            accessibilityLabel={t('common.close')}
+          />
 
           <View className="bg-white rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
             <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
@@ -536,7 +533,7 @@ export default function BookingConfirmationModal({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -645,7 +642,7 @@ const styles = StyleSheet.create({
   drawerContainer: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    shadowColor: '#000',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,

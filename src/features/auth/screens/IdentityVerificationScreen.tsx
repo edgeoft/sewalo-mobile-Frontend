@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, Text, View, StyleSheet } from 'react-native';
+import { Modal, Pressable, Text, View, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -24,6 +25,14 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 interface IdentityVerificationScreenProps {
   role: 'customer' | 'provider';
 }
+
+const CARD_SHADOW = {
+  shadowColor: THEME_COLORS.slate900,
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.03,
+  shadowRadius: 8,
+  elevation: 0,
+};
 
 export default function IdentityVerificationScreen({ role }: IdentityVerificationScreenProps) {
   const { t } = useTranslation();
@@ -101,14 +110,6 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     }
   };
 
-  const cardShadow = {
-    shadowColor: THEME_COLORS.slate900,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
-
   const renderStatusInfoBanner = () => {
     if (isCompleted) {
       const msg =
@@ -117,7 +118,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         'Your document is under review. Please wait for approval.';
       return (
         <View
-          style={cardShadow}
+          style={CARD_SHADOW}
           className="mb-5 p-4 bg-amber-50 border border-amber-200/80 rounded-lg flex-row items-start"
         >
           <Feather name="clock" size={16} color={THEME_COLORS.amberStar} style={{ marginTop: 2, marginRight: 10 }} />
@@ -133,7 +134,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
       const msg = getMessage() || t('components.verifiedDesc') || 'Your identity has been verified.';
       return (
         <View
-          style={cardShadow}
+          style={CARD_SHADOW}
           className="mb-5 p-4 bg-emerald-50 border border-emerald-200/80 rounded-lg flex-row items-start"
         >
           <Feather
@@ -156,7 +157,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
       const msg = getMessage() || t('components.rejectedDesc') || 'Your verification was rejected.';
       return (
         <View
-          style={cardShadow}
+          style={CARD_SHADOW}
           className="mb-5 p-4 bg-rose-50 border border-rose-200/80 rounded-lg flex-row items-start"
         >
           <Feather
@@ -178,7 +179,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
     // Empty or pending initial state
     return (
       <View
-        style={cardShadow}
+        style={CARD_SHADOW}
         className="mb-5 p-4 bg-surface-indigo-subtle border border-indigo-100/80 rounded-lg flex-row items-start"
       >
         <Feather name="shield" size={16} color={THEME_COLORS.primary} style={{ marginTop: 2, marginRight: 10 }} />
@@ -219,7 +220,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         {renderStatusInfoBanner()}
 
         {/* 2. Document Card */}
-        <View style={cardShadow} className="rounded-lg border border-gray-200 bg-white p-4 mb-5">
+        <View style={CARD_SHADOW} className="rounded-lg border border-gray-200 bg-white p-4 mb-5">
           <View className="flex-row items-center mb-3.5">
             <Feather name="credit-card" size={15} color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-bold text-gray-950 ml-2">{t('services.identityDocument')}</Text>
@@ -228,7 +229,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
           {documentImage ? (
             <View>
               <View className="relative h-56 w-full rounded-lg border border-gray-200 bg-gray-50 overflow-hidden">
-                <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="cover" />
+                <Image source={{ uri: documentImage }} className="w-full h-full" contentFit="cover" />
 
                 {/* Full screen view action */}
                 <Pressable
@@ -327,7 +328,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
             accessibilityLabel={t('common.close')}
           />
           <View className="relative w-full max-w-[92%] aspect-[4/3] rounded-lg bg-white overflow-hidden shadow-2xl">
-            {previewImage && <Image source={{ uri: previewImage }} className="w-full h-full" resizeMode="contain" />}
+            {previewImage && <Image source={{ uri: previewImage }} className="w-full h-full" contentFit="contain" />}
             <Pressable
               onPress={() => setPreviewImage(null)}
               className="absolute top-3.5 right-3.5 h-9 w-9 bg-black/60 rounded-lg items-center justify-center active:opacity-75"

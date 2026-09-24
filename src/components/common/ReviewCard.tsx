@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +23,7 @@ export interface ReviewCardProps {
  * Shared review card used by the customer "my reviews" list and the
  * provider reviews list.
  */
-export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: ReviewCardProps) {
+function ReviewCard({ rating, counterpart, onEdit, onDelete }: ReviewCardProps) {
   const { t } = useTranslation();
 
   const person = counterpart === 'provider' ? (rating.provider ?? rating.booking?.provider) : rating.user;
@@ -35,7 +36,7 @@ export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: Re
           <Image
             source={getSource(person?.avatar, 'avatar')}
             className="h-10 w-10 rounded-full border border-gray-100 bg-gray-50 mr-3"
-            resizeMode="cover"
+            contentFit="cover"
           />
           <View className="flex-1">
             <Text className="text-sm font-sans-bold text-gray-900">{person?.name || nameFallback}</Text>
@@ -66,7 +67,7 @@ export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: Re
             accessibilityRole="button"
             className="flex-row items-center px-3 py-1.5 rounded-lg active:bg-red-50"
           >
-            <Feather name="trash-2" size={13} color="#ef4444" accessible={false} />
+            <Feather name="trash-2" size={13} color={THEME_COLORS.dangerRed} accessible={false} />
             <Text className="text-xs font-sans-semibold text-red-500 ml-1.5">{t('customer.delete')}</Text>
           </Pressable>
         </View>
@@ -74,3 +75,5 @@ export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: Re
     </View>
   );
 }
+
+export default memo(ReviewCard);

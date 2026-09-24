@@ -1,6 +1,7 @@
+import React, { memo, type ComponentProps } from 'react';
 import { Feather } from '@expo/vector-icons';
-import { ComponentProps } from 'react';
 import { Pressable, View, Text } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
@@ -11,7 +12,7 @@ interface HeaderIconButtonProps {
   badgeCount?: number;
 }
 
-export default function HeaderIconButton({ icon, accessibilityLabel, onPress, badgeCount }: HeaderIconButtonProps) {
+function HeaderIconButton({ icon, accessibilityLabel, onPress, badgeCount }: HeaderIconButtonProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -21,7 +22,7 @@ export default function HeaderIconButton({ icon, accessibilityLabel, onPress, ba
       accessibilityHint={badgeCount ? `${badgeCount} unread` : undefined}
     >
       <View importantForAccessibility="no" accessibilityElementsHidden>
-        <Feather name={icon} size={18} color="#0f172a" />
+        <Feather name={icon} size={18} color={THEME_COLORS.slate900} />
       </View>
       {badgeCount != null && badgeCount > 0 && (
         <View
@@ -37,3 +38,5 @@ export default function HeaderIconButton({ icon, accessibilityLabel, onPress, ba
     </Pressable>
   );
 }
+
+export default memo(HeaderIconButton);

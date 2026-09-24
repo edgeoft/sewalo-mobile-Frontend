@@ -1,6 +1,7 @@
 import { getProviderRating } from '@/utils/rating';
-import React from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { memo } from 'react';
+import { View, Text } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { UserProfile } from '@/types';
@@ -13,14 +14,15 @@ interface AccountProfileCardProps {
   role: typeof USER_ROLES.Customer | typeof USER_ROLES.Provider;
 }
 
-export default function AccountProfileCard({ user, role }: AccountProfileCardProps) {
+const DEFAULT_AVATAR = require('@/assets/images/avatar-default.png');
+
+function AccountProfileCard({ user, role }: AccountProfileCardProps) {
   const { t } = useTranslation();
 
   const isProvider = role === USER_ROLES.Provider;
   const isVerified = user?.status === USER_STATUSES.Verified;
 
-  const defaultAvatar = require('@/assets/images/avatar-default.png');
-  const avatarSource = user?.avatar ? { uri: getImageUrl(user.avatar) } : defaultAvatar;
+  const avatarSource = user?.avatar ? { uri: getImageUrl(user.avatar) } : DEFAULT_AVATAR;
 
   const displayName = isProvider ? user?.name || t('provider.partner') : user?.name || t('customer.guestUser');
 
@@ -31,7 +33,7 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
           <Image
             source={avatarSource}
             className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
-            resizeMode="cover"
+            contentFit="cover"
           />
           {isProvider ? (
             isVerified && (
@@ -69,3 +71,5 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
     </View>
   );
 }
+
+export default memo(AccountProfileCard);

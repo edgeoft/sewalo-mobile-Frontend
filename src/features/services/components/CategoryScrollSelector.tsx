@@ -1,5 +1,6 @@
-import React from 'react';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import React, { memo } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '@/utils/image';
@@ -20,7 +21,7 @@ const SPACING_MAP = {
   'px-4': 16,
 };
 
-export default function CategoryScrollSelector({
+function CategoryScrollSelector({
   selectedCategorySlug,
   onSelectCategory,
   categories,
@@ -80,7 +81,7 @@ export default function CategoryScrollSelector({
                 }`}
               >
                 {iconUri ? (
-                  <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" resizeMode="contain" accessible={false} />
+                  <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" contentFit="contain" accessible={false} />
                 ) : (
                   <Feather
                     name="tag"
@@ -101,3 +102,5 @@ export default function CategoryScrollSelector({
     </View>
   );
 }
+
+export default memo(CategoryScrollSelector);
