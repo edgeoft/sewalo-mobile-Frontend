@@ -1,16 +1,15 @@
-import React, { memo } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
-import { Image, type ImageSource } from 'expo-image';
+import React from 'react';
+import { Image, ImageSourcePropType, Text, View, useWindowDimensions } from 'react-native';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 
 interface OnboardingPageProps {
   title: string;
   description: string;
-  illustration?: ImageSource | React.ReactNode;
+  illustration?: ImageSourcePropType | React.ReactNode;
 }
 
-function OnboardingPage({
+export default function OnboardingPage({
   title,
   description,
   illustration = require('@/assets/onboarding/illustration_one.png'),
@@ -23,7 +22,7 @@ function OnboardingPage({
         {React.isValidElement(illustration) ? (
           illustration
         ) : (
-          <Image source={illustration as ImageSource} className="w-full h-full border-0" contentFit="contain" />
+          <Image source={illustration as ImageSourcePropType} className="w-full h-full border-0" resizeMode="contain" />
         )}
       </View>
 
@@ -34,5 +33,3 @@ function OnboardingPage({
     </ContentLayout>
   );
 }
-
-export default memo(OnboardingPage);

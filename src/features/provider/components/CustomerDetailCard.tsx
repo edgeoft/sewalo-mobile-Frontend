@@ -1,6 +1,5 @@
-import React, { memo } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { Image } from 'expo-image';
+import React from 'react';
+import { View, Text, Image, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
@@ -9,14 +8,14 @@ interface CustomerDetailCardProps {
   booking: ProviderBookingItem;
 }
 
-function CustomerDetailCard({ booking }: CustomerDetailCardProps) {
+export default function CustomerDetailCard({ booking }: CustomerDetailCardProps) {
   return (
     <View className="bg-white rounded-xl border border-gray-200 p-4">
       {/* Header Info: Avatar, Name, Service */}
       <View className="flex-row gap-4 mb-4">
         <Image
           source={{ uri: booking.customerAvatar }}
-          contentFit="cover"
+          resizeMode="cover"
           className="h-16 w-16 rounded-xl bg-gray-50"
         />
         <View className="flex-1 justify-center gap-1">
@@ -78,5 +77,3 @@ function CustomerDetailCard({ booking }: CustomerDetailCardProps) {
     </View>
   );
 }
-
-export default memo(CustomerDetailCard);

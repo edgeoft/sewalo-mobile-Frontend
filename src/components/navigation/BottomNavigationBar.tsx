@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -24,7 +24,7 @@ const TAB_TRANSLATION_KEYS: Record<string, string> = {
   earnings: 'navigation.tabEarnings',
 };
 
-function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export default function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -54,7 +54,7 @@ function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarPro
       style={{
         paddingBottom: bottomPadding,
         height: barHeight,
-        shadowColor: THEME_COLORS.slate900,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.04,
         shadowRadius: 4,
@@ -127,7 +127,8 @@ function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarPro
                 {config.icon(isFocused)}
               </View>
               <Text
-                className={`text-[11px] font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}
+                style={{ fontSize: 11 }}
+                className={`font-sans-medium tracking-tight text-center ${isFocused ? 'text-primary' : 'text-gray-900'}`}
               >
                 {translatedLabel}
               </Text>
@@ -137,5 +138,3 @@ function BottomNavigationBar({ state, descriptors, navigation }: BottomTabBarPro
     </View>
   );
 }
-
-export default memo(BottomNavigationBar);

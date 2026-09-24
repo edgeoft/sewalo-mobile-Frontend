@@ -1,8 +1,7 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Pressable, View } from 'react-native';
-import { Image } from 'expo-image';
+import { Image, Pressable, View } from 'react-native';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -13,7 +12,7 @@ export interface AvatarPickerProps {
   className?: string;
 }
 
-function AvatarPicker({ avatarUri, onAvatarChange, size = 96, className = '' }: AvatarPickerProps) {
+export default function AvatarPicker({ avatarUri, onAvatarChange, size = 96, className = '' }: AvatarPickerProps) {
   const { showSnackbar } = useSnackbar();
 
   const handlePickImage = async () => {
@@ -43,7 +42,7 @@ function AvatarPicker({ avatarUri, onAvatarChange, size = 96, className = '' }: 
           className="bg-gray-100 border-2 border-white overflow-hidden items-center justify-center"
         >
           {avatarUri ? (
-            <Image source={{ uri: avatarUri }} style={{ width: size, height: size }} contentFit="cover" />
+            <Image source={{ uri: avatarUri }} style={{ width: size, height: size }} resizeMode="cover" />
           ) : (
             <Feather name="user" size={size * 0.45} color={THEME_COLORS.slate400} />
           )}
@@ -55,5 +54,3 @@ function AvatarPicker({ avatarUri, onAvatarChange, size = 96, className = '' }: 
     </View>
   );
 }
-
-export default memo(AvatarPicker);

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, Linking, Pressable } from 'react-native';
-import { Image } from 'expo-image';
+import { View, Text, Linking, Pressable, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -10,15 +9,6 @@ import { SectionHeader } from '@/components/common';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useDistributionUpdate } from '@/hooks/useDistributionUpdate';
 import { LOGO } from '@/constants/images';
-import { THEME_COLORS } from '@/constants/colors';
-
-const CARD_SHADOW = {
-  shadowColor: THEME_COLORS.slate900,
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.03,
-  shadowRadius: 8,
-  elevation: 0,
-};
 
 export default function AboutAppScreen() {
   const insets = useSafeAreaInsets();
@@ -31,6 +21,14 @@ export default function AboutAppScreen() {
     Linking.openURL(url).catch(() => {
       showSnackbar({ message: t('settings.unableToOpenLink') + url, type: 'error' });
     });
+  };
+
+  const cardShadow = {
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 0,
   };
 
   return (
@@ -55,14 +53,14 @@ export default function AboutAppScreen() {
 
         {/* Logo and App Details Card */}
         <View
-          style={CARD_SHADOW}
+          style={cardShadow}
           className="bg-white border border-gray-200 rounded-xl p-6 mb-5 items-center justify-center"
         >
           {/* Sewalo Logo */}
           <Image
             source={LOGO.appIcon}
             className="w-16 h-16 rounded-2xl mb-3 shadow-sm shadow-primary/20"
-            contentFit="contain"
+            resizeMode="contain"
             accessible={false}
             importantForAccessibility="no"
           />

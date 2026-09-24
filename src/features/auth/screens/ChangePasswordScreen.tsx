@@ -16,7 +16,6 @@ import { getChangePasswordSchema, ChangePasswordFormData } from '@/schemas/auth'
 
 import { useChangePassword } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
-import { extractErrorMessage } from '@/api/client/query/errorHandler';
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
@@ -53,8 +52,14 @@ export default function ChangePasswordScreen() {
           showSnackbar({ message: t('auth.passwordChangedSuccess'), type: 'success' });
           router.back();
         },
-        onError: (error) => {
-          const message = extractErrorMessage(error) || t('auth.passwordChangeFailed') || 'Failed to change password';
+        onError: (error: any) => {
+          const message =
+            error?.response?.data?.message ||
+            error?.response?.data?.errors?.new_password?.[0] ||
+            error?.response?.data?.errors?.password?.[0] ||
+            error?.message ||
+            t('auth.passwordChangeFailed') ||
+            'Failed to change password';
           showSnackbar({
             message,
             type: 'error',

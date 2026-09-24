@@ -76,7 +76,7 @@ export default function Header(props: HeaderProps) {
 
     if (showNotifications) {
       return (
-        <View className="flex-row items-center">
+        <View className="flex-row items-center -mr-2.5">
           <HeaderIconButton
             icon="bell"
             accessibilityLabel={t('home.notificationAccessibility')}

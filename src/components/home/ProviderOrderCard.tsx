@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import React, { memo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { Image } from 'expo-image';
+import React, { useState } from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
@@ -17,9 +16,7 @@ interface ProviderOrderCardProps {
   onPress?: () => void;
 }
 
-const AVATAR_STYLE = { width: 64, height: 64, borderRadius: 8 };
-
-function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrderCardProps) {
+export default function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrderCardProps) {
   const { t } = useTranslation();
   const [imgError, setImgError] = useState(false);
   const statusPresentation = BOOKING_STATUS_PRESENTATION[order.status];
@@ -39,8 +36,8 @@ function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrde
           source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
           className="h-16 w-16 rounded-lg bg-gray-50 shrink-0"
-          style={AVATAR_STYLE}
-          contentFit="cover"
+          style={{ width: 64, height: 64, borderRadius: 8 }}
+          resizeMode="cover"
         />
 
         {/* Customer & Order Details */}
@@ -129,5 +126,3 @@ function ProviderOrderCard({ order, onAccept, onDecline, onPress }: ProviderOrde
     </Pressable>
   );
 }
-
-export default memo(ProviderOrderCard);

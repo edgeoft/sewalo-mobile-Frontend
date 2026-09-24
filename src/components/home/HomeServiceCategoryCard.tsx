@@ -1,8 +1,6 @@
-import React, { memo, useMemo } from 'react';
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { Image } from 'expo-image';
+import { Image, Pressable, Text, View } from 'react-native';
 import { getImageUrl } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -15,10 +13,8 @@ export interface HomeServiceCategoryCardProps {
   onPress?: () => void;
 }
 
-const ICON_STYLE = { width: 32, height: 32 };
-
-function HomeServiceCategoryCard({ icon, imageUrl, label, onPress }: HomeServiceCategoryCardProps) {
-  const resolvedImageUrl = useMemo(() => (imageUrl ? getImageUrl(imageUrl) : null), [imageUrl]);
+export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress }: HomeServiceCategoryCardProps) {
+  const hasImage = imageUrl && getImageUrl(imageUrl);
 
   return (
     <Pressable
@@ -29,8 +25,13 @@ function HomeServiceCategoryCard({ icon, imageUrl, label, onPress }: HomeService
       hitSlop={8}
     >
       <View className="h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white overflow-hidden">
-        {resolvedImageUrl ? (
-          <Image source={{ uri: resolvedImageUrl }} className="h-8 w-8" style={ICON_STYLE} contentFit="contain" />
+        {hasImage ? (
+          <Image
+            source={{ uri: getImageUrl(imageUrl) }}
+            className="h-8 w-8"
+            style={{ width: 32, height: 32 }}
+            resizeMode="contain"
+          />
         ) : (
           <Feather name={icon || 'grid'} size={20} color={THEME_COLORS.primary} />
         )}
@@ -45,5 +46,3 @@ function HomeServiceCategoryCard({ icon, imageUrl, label, onPress }: HomeService
     </Pressable>
   );
 }
-
-export default memo(HomeServiceCategoryCard);

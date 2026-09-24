@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { type WebView, type WebViewMessageEvent } from 'react-native-webview';
+import { type WebViewMessageEvent } from 'react-native-webview';
 
 import type { MapViewport } from '@/types';
 import { getImageUrl } from '@/utils/image';
@@ -30,7 +30,7 @@ export default function NearbyServicesMapBase({
   generateHtml,
   label = 'MapWebView',
 }: NearbyServicesMapBaseProps) {
-  const webViewRef = useRef<WebView>(null);
+  const webViewRef = useRef<React.ElementRef<typeof SharedWebViewMap>>(null);
 
   // Coordinates are required numbers; only guard against NaN.
   const safeLat = Number.isFinite(userLat) ? userLat : 27.700769;

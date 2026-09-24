@@ -3,8 +3,7 @@ import { THEME_COLORS } from '@/constants/colors';
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
-import { Image } from 'expo-image';
+import { Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
@@ -256,7 +255,7 @@ export default function MapServicesScreen() {
             <Feather
               name="grid"
               size={14}
-              color={selectedCategorySlug ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
+              color={selectedCategorySlug ? '#ffffff' : THEME_COLORS.primary}
               accessible={false}
             />
             <Text
@@ -268,7 +267,7 @@ export default function MapServicesScreen() {
             <Feather
               name="chevron-down"
               size={12}
-              color={selectedCategorySlug ? THEME_COLORS.primaryForeground : THEME_COLORS.slate500}
+              color={selectedCategorySlug ? '#ffffff' : '#64748b'}
               accessible={false}
             />
           </Pressable>
@@ -285,7 +284,7 @@ export default function MapServicesScreen() {
             <Feather
               name="sliders"
               size={14}
-              color={activeFiltersCount > 0 ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
+              color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
               accessible={false}
             />
             {activeFiltersCount > 0 && (
@@ -316,7 +315,7 @@ export default function MapServicesScreen() {
             bottom: Math.max(insets.bottom, 12),
             left: 14,
             right: 14,
-            backgroundColor: THEME_COLORS.primaryForeground,
+            backgroundColor: '#ffffff',
             borderRadius: 12,
             paddingVertical: 12,
             paddingLeft: 12,
@@ -324,7 +323,7 @@ export default function MapServicesScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: THEME_COLORS.slate200,
+            borderColor: '#e2e8f0',
             zIndex: 30,
           }}
           className="active:opacity-95"
@@ -342,18 +341,18 @@ export default function MapServicesScreen() {
               top: -8,
               right: -4,
               zIndex: 10,
-              backgroundColor: THEME_COLORS.primaryForeground,
+              backgroundColor: '#ffffff',
               width: 22,
               height: 22,
               borderRadius: 11,
               alignItems: 'center',
               justifyContent: 'center',
               borderWidth: 1,
-              borderColor: THEME_COLORS.slate400,
+              borderColor: '#cbd5e1',
             }}
             className="active:opacity-60"
           >
-            <Feather name="x" size={10} color={THEME_COLORS.slate500} accessible={false} />
+            <Feather name="x" size={10} color="#64748b" accessible={false} />
           </Pressable>
 
           <View
@@ -371,7 +370,7 @@ export default function MapServicesScreen() {
               source={{ uri: getImageUrl(selectedProvider.avatar) || FALLBACKS.avatar }}
               style={{ width: '100%', height: '100%', borderRadius: 20 }}
               className="bg-gray-100"
-              contentFit="cover"
+              resizeMode="cover"
             />
           </View>
 
@@ -394,13 +393,13 @@ export default function MapServicesScreen() {
 
             <View className="flex-row items-center mt-1.5" style={{ gap: 8 }}>
               <View className="flex-row items-center" style={{ gap: 2 }}>
-                <Feather name="star" size={10} color={THEME_COLORS.amberStar} />
+                <Feather name="star" size={10} color="#f59e0b" />
                 <Text className="text-[11px] font-sans-extrabold text-gray-800">
                   {selectedProvider.avg_rating.toFixed(1)}
                 </Text>
               </View>
               <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>
-              <Feather name="map-pin" size={10} color={THEME_COLORS.slate500} />
+              <Feather name="map-pin" size={10} color="#64748b" />
               <Text className="text-[11px] font-sans-bold text-gray-700">
                 {selectedProvider.distance_km.toFixed(2)} km away
               </Text>
@@ -419,7 +418,7 @@ export default function MapServicesScreen() {
               marginLeft: 6,
             }}
           >
-            <Feather name="chevron-right" size={16} color={THEME_COLORS.primaryForeground} />
+            <Feather name="chevron-right" size={16} color="#ffffff" />
           </View>
         </Pressable>
       )}
@@ -448,7 +447,7 @@ export default function MapServicesScreen() {
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
               >
-                <Feather name="x" size={18} color={THEME_COLORS.slate500} />
+                <Feather name="x" size={18} color="#64748b" />
               </Pressable>
             </View>
 
@@ -465,11 +464,7 @@ export default function MapServicesScreen() {
                 }`}
               >
                 <View className="flex-row items-center gap-2">
-                  <Feather
-                    name="grid"
-                    size={16}
-                    color={!selectedCategorySlug ? THEME_COLORS.primary : THEME_COLORS.slate500}
-                  />
+                  <Feather name="grid" size={16} color={!selectedCategorySlug ? THEME_COLORS.primary : '#64748b'} />
                   <Text
                     className={`text-sm font-sans-bold ${!selectedCategorySlug ? 'text-primary' : 'text-gray-800'}`}
                   >

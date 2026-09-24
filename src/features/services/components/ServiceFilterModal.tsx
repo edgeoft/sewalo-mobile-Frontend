@@ -1,11 +1,10 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { SERVICE_LOCATIONS } from '@/types';
 import { SERVICE_SORT, SORT_OPTIONS } from '@/constants/services';
-import { THEME_COLORS } from '@/constants/colors';
 
 export interface ServiceFilterModalProps {
   isOpen: boolean;
@@ -26,7 +25,7 @@ export interface ServiceFilterModalProps {
   onReset: () => void;
 }
 
-function ServiceFilterModal({
+export default function ServiceFilterModal({
   isOpen,
   onClose,
   minPrice,
@@ -59,7 +58,7 @@ function ServiceFilterModal({
               hitSlop={8}
               className="p-1"
             >
-              <Feather name="x" size={20} color={THEME_COLORS.slate700} accessible={false} />
+              <Feather name="x" size={20} color="#475569" accessible={false} />
             </Pressable>
           </View>
 
@@ -163,7 +162,7 @@ function ServiceFilterModal({
                     <Feather
                       name="star"
                       size={11}
-                      color={minRating === star ? THEME_COLORS.amberStar : THEME_COLORS.slate400}
+                      color={minRating === star ? '#eab308' : '#94a3b8'}
                       accessible={false}
                     />
                   </Pressable>
@@ -197,7 +196,7 @@ function ServiceFilterModal({
                       {loc.label}
                     </Text>
                     {serviceLocation === loc.value ? (
-                      <Feather name="check" size={16} color={THEME_COLORS.primary} accessible={false} />
+                      <Feather name="check" size={16} color="var(--primary)" accessible={false} />
                     ) : null}
                   </Pressable>
                 ))}
@@ -214,5 +213,3 @@ function ServiceFilterModal({
     </Modal>
   );
 }
-
-export default memo(ServiceFilterModal);
