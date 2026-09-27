@@ -69,6 +69,9 @@ export default function RatingModal({
         {
           onSuccess: () => {
             showSnackbar({ message: t('customer.reviewUpdated'), type: 'success' });
+            setRating(0);
+            setReview('');
+            setHoveredRating(0);
             onClose();
           },
           onError: (error) =>
@@ -81,6 +84,9 @@ export default function RatingModal({
         {
           onSuccess: () => {
             showSnackbar({ message: t('customer.reviewSubmitted'), type: 'success' });
+            setRating(0);
+            setReview('');
+            setHoveredRating(0);
             onClose();
           },
           onError: (error) =>
@@ -91,6 +97,9 @@ export default function RatingModal({
   };
 
   const handleClose = () => {
+    setRating(existingRating?.rate || 0);
+    setReview(existingRating?.review || '');
+    setHoveredRating(0);
     onClose();
   };
 
