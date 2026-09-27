@@ -103,9 +103,7 @@ export default function DiscountLoyaltyCard({
     <View className="gap-y-4">
       {/* Coupon Selection */}
       <View>
-        <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">
-          {t('customer.applyCoupon')}
-        </Text>
+        <Text className="text-xs font-sans-bold text-gray-900 mb-1.5 ml-0.5">{t('customer.applyCoupon')}</Text>
 
         {selectedCoupon ? (
           /* Applied Coupon State */
@@ -152,7 +150,6 @@ export default function DiscountLoyaltyCard({
                     if (couponError) setCouponError('');
                   }}
                   autoCapitalize="characters"
-                  className="h-11"
                   inputClassName="text-sm font-sans-semibold text-gray-900 tracking-wider"
                 />
               </View>
@@ -161,7 +158,7 @@ export default function DiscountLoyaltyCard({
                 variant="primary"
                 size="sm"
                 onPress={handleManualApply}
-                className="h-11 px-4 min-w-[76px]"
+                className="h-12 px-4 min-w-[76px]"
                 disabled={!couponInput.trim()}
               />
             </View>
@@ -201,9 +198,7 @@ export default function DiscountLoyaltyCard({
       {/* Loyalty Points */}
       <View>
         <View className="flex-row items-center justify-between mb-1.5">
-          <Text className="text-xs font-sans-bold text-gray-950 uppercase tracking-wide ml-0.5">
-            {t('components.redeemLoyaltyPoints')}
-          </Text>
+          <Text className="text-xs font-sans-bold text-gray-900 ml-0.5">{t('components.redeemLoyaltyPoints')}</Text>
           <View className="flex-row items-center gap-x-2">
             <Text className="text-xs font-sans-bold text-primary">
               {t('components.balancePts', { balance: loyaltyBalance })}
@@ -227,11 +222,10 @@ export default function DiscountLoyaltyCard({
               value={loyaltyPoints}
               onChangeText={onChangeLoyaltyPoints}
               editable={loyaltyBalance > 0}
-              className="h-11"
               inputClassName="text-sm font-sans-medium text-gray-900"
             />
           </View>
-          <View className="h-11 px-3 border border-gray-200 rounded-lg bg-gray-50 justify-center min-w-[90px]">
+          <View className="h-12 px-3 border border-gray-200 rounded-lg bg-gray-50 justify-center min-w-[90px]">
             <Text className="text-[10px] font-sans-medium text-gray-500 text-center">{t('common.value')}</Text>
             <Text className="text-xs font-sans-bold text-gray-900 text-center">Rs. {pointsValue}</Text>
           </View>

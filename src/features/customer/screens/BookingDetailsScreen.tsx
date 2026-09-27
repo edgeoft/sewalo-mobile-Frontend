@@ -509,7 +509,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 subtotal={subtotal}
               />
 
-              <View className="border-t border-gray-100 pt-4 gap-y-2.5 mb-4">
+              <View className="border-t border-gray-100 mt-4 pt-4 gap-y-2.5 mb-4">
                 <View className="flex-row justify-between">
                   <Text className="text-xs font-sans-medium text-gray-500">{t('customer.subtotal')}</Text>
                   <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subtotal.toLocaleString()}</Text>

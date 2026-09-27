@@ -1,5 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import * as IntentLauncher from 'expo-intent-launcher';
+import { Platform } from 'react-native';
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
 import { ENV } from '@/constants/env';
@@ -81,9 +83,28 @@ export const downloadInvoiceAction = async (invoiceId: string): Promise<string> 
 
   const result = await FileSystem.downloadAsync(url, fileUri, { headers });
 
+  if (Platform.OS === 'android') {
+    try {
+      const contentUri = await FileSystem.getContentUriAsync(result.uri);
+      await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+        data: contentUri,
+        flags: 1,
+        type: 'application/pdf',
+      });
+      return result.uri;
+    } catch {
+      await Sharing.shareAsync(result.uri, {
+        mimeType: 'application/pdf',
+        dialogTitle: 'Download Invoice',
+      });
+      return result.uri;
+    }
+  }
+
   await Sharing.shareAsync(result.uri, {
     mimeType: 'application/pdf',
     dialogTitle: 'Download Invoice',
+    UTI: 'com.adobe.pdf',
   });
 
   return result.uri;

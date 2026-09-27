@@ -96,9 +96,7 @@ export default function ApplyCouponModal({
       <View className="gap-y-5">
         {/* Manual Coupon Input */}
         <View>
-          <Text className="text-xs font-sans-bold text-gray-950 mb-1.5 uppercase tracking-wide ml-0.5">
-            {t('customer.applyCoupon')}
-          </Text>
+          <Text className="text-xs font-sans-bold text-gray-900 mb-1.5 ml-0.5">{t('customer.applyCoupon')}</Text>
           <View className="flex-row items-center gap-2">
             <View className="flex-1">
               <Input
@@ -109,7 +107,6 @@ export default function ApplyCouponModal({
                   if (couponError) setCouponError('');
                 }}
                 autoCapitalize="characters"
-                className="h-11"
                 inputClassName="text-sm font-sans-semibold text-gray-900 tracking-wider"
               />
             </View>
@@ -118,7 +115,7 @@ export default function ApplyCouponModal({
               variant="primary"
               size="sm"
               onPress={handleManualApply}
-              className="h-11 px-4 min-w-[76px]"
+              className="h-12 px-4 min-w-[76px]"
               disabled={!couponInput.trim()}
             />
           </View>
