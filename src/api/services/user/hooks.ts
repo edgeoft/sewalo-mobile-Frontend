@@ -52,13 +52,20 @@ const favoritesQueryHook = createQueryHook<GetFavoritesResponse, { page?: number
 
 export const useGetFavoritesQuery = (params: { page?: number; limit?: number } = {}) => favoritesQueryHook(params);
 
+type AddRemoveFavoriteContext = {
+  previousServices?: [readonly unknown[], unknown][];
+  previousProviderDetails?: [readonly unknown[], unknown][];
+};
+
 export const useAddRemoveFavorite = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, AddRemoveFavoritePayload, { previousServices?: [readonly unknown[], unknown][] }>({
+  return useMutation<void, Error, AddRemoveFavoritePayload, AddRemoveFavoriteContext>({
     mutationFn: addRemoveFavoriteAction,
     onMutate: async ({ service_id }) => {
       await queryClient.cancelQueries({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
+      await queryClient.cancelQueries({ queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL });
       const previousServices = queryClient.getQueriesData({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
+      const previousProviderDetails = queryClient.getQueriesData({ queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL });
 
       queryClient.setQueriesData(
         { queryKey: QUERY_KEYS.SERVICE_LIST.ALL },
@@ -71,7 +78,18 @@ export const useAddRemoveFavorite = () => {
         },
       );
 
-      return { previousServices };
+      queryClient.setQueriesData(
+        { queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL },
+        (old: ProviderDetailsResponse | undefined) => {
+          if (!old?.services) return old;
+          return {
+            ...old,
+            services: old.services.map((s) => (s.id === service_id ? { ...s, is_favourite: !s.is_favourite } : s)),
+          };
+        },
+      );
+
+      return { previousServices, previousProviderDetails };
     },
     onError: (_err, _vars, context) => {
       if (context?.previousServices) {
@@ -79,9 +97,16 @@ export const useAddRemoveFavorite = () => {
           queryClient.setQueryData(key, data);
         }
       }
+      if (context?.previousProviderDetails) {
+        for (const [key, data] of context.previousProviderDetails) {
+          queryClient.setQueryData(key, data);
+        }
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FAVOURITES_LIST.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROVIDER_DETAILS.ALL });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.SERVICE_LIST.ALL });
     },
   });
 };

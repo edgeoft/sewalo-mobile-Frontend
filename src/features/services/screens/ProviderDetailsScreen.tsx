@@ -50,7 +50,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
 
   const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'portfolio' | 'reviews'>('services');
   const [selectedServices, setSelectedServices] = useState<Record<string, boolean>>({});
-  const [isSaved, setIsSaved] = useState(provider.isFavourite || false);
+  const [optimisticSaved, setOptimisticSaved] = useState<boolean | null>(null);
+  const isSaved = optimisticSaved !== null ? optimisticSaved : Boolean(provider.isFavourite);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const addRemoveFav = useAddRemoveFavorite();
@@ -84,18 +85,21 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
     }
 
     if (!provider.serviceId) return;
-    const newIsSaved = !isSaved;
-    setIsSaved(newIsSaved);
+    const nextSaved = !isSaved;
+    setOptimisticSaved(nextSaved);
     addRemoveFav.mutate(
       { service_id: provider.serviceId },
       {
         onSuccess: () => {
           showSnackbar({
-            message: newIsSaved ? t('customer.addedToFavourites') : t('customer.removedFromFavourites'),
+            message: nextSaved ? t('customer.addedToFavourites') : t('customer.removedFromFavourites'),
             type: 'success',
           });
+          setOptimisticSaved(null);
         },
-        onError: () => setIsSaved(!newIsSaved),
+        onError: () => {
+          setOptimisticSaved(null);
+        },
       },
     );
   };

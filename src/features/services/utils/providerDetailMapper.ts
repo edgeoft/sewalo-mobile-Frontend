@@ -38,10 +38,11 @@ export function mapApiToProviderDetail(
 ): ProviderDetail | null {
   if (!data || !data.provider) return null;
   const { provider, services } = data;
+  const activeService = services?.find((s) => s.is_favourite) || services?.[0];
   const firstService = services?.[0];
 
   const offeringsMap = new Map<string, string>();
-  firstService?.service_offerings?.forEach((o: ServiceOffering) => {
+  activeService?.service_offerings?.forEach((o: ServiceOffering) => {
     if (o.sub_category?.name) {
       if (o.id) offeringsMap.set(o.id, o.sub_category.name);
       if (o.sub_category_id) offeringsMap.set(o.sub_category_id, o.sub_category.name);
@@ -54,12 +55,12 @@ export function mapApiToProviderDetail(
     const mapped = offeringsMap.get(item);
     if (mapped) return mapped;
     if (UUID_REGEX.test(item)) {
-      return firstService?.category?.name || t('services.service');
+      return activeService?.category?.name || firstService?.category?.name || t('services.service');
     }
     return item;
   };
 
-  const pkg = firstService?.service_packages?.[0];
+  const pkg = activeService?.service_packages?.[0] || firstService?.service_packages?.[0];
   const specialPackage = pkg
     ? {
         id: pkg.id,
@@ -72,23 +73,26 @@ export function mapApiToProviderDetail(
     : null;
 
   const individualServices =
-    firstService?.service_offerings?.map((o: ServiceOffering) => ({
+    activeService?.service_offerings?.map((o: ServiceOffering) => ({
       id: o.id,
       title: o.sub_category?.name || t('services.serviceOffering'),
-      category: firstService?.category?.name || t('services.services'),
+      category: activeService?.category?.name || firstService?.category?.name || t('services.services'),
       price: `Rs. ${o.price}`,
       durationLabel: `${o.duration} ${o.duration_unit || t('services.hrs')}`,
     })) || [];
 
   const portfolio =
-    firstService?.portfolio?.map((uri: string, idx: number) => ({
-      id: `port-${idx}`,
-      uri: getImageUrl(uri) || FALLBACKS.image,
-      title: t('services.project', { number: idx + 1 }),
-    })) || [];
+    (activeService?.portfolio?.length ? activeService.portfolio : firstService?.portfolio)?.map(
+      (uri: string, idx: number) => ({
+        id: `port-${idx}`,
+        uri: getImageUrl(uri) || FALLBACKS.image,
+        title: t('services.project', { number: idx + 1 }),
+      }),
+    ) || [];
 
-  const providerRating = getProviderRating([firstService, provider]).toFixed(1);
-  const providerReviewCount = provider.total_ratings || firstService?.total_ratings || reviews.length || 0;
+  const providerRating = getProviderRating([activeService, firstService, provider]).toFixed(1);
+  const providerReviewCount =
+    provider.total_ratings || activeService?.total_ratings || firstService?.total_ratings || reviews.length || 0;
 
   const availability = provider.availability || t('services.always');
 
@@ -103,12 +107,12 @@ export function mapApiToProviderDetail(
   return {
     id: provider.id,
     slug: provider.slug || providerSlug,
-    serviceId: firstService?.id,
-    isFavourite: firstService?.is_favourite || false,
+    serviceId: activeService?.id || firstService?.id,
+    isFavourite: Boolean(services?.some((s) => s.is_favourite)),
     name: provider.name,
     avatarUri: getAvatarUrl(provider.avatar),
     isVerified: provider.status === USER_STATUSES.Verified,
-    serviceLabel: firstService?.category?.name || t('services.services'),
+    serviceLabel: activeService?.category?.name || firstService?.category?.name || t('services.services'),
     location: formatProviderLocation(provider, t('home.nepal')),
     fullLocation: provider.address ? `${provider.address}, ${provider.city || ''}` : provider.city || t('home.nepal'),
     rating: Number(providerRating).toFixed(1),
