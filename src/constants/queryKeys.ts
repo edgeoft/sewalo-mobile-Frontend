@@ -24,6 +24,7 @@ export const QUERY_KEYS = {
   },
   CATEGORIES: {
     ALL: (show?: string) => ['categories', show] as const,
+    SUB: (slug: string) => ['subcategories', slug] as const,
   },
   NOTIFICATIONS: {
     LIST: (params?: QueryParams) => ['notifications', params] as const,
@@ -36,7 +37,7 @@ export const QUERY_KEYS = {
   EARNING_SUMMARY: ['earning-summary'],
   MY_TRANSACTIONS: (page: number, limit: number) => ['my-transactions', page, limit] as const,
   FINANCE_ACCOUNTS: ['financeAccounts'],
-  PROVIDER_CATEGORIES: ['categories'],
+  PROVIDER_CATEGORIES: ['categories'] as const,
   PROVIDER_SUBCATEGORIES: (slug: string) => ['subcategories', slug] as const,
   MY_SERVICES: ['my-services'],
   REFERRAL_CODE: ['referral-code'],

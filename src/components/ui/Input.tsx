@@ -1,5 +1,6 @@
 import React, { useId, useRef, useState } from 'react';
 import { Pressable, StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -50,7 +51,7 @@ export default function Input({
   return (
     <View style={containerStyle} className={`w-full ${className}`}>
       {label && (
-        <Text nativeID={labelId} className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+        <Text nativeID={labelId} className="text-xs font-sans-semibold text-slate-700 mb-1.5 ml-0.5">
           {label}
         </Text>
       )}
@@ -71,7 +72,7 @@ export default function Input({
           ref={inputRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor={props.placeholderTextColor ?? THEME_COLORS.slate400}
           numberOfLines={props.multiline ? props.numberOfLines : 1}
           multiline={props.multiline ?? false}
           style={[

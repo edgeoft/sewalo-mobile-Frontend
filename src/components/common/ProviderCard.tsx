@@ -1,7 +1,8 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { Pressable, Text, View } from 'react-native';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
 import { FALLBACKS, getAvatarUrl } from '@/utils/image';
@@ -70,7 +71,7 @@ function ProviderCard({
         },
         width ? { width } : {},
       ]}
-      className="shrink-0 rounded-2xl border border-gray-200 bg-white p-3.5"
+      className="shrink-0 rounded-2xl border border-border bg-background p-3.5"
       accessibilityRole="button"
       accessibilityLabel={name}
     >
@@ -81,8 +82,8 @@ function ProviderCard({
           accessibilityRole="button"
           accessibilityLabel={`Save ${name}`}
           accessibilityState={{ selected: isFavourite }}
-          hitSlop={8}
-          className="absolute top-2.5 right-2.5 z-10 h-8 w-8 items-center justify-center rounded-full active:opacity-70"
+          hitSlop={12}
+          className="absolute top-2 right-2 z-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full active:opacity-70"
         >
           <Ionicons
             name={isFavourite ? 'heart' : 'heart-outline'}
@@ -100,7 +101,8 @@ function ProviderCard({
           onError={() => setImgError(true)}
           style={{ width: 56, height: 56, borderRadius: 28 }}
           className="h-14 w-14 rounded-full bg-slate-100 shrink-0"
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
         />
 
         <View className="flex-1 justify-center gap-1">
@@ -170,7 +172,7 @@ function ProviderCard({
       </View>
 
       {/* Bottom Section: Starting Price / Booking Info & Availability / Status Badge */}
-      <View className="mt-2.5 flex-row items-end justify-between border-t border-gray-100 pt-2.5">
+      <View className="mt-2.5 flex-row items-end justify-between border-t border-border pt-2.5">
         <View className="gap-0.5">
           <View className="flex-row items-center gap-1">
             <View className="h-3.5 w-3.5 items-center justify-center rounded-full bg-surface-success-subtle">
@@ -196,7 +198,7 @@ function ProviderCard({
           </View>
         ) : showCustomAction ? (
           <View className="rounded-lg bg-primary px-3.5 py-1.5">
-            <Text className="text-xs font-sans-semibold text-white">{actionLabel}</Text>
+            <Text className="text-xs font-sans-semibold text-primary-foreground">{actionLabel}</Text>
           </View>
         ) : availabilityStatus ? (
           <View className="rounded-lg bg-surface-success-subtle px-3 py-1.5">

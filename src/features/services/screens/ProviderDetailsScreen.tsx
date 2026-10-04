@@ -1,8 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Dimensions, Image, Linking, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import {
+  Linking,
+  Modal,
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Animated, { SlideInRight } from 'react-native-reanimated';
@@ -33,9 +44,8 @@ interface ProviderDetailsScreenProps {
   provider: ProviderDetail;
 }
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
 export default function ProviderDetailsScreen({ provider }: ProviderDetailsScreenProps) {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -431,8 +441,8 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
           {zoomedImage && (
             <Image
               source={{ uri: zoomedImage }}
-              style={{ width: SCREEN_WIDTH - 24, height: SCREEN_HEIGHT * 0.6 }}
-              resizeMode="contain"
+              style={{ width: windowWidth - 24, height: windowHeight * 0.6 }}
+              contentFit="contain"
             />
           )}
 

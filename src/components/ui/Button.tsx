@@ -40,25 +40,25 @@ export default function Button({
 }: ButtonProps) {
   const variantStyles = {
     primary: 'bg-primary border-primary active:opacity-90',
-    secondary: 'bg-secondary border-secondary active:opacity-90',
-    outline: 'bg-transparent border border-white/20 active:bg-white/10',
+    secondary: 'bg-secondary border-border active:opacity-90',
+    outline: 'bg-transparent border border-border active:bg-secondary/40',
     ghost: 'bg-transparent border-transparent active:opacity-60',
-    light: 'bg-white border-white active:bg-white/90',
+    light: 'bg-background border-border active:bg-secondary',
   };
 
   const textVariantStyles = {
-    primary: 'text-white font-sans-semibold',
-    secondary: 'text-white font-sans-semibold',
-    outline: 'text-white font-sans-semibold',
-    ghost: 'text-white font-sans-semibold',
+    primary: 'text-primary-foreground font-sans-semibold',
+    secondary: 'text-secondary-foreground font-sans-semibold',
+    outline: 'text-foreground font-sans-semibold',
+    ghost: 'text-foreground font-sans-semibold',
     light: 'text-primary font-sans-semibold',
   };
 
   const sizeStyles = {
     none: 'p-0 border-0',
-    sm: 'py-2 px-4 rounded-lg',
-    md: 'h-12 px-4 rounded-lg',
-    lg: 'py-4 px-8 rounded-lg',
+    sm: 'min-h-[44px] py-2 px-4 rounded-lg',
+    md: 'min-h-[48px] h-12 px-4 rounded-lg',
+    lg: 'min-h-[56px] py-4 px-8 rounded-lg',
   };
 
   const textSizeStyles = {

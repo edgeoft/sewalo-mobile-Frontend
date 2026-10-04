@@ -11,7 +11,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import Button from '@/components/ui/Button';
 import PasswordField from '../components/PasswordField';
-import EnhancedPasswordRequirements from '../components/EnhancedPasswordRequirements';
+import PasswordRequirements from '../components/PasswordRequirements';
 import { getChangePasswordSchema, ChangePasswordFormData } from '@/schemas/auth';
 
 import { useChangePassword } from '@/api';
@@ -106,7 +106,7 @@ export default function ChangePasswordScreen() {
               error={errors.newPassword?.message}
             />
 
-            <EnhancedPasswordRequirements
+            <PasswordRequirements
               password={newPasswordValue}
               labels={{
                 title: t('auth.passwordRequirementsTitle'),

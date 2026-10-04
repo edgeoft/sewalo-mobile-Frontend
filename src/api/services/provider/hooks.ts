@@ -8,8 +8,6 @@ import {
   deleteFinanceAccountAction,
   getFinanceAccountsAction,
   updateFinanceAccountAction,
-  getProviderCategoriesAction,
-  getProviderSubCategoriesAction,
   getMyServicesAction,
   createServiceAction,
   updateServiceAction,
@@ -26,8 +24,6 @@ import type {
   CreateServiceParams,
   UpdateServiceParams,
   Service,
-  CategoryListResponse,
-  SubCategoryListResponse,
   GetMyServicesResponse,
 } from '@/types';
 
@@ -75,18 +71,10 @@ export const useDeleteFinanceAccount = createMutationHook<void, number>(deleteFi
 });
 
 // Services
-export const useGetProviderCategoriesQuery = createQueryHook<CategoryListResponse, void>(
-  () => QUERY_KEYS.PROVIDER_CATEGORIES,
-  getProviderCategoriesAction,
-);
-
-const subCategoriesQueryHook = createQueryHook<SubCategoryListResponse, string>(
-  (slug) => QUERY_KEYS.PROVIDER_SUBCATEGORIES(slug),
-  (slug) => getProviderSubCategoriesAction(slug),
-);
-
-export const useGetProviderSubCategoriesQuery = (slug: string, enabled: boolean = true) =>
-  subCategoriesQueryHook(slug, { enabled: enabled && !!slug });
+export {
+  useGetCategoriesQuery as useGetProviderCategoriesQuery,
+  useGetSubCategoriesQuery as useGetProviderSubCategoriesQuery,
+} from '@/api/services/categories/hooks';
 
 const myServicesQueryHook = createQueryHook<GetMyServicesResponse, void>(
   () => QUERY_KEYS.MY_SERVICES,

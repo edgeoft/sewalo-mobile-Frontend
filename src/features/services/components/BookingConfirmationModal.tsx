@@ -27,17 +27,10 @@ import {
   type ProviderAvailabilityInfo,
 } from '../utils/providerAvailability';
 import type { LocationData } from '@/types';
-import { getBookingDetailsSchema, type BookingDetailsFormData } from '@/schemas/booking';
+import { THEME_COLORS } from '@/constants/colors';
+import { getBookingDetailsSchema, type BookingDetailsFormData, type BookingDetails } from '@/schemas/booking';
 
-export interface BookingDetails {
-  serviceDate: string;
-  startTime: string;
-  location: string;
-  city: string;
-  lat: number;
-  lng: number;
-  notes: string;
-}
+export type { BookingDetails };
 
 interface BookingConfirmationModalProps {
   visible: boolean;
@@ -221,35 +214,37 @@ export default function BookingConfirmationModal({
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="bg-white rounded-t-3xl overflow-hidden"
+          className="bg-card rounded-t-3xl overflow-hidden"
           style={{ maxHeight: '90%' }}
         >
-          <View className="px-6 pt-6 pb-4 border-b border-gray-100 flex-row justify-between items-center">
+          <View className="px-6 pt-6 pb-4 border-b border-border flex-row justify-between items-center">
             <View className="flex-1 mr-4">
-              <Text className="text-lg font-sans-extrabold text-gray-950">{t('services.confirmBookingService')}</Text>
-              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{t('services.confirmBookingDesc')}</Text>
+              <Text className="text-lg font-sans-extrabold text-foreground">{t('services.confirmBookingService')}</Text>
+              <Text className="text-xs font-sans-medium text-muted-foreground mt-0.5">
+                {t('services.confirmBookingDesc')}
+              </Text>
             </View>
             <Pressable
               onPress={onClose}
               accessibilityRole="button"
               accessibilityLabel={t('common.close')}
               hitSlop={8}
-              className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
+              className="h-11 w-11 bg-muted rounded-full items-center justify-center active:bg-muted/80"
             >
-              <Feather name="x" size={18} color="#64748b" />
+              <Feather name="x" size={18} color={THEME_COLORS.slate500} />
             </Pressable>
           </View>
 
           <ScrollView className="px-6 py-4" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-            <View className="bg-blue-50/30 border border-blue-200 rounded-lg p-4 flex-row justify-between items-center mb-6">
+            <View className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex-row justify-between items-center mb-6">
               <View className="flex-1 mr-3">
-                <Text className="text-[10px] font-sans-bold text-gray-400 uppercase tracking-wider mb-1">
+                <Text className="text-[10px] font-sans-bold text-muted-foreground uppercase tracking-wider mb-1">
                   {t('services.selectedServices')}
                 </Text>
-                <Text className="text-xs font-sans-extrabold text-gray-800" numberOfLines={2}>
+                <Text className="text-xs font-sans-extrabold text-foreground" numberOfLines={2}>
                   {servicesDisplay}
                 </Text>
-                <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">{durationDisplay}</Text>
+                <Text className="text-[10px] font-sans-medium text-muted-foreground mt-0.5">{durationDisplay}</Text>
               </View>
               <Text className="text-base font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
             </View>
@@ -263,7 +258,7 @@ export default function BookingConfirmationModal({
                     value={serviceDate}
                     onChangeText={() => {}}
                     error={errors.serviceDate?.message}
-                    rightIcon={<Feather name="calendar" size={16} color="#898f8f" />}
+                    rightIcon={<Feather name="calendar" size={16} color={THEME_COLORS.slate400} />}
                   />
                 </View>
               </Pressable>
@@ -277,12 +272,12 @@ export default function BookingConfirmationModal({
                       value={startTime}
                       onChangeText={() => {}}
                       error={errors.startTime?.message}
-                      rightIcon={<Feather name="clock" size={16} color="#898f8f" />}
+                      rightIcon={<Feather name="clock" size={16} color={THEME_COLORS.slate400} />}
                     />
                   </View>
                 </Pressable>
                 {workingHours.startTime && workingHours.endTime && !errors.startTime ? (
-                  <Text className="text-xs font-sans-medium text-gray-500 mt-1 ml-0.5">
+                  <Text className="text-xs font-sans-medium text-muted-foreground mt-1 ml-0.5">
                     {t('services.providerWorkingHours', {
                       start: workingHours.startTime,
                       end: workingHours.endTime,
@@ -292,7 +287,7 @@ export default function BookingConfirmationModal({
               </View>
 
               <View>
-                <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">
+                <Text className="text-xs font-sans-semibold text-foreground mb-1.5 ml-0.5">
                   {t('services.locationLabel')}
                 </Text>
                 <LocationSelector
@@ -321,7 +316,7 @@ export default function BookingConfirmationModal({
               />
             </View>
 
-            <View className="pt-2 pb-6 border-t border-gray-100 gap-y-2.5">
+            <View className="pt-2 pb-6 border-t border-border gap-y-2.5">
               <Button
                 title={t('services.confirmBooking')}
                 variant="primary"
@@ -336,7 +331,7 @@ export default function BookingConfirmationModal({
                 variant="outline"
                 size="md"
                 onPress={onClose}
-                className="border-primary bg-white active:bg-blue-50/30"
+                className="border-primary bg-card active:bg-primary/5"
                 textClassName="text-primary font-sans-semibold"
               />
             </View>
@@ -356,19 +351,19 @@ export default function BookingConfirmationModal({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View className="bg-white rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
-            <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
+          <View className="bg-card rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
+            <View className="w-10 h-1 bg-muted-foreground/30 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectServiceDate')}</Text>
+              <Text className="text-foreground text-xl font-sans-extrabold">{t('services.selectServiceDate')}</Text>
               <Pressable
                 onPress={() => setDatePickerVisible(false)}
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
-                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                className="w-11 h-11 rounded-full items-center justify-center bg-muted active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -385,13 +380,13 @@ export default function BookingConfirmationModal({
               return (
                 <View className="flex-row justify-between mb-6 gap-x-2">
                   <View className="flex-1">
-                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                    <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
                       {t('services.year')}
                     </Text>
                     <ScrollView
                       style={{ height: 150 }}
                       showsVerticalScrollIndicator={false}
-                      className="border border-gray-100 rounded-lg"
+                      className="border border-border rounded-lg"
                     >
                       {YEARS.map((y) => (
                         <Pressable
@@ -399,10 +394,10 @@ export default function BookingConfirmationModal({
                           onPress={() => setTempYear(y)}
                           accessibilityRole="button"
                           accessibilityState={{ selected: tempYear === y }}
-                          className={`py-2 items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
+                          className={`min-h-[40px] justify-center items-center ${tempYear === y ? 'bg-primary/10' : ''}`}
                         >
                           <Text
-                            className={`font-sans-medium ${tempYear === y ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
+                            className={`font-sans-medium ${tempYear === y ? 'text-primary font-sans-bold' : 'text-foreground'}`}
                           >
                             {y}
                           </Text>
@@ -412,13 +407,13 @@ export default function BookingConfirmationModal({
                   </View>
 
                   <View className="flex-[1.5]">
-                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                    <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
                       {t('services.month')}
                     </Text>
                     <ScrollView
                       style={{ height: 150 }}
                       showsVerticalScrollIndicator={false}
-                      className="border border-gray-100 rounded-lg"
+                      className="border border-border rounded-lg"
                     >
                       {MONTHS.map((m, idx) => {
                         const isPastMonth = selectedYearNum === currentYear && idx < currentMonthIdx;
@@ -435,7 +430,7 @@ export default function BookingConfirmationModal({
                             }}
                             accessibilityRole="button"
                             accessibilityState={{ selected: tempMonth === m, disabled: isPastMonth }}
-                            className={`py-2 items-center ${tempMonth === m ? 'bg-primary/10' : ''} ${
+                            className={`min-h-[40px] justify-center items-center ${tempMonth === m ? 'bg-primary/10' : ''} ${
                               isPastMonth ? 'opacity-30' : ''
                             }`}
                           >
@@ -444,8 +439,8 @@ export default function BookingConfirmationModal({
                                 tempMonth === m
                                   ? 'text-primary font-sans-bold'
                                   : isPastMonth
-                                    ? 'text-gray-300'
-                                    : 'text-gray-700'
+                                    ? 'text-muted-foreground/50'
+                                    : 'text-foreground'
                               }`}
                             >
                               {m}
@@ -457,13 +452,13 @@ export default function BookingConfirmationModal({
                   </View>
 
                   <View className="flex-1">
-                    <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                    <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
                       {t('services.day')}
                     </Text>
                     <ScrollView
                       style={{ height: 150 }}
                       showsVerticalScrollIndicator={false}
-                      className="border border-gray-100 rounded-lg"
+                      className="border border-border rounded-lg"
                     >
                       {daysList.map((d) => {
                         const dNum = parseInt(d, 10);
@@ -478,7 +473,7 @@ export default function BookingConfirmationModal({
                             onPress={() => setTempDay(d)}
                             accessibilityRole="button"
                             accessibilityState={{ selected: tempDay === d, disabled: isPastDay }}
-                            className={`py-2 items-center ${tempDay === d ? 'bg-primary/10' : ''} ${
+                            className={`min-h-[40px] justify-center items-center ${tempDay === d ? 'bg-primary/10' : ''} ${
                               isPastDay ? 'opacity-30' : ''
                             }`}
                           >
@@ -487,8 +482,8 @@ export default function BookingConfirmationModal({
                                 tempDay === d
                                   ? 'text-primary font-sans-bold'
                                   : isPastDay
-                                    ? 'text-gray-300'
-                                    : 'text-gray-700'
+                                    ? 'text-muted-foreground/50'
+                                    : 'text-foreground'
                               }`}
                             >
                               {d}
@@ -524,29 +519,31 @@ export default function BookingConfirmationModal({
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
-          <View className="bg-white rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
-            <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-5" />
+          <View className="bg-card rounded-t-3xl px-5 pb-7 pt-4" style={styles.drawerContainer}>
+            <View className="w-10 h-1 bg-muted-foreground/30 rounded-full self-center mb-5" />
 
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-900 text-xl font-sans-extrabold">{t('services.selectStartTime')}</Text>
+              <Text className="text-foreground text-xl font-sans-extrabold">{t('services.selectStartTime')}</Text>
               <Pressable
                 onPress={() => setTimePickerVisible(false)}
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
-                className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
+                className="w-11 h-11 rounded-full items-center justify-center bg-muted active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
             <View className="flex-row justify-center gap-x-4 mb-6">
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">{t('services.hour')}</Text>
+                <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
+                  {t('services.hour')}
+                </Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
-                  className="border border-gray-100 rounded-lg"
+                  className="border border-border rounded-lg"
                 >
                   {HOURS.map((h) => (
                     <Pressable
@@ -554,10 +551,10 @@ export default function BookingConfirmationModal({
                       onPress={() => setTempHour(h)}
                       accessibilityRole="button"
                       accessibilityState={{ selected: tempHour === h }}
-                      className={`py-2 items-center ${tempHour === h ? 'bg-primary/10' : ''}`}
+                      className={`min-h-[40px] justify-center items-center ${tempHour === h ? 'bg-primary/10' : ''}`}
                     >
                       <Text
-                        className={`font-sans-medium ${tempHour === h ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
+                        className={`font-sans-medium ${tempHour === h ? 'text-primary font-sans-bold' : 'text-foreground'}`}
                       >
                         {h}
                       </Text>
@@ -567,13 +564,13 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
                   {t('services.minute')}
                 </Text>
                 <ScrollView
                   style={{ height: 120 }}
                   showsVerticalScrollIndicator={false}
-                  className="border border-gray-100 rounded-lg"
+                  className="border border-border rounded-lg"
                 >
                   {MINUTES.map((m) => (
                     <Pressable
@@ -581,10 +578,10 @@ export default function BookingConfirmationModal({
                       onPress={() => setTempMinute(m)}
                       accessibilityRole="button"
                       accessibilityState={{ selected: tempMinute === m }}
-                      className={`py-2 items-center ${tempMinute === m ? 'bg-primary/10' : ''}`}
+                      className={`min-h-[40px] justify-center items-center ${tempMinute === m ? 'bg-primary/10' : ''}`}
                     >
                       <Text
-                        className={`font-sans-medium ${tempMinute === m ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
+                        className={`font-sans-medium ${tempMinute === m ? 'text-primary font-sans-bold' : 'text-foreground'}`}
                       >
                         {m}
                       </Text>
@@ -594,20 +591,20 @@ export default function BookingConfirmationModal({
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-sans-semibold text-gray-500 mb-1 text-center">
+                <Text className="text-xs font-sans-semibold text-muted-foreground mb-1 text-center">
                   {t('services.period')}
                 </Text>
-                <View className="border border-gray-100 rounded-lg">
+                <View className="border border-border rounded-lg">
                   {PERIODS.map((p) => (
                     <Pressable
                       key={p}
                       onPress={() => setTempPeriod(p)}
                       accessibilityRole="button"
                       accessibilityState={{ selected: tempPeriod === p }}
-                      className={`py-3 items-center ${tempPeriod === p ? 'bg-primary/10' : ''}`}
+                      className={`min-h-[40px] justify-center items-center ${tempPeriod === p ? 'bg-primary/10' : ''}`}
                     >
                       <Text
-                        className={`font-sans-medium ${tempPeriod === p ? 'text-primary font-sans-bold' : 'text-gray-700'}`}
+                        className={`font-sans-medium ${tempPeriod === p ? 'text-primary font-sans-bold' : 'text-foreground'}`}
                       >
                         {p}
                       </Text>

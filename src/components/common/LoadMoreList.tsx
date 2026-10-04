@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, Text, View, ListRenderItemInfo } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import EmptyStateCard from './EmptyStateCard';
 
 export interface LoadMoreListProps<T> {
   data: T[];
@@ -21,7 +22,7 @@ export interface LoadMoreListProps<T> {
 export default function LoadMoreList<T>({
   data,
   keyExtractor,
-  renderItem: renderItemProp,
+  renderItem,
   initialVisibleCount = 4,
   pageSize = 4,
   onLoadMore,
@@ -30,7 +31,6 @@ export default function LoadMoreList<T>({
   emptyTitle,
   emptyDescription,
   emptyContent,
-  itemHeight,
   listClassName = 'gap-4',
 }: LoadMoreListProps<T>) {
   const { t } = useTranslation();
@@ -49,67 +49,37 @@ export default function LoadMoreList<T>({
     onLoadMore?.(nextVisibleCount);
   }, [visibleCount, pageSize, data.length, onLoadMore]);
 
-  const renderItemCallback = useCallback(
-    ({ item, index }: ListRenderItemInfo<T>) => (
-      <View className={`mb-4 ${listClassName}`}>{renderItemProp(item, index)}</View>
-    ),
-    [renderItemProp, listClassName],
-  );
-
-  const getItemLayout = useCallback(
-    (_: unknown, index: number) => {
-      if (!itemHeight) return { length: 0, offset: 0, index };
-      return {
-        length: itemHeight,
-        offset: itemHeight * index,
-        index,
-      };
-    },
-    [itemHeight],
-  );
-
   if (data.length === 0) {
     if (emptyContent) {
       return <>{emptyContent}</>;
     }
 
-    return (
-      <View className="rounded-2xl border border-gray-200 bg-white px-5 py-8 items-center">
-        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{resolvedEmptyTitle}</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5">{resolvedEmptyDescription}</Text>
-      </View>
-    );
+    return <EmptyStateCard title={resolvedEmptyTitle} description={resolvedEmptyDescription} />;
   }
 
-  const renderFooter = () => (
-    <View className="items-center pt-2 pb-4">
-      {hasMore ? (
-        <Pressable
-          onPress={handleLoadMore}
-          accessibilityRole="button"
-          accessibilityLabel={resolvedLoadMoreLabel}
-          className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 active:opacity-80"
-        >
-          <Text className="text-xs font-sans-semibold text-gray-700">{resolvedLoadMoreLabel}</Text>
-        </Pressable>
-      ) : (
-        <Text className="text-[11px] font-sans-medium text-gray-400">{resolvedEndReachedLabel}</Text>
-      )}
-    </View>
-  );
-
   return (
-    <FlatList
-      data={visibleItems}
-      keyExtractor={keyExtractor}
-      renderItem={renderItemCallback}
-      getItemLayout={itemHeight ? getItemLayout : undefined}
-      ListFooterComponent={renderFooter}
-      initialNumToRender={10}
-      maxToRenderPerBatch={10}
-      windowSize={5}
-      removeClippedSubviews
-      scrollEnabled={false}
-    />
+    <View className="w-full">
+      <View className={listClassName}>
+        {visibleItems.map((item, index) => (
+          <View key={keyExtractor(item, index)}>{renderItem(item, index)}</View>
+        ))}
+      </View>
+
+      <View className="items-center pt-4 pb-4">
+        {hasMore ? (
+          <Pressable
+            onPress={handleLoadMore}
+            accessibilityRole="button"
+            accessibilityLabel={resolvedLoadMoreLabel}
+            hitSlop={8}
+            className="min-h-[44px] min-w-[120px] items-center justify-center rounded-xl border border-border bg-background px-5 py-2.5 active:bg-secondary"
+          >
+            <Text className="text-xs font-sans-semibold text-foreground">{resolvedLoadMoreLabel}</Text>
+          </Pressable>
+        ) : (
+          <Text className="text-[11px] font-sans-medium text-muted-foreground">{resolvedEndReachedLabel}</Text>
+        )}
+      </View>
+    </View>
   );
 }

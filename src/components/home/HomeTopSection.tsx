@@ -19,6 +19,52 @@ interface HomeTopSectionProps {
   categories?: Category[];
 }
 
+const DEFAULT_STATS: DashboardStats = {
+  pendingOrders: 3,
+  completedOrders: 142,
+  avgRating: 4.9,
+  completionRate: '98%',
+};
+
+const CARD_SHADOW = {
+  shadowColor: '#0f172a',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.03,
+  shadowRadius: 8,
+  elevation: 0,
+};
+
+const STAT_CONFIG = [
+  {
+    key: 'pendingOrders' as const,
+    icon: 'clock' as const,
+    iconBg: 'bg-amber-50',
+    iconColor: '#d97706',
+    labelKey: 'home.pending',
+  },
+  {
+    key: 'avgRating' as const,
+    icon: 'star' as const,
+    iconBg: 'bg-yellow-50',
+    iconColor: '#b45309',
+    labelKey: 'home.avgRating',
+  },
+  {
+    key: 'completedOrders' as const,
+    icon: 'check-circle' as const,
+    iconBg: 'bg-emerald-50',
+    iconColor: '#059669',
+    labelKey: 'home.completed',
+  },
+  {
+    key: 'completionRate' as const,
+    icon: 'trending-up' as const,
+    iconBg: 'bg-blue-50',
+    iconColor: '#2563eb',
+    labelKey: 'home.completion',
+  },
+];
+
 export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -44,7 +90,7 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
           Welcome back, <Text className="text-primary font-sans-bold">{firstName}</Text>
         </Trans>
       ) : (
-        <Text className="text-gray-900 font-sans-bold">{t('home.welcomeBack')}</Text>
+        <Text className="text-foreground font-sans-bold">{t('home.welcomeBack')}</Text>
       ),
       subtitle: t('home.customerHeroSubtitle'),
       searchPlaceholder: t('home.customerSearchPlaceholder'),
@@ -56,7 +102,7 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
           Welcome back, <Text className="text-primary font-sans-bold">{firstName}</Text>
         </Trans>
       ) : (
-        <Text className="text-gray-900 font-sans-bold">{t('home.welcomeBack')}</Text>
+        <Text className="text-foreground font-sans-bold">{t('home.welcomeBack')}</Text>
       ),
       subtitle: t('home.providerHeroSubtitle'),
       searchPlaceholder: '',
@@ -68,20 +114,7 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
   };
 
   const heroCopy = heroCopyByVariant[variant];
-  const displayStats = stats || {
-    pendingOrders: 3,
-    completedOrders: 142,
-    avgRating: 4.9,
-    completionRate: '98%',
-  };
-
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
+  const displayStats = stats || DEFAULT_STATS;
 
   return (
     <ContentLayout className="overflow-hidden bg-surface-brand-subtle">
@@ -93,71 +126,31 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
 
         {/* Hero Header */}
         <View className="pt-0.5 pb-0.5">
-          <Text numberOfLines={1} className="text-xl font-sans-bold text-gray-900 tracking-tight">
+          <Text numberOfLines={1} className="text-xl font-sans-bold text-foreground tracking-tight">
             {heroCopy.title}
           </Text>
-          <Text numberOfLines={1} className="mt-0.5 text-xs font-sans-medium text-gray-500">
+          <Text numberOfLines={1} className="mt-0.5 text-xs font-sans-medium text-muted-foreground">
             {heroCopy.subtitle}
           </Text>
         </View>
 
         {variant === USER_ROLES.Provider ? (
           <View className="flex-row flex-wrap justify-between gap-3 mt-2">
-            {/* Pending Orders */}
-            <View
-              className="w-[47%] bg-white rounded-xl border border-gray-100 p-3.5 flex-row items-center gap-3"
-              style={cardShadow}
-            >
-              <View className="h-10 w-10 rounded-xl bg-amber-50 items-center justify-center">
-                <Feather name="clock" size={18} color="#d97706" />
+            {STAT_CONFIG.map((item) => (
+              <View
+                key={item.key}
+                className="flex-1 min-w-[140px] bg-card rounded-xl border border-border p-3.5 flex-row items-center gap-3"
+                style={CARD_SHADOW}
+              >
+                <View className={`h-10 w-10 rounded-xl ${item.iconBg} items-center justify-center`}>
+                  <Feather name={item.icon} size={18} color={item.iconColor} />
+                </View>
+                <View>
+                  <Text className="text-lg font-sans-bold text-foreground">{displayStats[item.key]}</Text>
+                  <Text className="text-[11px] font-sans-medium text-muted-foreground">{t(item.labelKey)}</Text>
+                </View>
               </View>
-              <View>
-                <Text className="text-lg font-sans-bold text-gray-900">{displayStats.pendingOrders}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.pending')}</Text>
-              </View>
-            </View>
-
-            {/* Avg Rating */}
-            <View
-              className="w-[47%] bg-white rounded-xl border border-gray-100 p-3.5 flex-row items-center gap-3"
-              style={cardShadow}
-            >
-              <View className="h-10 w-10 rounded-xl bg-yellow-50 items-center justify-center">
-                <Feather name="star" size={18} color="#b45309" />
-              </View>
-              <View>
-                <Text className="text-lg font-sans-bold text-gray-900">{displayStats.avgRating}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.avgRating')}</Text>
-              </View>
-            </View>
-
-            {/* Completed Orders */}
-            <View
-              className="w-[47%] bg-white rounded-xl border border-gray-100 p-3.5 flex-row items-center gap-3"
-              style={cardShadow}
-            >
-              <View className="h-10 w-10 rounded-xl bg-emerald-50 items-center justify-center">
-                <Feather name="check-circle" size={18} color="#059669" />
-              </View>
-              <View>
-                <Text className="text-lg font-sans-bold text-gray-900">{displayStats.completedOrders}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.completed')}</Text>
-              </View>
-            </View>
-
-            {/* Completion Rate */}
-            <View
-              className="w-[47%] bg-white rounded-xl border border-gray-100 p-3.5 flex-row items-center gap-3"
-              style={cardShadow}
-            >
-              <View className="h-10 w-10 rounded-xl bg-blue-50 items-center justify-center">
-                <Feather name="trending-up" size={18} color="#2563eb" />
-              </View>
-              <View>
-                <Text className="text-lg font-sans-bold text-gray-900">{displayStats.completionRate}</Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">{t('home.completion')}</Text>
-              </View>
-            </View>
+            ))}
           </View>
         ) : (
           <HomeTopSectionSearchBar placeholder={heroCopy.searchPlaceholder} onPress={handleSearchPress} />

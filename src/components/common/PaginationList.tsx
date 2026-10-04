@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { THEME_COLORS } from '@/constants/colors';
+import EmptyStateCard from './EmptyStateCard';
 
 export interface PaginationListProps<T> {
   data: T[];
@@ -59,12 +60,7 @@ export default function PaginationList<T>({
       return <>{emptyContent}</>;
     }
 
-    return (
-      <View className="rounded-xl border border-gray-200 bg-white px-5 py-8 items-center">
-        <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{resolvedEmptyTitle}</Text>
-        <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5">{resolvedEmptyDescription}</Text>
-      </View>
-    );
+    return <EmptyStateCard title={resolvedEmptyTitle} description={resolvedEmptyDescription} />;
   }
 
   const isFirstPage = activePage === 1;
@@ -88,14 +84,14 @@ export default function PaginationList<T>({
           accessibilityLabel={t('components.previousPage')}
           accessibilityState={{ disabled: isFirstPage }}
           hitSlop={8}
-          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
-            isFirstPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
+          className={`min-h-[44px] min-w-[44px] rounded-xl border items-center justify-center bg-background ${
+            isFirstPage ? 'border-border/40 opacity-40' : 'border-border active:bg-secondary'
           }`}
         >
           <Feather name="chevron-left" size={18} color={THEME_COLORS.slate500} accessible={false} />
         </Pressable>
 
-        <Text className="text-xs font-sans-semibold text-gray-500">
+        <Text className="text-xs font-sans-semibold text-muted-foreground">
           {t('components.pageOf', { active: activePage, total: totalPages })}
         </Text>
 
@@ -106,8 +102,8 @@ export default function PaginationList<T>({
           accessibilityLabel={t('components.nextPage')}
           accessibilityState={{ disabled: isLastPage }}
           hitSlop={8}
-          className={`h-9 w-9 rounded-xl border items-center justify-center bg-white ${
-            isLastPage ? 'border-gray-100 opacity-40' : 'border-gray-200 active:bg-gray-50'
+          className={`min-h-[44px] min-w-[44px] rounded-xl border items-center justify-center bg-background ${
+            isLastPage ? 'border-border/40 opacity-40' : 'border-border active:bg-secondary'
           }`}
         >
           <Feather name="chevron-right" size={18} color={THEME_COLORS.slate500} accessible={false} />

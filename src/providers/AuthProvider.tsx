@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 import { useAuthStore } from '@/store/useAuthStore';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -23,37 +24,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+export const useAuthUser = () => useAuthStore((state) => state.user);
+export const useAuthRole = () => useAuthStore((state) => state.role);
+export const useIsLoggedIn = () => useAuthStore((state) => state.isLoggedIn);
+export const useAuthLoading = () => useAuthStore((state) => state.isLoading);
+
 export function useAuthState() {
-  const role = useAuthStore((state) => state.role);
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user = useAuthStore((state) => state.user);
-  const isLoading = useAuthStore((state) => state.isLoading);
-  return { role, isLoggedIn, user, isLoading };
+  return useAuthStore(
+    useShallow((state) => ({
+      role: state.role,
+      isLoggedIn: state.isLoggedIn,
+      user: state.user,
+      isLoading: state.isLoading,
+    })),
+  );
 }
 
 export function useAuthActions() {
-  const setRole = useAuthStore((state) => state.setRole);
-  const login = useAuthStore((state) => state.login);
-  const logout = useAuthStore((state) => state.logout);
-  return { setRole, login, logout };
+  return useAuthStore(
+    useShallow((state) => ({
+      setRole: state.setRole,
+      login: state.login,
+      logout: state.logout,
+      updateUser: state.updateUser,
+    })),
+  );
 }
 
 export function useAuth() {
-  const role = useAuthStore((state) => state.role);
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user = useAuthStore((state) => state.user);
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const setRole = useAuthStore((state) => state.setRole);
-  const login = useAuthStore((state) => state.login);
-  const logout = useAuthStore((state) => state.logout);
-
-  return {
-    role,
-    isLoggedIn,
-    user,
-    isLoading,
-    setRole,
-    login,
-    logout,
-  };
+  return useAuthStore(
+    useShallow((state) => ({
+      role: state.role,
+      isLoggedIn: state.isLoggedIn,
+      user: state.user,
+      isLoading: state.isLoading,
+      setRole: state.setRole,
+      login: state.login,
+      logout: state.logout,
+    })),
+  );
 }

@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { Pressable, Text, View } from 'react-native';
 import { getImageUrl } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -14,7 +15,7 @@ export interface HomeServiceCategoryCardProps {
 }
 
 export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress }: HomeServiceCategoryCardProps) {
-  const hasImage = imageUrl && getImageUrl(imageUrl);
+  const resolvedImageUrl = imageUrl ? getImageUrl(imageUrl) : undefined;
 
   return (
     <Pressable
@@ -24,13 +25,14 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
       accessibilityLabel={label}
       hitSlop={8}
     >
-      <View className="h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white overflow-hidden">
-        {hasImage ? (
+      <View className="h-14 w-14 items-center justify-center rounded-full border border-border bg-background overflow-hidden">
+        {resolvedImageUrl ? (
           <Image
-            source={{ uri: getImageUrl(imageUrl) }}
+            source={{ uri: resolvedImageUrl }}
             className="h-8 w-8"
             style={{ width: 32, height: 32 }}
-            resizeMode="contain"
+            contentFit="contain"
+            transition={200}
           />
         ) : (
           <Feather name={icon || 'grid'} size={20} color={THEME_COLORS.primary} />
@@ -38,7 +40,7 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
       </View>
 
       <Text
-        className="mt-1.5 text-center text-[11px] font-sans-medium leading-[14px] text-gray-900 w-full px-0.5"
+        className="mt-1.5 text-center text-[11px] font-sans-medium leading-[14px] text-foreground w-full px-0.5"
         numberOfLines={2}
       >
         {label}

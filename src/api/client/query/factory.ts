@@ -24,30 +24,33 @@ export function createQueryHook<TData, TParams = void, TError = ApiError>(
   };
 }
 
-export function createMutationHook<TData, TVariables, TError = ApiError>(
+export function createMutationHook<TData, TVariables, TError = ApiError, TContext = unknown>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   options?: {
     invalidateKeys?: (data: TData, variables: TVariables) => QueryKey[];
-  } & Partial<UseMutationOptions<TData, TError, TVariables>>,
+  } & Partial<UseMutationOptions<TData, TError, TVariables, TContext>>,
 ) {
-  return function useGeneratedMutation(customOptions?: Partial<UseMutationOptions<TData, TError, TVariables>>) {
+  return function useGeneratedMutation(
+    customOptions?: Partial<UseMutationOptions<TData, TError, TVariables, TContext>>,
+  ) {
     const queryClient = useQueryClient();
-    return useMutation<TData, TError, TVariables>({
+    return useMutation<TData, TError, TVariables, TContext>({
       mutationFn,
-      onSuccess: (data, variables, context) => {
-        if (options?.invalidateKeys) {
+      ...options,
+      ...customOptions,
+      onSettled: (...args) => {
+        const [data, , variables] = args;
+        if (options?.invalidateKeys && data) {
           const keys = options.invalidateKeys(data, variables);
           keys.forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
         }
-        if (options?.onSuccess) {
-          (options.onSuccess as (d: TData, v: TVariables, c: unknown) => void)(data, variables, context);
-        }
-        if (customOptions?.onSuccess) {
-          (customOptions.onSuccess as (d: TData, v: TVariables, c: unknown) => void)(data, variables, context);
-        }
+        options?.onSettled?.(...args);
+        customOptions?.onSettled?.(...args);
       },
-      ...options,
-      ...customOptions,
+      onSuccess: (...args) => {
+        options?.onSuccess?.(...args);
+        customOptions?.onSuccess?.(...args);
+      },
     });
   };
 }

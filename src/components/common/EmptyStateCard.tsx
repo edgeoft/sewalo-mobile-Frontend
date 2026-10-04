@@ -20,10 +20,12 @@ export default function EmptyStateCard({
   className = '',
 }: EmptyStateCardProps) {
   return (
-    <View className={`rounded-2xl border border-gray-200 bg-white px-5 py-8 items-center ${className}`}>
+    <View className={`rounded-2xl border border-border bg-card px-5 py-8 items-center ${className}`}>
       {icon && <View className="mb-4">{icon}</View>}
-      <Text className="text-sm font-sans-semibold text-gray-900 mb-1 text-center">{title}</Text>
-      <Text className="text-xs font-sans-medium text-gray-500 text-center leading-5 mb-5 px-4">{description}</Text>
+      <Text className="text-sm font-sans-semibold text-foreground mb-1 text-center">{title}</Text>
+      <Text className="text-xs font-sans-medium text-muted-foreground text-center leading-5 mb-5 px-4">
+        {description}
+      </Text>
       {buttonTitle && onButtonPress && (
         <Button
           title={buttonTitle}

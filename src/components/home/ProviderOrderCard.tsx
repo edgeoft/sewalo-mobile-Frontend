@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { BOOKING_STATUS_PRESENTATION } from '@/constants/bookings';
@@ -26,7 +27,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
   return (
     <Pressable
       onPress={onPress}
-      className="rounded-lg border border-gray-200 bg-white p-3 active:opacity-95"
+      className="rounded-lg border border-border bg-background p-3 active:opacity-95"
       accessibilityRole="button"
       accessibilityLabel={`Order from ${order.customerName}`}
     >
@@ -35,15 +36,16 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
         <Image
           source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
-          className="h-16 w-16 rounded-lg bg-gray-50 shrink-0"
+          className="h-16 w-16 rounded-lg bg-secondary shrink-0"
           style={{ width: 64, height: 64, borderRadius: 8 }}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
         />
 
         {/* Customer & Order Details */}
         <View className="flex-1 justify-center">
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-base font-sans-bold text-gray-900" numberOfLines={1}>
+            <Text className="text-base font-sans-bold text-foreground" numberOfLines={1}>
               {order.customerName}
             </Text>
             {statusPresentation && (
@@ -68,13 +70,13 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             {/* Scheduled Date/Time */}
             <View className="flex-row items-center gap-1.5">
               <Feather name="calendar" size={12} color={THEME_COLORS.slate500} />
-              <Text className="text-xs font-sans-medium text-gray-500">{order.bookingDate}</Text>
+              <Text className="text-xs font-sans-medium text-muted-foreground">{order.bookingDate}</Text>
             </View>
 
             {/* Location */}
             <View className="flex-row items-center gap-1.5">
               <Feather name="map-pin" size={12} color={THEME_COLORS.slate500} />
-              <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
+              <Text className="text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
                 {order.location}
               </Text>
             </View>
@@ -83,15 +85,15 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
       </View>
 
       {/* Divider */}
-      <View className="my-2.5 border-t border-gray-100" />
+      <View className="my-2.5 border-t border-border" />
 
       {/* Bottom Bar: Price & Action Buttons */}
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-[10px] font-sans-medium text-gray-400">{t('home.totalPrice')}</Text>
+          <Text className="text-[10px] font-sans-medium text-muted-foreground">{t('home.totalPrice')}</Text>
           <View className="flex-row items-center gap-1.5 mt-0.5">
             <Feather name="tag" size={13} color={THEME_COLORS.primary} />
-            <Text className="text-base font-sans-bold text-gray-900">{order.bookedPrice}</Text>
+            <Text className="text-base font-sans-bold text-foreground">{order.bookedPrice}</Text>
           </View>
         </View>
 
@@ -100,24 +102,27 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             <Pressable
               onPress={() => onDecline?.(order.id)}
               accessibilityRole="button"
-              className="rounded-md border border-red-200 bg-red-50/50 px-3.5 py-2 active:bg-red-50"
+              hitSlop={8}
+              className="min-h-[44px] justify-center items-center rounded-md border border-destructive/30 bg-surface-danger-subtle px-3.5 py-2 active:opacity-75"
             >
-              <Text className="text-xs font-sans-bold text-red-600">{t('home.decline')}</Text>
+              <Text className="text-xs font-sans-bold text-destructive">{t('home.decline')}</Text>
             </Pressable>
 
             <Pressable
               onPress={() => onAccept?.(order.id)}
               accessibilityRole="button"
-              className="rounded-md bg-primary px-4 py-2 active:opacity-90"
+              hitSlop={8}
+              className="min-h-[44px] justify-center items-center rounded-md bg-primary px-4 py-2 active:opacity-90"
             >
-              <Text className="text-xs font-sans-bold text-white">{t('home.accept')}</Text>
+              <Text className="text-xs font-sans-bold text-primary-foreground">{t('home.accept')}</Text>
             </Pressable>
           </View>
         ) : (
           <Pressable
             onPress={onPress}
             accessibilityRole="button"
-            className="rounded-md bg-surface-indigo-subtle px-3.5 py-1.5 active:opacity-90"
+            hitSlop={8}
+            className="min-h-[44px] justify-center items-center rounded-md bg-surface-indigo-subtle px-3.5 py-1.5 active:opacity-90"
           >
             <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
           </Pressable>

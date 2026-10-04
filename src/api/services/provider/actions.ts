@@ -9,8 +9,6 @@ import {
   FinanceAccount,
   GetFinanceAccountsResponse,
   UpdateFinanceAccountPayload,
-  CategoryListResponse,
-  SubCategoryListResponse,
   GetMyServicesResponse,
   CreateServiceParams,
   Service,
@@ -51,14 +49,10 @@ export const deleteFinanceAccountAction = async (id: number): Promise<void> => {
   return internalClient.delete<void>(API_ENDPOINTS.FINANCE_ACCOUNTS.DELETE(id));
 };
 
-// Services
-export const getProviderCategoriesAction = async (): Promise<CategoryListResponse> => {
-  return internalClient.get<CategoryListResponse>(API_ENDPOINTS.CATEGORIES.LIST);
-};
-
-export const getProviderSubCategoriesAction = async (slug: string): Promise<SubCategoryListResponse> => {
-  return internalClient.get<SubCategoryListResponse>(API_ENDPOINTS.CATEGORIES.SUB_CATEGORIES(slug));
-};
+export {
+  getCategoriesAction as getProviderCategoriesAction,
+  getSubCategoriesAction as getProviderSubCategoriesAction,
+} from '@/api/services/categories/actions';
 
 export const getMyServicesAction = async (): Promise<GetMyServicesResponse> => {
   return internalClient.get<GetMyServicesResponse>(API_ENDPOINTS.SERVICES.MY_SERVICES);
