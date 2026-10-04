@@ -26,6 +26,8 @@ interface InvoiceReviewModalProps {
   totalPayableValue: number;
   onDownloadInvoice: () => void;
   isDownloadingInvoice?: boolean;
+  onShareInvoice?: () => void;
+  isSharingInvoice?: boolean;
 }
 
 export default function InvoiceReviewModal({
@@ -39,6 +41,8 @@ export default function InvoiceReviewModal({
   totalPayableValue,
   onDownloadInvoice,
   isDownloadingInvoice = false,
+  onShareInvoice,
+  isSharingInvoice = false,
 }: InvoiceReviewModalProps) {
   const { t } = useTranslation();
   const { height } = useWindowDimensions();
@@ -79,6 +83,23 @@ export default function InvoiceReviewModal({
                   </>
                 )}
               </Pressable>
+
+              {onShareInvoice && (
+                <Pressable
+                  onPress={onShareInvoice}
+                  disabled={isSharingInvoice}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('customer.shareInvoice')}
+                  hitSlop={8}
+                  className="h-8 w-8 rounded-lg border border-gray-200 bg-gray-50 active:bg-gray-100 items-center justify-center"
+                >
+                  {isSharingInvoice ? (
+                    <ActivityIndicator size="small" color={THEME_COLORS.slate700} />
+                  ) : (
+                    <Feather name="share-2" size={13} color={THEME_COLORS.slate700} />
+                  )}
+                </Pressable>
+              )}
 
               <Pressable
                 onPress={onClose}

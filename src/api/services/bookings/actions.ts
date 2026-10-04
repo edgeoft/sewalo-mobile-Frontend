@@ -1,6 +1,4 @@
 import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
-import * as IntentLauncher from 'expo-intent-launcher';
 import { Platform } from 'react-native';
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
@@ -79,35 +77,27 @@ export const downloadInvoiceAction = async (invoiceId: string): Promise<string> 
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const fileUri = `${FileSystem.cacheDirectory}invoice-${invoiceId}.pdf`;
-
-  const result = await FileSystem.downloadAsync(url, fileUri, { headers });
-
   if (Platform.OS === 'android') {
-    try {
-      const contentUri = await FileSystem.getContentUriAsync(result.uri);
-      await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-        data: contentUri,
-        flags: 1,
-        type: 'application/pdf',
-      });
-      return result.uri;
-    } catch {
-      await Sharing.shareAsync(result.uri, {
-        mimeType: 'application/pdf',
-        dialogTitle: 'Download Invoice',
-      });
-      return result.uri;
+    const tempUri = `${FileSystem.cacheDirectory}invoice-${invoiceId}.pdf`;
+    const { uri } = await FileSystem.downloadAsync(url, tempUri, { headers });
+
+    const perm = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+    if (perm.granted) {
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const fileUri = await FileSystem.StorageAccessFramework.createFileAsync(
+        perm.directoryUri,
+        `invoice-${invoiceId}`,
+        'application/pdf',
+      );
+      await FileSystem.writeAsStringAsync(fileUri, base64, { encoding: FileSystem.EncodingType.Base64 });
+      return fileUri;
     }
+    return uri;
   }
 
-  await Sharing.shareAsync(result.uri, {
-    mimeType: 'application/pdf',
-    dialogTitle: 'Download Invoice',
-    UTI: 'com.adobe.pdf',
-  });
-
-  return result.uri;
+  const fileUri = `${FileSystem.documentDirectory}invoice-${invoiceId}.pdf`;
+  const { uri } = await FileSystem.downloadAsync(url, fileUri, { headers });
+  return uri;
 };
 
 // Payment Actions

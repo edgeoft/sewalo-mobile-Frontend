@@ -144,6 +144,8 @@
   "paymentCompleted": "भुक्तानी सफलतापूर्वक पूरा भयो!",
   "invoiceDownloaded": "इनभ्वाइस सफलतापूर्वक डाउनलोड भयो।",
   "failedToDownloadInvoice": "इनभ्वाइस डाउनलोड गर्न असफल भयो।",
+  "shareInvoice": "इनभ्वाइस साझा गर्नुहोस्",
+  "failedToShareInvoice": "इनभ्वाइस साझा गर्न असफल भयो।",
   "servicePrice": "सेवा मूल्य",
   "basePrice": "आधार मूल्य",
   "totalPayable": "कुल भुक्तानी",

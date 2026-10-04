@@ -22,13 +22,16 @@ import PaymentOptionsModal from '../components/PaymentOptionsModal';
 import RatingModal from '../components/RatingModal';
 import EsewaPaymentModal from '../components/EsewaPaymentModal';
 import InvoiceReviewModal from '../components/InvoiceReviewModal';
+import * as Sharing from 'expo-sharing';
 import {
   useGetApplicableCoupons,
   useProcessPayment,
   useCancelBooking,
   useDownloadInvoice,
+  downloadInvoiceAction,
   useGetProfileQuery,
 } from '@/api';
+import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { useAuth } from '@/providers/AuthProvider';
 import { LOYALTY_POINTS_VALUE, MAX_LOYALTY_POINTS_REDEMPTION_PERCENTAGE, DISCOUNT_TYPES } from '@/constants/loyalty';
 import { useQueryClient } from '@tanstack/react-query';
@@ -70,6 +73,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const processPayment = useProcessPayment();
   const cancelBooking = useCancelBooking();
   const downloadInvoice = useDownloadInvoice();
+  const [isSharing, setIsSharing] = useState(false);
 
   const availableCoupons = useMemo(() => couponsData?.data || [], [couponsData]);
 
@@ -231,9 +235,31 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         showSnackbar({ message: t('customer.invoiceDownloaded'), type: 'success' });
       },
       onError: (error) => {
-        showSnackbar({ message: error.message || t('customer.failedToDownloadInvoice'), type: 'error' });
+        showSnackbar({ message: extractErrorMessage(error), type: 'error' });
       },
     });
+  };
+
+  const handleShareInvoice = async () => {
+    if (!invoice?.id) return;
+    try {
+      setIsSharing(true);
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        showSnackbar({ message: t('customer.failedToShareInvoice'), type: 'error' });
+        return;
+      }
+      const uri = await downloadInvoiceAction(invoice.id);
+      await Sharing.shareAsync(uri, {
+        mimeType: 'application/pdf',
+        dialogTitle: t('customer.shareInvoice'),
+        UTI: 'com.adobe.pdf',
+      });
+    } catch (error) {
+      showSnackbar({ message: extractErrorMessage(error), type: 'error' });
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   const handleRateProvider = () => {
@@ -581,24 +607,39 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             </View>
 
             <View className="gap-y-2.5">
-              <Pressable
-                onPress={handleDownloadInvoice}
-                disabled={downloadInvoice.isPending}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: downloadInvoice.isPending }}
-                className="border border-primary py-3.5 rounded-lg items-center bg-white active:bg-blue-50/30 disabled:opacity-50"
-              >
-                {downloadInvoice.isPending ? (
-                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
-                ) : (
-                  <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
-                )}
-              </Pressable>
+              <View className="flex-row items-center gap-x-2">
+                <Pressable
+                  onPress={handleDownloadInvoice}
+                  disabled={downloadInvoice.isPending || isSharing}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: downloadInvoice.isPending }}
+                  className="flex-1 border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-blue-50/30 disabled:opacity-50 min-h-[44px]"
+                >
+                  {downloadInvoice.isPending ? (
+                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                  ) : (
+                    <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
+                  )}
+                </Pressable>
+                <Pressable
+                  onPress={handleShareInvoice}
+                  disabled={isSharing || downloadInvoice.isPending}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('customer.shareInvoice')}
+                  className="border border-gray-200 px-3.5 py-3.5 rounded-lg items-center justify-center bg-white active:bg-gray-50 disabled:opacity-50 min-h-[44px] min-w-[44px]"
+                >
+                  {isSharing ? (
+                    <ActivityIndicator size="small" color={THEME_COLORS.slate700} />
+                  ) : (
+                    <Feather name="share-2" size={16} color={THEME_COLORS.slate700} />
+                  )}
+                </Pressable>
+              </View>
               {booking.status === BOOKING_STATUSES.Paid && (
                 <Pressable
                   onPress={handleRateProvider}
                   accessibilityRole="button"
-                  className="bg-primary py-3.5 rounded-lg items-center active:opacity-90"
+                  className="bg-primary py-3.5 rounded-lg items-center active:opacity-90 min-h-[44px] justify-center"
                 >
                   <Text className="text-sm font-sans-bold text-white">{t('customer.rateProvider')}</Text>
                 </Pressable>
@@ -622,6 +663,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         totalPayableValue={totalPayableValue}
         onDownloadInvoice={handleDownloadInvoice}
         isDownloadingInvoice={downloadInvoice.isPending}
+        onShareInvoice={handleShareInvoice}
+        isSharingInvoice={isSharing}
       />
 
       <PaymentOptionsModal

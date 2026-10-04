@@ -144,6 +144,8 @@
   "paymentCompleted": "Payment completed successfully!",
   "invoiceDownloaded": "Invoice downloaded successfully.",
   "failedToDownloadInvoice": "Failed to download invoice.",
+  "shareInvoice": "Share Invoice",
+  "failedToShareInvoice": "Failed to share invoice.",
   "servicePrice": "Service Price",
   "basePrice": "Base Price",
   "totalPayable": "Total Payable",

@@ -24,6 +24,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       bundleIdentifier: 'com.edgeoft.sewalo',
       buildNumber: String(buildNumber),
       icon: './assets/app_icons/ios_icon.png',
+      infoPlist: {
+        UIFileSharingEnabled: true,
+        LSSupportsOpeningDocumentsInPlace: true,
+      },
     },
     android: {
       adaptiveIcon: {
