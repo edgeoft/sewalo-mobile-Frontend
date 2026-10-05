@@ -40,6 +40,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           style={{ width: 64, height: 64, borderRadius: 8 }}
           contentFit="cover"
           transition={200}
+          cachePolicy="memory-disk"
         />
 
         {/* Customer & Order Details */}

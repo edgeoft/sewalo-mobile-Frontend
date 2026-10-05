@@ -103,6 +103,7 @@ function ProviderCard({
           className="h-14 w-14 rounded-full bg-slate-100 shrink-0"
           contentFit="cover"
           transition={200}
+          cachePolicy="memory-disk"
         />
 
         <View className="flex-1 justify-center gap-1">

@@ -59,6 +59,7 @@ export default function AvatarPicker({ avatarUri, onAvatarChange, size = 96, cla
               style={{ width: size, height: size }}
               contentFit="cover"
               transition={200}
+              cachePolicy="memory-disk"
             />
           ) : (
             <Feather name="user" size={size * 0.45} color={THEME_COLORS.slate400} />

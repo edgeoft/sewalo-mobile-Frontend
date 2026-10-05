@@ -35,9 +35,11 @@ export default function ReviewCard({ rating, counterpart, onEdit, onDelete }: Re
         <View className="flex-row items-center flex-1">
           <Image
             source={getSource(person?.avatar, 'avatar')}
-            className="h-10 w-10 rounded-full border border-border bg-secondary mr-3"
+            style={{ width: 40, height: 40, borderRadius: 20 }}
+            className="h-10 w-10 rounded-full border border-border bg-secondary mr-3 shrink-0"
             contentFit="cover"
             transition={200}
+            cachePolicy="memory-disk"
           />
           <View className="flex-1">
             <Text className="text-sm font-sans-bold text-foreground">{person?.name || nameFallback}</Text>

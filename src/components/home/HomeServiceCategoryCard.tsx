@@ -29,10 +29,11 @@ export default function HomeServiceCategoryCard({ icon, imageUrl, label, onPress
         {resolvedImageUrl ? (
           <Image
             source={{ uri: resolvedImageUrl }}
-            className="h-8 w-8"
+            className="h-8 w-8 shrink-0"
             style={{ width: 32, height: 32 }}
             contentFit="contain"
             transition={200}
+            cachePolicy="memory-disk"
           />
         ) : (
           <Feather name={icon || 'grid'} size={20} color={THEME_COLORS.primary} />
