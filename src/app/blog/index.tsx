@@ -77,10 +77,11 @@ export default function BlogListScreen() {
                   <View className="flex-row gap-3">
                     <Image
                       source={{ uri: getImageUrl(item.img_url) || FALLBACKS.image }}
+                      style={{ width: 96, height: 96, borderRadius: 12 }}
                       contentFit="cover"
                       transition={150}
                       cachePolicy="memory-disk"
-                      className="h-24 w-24 rounded-xl bg-gray-50"
+                      className="h-24 w-24 rounded-xl bg-gray-50 shrink-0"
                     />
                     <View className="flex-1 justify-between py-0.5">
                       <View className="self-start rounded-xl bg-surface-indigo-subtle px-2 py-0.5">

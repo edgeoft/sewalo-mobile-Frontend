@@ -65,6 +65,7 @@ export default function BlogDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-12">
         <Image
           source={{ uri: imgUri }}
+          style={{ width: '100%', height: 256 }}
           className="w-full h-64 bg-gray-100"
           contentFit="cover"
           transition={150}
