@@ -25,7 +25,7 @@ function ContentLayout({
   refreshing = false,
   scrollRef,
 }: ContentLayoutProps) {
-  const layoutClassName = `${className} px-4`.trim();
+  const layoutClassName = `w-full max-w-2xl self-center px-4 ${className}`.trim();
 
   if (scrollable) {
     return (
