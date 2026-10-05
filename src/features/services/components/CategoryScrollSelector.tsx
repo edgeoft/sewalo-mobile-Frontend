@@ -1,9 +1,11 @@
 import React from 'react';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
+import { IMAGE_PRESETS } from '@/constants/layout';
 
 import type { Category } from '@/types';
 
@@ -33,7 +35,7 @@ export default function CategoryScrollSelector({
   const paddingVal = SPACING_MAP[horizontalPaddingClass] ?? 0;
 
   return (
-    <View className="mb-6">
+    <View className="mb-3">
       <View className={`mb-3 ${titlePaddingClass}`}>
         <Text className="text-lg font-sans-bold text-gray-950 tracking-tight">{t('services.browseByCategory')}</Text>
       </View>
@@ -80,7 +82,14 @@ export default function CategoryScrollSelector({
                 }`}
               >
                 {iconUri ? (
-                  <Image source={{ uri: iconUri }} className="h-4 w-4 mr-2" resizeMode="contain" accessible={false} />
+                  <Image
+                    source={{ uri: iconUri }}
+                    style={IMAGE_PRESETS.category.icon}
+                    className="h-4 w-4 mr-2 shrink-0"
+                    contentFit="contain"
+                    cachePolicy="memory-disk"
+                    accessible={false}
+                  />
                 ) : (
                   <Feather
                     name="tag"

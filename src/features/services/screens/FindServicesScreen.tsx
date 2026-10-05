@@ -236,7 +236,7 @@ export default function FindServicesScreen() {
   const listHeader = (
     <View>
       {/* Page Header (Title + Subtitle) */}
-      <View className="mb-6">
+      <View className="mb-5">
         <Text className="text-2xl font-sans-extrabold text-left text-gray-950 mb-1.5 tracking-tight">
           {t('services.findServicesTitle')}
         </Text>
@@ -257,7 +257,7 @@ export default function FindServicesScreen() {
       </View>
 
       {/* Filters & Map Action Toolbar */}
-      <View className="flex-row items-center justify-between gap-3 mb-6">
+      <View className="flex-row items-center justify-between gap-3 mb-4">
         <Pressable
           onPress={() => setIsFilterModalOpen(true)}
           accessibilityRole="button"
@@ -303,7 +303,7 @@ export default function FindServicesScreen() {
       />
 
       {/* Section title */}
-      <Text className="text-lg font-sans-bold text-gray-950 mb-4 mt-6 tracking-tight">
+      <Text className="text-lg font-sans-bold text-gray-950 mb-3 mt-2 tracking-tight">
         {t('services.serviceProviders')}
       </Text>
     </View>
