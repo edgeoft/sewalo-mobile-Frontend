@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
@@ -94,7 +95,13 @@ export default function IdentityVerificationStep({
           <View className="gap-y-4">
             {documentImage ? (
               <View className="relative h-52 w-full rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
-                <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="cover" />
+                <Image
+                  source={{ uri: documentImage }}
+                  style={{ width: '100%', height: '100%' }}
+                  className="w-full h-full"
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                />
                 <TouchableOpacity
                   onPress={handleRemoveImage}
                   className="absolute top-2.5 right-2.5 h-8 w-8 bg-black/60 rounded-full items-center justify-center active:opacity-75"
@@ -158,7 +165,15 @@ export default function IdentityVerificationStep({
             accessibilityLabel={t('common.close')}
           />
           <View className="relative w-full max-w-[90%] aspect-[4/3] rounded-2xl bg-white overflow-hidden shadow-2xl">
-            {documentImage && <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="contain" />}
+            {documentImage && (
+              <Image
+                source={{ uri: documentImage }}
+                style={{ width: '100%', height: '100%' }}
+                className="w-full h-full"
+                contentFit="contain"
+                cachePolicy="memory-disk"
+              />
+            )}
             <Pressable
               onPress={() => setPreviewVisible(false)}
               className="absolute top-4 right-4 h-10 w-10 bg-black/60 rounded-full items-center justify-center active:opacity-75"

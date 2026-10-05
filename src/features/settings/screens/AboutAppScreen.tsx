@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Linking, Pressable, Image } from 'react-native';
+import { View, Text, Linking, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -59,10 +60,11 @@ export default function AboutAppScreen() {
           {/* Sewalo Logo */}
           <Image
             source={LOGO.appIcon}
-            className="w-16 h-16 rounded-2xl mb-3 shadow-sm shadow-primary/20"
-            resizeMode="contain"
+            style={{ width: 64, height: 64, borderRadius: 16 }}
+            className="w-16 h-16 rounded-2xl mb-3 shadow-sm shadow-primary/20 shrink-0"
+            contentFit="contain"
+            cachePolicy="memory-disk"
             accessible={false}
-            importantForAccessibility="no"
           />
 
           <Text className="text-lg font-sans-extrabold text-gray-900 mb-1">Sewalo</Text>

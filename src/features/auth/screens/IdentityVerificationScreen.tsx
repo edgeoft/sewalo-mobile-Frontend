@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Image, Modal, Pressable, Text, View, StyleSheet } from 'react-native';
+import { Modal, Pressable, Text, View, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -228,7 +229,13 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
           {documentImage ? (
             <View>
               <View className="relative h-56 w-full rounded-lg border border-gray-200 bg-gray-50 overflow-hidden">
-                <Image source={{ uri: documentImage }} className="w-full h-full" resizeMode="cover" />
+                <Image
+                  source={{ uri: documentImage }}
+                  style={{ width: '100%', height: '100%' }}
+                  className="w-full h-full"
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                />
 
                 {/* Full screen view action */}
                 <Pressable
@@ -327,7 +334,15 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
             accessibilityLabel={t('common.close')}
           />
           <View className="relative w-full max-w-[92%] aspect-[4/3] rounded-lg bg-white overflow-hidden shadow-2xl">
-            {previewImage && <Image source={{ uri: previewImage }} className="w-full h-full" resizeMode="contain" />}
+            {previewImage && (
+              <Image
+                source={{ uri: previewImage }}
+                style={{ width: '100%', height: '100%' }}
+                className="w-full h-full"
+                contentFit="contain"
+                cachePolicy="memory-disk"
+              />
+            )}
             <Pressable
               onPress={() => setPreviewImage(null)}
               className="absolute top-3.5 right-3.5 h-9 w-9 bg-black/60 rounded-lg items-center justify-center active:opacity-75"

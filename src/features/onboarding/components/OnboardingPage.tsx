@@ -1,12 +1,13 @@
 import React from 'react';
-import { Image, ImageSourcePropType, Text, View, useWindowDimensions } from 'react-native';
+import { Text, View, useWindowDimensions } from 'react-native';
+import { Image, type ImageSource } from 'expo-image';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 
 interface OnboardingPageProps {
   title: string;
   description: string;
-  illustration?: ImageSourcePropType | React.ReactNode;
+  illustration?: ImageSource | string | number | React.ReactNode;
 }
 
 export default function OnboardingPage({
@@ -22,7 +23,13 @@ export default function OnboardingPage({
         {React.isValidElement(illustration) ? (
           illustration
         ) : (
-          <Image source={illustration as ImageSourcePropType} className="w-full h-full border-0" resizeMode="contain" />
+          <Image
+            source={illustration as ImageSource}
+            style={{ width: '100%', height: '100%' }}
+            className="w-full h-full border-0"
+            contentFit="contain"
+            cachePolicy="memory-disk"
+          />
         )}
       </View>
 
