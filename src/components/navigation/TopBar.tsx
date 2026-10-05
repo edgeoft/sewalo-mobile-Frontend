@@ -56,7 +56,14 @@ export default function TopBar({
           </Pressable>
         )}
         {!showBackButton && (
-          <Image source={LOGO.secondary} className="w-28 h-11 -ml-1" contentFit="contain" accessible={false} />
+          <Image
+            source={LOGO.secondary}
+            style={{ width: 112, height: 44 }}
+            className="w-28 h-11 -ml-1 shrink-0"
+            contentFit="contain"
+            cachePolicy="memory-disk"
+            accessible={false}
+          />
         )}
       </View>
 
