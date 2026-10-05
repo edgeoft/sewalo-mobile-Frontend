@@ -275,7 +275,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           {/* Provider Section */}
           <View className="flex-row items-center">
             {providerAvatar ? (
-              <Image source={{ uri: providerAvatar }} className="h-12 w-12 rounded-full" contentFit="cover" />
+              <Image
+                source={{ uri: providerAvatar }}
+                style={{ width: 48, height: 48, borderRadius: 24 }}
+                className="h-12 w-12 rounded-full shrink-0"
+                contentFit="cover"
+                transition={150}
+                cachePolicy="memory-disk"
+              />
             ) : (
               <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
                 <Feather name="user" size={20} color={THEME_COLORS.primary} />

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
@@ -142,7 +143,13 @@ export default function ServiceFormStandout({
             const isUploading = uploadingIndex === index;
             return (
               <View key={sample.uri} className="w-32 h-24 rounded-lg overflow-hidden bg-gray-50 relative">
-                <Image source={{ uri: sample.uri }} className="w-full h-full" resizeMode="cover" />
+                <Image
+                  source={{ uri: sample.uri }}
+                  style={{ width: '100%', height: '100%' }}
+                  className="w-full h-full"
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                />
 
                 {/* Uploading progress overlay */}
                 {isUploading && (

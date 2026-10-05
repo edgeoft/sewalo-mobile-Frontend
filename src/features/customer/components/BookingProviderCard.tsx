@@ -1,9 +1,11 @@
 import { memo, useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
 import { FALLBACKS, getAvatarUrl } from '@/utils/image';
+import { IMAGE_PRESETS } from '@/constants/layout';
 
 interface BookingProviderCardProps {
   booking: CustomerBookingItem;
@@ -20,8 +22,10 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
         <Image
           source={{ uri: resolvedAvatar }}
           onError={() => setImgError(true)}
-          resizeMode="cover"
-          style={{ width: 64, height: 64, borderRadius: 12 }}
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
+          style={IMAGE_PRESETS.avatar.xl}
           className="h-16 w-16 rounded-xl bg-gray-50 shrink-0"
         />
         <View className="flex-1 gap-1">

@@ -1,12 +1,14 @@
 import { getProviderRating } from '@/utils/rating';
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { UserProfile } from '@/types';
 import { USER_ROLES, USER_STATUSES } from '@/constants/roles';
 import { THEME_COLORS } from '@/constants/colors';
 import { getImageUrl } from '@/utils/image';
+import { IMAGE_PRESETS } from '@/constants/layout';
 
 interface AccountProfileCardProps {
   user: UserProfile | null;
@@ -30,8 +32,10 @@ export default function AccountProfileCard({ user, role }: AccountProfileCardPro
         <View className="relative">
           <Image
             source={avatarSource}
+            style={IMAGE_PRESETS.avatar.xl}
             className="h-16 w-16 rounded-full border border-gray-100 bg-gray-50"
-            resizeMode="cover"
+            contentFit="cover"
+            cachePolicy="memory-disk"
           />
           {isProvider ? (
             isVerified && (

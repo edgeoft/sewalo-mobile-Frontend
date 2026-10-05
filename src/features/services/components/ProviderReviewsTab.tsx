@@ -71,7 +71,8 @@ const ReviewRow = React.memo(function ReviewRow({ rev }: { rev: ReviewItem }) {
         <View className="flex-row items-center">
           <Image
             source={{ uri: rev.customerAvatar }}
-            className="h-8 w-8 rounded-full bg-gray-100 mr-2.5"
+            style={{ width: 32, height: 32, borderRadius: 16 }}
+            className="h-8 w-8 rounded-full bg-gray-100 mr-2.5 shrink-0"
             contentFit="cover"
             transition={150}
             cachePolicy="memory-disk"

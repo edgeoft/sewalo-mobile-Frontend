@@ -192,7 +192,8 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             {customerAvatar ? (
               <Image
                 source={{ uri: customerAvatar }}
-                className="h-12 w-12 rounded-full"
+                style={{ width: 48, height: 48, borderRadius: 24 }}
+                className="h-12 w-12 rounded-full shrink-0"
                 contentFit="cover"
                 cachePolicy="memory-disk"
               />

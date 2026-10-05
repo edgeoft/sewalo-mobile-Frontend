@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
+import { IMAGE_PRESETS } from '@/constants/layout';
 
 interface CustomerDetailCardProps {
   booking: ProviderBookingItem;
@@ -15,8 +17,11 @@ export default function CustomerDetailCard({ booking }: CustomerDetailCardProps)
       <View className="flex-row gap-4 mb-4">
         <Image
           source={{ uri: booking.customerAvatar }}
-          resizeMode="cover"
-          className="h-16 w-16 rounded-xl bg-gray-50"
+          style={IMAGE_PRESETS.avatar.xl}
+          className="h-16 w-16 rounded-xl bg-gray-50 shrink-0"
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
         />
         <View className="flex-1 justify-center gap-1">
           <Text className="text-base font-sans-bold text-gray-900">{booking.customerName}</Text>

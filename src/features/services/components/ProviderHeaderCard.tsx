@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import { FALLBACKS } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
+import { IMAGE_PRESETS } from '@/constants/layout';
 
 interface ProviderHeaderCardProps {
   avatarUri: string;
@@ -45,8 +47,12 @@ export default function ProviderHeaderCard({
         <Image
           source={{ uri: imgError ? FALLBACKS.avatar : avatarUri }}
           onError={() => setImgError(true)}
+          style={IMAGE_PRESETS.avatar.hero}
           className="h-20 w-20 rounded-2xl bg-gray-50 shrink-0"
-          resizeMode="cover"
+          contentFit="cover"
+          transition={150}
+          cachePolicy="memory-disk"
+          accessible={false}
         />
 
         <View className="flex-1 min-w-0 justify-center">

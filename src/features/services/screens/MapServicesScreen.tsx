@@ -3,7 +3,8 @@ import { THEME_COLORS } from '@/constants/colors';
 import { useRouter, useSegments } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
@@ -368,9 +369,11 @@ export default function MapServicesScreen() {
           >
             <Image
               source={{ uri: getImageUrl(selectedProvider.avatar) || FALLBACKS.avatar }}
-              style={{ width: '100%', height: '100%', borderRadius: 20 }}
+              style={{ width: 38, height: 38, borderRadius: 19 }}
               className="bg-gray-100"
-              resizeMode="cover"
+              contentFit="cover"
+              transition={150}
+              cachePolicy="memory-disk"
             />
           </View>
 
