@@ -166,6 +166,15 @@ export default function ServiceEditScreen() {
       };
     });
 
+    const missingBilling = serviceOfferings.some((o) => !o.billing_option_id);
+    if (missingBilling) {
+      showSnackbar({
+        message: t('services.billingBasisMissingError'),
+        type: 'error',
+      });
+      return;
+    }
+
     const servicePackages = (data.packages || []).map((pkg) => ({
       name: pkg.title,
       services_offered: data.serviceTypeIds,

@@ -218,6 +218,18 @@ export default function ServiceFormRates({
         </View>
       </View>
 
+      {activeCategory && (!activeCategory.billing_options || activeCategory.billing_options.length === 0) && (
+        <View className="flex-row items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3.5 mb-3">
+          <Feather name="alert-circle" size={16} color={THEME_COLORS.dangerRed} style={{ marginTop: 1 }} />
+          <View className="flex-1">
+            <Text className="text-xs font-sans-bold text-red-900 mb-0.5">{t('services.noBillingOptionsError')}</Text>
+            <Text className="text-[11px] font-sans-medium text-red-700 leading-4">
+              {t('services.noBillingOptionsDesc')}
+            </Text>
+          </View>
+        </View>
+      )}
+
       {watchServiceTypeIds.length === 0 ? (
         <View className="items-center justify-center py-6 border-t border-gray-100 mt-2">
           <Text className="text-xs font-sans-medium text-gray-400 text-center">

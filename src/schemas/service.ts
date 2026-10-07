@@ -22,7 +22,7 @@ export const getServiceFormSchema = (t: (key: string) => string) =>
               { message: t('validation.positiveNumber') },
             ),
           billingBasis: z.string().optional(),
-          billingOptionId: z.string().optional(),
+          billingOptionId: z.string().min(1, t('validation.billingOptionRequired')),
           duration: z
             .string()
             .optional()
@@ -114,6 +114,7 @@ export const serviceFormSchema = getServiceFormSchema((key) => {
     'validation.serviceTypeRequired': 'Select at least 1 service type',
     'validation.descriptionMin': 'Description must be at least 20 characters',
     'validation.priceRequired': 'Price is required',
+    'validation.billingOptionRequired': 'Billing basis is required',
     'validation.positiveNumber': 'Price/Duration must be a positive number',
     'validation.durationRequired': 'Duration is required',
     'validation.deliveryTypeRequired': 'Select at least 1 delivery method',

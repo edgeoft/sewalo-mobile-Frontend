@@ -133,10 +133,17 @@ export default function RateCard({
           <View className="flex-1">
             <Text className="text-xs font-sans-semibold text-gray-700 mb-1.5 ml-0.5">{t('services.billingBasis')}</Text>
             <Pressable
-              onPress={() => setBasisModalVisible(true)}
+              onPress={() => {
+                if (!billingOptions || billingOptions.length === 0) return;
+                setBasisModalVisible(true);
+              }}
               accessibilityRole="button"
               className={`form-input-container form-input-container-single justify-between ${
-                billingBasisError ? 'border-destructive' : 'border-gray-200'
+                !billingOptions || billingOptions.length === 0
+                  ? 'border-red-300 bg-red-50/30'
+                  : billingBasisError
+                    ? 'border-destructive'
+                    : 'border-gray-200'
               }`}
               style={{
                 shadowColor: '#000',
@@ -147,14 +154,30 @@ export default function RateCard({
                 paddingHorizontal: 14,
               }}
             >
-              <Text className="text-sm text-gray-900">
-                {selectedDynamicOption ? selectedDynamicOption.name : t(selectedBasis.labelKey)}
+              <Text
+                className={`text-sm ${
+                  !billingOptions || billingOptions.length === 0
+                    ? 'text-red-500 font-sans-medium'
+                    : selectedDynamicOption
+                      ? 'text-gray-900'
+                      : 'text-gray-400'
+                }`}
+              >
+                {selectedDynamicOption
+                  ? selectedDynamicOption.name
+                  : !billingOptions || billingOptions.length === 0
+                    ? t('services.noBillingOptionsAvailable')
+                    : t('services.selectBillingBasis')}
               </Text>
               <Feather name="chevron-down" size={15} color={THEME_COLORS.slate400} accessible={false} />
             </Pressable>
-            {billingBasisError && (
+            {!billingOptions || billingOptions.length === 0 ? (
+              <Text className="text-xs font-sans-medium text-red-500 mt-1.5 ml-1">
+                {t('services.noBillingOptionsError')}
+              </Text>
+            ) : billingBasisError ? (
               <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">{billingBasisError}</Text>
-            )}
+            ) : null}
           </View>
         </View>
 
@@ -229,33 +252,31 @@ export default function RateCard({
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
               <View className="gap-y-2.5 pb-4">
-                {billingOptions && billingOptions.length > 0
-                  ? billingOptions.map((opt) => {
-                      const isSelected = selectedDynamicOption?.id === opt.id;
-                      return (
-                        <SelectionOption
-                          key={opt.id}
-                          onPress={() => handleSelectDynamicOption(opt)}
-                          title={`${opt.name} (${opt.label})`}
-                          selected={isSelected}
-                          indicatorType="radio"
-                          gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
-                        />
-                      );
-                    })
-                  : BILLING_BASIS_OPTIONS.map((opt) => {
-                      const isSelected = opt.value === billingBasisValue;
-                      return (
-                        <SelectionOption
-                          key={opt.value}
-                          onPress={() => handleSelectBasis(opt.value)}
-                          title={t(opt.labelKey)}
-                          selected={isSelected}
-                          indicatorType="radio"
-                          gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
-                        />
-                      );
-                    })}
+                {billingOptions && billingOptions.length > 0 ? (
+                  billingOptions.map((opt) => {
+                    const isSelected = selectedDynamicOption?.id === opt.id;
+                    return (
+                      <SelectionOption
+                        key={opt.id}
+                        onPress={() => handleSelectDynamicOption(opt)}
+                        title={`${opt.name} (${opt.label})`}
+                        selected={isSelected}
+                        indicatorType="radio"
+                        gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
+                      />
+                    );
+                  })
+                ) : (
+                  <View className="py-6 px-4 items-center">
+                    <Feather name="alert-circle" size={24} color={THEME_COLORS.dangerRed} />
+                    <Text className="text-xs font-sans-bold text-red-600 mt-2 text-center">
+                      {t('services.noBillingOptionsError')}
+                    </Text>
+                    <Text className="text-[11px] font-sans-medium text-gray-500 mt-1 text-center">
+                      {t('services.noBillingOptionsDesc')}
+                    </Text>
+                  </View>
+                )}
               </View>
             </ScrollView>
           </View>
