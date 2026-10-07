@@ -71,8 +71,12 @@ export default function ProviderServicesScreen() {
     service?.service_offerings?.map((offering) => ({
       id: offering.id,
       title: offering.sub_category?.name || t('provider.serviceOffering'),
-      price: `Rs. ${offering.price}`,
-      duration: `${offering.duration} ${offering.duration_unit || 'hrs'}`,
+      price: offering.billing_option?.label
+        ? `Rs. ${offering.price} ${offering.billing_option.label}`
+        : `Rs. ${offering.price}`,
+      duration: offering.duration
+        ? `${offering.duration} ${offering.duration_unit || 'hrs'}`
+        : offering.billing_option?.name || '',
     })) || [];
 
   // Prepare packages mapping

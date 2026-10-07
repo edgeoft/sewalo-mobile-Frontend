@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { THEME_COLORS } from '@/constants/colors';
+import type { BillingOption } from '@/types';
 
 export type BillingBasisType = 'per_hour' | 'per_day' | 'per_job' | 'per_project' | 'per_session';
 export type DurationUnitType = 'minutes' | 'hours' | 'days' | 'weeks';
@@ -28,6 +29,10 @@ interface RateCardProps {
   billingBasisValue: BillingBasisType;
   onBillingBasisChange: (val: BillingBasisType) => void;
   billingBasisError?: string;
+
+  billingOptions?: BillingOption[];
+  billingOptionId?: string;
+  onBillingOptionIdChange?: (id: string) => void;
 
   durationValue: string;
   onDurationChange: (val: string) => void;
@@ -60,6 +65,9 @@ export default function RateCard({
   billingBasisValue,
   onBillingBasisChange,
   billingBasisError,
+  billingOptions,
+  billingOptionId,
+  onBillingOptionIdChange,
   durationValue,
   onDurationChange,
   durationError,
@@ -71,11 +79,23 @@ export default function RateCard({
   const [basisModalVisible, setBasisModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
+  const selectedDynamicOption =
+    billingOptions?.find((o) => o.id === billingOptionId) ||
+    billingOptions?.find((o) => o.is_default) ||
+    billingOptions?.[0];
+
   const selectedBasis = BILLING_BASIS_OPTIONS.find((o) => o.value === billingBasisValue) || BILLING_BASIS_OPTIONS[0];
   const selectedUnit = DURATION_UNIT_OPTIONS.find((o) => o.value === durationUnitValue) || DURATION_UNIT_OPTIONS[0];
 
   const handleSelectBasis = (value: BillingBasisType) => {
     onBillingBasisChange(value);
+    setBasisModalVisible(false);
+  };
+
+  const handleSelectDynamicOption = (opt: BillingOption) => {
+    onBillingOptionIdChange?.(opt.id);
+    const mappedBasis = (opt.name.toLowerCase().replace(/\s+/g, '_') as BillingBasisType) || 'per_job';
+    onBillingBasisChange(mappedBasis);
     setBasisModalVisible(false);
   };
 
@@ -127,7 +147,9 @@ export default function RateCard({
                 paddingHorizontal: 14,
               }}
             >
-              <Text className="text-sm text-gray-900">{t(selectedBasis.labelKey)}</Text>
+              <Text className="text-sm text-gray-900">
+                {selectedDynamicOption ? selectedDynamicOption.name : t(selectedBasis.labelKey)}
+              </Text>
               <Feather name="chevron-down" size={15} color={THEME_COLORS.slate400} accessible={false} />
             </Pressable>
             {billingBasisError && (
@@ -207,19 +229,33 @@ export default function RateCard({
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
               <View className="gap-y-2.5 pb-4">
-                {BILLING_BASIS_OPTIONS.map((opt) => {
-                  const isSelected = opt.value === billingBasisValue;
-                  return (
-                    <SelectionOption
-                      key={opt.value}
-                      onPress={() => handleSelectBasis(opt.value)}
-                      title={t(opt.labelKey)}
-                      selected={isSelected}
-                      indicatorType="radio"
-                      gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
-                    />
-                  );
-                })}
+                {billingOptions && billingOptions.length > 0
+                  ? billingOptions.map((opt) => {
+                      const isSelected = selectedDynamicOption?.id === opt.id;
+                      return (
+                        <SelectionOption
+                          key={opt.id}
+                          onPress={() => handleSelectDynamicOption(opt)}
+                          title={`${opt.name} (${opt.label})`}
+                          selected={isSelected}
+                          indicatorType="radio"
+                          gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
+                        />
+                      );
+                    })
+                  : BILLING_BASIS_OPTIONS.map((opt) => {
+                      const isSelected = opt.value === billingBasisValue;
+                      return (
+                        <SelectionOption
+                          key={opt.value}
+                          onPress={() => handleSelectBasis(opt.value)}
+                          title={t(opt.labelKey)}
+                          selected={isSelected}
+                          indicatorType="radio"
+                          gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
+                        />
+                      );
+                    })}
               </View>
             </ScrollView>
           </View>

@@ -81,8 +81,9 @@ export default function ServiceEditScreen() {
         parsedRates[offering.sub_category_id] = {
           price: offering.price ? offering.price.toString() : '',
           billingBasis: 'per_hour',
-          duration: offering.duration ? offering.duration.toString() : '1',
-          durationUnit: unitMap[offering.duration_unit] || 'hours',
+          billingOptionId: offering.billing_option_id || '',
+          duration: offering.duration ? offering.duration.toString() : '',
+          durationUnit: offering.duration_unit ? unitMap[offering.duration_unit] || 'hours' : 'hours',
         };
       });
 
@@ -157,9 +158,10 @@ export default function ServiceEditScreen() {
       const rate = data.rates[typeId];
       return {
         sub_category_id: typeId,
+        billing_option_id: rate?.billingOptionId || null,
         price: Number(rate?.price) || 0,
-        duration: Number(rate?.duration) || 0,
-        duration_unit: durationUnitMap[rate?.durationUnit || ''] || 'hour',
+        duration: rate?.duration ? Number(rate.duration) : null,
+        duration_unit: rate?.duration ? durationUnitMap[rate?.durationUnit || ''] || 'hour' : null,
         services_offered: [typeId],
       };
     });

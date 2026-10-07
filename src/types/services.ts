@@ -1,4 +1,4 @@
-import type { Category, SubCategory } from './categories';
+import type { BillingOption, Category, SubCategory } from './categories';
 import type { UserProfile, EducationItem, ExperienceItem } from './user';
 import type { PaginatedResponse, DataEnvelope } from './common';
 
@@ -7,9 +7,11 @@ export interface ServiceOffering {
   id: string;
   service_id: string;
   sub_category_id: string;
+  billing_option_id?: string | null;
+  billing_option?: BillingOption | null;
   price: string;
-  duration: number;
-  duration_unit: string;
+  duration?: number | null;
+  duration_unit?: string | null;
   sub_category: SubCategory;
 }
 
@@ -116,9 +118,10 @@ export type GetFavoritesResponse = PaginatedResponse<FavoriteItem>;
 // Provider Creation Params Types (Moved from features/provider)
 export interface CreateServiceOffering {
   sub_category_id: string;
+  billing_option_id?: string | null;
   price: number;
-  duration: number;
-  duration_unit: string;
+  duration?: number | null;
+  duration_unit?: string | null;
   services_offered: string[];
 }
 

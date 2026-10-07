@@ -39,7 +39,25 @@ export default function ServiceFormRates({
   const [pkgDescription, setPkgDescription] = useState('');
   const [pkgErrors, setPkgErrors] = useState<{ title?: string; price?: string; description?: string }>({});
 
-  // Ensure that each selected service type has a rate structure initialized
+  // Fetch categories and subcategories dynamically from the API to display rate card names
+  const { data: categoriesData } = useGetProviderCategoriesQuery();
+  const categoriesList =
+    categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
+  const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
+  const activeCategorySlug = activeCategory?.slug ?? '';
+
+  const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
+
+  const availableServiceTypes = activeCategory
+    ? subcategoriesData?.data && subcategoriesData.data.length > 0
+      ? subcategoriesData.data.map((sub) => ({ id: sub.id, name: sub.name, categoryId: sub.category_id }))
+      : SERVICE_TYPES.filter((t) => t.categoryId === watchCategoryId)
+    : [];
+
+  const defaultBillingOption =
+    activeCategory?.billing_options?.find((b) => b.is_default) || activeCategory?.billing_options?.[0];
+
+  // Ensure that each selected service type has a rate structure initialized with category default
   useEffect(() => {
     const currentRates = { ...watchRates };
     let hasChanges = false;
@@ -48,9 +66,16 @@ export default function ServiceFormRates({
       if (!currentRates[id]) {
         currentRates[id] = {
           price: '',
-          billingBasis: 'per_hour',
+          billingBasis: 'per_job',
+          billingOptionId: defaultBillingOption?.id,
           duration: '',
           durationUnit: 'hours',
+        };
+        hasChanges = true;
+      } else if (!currentRates[id].billingOptionId && defaultBillingOption?.id) {
+        currentRates[id] = {
+          ...currentRates[id],
+          billingOptionId: defaultBillingOption.id,
         };
         hasChanges = true;
       }
@@ -59,7 +84,7 @@ export default function ServiceFormRates({
     if (hasChanges) {
       setValue('rates', currentRates);
     }
-  }, [watchServiceTypeIds, watchRates, setValue]);
+  }, [watchServiceTypeIds, watchRates, defaultBillingOption, setValue]);
 
   const handlePriceChange = (id: string, value: string) => {
     const currentRates = { ...watchRates };
@@ -75,6 +100,15 @@ export default function ServiceFormRates({
     currentRates[id] = {
       ...currentRates[id],
       billingBasis: value,
+    };
+    setValue('rates', currentRates, { shouldValidate: true });
+  };
+
+  const handleOptionIdChange = (id: string, value: string) => {
+    const currentRates = { ...watchRates };
+    currentRates[id] = {
+      ...currentRates[id],
+      billingOptionId: value,
     };
     setValue('rates', currentRates, { shouldValidate: true });
   };
@@ -147,21 +181,6 @@ export default function ServiceFormRates({
     setShowPkgForm(false);
   };
 
-  // Fetch categories and subcategories dynamically from the API to display rate card names
-  const { data: categoriesData } = useGetProviderCategoriesQuery();
-  const categoriesList =
-    categoriesData?.data && categoriesData.data.length > 0 ? categoriesData.data : SERVICE_CATEGORIES;
-  const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
-  const activeCategorySlug = activeCategory?.slug ?? '';
-
-  const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug, !!activeCategorySlug);
-
-  const availableServiceTypes = activeCategory
-    ? subcategoriesData?.data && subcategoriesData.data.length > 0
-      ? subcategoriesData.data.map((sub) => ({ id: sub.id, name: sub.name, categoryId: sub.category_id }))
-      : SERVICE_TYPES.filter((t) => t.categoryId === watchCategoryId)
-    : [];
-
   return (
     <View
       style={{
@@ -232,13 +251,16 @@ export default function ServiceFormRates({
                   priceValue={rate.price}
                   onPriceChange={(val) => handlePriceChange(id, val)}
                   priceError={rateErrors?.price?.message}
-                  billingBasisValue={rate.billingBasis}
+                  billingBasisValue={rate.billingBasis as BillingBasisType}
                   onBillingBasisChange={(val) => handleBasisChange(id, val)}
                   billingBasisError={rateErrors?.billingBasis?.message}
-                  durationValue={rate.duration}
+                  billingOptions={activeCategory?.billing_options}
+                  billingOptionId={rate.billingOptionId || undefined}
+                  onBillingOptionIdChange={(val) => handleOptionIdChange(id, val)}
+                  durationValue={rate.duration || ''}
                   onDurationChange={(val) => handleDurationChange(id, val)}
                   durationError={rateErrors?.duration?.message}
-                  durationUnitValue={rate.durationUnit}
+                  durationUnitValue={(rate.durationUnit as DurationUnitType) || 'hours'}
                   onDurationUnitChange={(val) => handleUnitChange(id, val)}
                 />
               </View>

@@ -130,9 +130,10 @@ export interface ServiceFormData {
     string,
     {
       price: string;
-      billingBasis: 'per_hour' | 'per_day' | 'per_job' | 'per_project' | 'per_session';
-      duration: string;
-      durationUnit: 'minutes' | 'hours' | 'days' | 'weeks';
+      billingBasis?: 'per_hour' | 'per_day' | 'per_job' | 'per_project' | 'per_session' | string;
+      billingOptionId?: string | null;
+      duration?: string;
+      durationUnit?: 'minutes' | 'hours' | 'days' | 'weeks';
     }
   >;
   deliveryTypes: DeliveryType[];

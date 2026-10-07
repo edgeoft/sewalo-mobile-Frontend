@@ -21,18 +21,20 @@ export const getServiceFormSchema = (t: (key: string) => string) =>
               },
               { message: t('validation.positiveNumber') },
             ),
-          billingBasis: z.enum(['per_hour', 'per_day', 'per_job', 'per_project', 'per_session']),
+          billingBasis: z.string().optional(),
+          billingOptionId: z.string().optional(),
           duration: z
             .string()
-            .min(1, t('validation.durationRequired'))
+            .optional()
             .refine(
               (val) => {
+                if (!val || val.trim() === '') return true;
                 const num = Number(val);
                 return !isNaN(num) && num > 0;
               },
               { message: t('validation.positiveNumber') },
             ),
-          durationUnit: z.enum(['minutes', 'hours', 'days', 'weeks']),
+          durationUnit: z.enum(['minutes', 'hours', 'days', 'weeks']).optional(),
         }),
       ),
       deliveryTypes: z
@@ -83,7 +85,7 @@ export const getServiceFormSchema = (t: (key: string) => string) =>
               message: t('validation.positiveNumber'),
             });
           }
-          if (!rate.duration || Number(rate.duration) <= 0) {
+          if (rate.duration && rate.duration.trim() !== '' && Number(rate.duration) <= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               path: ['rates', id, 'duration'],
