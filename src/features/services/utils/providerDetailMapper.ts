@@ -77,10 +77,9 @@ export function mapApiToProviderDetail(
       id: o.id,
       title: o.sub_category?.name || t('services.serviceOffering'),
       category: activeService?.category?.name || firstService?.category?.name || t('services.services'),
-      price: o.billing_option?.label ? `Rs. ${o.price} ${o.billing_option.label}` : `Rs. ${o.price}`,
-      durationLabel: o.duration
-        ? `${o.duration} ${o.duration_unit || t('services.hrs')}`
-        : o.billing_option?.name || '',
+      price: `Rs. ${o.price}`,
+      billingLabel: o.billing_option?.label || o.billing_option?.name || '',
+      durationLabel: o.duration ? `${o.duration} ${o.duration_unit || t('services.hrs')}` : '',
     })) || [];
 
   const portfolio =

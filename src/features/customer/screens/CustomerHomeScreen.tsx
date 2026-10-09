@@ -39,11 +39,7 @@ export default function CustomerHomeScreen() {
       const provider = b.provider;
       const service = b.service;
 
-      const billingOption = service?.service_offerings?.[0]?.billing_option;
-      const billingLabel = billingOption?.label || billingOption?.name;
-      const bookedPrice = b.invoice?.total
-        ? `Rs. ${Number(b.invoice.total).toFixed(0)}${billingLabel ? ` ${billingLabel}` : ''}`
-        : t('home.na');
+      const bookedPrice = b.invoice?.total ? `Rs. ${Number(b.invoice.total).toFixed(0)}` : t('home.na');
 
       return {
         id: b.id,
@@ -98,7 +94,7 @@ export default function CustomerHomeScreen() {
             actionLabel={t('common.viewAll')}
             bookings={bookings}
             onActionPress={() => router.push(ROUTES.customer.bookings)}
-            onBookingPress={() => router.push(ROUTES.customer.bookings)}
+            onBookingPress={(booking) => router.push(ROUTES.customer.bookingDetail(booking.id))}
             onExplorePress={() => router.push(ROUTES.customer.findServices)}
           />
 

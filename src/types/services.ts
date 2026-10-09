@@ -172,6 +172,7 @@ export interface ServiceItem {
   category: string;
   price: string;
   durationLabel: string;
+  billingLabel?: string;
 }
 
 export interface PortfolioItem {

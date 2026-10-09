@@ -181,7 +181,7 @@ function ProviderCard({
             </View>
             <Text className="text-[11px] font-sans-medium text-slate-500">{t('home.startingFrom')}</Text>
           </View>
-          <Text className="text-xl font-sans-extrabold text-primary">{startingFromPrice}</Text>
+          <Text className="text-base font-sans-bold text-primary">{startingFromPrice}</Text>
         </View>
 
         {statusPresentation ? (

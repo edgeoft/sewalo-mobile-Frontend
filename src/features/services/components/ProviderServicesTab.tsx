@@ -124,7 +124,7 @@ export default function ProviderServicesTab({
                 isChecked ? 'border-primary bg-primary/[0.02]' : 'border-gray-200'
               }`}
             >
-              <View className="flex-row items-center flex-1 pr-4">
+              <View className="flex-row items-center flex-1 pr-3">
                 {!isOwnProfile && (
                   <Checkbox checked={isChecked} onChange={() => onServiceToggle(service.id)} className="mr-3" />
                 )}
@@ -134,15 +134,22 @@ export default function ProviderServicesTab({
                     <View className="bg-gray-50 border border-gray-100 rounded px-1.5 py-0.5">
                       <Text className="text-[9px] font-sans-semibold text-gray-400">{service.category}</Text>
                     </View>
-                    <View className="flex-row items-center">
-                      <Feather name="clock" size={10} color={THEME_COLORS.slate400} className="mr-0.5" />
-                      <Text className="text-[9px] font-sans-medium text-gray-400">{service.durationLabel}</Text>
-                    </View>
+                    {service.durationLabel ? (
+                      <View className="flex-row items-center">
+                        <Feather name="clock" size={10} color={THEME_COLORS.slate400} className="mr-0.5" />
+                        <Text className="text-[9px] font-sans-medium text-gray-400">{service.durationLabel}</Text>
+                      </View>
+                    ) : null}
                   </View>
                 </View>
               </View>
 
-              <Text className="text-sm font-sans-extrabold text-primary">{service.price}</Text>
+              <View className="items-end shrink-0 pl-2">
+                <Text className="text-sm font-sans-extrabold text-primary">{service.price}</Text>
+                {service.billingLabel ? (
+                  <Text className="text-[10px] font-sans-medium text-slate-500 mt-0.5">{service.billingLabel}</Text>
+                ) : null}
+              </View>
             </Pressable>
           );
         })}

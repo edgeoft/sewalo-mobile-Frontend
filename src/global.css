@@ -17,6 +17,8 @@
   --ring: #485aff;
   --background: #ffffff;
   --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
 
   --surface-brand-subtle: #f7f9ff;
   --surface-indigo-subtle: #eef2ff;
@@ -63,6 +65,8 @@
   --color-ring: var(--ring);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);

@@ -273,7 +273,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           </Pressable>
         )}
 
-        <View style={styles.cardShadow} className="bg-card rounded-lg border border-border p-5 mb-6">
+        <View style={styles.cardShadow} className="bg-white rounded-lg border border-border p-5 mb-6">
           {/* Provider Section */}
           <View className="flex-row items-center">
             {providerAvatar ? (
@@ -480,7 +480,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {/* Ready to Pay Section */}
         {isReadyToPay && (
           <>
-            <View style={styles.cardShadow} className="bg-card rounded-lg border border-border p-5 mb-4">
+            <View style={styles.cardShadow} className="bg-white rounded-lg border border-border p-5 mb-4">
               <View className="flex-row items-center mb-4">
                 <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
                 <Text className="text-sm font-sans-bold text-foreground ml-2">{t('customer.invoiceSummary')}</Text>
@@ -552,7 +552,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
         {/* Payment Completed Section */}
         {isPaymentCompletedOrInitiated && (
-          <View style={styles.cardShadow} className="bg-card rounded-lg border border-border p-5 mb-4">
+          <View style={styles.cardShadow} className="bg-white rounded-lg border border-border p-5 mb-4">
             <View className="flex-row items-center mb-4">
               <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
               <Text className="text-sm font-sans-bold text-foreground ml-2">{t('customer.invoiceSummary')}</Text>
@@ -576,7 +576,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   disabled={downloadInvoice.isPending || isSharing}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: downloadInvoice.isPending }}
-                  className="flex-1 border border-primary py-3.5 rounded-lg items-center justify-center bg-card active:bg-primary/5 disabled:opacity-50 min-h-[44px]"
+                  className="flex-1 border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 disabled:opacity-50 min-h-[44px]"
                 >
                   {downloadInvoice.isPending ? (
                     <ActivityIndicator size="small" color={THEME_COLORS.primary} />
@@ -589,7 +589,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   disabled={isSharing || downloadInvoice.isPending}
                   accessibilityRole="button"
                   accessibilityLabel={t('customer.shareInvoice')}
-                  className="border border-border px-3.5 py-3.5 rounded-lg items-center justify-center bg-card active:bg-muted disabled:opacity-50 min-h-[44px] min-w-[44px]"
+                  className="border border-border px-3.5 py-3.5 rounded-lg items-center justify-center bg-white active:bg-muted disabled:opacity-50 min-h-[44px] min-w-[44px]"
                 >
                   {isSharing ? (
                     <ActivityIndicator size="small" color={THEME_COLORS.slate700} />

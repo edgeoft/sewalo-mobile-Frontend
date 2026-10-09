@@ -57,11 +57,9 @@ export default function CustomerBookingsScreen() {
     return b.provider?.city || b.city || 'Nepal';
   };
 
-  const formatPrice = (b: (typeof bookings)[0]) => {
-    if (!b.invoice?.total) return '';
-    const billingOption = b.service?.service_offerings?.[0]?.billing_option;
-    const billingLabel = billingOption?.label || billingOption?.name;
-    return `Rs. ${Number(b.invoice.total).toLocaleString()}${billingLabel ? ` ${billingLabel}` : ''}`;
+  const formatPrice = (invoice: (typeof bookings)[0]['invoice']) => {
+    if (!invoice?.total) return '';
+    return `Rs. ${Number(invoice.total).toLocaleString()}`;
   };
 
   const filteredBookings = useMemo(() => {
@@ -172,7 +170,7 @@ export default function CustomerBookingsScreen() {
                 location={formatLocation(booking)}
                 rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
                 ordersCompleted=""
-                startingFromPrice={formatPrice(booking)}
+                startingFromPrice={formatPrice(booking.invoice)}
                 bookingStatus={booking.status}
                 variant="booking"
                 onPress={() => {
