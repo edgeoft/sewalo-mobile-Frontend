@@ -63,7 +63,12 @@ export default function ProviderBookingsScreen() {
         serviceLabel: booking.service?.name || 'Service',
         location: booking.city ? `${booking.city}${booking.address ? `, ${booking.address}` : ''}` : 'Nepal',
         bookingDate: [formatDate(booking.service_date), formatTime(booking.start_time)].filter(Boolean).join(', '),
-        bookedPrice: booking.invoice?.total ? `Rs. ${Number(booking.invoice.total).toLocaleString()}` : '',
+        bookedPrice: (() => {
+          if (!booking.invoice?.total) return '';
+          const billingOption = booking.service?.service_offerings?.[0]?.billing_option;
+          const billingLabel = billingOption?.label || billingOption?.name;
+          return `Rs. ${Number(booking.invoice.total).toLocaleString()}${billingLabel ? ` ${billingLabel}` : ''}`;
+        })(),
         status: booking.status,
         cancelReason: booking.cancellation_reason || undefined,
       })),

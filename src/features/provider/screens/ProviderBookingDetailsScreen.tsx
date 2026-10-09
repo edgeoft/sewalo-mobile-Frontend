@@ -56,6 +56,8 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const descriptionText = initialBooking.service?.description;
   const invoiceData = initialBooking.invoice;
   const basePriceValue = invoiceData ? Number(invoiceData.sub_total) || 0 : 0;
+  const billingOption = initialBooking.service?.service_offerings?.[0]?.billing_option;
+  const billingLabel = billingOption?.label || billingOption?.name;
   const totalPrice = invoiceData ? Number(invoiceData.total) || 0 : 0;
   const cancelReason = initialBooking.cancellation_reason;
 
@@ -308,6 +310,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                     <Text className="text-xs font-sans-medium text-gray-500">{serviceName || 'Service'} Price</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">
                       Rs. {basePriceValue.toLocaleString()}
+                      {billingLabel ? ` ${billingLabel}` : ''}
                     </Text>
                   </View>
                   <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">

@@ -261,6 +261,19 @@ export default function ProviderInvoiceEditorCard({
         <View className="mt-3 gap-y-2.5">
           {items.map((item, idx) => {
             const price = parseFloat(item.unit_price) || 0;
+            const matchingOffering = booking.service?.service_offerings?.find(
+              (offering) =>
+                offering?.sub_category?.name &&
+                item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
+            );
+            const billingLabel =
+              matchingOffering?.billing_option?.label ||
+              matchingOffering?.billing_option?.name ||
+              (item.is_primary_item
+                ? booking.service?.service_offerings?.[0]?.billing_option?.label ||
+                  booking.service?.service_offerings?.[0]?.billing_option?.name
+                : null);
+
             return (
               <View key={item.id || idx} className="flex-row items-center justify-between py-1">
                 <View className="flex-1 mr-3">
@@ -277,7 +290,10 @@ export default function ProviderInvoiceEditorCard({
                     )}
                   </View>
                 </View>
-                <Text className="text-xs font-sans-semibold text-gray-900">Rs. {price.toLocaleString()}</Text>
+                <Text className="text-xs font-sans-semibold text-gray-900">
+                  Rs. {price.toLocaleString()}
+                  {billingLabel ? ` ${billingLabel}` : ''}
+                </Text>
               </View>
             );
           })}

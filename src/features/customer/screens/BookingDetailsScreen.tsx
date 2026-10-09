@@ -224,6 +224,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const descriptionText = booking.service?.description;
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
   const basePrice = invoice?.sub_total ? Number(invoice.sub_total) : 0;
+  const billingOption = booking.service?.service_offerings?.[0]?.billing_option;
+  const billingLabel = billingOption?.label || billingOption?.name;
 
   const showDetailsCards =
     booking.status === BOOKING_STATUSES.Pending ||
@@ -437,7 +439,10 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                     <Text className="text-xs font-sans-medium text-muted-foreground">
                       {serviceName || t('home.service')} {t('customer.price')}
                     </Text>
-                    <Text className="text-xs font-sans-semibold text-foreground">Rs. {basePrice.toLocaleString()}</Text>
+                    <Text className="text-xs font-sans-semibold text-foreground">
+                      Rs. {basePrice.toLocaleString()}
+                      {billingLabel ? ` ${billingLabel}` : ''}
+                    </Text>
                   </View>
                   <View className="pt-2 border-t border-border flex-row justify-between items-center">
                     <Text className="text-sm font-sans-bold text-foreground">{t('customer.total')}</Text>

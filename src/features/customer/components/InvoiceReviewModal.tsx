@@ -148,25 +148,36 @@ export default function InvoiceReviewModal({
 
                 {/* Table Rows */}
                 {items.length > 0 ? (
-                  items.map((item, idx) => (
-                    <View
-                      key={item.id || idx}
-                      className={`flex-row items-center px-3 py-2.5 ${
-                        idx < items.length - 1 ? 'border-b border-gray-100' : ''
-                      }`}
-                    >
-                      <View className="flex-1 mr-2">
-                        <Text className="text-xs font-sans-semibold text-gray-900 leading-snug">{item.name}</Text>
-                        <Text className="text-[10px] font-sans-medium text-gray-400">
-                          @ Rs. {Number(item.unit_price).toLocaleString()}
+                  items.map((item, idx) => {
+                    const matchingOffering = booking.service?.service_offerings?.find(
+                      (offering) =>
+                        offering?.sub_category?.name &&
+                        item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
+                    );
+                    const billingLabel =
+                      matchingOffering?.billing_option?.label || matchingOffering?.billing_option?.name;
+
+                    return (
+                      <View
+                        key={item.id || idx}
+                        className={`flex-row items-center px-3 py-2.5 ${
+                          idx < items.length - 1 ? 'border-b border-gray-100' : ''
+                        }`}
+                      >
+                        <View className="flex-1 mr-2">
+                          <Text className="text-xs font-sans-semibold text-gray-900 leading-snug">{item.name}</Text>
+                          <Text className="text-[10px] font-sans-medium text-gray-400">
+                            @ Rs. {Number(item.unit_price).toLocaleString()}
+                            {billingLabel ? ` ${billingLabel}` : ''}
+                          </Text>
+                        </View>
+                        <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">{item.quantity}</Text>
+                        <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
+                          Rs. {Number(item.total_amount).toLocaleString()}
                         </Text>
                       </View>
-                      <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">{item.quantity}</Text>
-                      <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
-                        Rs. {Number(item.total_amount).toLocaleString()}
-                      </Text>
-                    </View>
-                  ))
+                    );
+                  })
                 ) : (
                   <View className="flex-row items-center px-3 py-2.5">
                     <View className="flex-1 mr-2">
@@ -176,6 +187,13 @@ export default function InvoiceReviewModal({
                     <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">1</Text>
                     <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
                       Rs. {basePrice.toLocaleString()}
+                      {booking.service?.service_offerings?.[0]?.billing_option?.label ||
+                      booking.service?.service_offerings?.[0]?.billing_option?.name
+                        ? ` ${
+                            booking.service?.service_offerings?.[0]?.billing_option?.label ||
+                            booking.service?.service_offerings?.[0]?.billing_option?.name
+                          }`
+                        : ''}
                     </Text>
                   </View>
                 )}

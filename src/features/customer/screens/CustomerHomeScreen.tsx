@@ -39,7 +39,11 @@ export default function CustomerHomeScreen() {
       const provider = b.provider;
       const service = b.service;
 
-      const bookedPrice = b.invoice?.total ? `Rs. ${Number(b.invoice.total).toFixed(0)}` : t('home.na');
+      const billingOption = service?.service_offerings?.[0]?.billing_option;
+      const billingLabel = billingOption?.label || billingOption?.name;
+      const bookedPrice = b.invoice?.total
+        ? `Rs. ${Number(b.invoice.total).toFixed(0)}${billingLabel ? ` ${billingLabel}` : ''}`
+        : t('home.na');
 
       return {
         id: b.id,
