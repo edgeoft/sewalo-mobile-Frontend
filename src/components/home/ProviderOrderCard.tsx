@@ -44,14 +44,14 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
         />
 
         {/* Customer & Order Details */}
-        <View className="flex-1 justify-center">
-          <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-base font-sans-bold text-foreground" numberOfLines={1}>
+        <View className="flex-1 min-w-0 justify-center">
+          <View className="flex-row items-center justify-between mb-1 gap-2">
+            <Text className="flex-1 text-base font-sans-bold text-foreground" numberOfLines={1}>
               {order.customerName}
             </Text>
             {statusPresentation && (
               <View
-                className="flex-row items-center rounded-full px-2 py-0.5"
+                className="shrink-0 flex-row items-center rounded-full px-2 py-0.5"
                 style={{ backgroundColor: statusPresentation.backgroundColor }}
               >
                 <View
@@ -71,13 +71,15 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             {/* Scheduled Date/Time */}
             <View className="flex-row items-center gap-1.5">
               <Feather name="calendar" size={12} color={THEME_COLORS.slate500} />
-              <Text className="text-xs font-sans-medium text-muted-foreground">{order.bookingDate}</Text>
+              <Text className="flex-1 text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
+                {order.bookingDate}
+              </Text>
             </View>
 
             {/* Location */}
             <View className="flex-row items-center gap-1.5">
               <Feather name="map-pin" size={12} color={THEME_COLORS.slate500} />
-              <Text className="text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
+              <Text className="flex-1 text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
                 {order.location}
               </Text>
             </View>
@@ -94,7 +96,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <Text className="text-[10px] font-sans-medium text-muted-foreground">{t('home.totalPrice')}</Text>
           <View className="flex-row items-center gap-1.5 mt-0.5">
             <Feather name="tag" size={13} color={THEME_COLORS.primary} />
-            <Text className="text-base font-sans-bold text-foreground">{order.bookedPrice}</Text>
+            <Text className="text-base font-sans-bold text-primary">{order.bookedPrice}</Text>
           </View>
         </View>
 
@@ -118,16 +120,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
               <Text className="text-xs font-sans-bold text-primary-foreground">{t('home.accept')}</Text>
             </Pressable>
           </View>
-        ) : (
-          <Pressable
-            onPress={onPress}
-            accessibilityRole="button"
-            hitSlop={8}
-            className="min-h-[44px] justify-center items-center rounded-md bg-surface-indigo-subtle px-3.5 py-1.5 active:opacity-90"
-          >
-            <Text className="text-xs font-sans-bold text-primary">{t('home.viewDetails')}</Text>
-          </Pressable>
-        )}
+        ) : null}
       </View>
     </Pressable>
   );

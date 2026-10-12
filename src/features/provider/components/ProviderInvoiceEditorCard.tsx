@@ -6,12 +6,13 @@ import { THEME_COLORS } from '@/constants/colors';
 import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useUpdateInvoiceItems } from '@/api';
-import type { Booking, InvoiceItem } from '@/types';
+import { BOOKING_STATUSES, type Booking, type InvoiceItem } from '@/types';
 import { formatDate } from '@/utils/time';
 
 interface ProviderInvoiceEditorCardProps {
   booking: Booking;
   isEditing: boolean;
+  canEdit?: boolean;
   onToggleEdit: (editing: boolean) => void;
   onTotalCalculated: (total: number) => void;
 }
@@ -25,11 +26,10 @@ interface FormInvoiceItem {
   is_primary_item: boolean;
 }
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 export default function ProviderInvoiceEditorCard({
   booking,
   isEditing,
+  canEdit = booking.status === BOOKING_STATUSES.Completed,
   onToggleEdit,
   onTotalCalculated,
 }: ProviderInvoiceEditorCardProps) {
@@ -188,7 +188,7 @@ export default function ProviderInvoiceEditorCard({
     }
 
     const itemsToAdd = items
-      .filter((item) => !UUID_REGEX.test(item.id))
+      .filter((item) => item.id.startsWith('new-'))
       .map((item) => ({
         name: item.name.trim(),
         quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
@@ -196,7 +196,7 @@ export default function ProviderInvoiceEditorCard({
       }));
 
     const itemsToUpdate = items
-      .filter((item) => UUID_REGEX.test(item.id))
+      .filter((item) => !item.id.startsWith('new-'))
       .map((item) => ({
         id: item.id,
         name: item.name.trim(),
@@ -205,7 +205,7 @@ export default function ProviderInvoiceEditorCard({
       }));
 
     const itemsToDelete = (invoice?.invoice_items || [])
-      .filter((orig) => UUID_REGEX.test(orig.id) && !items.some((item) => item.id === orig.id))
+      .filter((orig) => !items.some((item) => item.id === orig.id))
       .map((orig) => orig.id);
 
     updateInvoiceMutation.mutate(
@@ -248,28 +248,29 @@ export default function ProviderInvoiceEditorCard({
           </Text>
         </View>
 
-        {!isEditing ? (
-          <Pressable
-            onPress={() => onToggleEdit(true)}
-            accessibilityRole="button"
-            accessibilityLabel={t('provider.editInvoice')}
-            hitSlop={8}
-            className="flex-row items-center gap-x-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 active:bg-primary/10"
-          >
-            <Feather name="edit-3" size={13} color={THEME_COLORS.primary} />
-            <Text className="text-xs font-sans-semibold text-primary">{t('provider.editInvoice')}</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            onPress={handleCancelEdit}
-            accessibilityRole="button"
-            accessibilityLabel={t('provider.invoiceCancel')}
-            hitSlop={8}
-            className="px-2.5 py-1.5 rounded-lg active:bg-gray-100"
-          >
-            <Text className="text-xs font-sans-medium text-gray-500">{t('provider.invoiceCancel')}</Text>
-          </Pressable>
-        )}
+        {canEdit &&
+          (!isEditing ? (
+            <Pressable
+              onPress={() => onToggleEdit(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('provider.editInvoice')}
+              hitSlop={8}
+              className="flex-row items-center gap-x-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 active:bg-primary/10"
+            >
+              <Feather name="edit-3" size={13} color={THEME_COLORS.primary} />
+              <Text className="text-xs font-sans-semibold text-primary">{t('provider.editInvoice')}</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={handleCancelEdit}
+              accessibilityRole="button"
+              accessibilityLabel={t('provider.invoiceCancel')}
+              hitSlop={8}
+              className="px-2.5 py-1.5 rounded-lg active:bg-gray-100"
+            >
+              <Text className="text-xs font-sans-medium text-gray-500">{t('provider.invoiceCancel')}</Text>
+            </Pressable>
+          ))}
       </View>
 
       {/* Item List / Edit Fields */}

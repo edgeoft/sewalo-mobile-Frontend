@@ -252,6 +252,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     booking.status === BOOKING_STATUSES.Confirmed ||
     booking.status === BOOKING_STATUSES.InProgress ||
     booking.status === BOOKING_STATUSES.Completed ||
+    booking.status === BOOKING_STATUSES.ReadyToPay ||
     booking.status === BOOKING_STATUSES.PaymentInitiated ||
     booking.status === BOOKING_STATUSES.Paid;
 
@@ -297,12 +298,16 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {booking.status === BOOKING_STATUSES.Completed && Boolean(booking.cancellation_reason) && (
           <View className="mb-5 p-3.5 rounded-xl border border-amber-200 bg-amber-50/80 flex-row items-start gap-x-2.5">
             <Feather name="clock" size={15} color="#d97706" style={{ marginTop: 2 }} />
-            <View className="flex-1">
+            <View className="flex-1 gap-y-1.5">
               <Text className="text-xs font-sans-semibold text-amber-950">
                 {t('customer.invoiceChangeRequestedTitle', 'Invoice Revision Requested')}
               </Text>
-              <Text className="text-xs font-sans-regular text-amber-900/80 mt-0.5 leading-snug">
-                {`"${booking.cancellation_reason}"`} •{' '}
+              <View className="rounded-lg border border-amber-200/70 bg-white/80 p-2">
+                <Text className="text-xs font-sans-medium text-amber-950 leading-tight">
+                  &ldquo;{booking.cancellation_reason}&rdquo;
+                </Text>
+              </View>
+              <Text className="text-xs font-sans-regular text-amber-900/80 leading-snug">
                 {t(
                   'customer.invoiceChangeWaiting',
                   'The service provider is revising the invoice. You will be able to review and pay once they resubmit.',

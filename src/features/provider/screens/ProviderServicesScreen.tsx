@@ -68,16 +68,17 @@ export default function ProviderServicesScreen() {
 
   // Prepare offerings mapping
   const offerings =
-    service?.service_offerings?.map((offering) => ({
-      id: offering.id,
-      title: offering.sub_category?.name || t('provider.serviceOffering'),
-      price: offering.billing_option?.label
-        ? `Rs. ${offering.price} ${offering.billing_option.label}`
-        : `Rs. ${offering.price}`,
-      duration: offering.duration
-        ? `${offering.duration} ${offering.duration_unit || 'hrs'}`
-        : offering.billing_option?.name || '',
-    })) || [];
+    service?.service_offerings?.map((offering) => {
+      const priceNum = Number(offering.price);
+      const formattedPrice = isNaN(priceNum) ? offering.price : priceNum.toLocaleString();
+      return {
+        id: offering.id,
+        title: offering.sub_category?.name || t('provider.serviceOffering'),
+        price: `Rs. ${formattedPrice}`,
+        billingLabel: offering.billing_option?.label || offering.billing_option?.name || '',
+        duration: offering.duration ? `${offering.duration} ${offering.duration_unit || 'hrs'}` : '',
+      };
+    }) || [];
 
   // Prepare packages mapping
   const packages =
@@ -218,22 +219,32 @@ export default function ProviderServicesScreen() {
                   {offerings.map((sub, idx) => (
                     <View
                       key={sub.id}
-                      className={`flex-row justify-between items-center py-0.5 ${
-                        idx !== offerings.length - 1 ? 'border-b border-gray-100 pb-2.5' : ''
+                      className={`flex-row items-center justify-between py-2 ${
+                        idx !== offerings.length - 1 ? 'border-b border-gray-100' : ''
                       }`}
                     >
-                      <View className="flex-row items-center gap-2.5">
-                        <View className="h-6 w-6 rounded-full bg-emerald-50 items-center justify-center">
-                          <Feather name="check" size={12} color="#059669" />
+                      <View className="flex-row items-center gap-3 flex-1 mr-3">
+                        <View className="h-7 w-7 rounded-full bg-emerald-50 items-center justify-center shrink-0">
+                          <Feather name="check" size={13} color="#059669" />
                         </View>
-                        <View>
-                          <Text className="text-xs font-sans-semibold text-gray-700">{sub.title}</Text>
-                          <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">
-                            {t('provider.duration')}: {sub.duration}
-                          </Text>
+                        <View className="flex-1">
+                          <Text className="text-xs font-sans-bold text-gray-800 leading-snug">{sub.title}</Text>
+                          {sub.duration ? (
+                            <View className="flex-row items-center mt-1">
+                              <Feather name="clock" size={10} color={THEME_COLORS.slate400} />
+                              <Text className="text-[10px] font-sans-medium text-gray-400 ml-1">
+                                {t('provider.duration')}: {sub.duration}
+                              </Text>
+                            </View>
+                          ) : null}
                         </View>
                       </View>
-                      <Text className="text-xs font-sans-bold text-primary">{sub.price}</Text>
+                      <View className="items-end shrink-0">
+                        <Text className="text-sm font-sans-bold text-primary">{sub.price}</Text>
+                        {sub.billingLabel ? (
+                          <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">{sub.billingLabel}</Text>
+                        ) : null}
+                      </View>
                     </View>
                   ))}
                 </View>

@@ -66,6 +66,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     currentStatus === BOOKING_STATUSES.Confirmed ||
     currentStatus === BOOKING_STATUSES.InProgress ||
     currentStatus === BOOKING_STATUSES.Completed ||
+    currentStatus === BOOKING_STATUSES.ReadyToPay ||
     currentStatus === BOOKING_STATUSES.PaymentInitiated ||
     currentStatus === BOOKING_STATUSES.Paid;
 
@@ -348,12 +349,16 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
         {currentStatus === BOOKING_STATUSES.Completed && Boolean(cancelReason) && (
           <View className="mb-5 p-3.5 rounded-xl border border-red-200 bg-red-50/80 flex-row items-start gap-x-2.5">
             <Feather name="alert-triangle" size={15} color={THEME_COLORS.dangerRed} style={{ marginTop: 2 }} />
-            <View className="flex-1">
+            <View className="flex-1 gap-y-1.5">
               <Text className="text-xs font-sans-semibold text-red-950">
                 {t('provider.invoiceRejectedTitle', 'Customer Requested Changes to Invoice')}
               </Text>
-              <Text className="text-xs font-sans-regular text-red-900/80 mt-0.5 leading-snug">
-                {`"${cancelReason}"`} •{' '}
+              <View className="rounded-lg border border-red-200/70 bg-white/80 p-2">
+                <Text className="text-xs font-sans-medium text-red-950 leading-tight">
+                  &ldquo;{cancelReason}&rdquo;
+                </Text>
+              </View>
+              <Text className="text-xs font-sans-regular text-red-900/80 leading-snug">
                 {t(
                   'provider.invoiceRejectedAction',
                   'Please edit the line items or pricing below, save the changes, and click "Send Invoice" to resubmit.',
@@ -371,6 +376,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           <ProviderInvoiceEditorCard
             key={`${initialBooking.id}-${initialBooking.invoice?.id || 'inv'}-${initialBooking.invoice?.updated_at || 'date'}`}
             booking={initialBooking}
+            canEdit={currentStatus === BOOKING_STATUSES.Completed}
             isEditing={currentStatus === BOOKING_STATUSES.Completed ? isEditingInvoice : false}
             onToggleEdit={currentStatus === BOOKING_STATUSES.Completed ? setIsEditingInvoice : () => {}}
             onTotalCalculated={setInvoiceTotal}
@@ -414,24 +420,14 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
           />
         )}
         {currentStatus === BOOKING_STATUSES.Completed && (
-          <View className="flex-row gap-3">
-            <Button
-              title={t('provider.editInvoice')}
-              variant="outline"
-              onPress={() => setIsEditingInvoice(true)}
-              className="flex-1 border-gray-300 bg-white"
-              textClassName="text-gray-700 font-sans-semibold"
-              leftIcon={<Feather name="edit-3" size={14} color={THEME_COLORS.slate700} />}
-            />
-            <Button
-              title={t('provider.sendInvoice')}
-              variant="primary"
-              onPress={handleSendInvoice}
-              loading={updateBooking.isPending}
-              className="flex-1"
-              leftIcon={!updateBooking.isPending ? <Feather name="send" size={14} color="#ffffff" /> : null}
-            />
-          </View>
+          <Button
+            title={t('provider.sendInvoice')}
+            variant="primary"
+            onPress={handleSendInvoice}
+            loading={updateBooking.isPending}
+            className="w-full"
+            leftIcon={!updateBooking.isPending ? <Feather name="send" size={14} color="#ffffff" /> : null}
+          />
         )}
         {currentStatus === BOOKING_STATUSES.PaymentInitiated && (
           <Button
