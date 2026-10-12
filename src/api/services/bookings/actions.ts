@@ -54,6 +54,15 @@ export const cancelBookingAction = async (
   });
 };
 
+export const rejectInvoiceAction = async (
+  id: string,
+  rejection_reason: string,
+): Promise<{ message: string; booking: Booking }> => {
+  return internalClient.post<{ message: string; booking: Booking }>(API_ENDPOINTS.BOOKINGS.REJECT_INVOICE(id), {
+    rejection_reason,
+  });
+};
+
 // Invoice Actions
 export const updateInvoiceItemsAction = async (payload: UpdateInvoiceItemsPayload): Promise<UpdateInvoiceResponse> => {
   return internalClient.post<UpdateInvoiceResponse>(API_ENDPOINTS.INVOICES.UPDATE_WITH_ITEMS(payload.id), payload);

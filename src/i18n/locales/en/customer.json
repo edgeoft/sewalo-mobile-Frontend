@@ -193,5 +193,17 @@
   "validUntil": "Valid until {{date}}",
   "noCouponsAvailable": "No Offers Available",
   "noCouponsAvailableDesc": "You don't have any assigned coupons right now. You can enter a promo code above if you have one.",
-  "tapToViewAndApply": "Tap to view and apply available discounts"
+  "tapToViewAndApply": "Tap to view and apply available discounts",
+  "requestChanges": "Request Changes",
+  "requestChangesTitle": "Request Invoice Changes",
+  "requestChangesDesc": "Explain what needs to be changed in this invoice. The service provider will be notified to revise it.",
+  "requestChangesPlaceholder": "e.g. Charged for extra hours not worked, materials already paid, or incorrect rate...",
+  "submitRequest": "Submit Request",
+  "cancelRequest": "Cancel Request",
+  "rejectionReasonRequired": "Please describe why you are requesting changes.",
+  "invoiceRejectedSuccess": "Change request submitted. The provider has been notified.",
+  "invoiceRejectedNotice": "Change Requested",
+  "invoiceChangeRequestedTitle": "Invoice Revision Requested",
+  "invoiceChangeRequestedDesc": "You requested changes with note:",
+  "invoiceChangeWaiting": "The service provider is revising the invoice. You will be able to review and pay once they resubmit."
 }

@@ -57,7 +57,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const invoiceData = initialBooking.invoice;
   const basePriceValue = invoiceData ? Number(invoiceData.sub_total) || 0 : 0;
   const billingOption = initialBooking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = billingOption?.label || billingOption?.name;
+  const billingLabel = billingOption?.label;
   const totalPrice = invoiceData ? Number(invoiceData.total) || 0 : 0;
   const cancelReason = initialBooking.cancellation_reason;
 
@@ -343,6 +343,25 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
               </>
             )}
         </View>
+
+        {/* Customer Rejection / Conflict Alert Banner */}
+        {currentStatus === BOOKING_STATUSES.Completed && Boolean(cancelReason) && (
+          <View className="mb-5 p-3.5 rounded-xl border border-red-200 bg-red-50/80 flex-row items-start gap-x-2.5">
+            <Feather name="alert-triangle" size={15} color={THEME_COLORS.dangerRed} style={{ marginTop: 2 }} />
+            <View className="flex-1">
+              <Text className="text-xs font-sans-semibold text-red-950">
+                {t('provider.invoiceRejectedTitle', 'Customer Requested Changes to Invoice')}
+              </Text>
+              <Text className="text-xs font-sans-regular text-red-900/80 mt-0.5 leading-snug">
+                {`"${cancelReason}"`} •{' '}
+                {t(
+                  'provider.invoiceRejectedAction',
+                  'Please edit the line items or pricing below, save the changes, and click "Send Invoice" to resubmit.',
+                )}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Invoice Section for Completed, ReadyToPay, PaymentInitiated, Paid statuses */}
         {(currentStatus === BOOKING_STATUSES.Completed ||

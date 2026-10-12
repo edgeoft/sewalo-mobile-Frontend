@@ -19,7 +19,7 @@ interface ProviderInvoiceEditorCardProps {
 interface FormInvoiceItem {
   id: string;
   name: string;
-  quantity: number;
+  quantity: string;
   unit_price: string;
   total_amount: number;
   is_primary_item: boolean;
@@ -63,7 +63,7 @@ export default function ProviderInvoiceEditorCard({
     originalItems.map((item) => ({
       id: item.id,
       name: item.name,
-      quantity: item.quantity || 1,
+      quantity: (item.quantity ?? 1).toString(),
       unit_price: (Number(item.unit_price) || 0).toString(),
       total_amount: Number(item.total_amount) || 0,
       is_primary_item: item.is_primary_item ?? false,
@@ -75,7 +75,7 @@ export default function ProviderInvoiceEditorCard({
   const subtotal = useMemo(() => {
     return items.reduce((sum, item) => {
       const price = parseFloat(item.unit_price) || 0;
-      const qty = item.quantity || 1;
+      const qty = parseInt(item.quantity, 10) || 0;
       return sum + qty * price;
     }, 0);
   }, [items]);
@@ -91,7 +91,7 @@ export default function ProviderInvoiceEditorCard({
     const newItem: FormInvoiceItem = {
       id: `new-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       name: '',
-      quantity: 1,
+      quantity: '1',
       unit_price: '',
       total_amount: 0,
       is_primary_item: false,
@@ -112,6 +112,22 @@ export default function ProviderInvoiceEditorCard({
     );
   }, []);
 
+  const handleItemQuantityChange = useCallback((text: string, index: number) => {
+    const cleanedText = text.replace(/[^0-9]/g, '');
+    setItems((prev) =>
+      prev.map((item, idx) => {
+        if (idx !== index) return item;
+        const qty = parseInt(cleanedText, 10) || 0;
+        const price = parseFloat(item.unit_price) || 0;
+        return {
+          ...item,
+          quantity: cleanedText,
+          total_amount: qty * price,
+        };
+      }),
+    );
+  }, []);
+
   const handleItemPriceChange = useCallback((text: string, index: number) => {
     // Clean input to allow only digits and at most one decimal point
     const cleanedText = text.replace(/[^0-9.]/g, '');
@@ -119,10 +135,11 @@ export default function ProviderInvoiceEditorCard({
       prev.map((item, idx) => {
         if (idx !== index) return item;
         const price = parseFloat(cleanedText) || 0;
+        const qty = parseInt(item.quantity, 10) || 0;
         return {
           ...item,
           unit_price: cleanedText,
-          total_amount: (item.quantity || 1) * price,
+          total_amount: qty * price,
         };
       }),
     );
@@ -134,7 +151,7 @@ export default function ProviderInvoiceEditorCard({
       originalItems.map((item) => ({
         id: item.id,
         name: item.name,
-        quantity: item.quantity || 1,
+        quantity: (item.quantity ?? 1).toString(),
         unit_price: (Number(item.unit_price) || 0).toString(),
         total_amount: Number(item.total_amount) || 0,
         is_primary_item: item.is_primary_item ?? false,
@@ -174,7 +191,7 @@ export default function ProviderInvoiceEditorCard({
       .filter((item) => !UUID_REGEX.test(item.id))
       .map((item) => ({
         name: item.name.trim(),
-        quantity: item.quantity || 1,
+        quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
         unit_price: parseFloat(item.unit_price) || 0,
       }));
 
@@ -183,7 +200,7 @@ export default function ProviderInvoiceEditorCard({
       .map((item) => ({
         id: item.id,
         name: item.name.trim(),
-        quantity: item.quantity || 1,
+        quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
         unit_price: parseFloat(item.unit_price) || 0,
       }));
 
@@ -261,18 +278,20 @@ export default function ProviderInvoiceEditorCard({
         <View className="mt-3 gap-y-2.5">
           {items.map((item, idx) => {
             const price = parseFloat(item.unit_price) || 0;
+            const qty = parseInt(item.quantity, 10) || 1;
             const matchingOffering = booking.service?.service_offerings?.find(
               (offering) =>
                 offering?.sub_category?.name &&
                 item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
             );
-            const billingLabel =
+            const rawBillingLabel =
               matchingOffering?.billing_option?.label ||
-              matchingOffering?.billing_option?.name ||
-              (item.is_primary_item
-                ? booking.service?.service_offerings?.[0]?.billing_option?.label ||
-                  booking.service?.service_offerings?.[0]?.billing_option?.name
-                : null);
+              (item.is_primary_item ? booking.service?.service_offerings?.[0]?.billing_option?.label : null);
+            const isFixedPrice =
+              !rawBillingLabel ||
+              rawBillingLabel.toLowerCase().includes('fixed') ||
+              matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
+            const billingLabel = isFixedPrice ? null : rawBillingLabel;
 
             return (
               <View key={item.id || idx} className="flex-row items-center justify-between py-1">
@@ -289,11 +308,12 @@ export default function ProviderInvoiceEditorCard({
                       </View>
                     )}
                   </View>
+                  <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">
+                    {qty} × Rs. {price.toLocaleString()}
+                    {billingLabel ? ` ${billingLabel}` : ''}
+                  </Text>
                 </View>
-                <Text className="text-xs font-sans-semibold text-gray-900">
-                  Rs. {price.toLocaleString()}
-                  {billingLabel ? ` ${billingLabel}` : ''}
-                </Text>
+                <Text className="text-xs font-sans-semibold text-gray-900">Rs. {(qty * price).toLocaleString()}</Text>
               </View>
             );
           })}
@@ -303,6 +323,20 @@ export default function ProviderInvoiceEditorCard({
         <View className="mt-3.5 gap-y-3">
           {items.map((item, index) => {
             const isPrimary = item.is_primary_item;
+            const matchingOffering = booking.service?.service_offerings?.find(
+              (offering) =>
+                offering?.sub_category?.name &&
+                item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
+            );
+            const rawBillingLabel =
+              matchingOffering?.billing_option?.label ||
+              (isPrimary ? booking.service?.service_offerings?.[0]?.billing_option?.label : null);
+            const isFixedPrice =
+              !rawBillingLabel ||
+              rawBillingLabel.toLowerCase().includes('fixed') ||
+              matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
+            const billingLabel = isFixedPrice ? null : rawBillingLabel;
+
             return (
               <View
                 key={item.id || index}
@@ -357,20 +391,55 @@ export default function ProviderInvoiceEditorCard({
                   )}
                 </View>
 
-                {/* Price Input */}
-                <View>
-                  <Text className="text-xs font-sans-medium text-gray-600 mb-1">{t('provider.invoicePrice')}</Text>
-                  <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
-                    <Text className="text-xs font-sans-semibold text-gray-500 mr-2">Rs.</Text>
-                    <TextInput
-                      value={item.unit_price}
-                      onChangeText={(text) => handleItemPriceChange(text, index)}
-                      placeholder="0"
-                      placeholderTextColor="#94a3b8"
-                      keyboardType="numeric"
-                      className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
-                    />
+                {/* Quantity and Price Inputs Side-by-Side */}
+                <View className="flex-row gap-3">
+                  {/* Quantity Input */}
+                  <View className="w-28">
+                    <Text className="text-xs font-sans-medium text-gray-600 mb-1">
+                      {t('provider.quantity', 'Quantity')}
+                    </Text>
+                    <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
+                      <TextInput
+                        value={item.quantity}
+                        onChangeText={(text) => handleItemQuantityChange(text, index)}
+                        placeholder="1"
+                        placeholderTextColor="#94a3b8"
+                        keyboardType="numeric"
+                        className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
+                      />
+                    </View>
                   </View>
+
+                  {/* Price Input */}
+                  <View className="flex-1">
+                    <View className="flex-row items-center justify-between mb-1">
+                      <Text className="text-xs font-sans-medium text-gray-600">{t('provider.invoicePrice')}</Text>
+                      {billingLabel ? (
+                        <Text className="text-[10px] font-sans-medium text-gray-400">{billingLabel}</Text>
+                      ) : null}
+                    </View>
+                    <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
+                      <Text className="text-xs font-sans-semibold text-gray-500 mr-2">Rs.</Text>
+                      <TextInput
+                        value={item.unit_price}
+                        onChangeText={(text) => handleItemPriceChange(text, index)}
+                        placeholder="0"
+                        placeholderTextColor="#94a3b8"
+                        keyboardType="numeric"
+                        className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Live Line Item Total */}
+                <View className="mt-2 pt-2 border-t border-gray-100 flex-row justify-between items-center">
+                  <Text className="text-[10px] font-sans-medium text-gray-400">
+                    {t('provider.itemTotal', 'Item Total')}
+                  </Text>
+                  <Text className="text-xs font-sans-bold text-gray-800">
+                    Rs. {((parseInt(item.quantity, 10) || 0) * (parseFloat(item.unit_price) || 0)).toLocaleString()}
+                  </Text>
                 </View>
               </View>
             );

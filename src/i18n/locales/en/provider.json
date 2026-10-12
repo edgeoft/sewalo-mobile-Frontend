@@ -264,5 +264,8 @@
   "invoiceSendSuccess": "Invoice sent to customer",
   "primaryService": "Primary Service",
   "additionalItem": "Additional Item",
-  "removeItem": "Remove"
+  "removeItem": "Remove",
+  "invoiceRejectedTitle": "Customer Requested Changes to Invoice",
+  "invoiceRejectedNote": "The customer reviewed this invoice and requested adjustments with note:",
+  "invoiceRejectedAction": "Please edit the line items or pricing below, save the changes, and click \"Send Invoice\" to resubmit."
 }

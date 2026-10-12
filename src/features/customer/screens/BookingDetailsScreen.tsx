@@ -22,6 +22,7 @@ import {
   useGetApplicableCoupons,
   useProcessPayment,
   useCancelBooking,
+  useRejectInvoice,
   useDownloadInvoice,
   downloadInvoiceAction,
   useGetProfileQuery,
@@ -65,6 +66,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const { data: couponsData } = useGetApplicableCoupons(booking.id);
   const processPayment = useProcessPayment();
   const cancelBooking = useCancelBooking();
+  const rejectInvoice = useRejectInvoice();
   const downloadInvoice = useDownloadInvoice();
   const [isSharing, setIsSharing] = useState(false);
 
@@ -210,6 +212,24 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
     setIsRatingModalVisible(true);
   };
 
+  const handleRejectInvoice = (reason: string) => {
+    rejectInvoice.mutate(
+      { id: booking.id, rejection_reason: reason },
+      {
+        onSuccess: () => {
+          setIsReviewInvoiceModalVisible(false);
+          showSnackbar({
+            message: t('customer.invoiceRejectedSuccess', 'Change request submitted. The provider has been notified.'),
+            type: 'success',
+          });
+        },
+        onError: (error) => {
+          showSnackbar({ message: extractErrorMessage(error), type: 'error' });
+        },
+      },
+    );
+  };
+
   const providerAvatar = getImageUrl(booking.provider?.avatar) || '';
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || '';
@@ -225,7 +245,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
   const basePrice = invoice?.sub_total ? Number(invoice.sub_total) : 0;
   const billingOption = booking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = billingOption?.label || billingOption?.name;
+  const billingLabel = billingOption?.label;
 
   const showDetailsCards =
     booking.status === BOOKING_STATUSES.Pending ||
@@ -271,6 +291,25 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             <Feather name="x-circle" size={16} color={THEME_COLORS.dangerRed} accessible={false} />
             <Text className="text-sm font-sans-semibold text-destructive">{t('customer.cancelBooking')}</Text>
           </Pressable>
+        )}
+
+        {/* Change Request Pending Banner */}
+        {booking.status === BOOKING_STATUSES.Completed && Boolean(booking.cancellation_reason) && (
+          <View className="mb-5 p-3.5 rounded-xl border border-amber-200 bg-amber-50/80 flex-row items-start gap-x-2.5">
+            <Feather name="clock" size={15} color="#d97706" style={{ marginTop: 2 }} />
+            <View className="flex-1">
+              <Text className="text-xs font-sans-semibold text-amber-950">
+                {t('customer.invoiceChangeRequestedTitle', 'Invoice Revision Requested')}
+              </Text>
+              <Text className="text-xs font-sans-regular text-amber-900/80 mt-0.5 leading-snug">
+                {`"${booking.cancellation_reason}"`} •{' '}
+                {t(
+                  'customer.invoiceChangeWaiting',
+                  'The service provider is revising the invoice. You will be able to review and pay once they resubmit.',
+                )}
+              </Text>
+            </View>
+          </View>
         )}
 
         <View style={styles.cardShadow} className="bg-white rounded-lg border border-border p-5 mb-6">
@@ -628,6 +667,8 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         isDownloadingInvoice={downloadInvoice.isPending}
         onShareInvoice={handleShareInvoice}
         isSharingInvoice={isSharing}
+        onRejectInvoice={handleRejectInvoice}
+        isRejectingInvoice={rejectInvoice.isPending}
       />
 
       <PaymentOptionsModal

@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
     CANCEL: (id: string) => `/bookings/${id}` as const,
     PAYMENT: (bookingId: string) => `/bookings/${bookingId}/payment` as const,
     CONFIRM_PAYMENT: (bookingId: string) => `/bookings/${bookingId}/confirm-payment` as const,
+    REJECT_INVOICE: (id: string) => `/bookings/${id}/reject-invoice` as const,
   },
   INVOICES: {
     UPDATE_WITH_ITEMS: (id: string) => `/invoices/${id}/update-with-items` as const,

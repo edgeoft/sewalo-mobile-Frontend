@@ -7,6 +7,7 @@ import {
   getBookingByIdAction,
   updateBookingAction,
   cancelBookingAction,
+  rejectInvoiceAction,
   getApplicableCouponsAction,
   downloadInvoiceAction,
   updateInvoiceItemsAction,
@@ -82,6 +83,16 @@ export const useCancelBooking = () => {
   const queryClient = useQueryClient();
   return useMutation<{ message: string; booking: Booking }, Error, { id: string; reason?: string }>({
     mutationFn: ({ id, reason }) => cancelBookingAction(id, reason),
+    onSuccess: (result) => {
+      invalidateBookingDetail(queryClient, result.booking.id, result.booking);
+    },
+  });
+};
+
+export const useRejectInvoice = () => {
+  const queryClient = useQueryClient();
+  return useMutation<{ message: string; booking: Booking }, Error, { id: string; rejection_reason: string }>({
+    mutationFn: ({ id, rejection_reason }) => rejectInvoiceAction(id, rejection_reason),
     onSuccess: (result) => {
       invalidateBookingDetail(queryClient, result.booking.id, result.booking);
     },

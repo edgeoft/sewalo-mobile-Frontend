@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
   Text,
+  TextInput,
   StyleSheet,
   Pressable,
   ScrollView,
@@ -28,6 +29,8 @@ interface InvoiceReviewModalProps {
   isDownloadingInvoice?: boolean;
   onShareInvoice?: () => void;
   isSharingInvoice?: boolean;
+  onRejectInvoice?: (reason: string) => void;
+  isRejectingInvoice?: boolean;
 }
 
 export default function InvoiceReviewModal({
@@ -43,9 +46,31 @@ export default function InvoiceReviewModal({
   isDownloadingInvoice = false,
   onShareInvoice,
   isSharingInvoice = false,
+  onRejectInvoice,
+  isRejectingInvoice = false,
 }: InvoiceReviewModalProps) {
   const { t } = useTranslation();
   const { height } = useWindowDimensions();
+
+  const [isRejectMode, setIsRejectMode] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [reasonError, setReasonError] = useState('');
+
+  const handleClose = () => {
+    setIsRejectMode(false);
+    setRejectionReason('');
+    setReasonError('');
+    onClose();
+  };
+
+  const handleSubmitRejection = () => {
+    if (!rejectionReason.trim()) {
+      setReasonError(t('customer.rejectionReasonRequired', 'Please describe why you are requesting changes.'));
+      return;
+    }
+    setReasonError('');
+    onRejectInvoice?.(rejectionReason.trim());
+  };
 
   const invoice = booking.invoice;
   const invoiceId = invoice?.invoice_id || (invoice?.id ? `#${invoice.id.slice(0, 8).toUpperCase()}` : '#INV-001');
@@ -55,7 +80,7 @@ export default function InvoiceReviewModal({
   const serviceName = booking.service?.name || 'Service';
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
         <View style={{ maxHeight: height * 0.88 }} className="bg-white rounded-t-3xl overflow-hidden flex flex-col">
           {/* Header */}
@@ -102,7 +127,7 @@ export default function InvoiceReviewModal({
               )}
 
               <Pressable
-                onPress={onClose}
+                onPress={handleClose}
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
@@ -154,8 +179,12 @@ export default function InvoiceReviewModal({
                         offering?.sub_category?.name &&
                         item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
                     );
-                    const billingLabel =
-                      matchingOffering?.billing_option?.label || matchingOffering?.billing_option?.name;
+                    const rawBillingLabel = matchingOffering?.billing_option?.label;
+                    const isFixedPrice =
+                      !rawBillingLabel ||
+                      rawBillingLabel.toLowerCase().includes('fixed') ||
+                      matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
+                    const billingLabel = isFixedPrice ? null : rawBillingLabel;
 
                     return (
                       <View
@@ -187,13 +216,18 @@ export default function InvoiceReviewModal({
                     <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">1</Text>
                     <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
                       Rs. {basePrice.toLocaleString()}
-                      {booking.service?.service_offerings?.[0]?.billing_option?.label ||
-                      booking.service?.service_offerings?.[0]?.billing_option?.name
-                        ? ` ${
-                            booking.service?.service_offerings?.[0]?.billing_option?.label ||
-                            booking.service?.service_offerings?.[0]?.billing_option?.name
-                          }`
-                        : ''}
+                      {(() => {
+                        const defaultOpt = booking.service?.service_offerings?.[0]?.billing_option;
+                        const label = defaultOpt?.label;
+                        if (
+                          !label ||
+                          label.toLowerCase().includes('fixed') ||
+                          defaultOpt?.name?.toLowerCase().includes('fixed')
+                        ) {
+                          return '';
+                        }
+                        return ` ${label}`;
+                      })()}
                     </Text>
                   </View>
                 )}
@@ -244,27 +278,108 @@ export default function InvoiceReviewModal({
 
             {/* Additional Notes (if any) */}
             {invoice?.additional_note ? (
-              <View className="bg-white border border-gray-100 rounded-xl p-3 mb-2">
+              <View className="bg-white border border-gray-100 rounded-xl p-3 mb-4">
                 <Text className="text-[11px] font-sans-bold text-gray-500 uppercase tracking-wider mb-1">
                   {t('customer.specialInstructions')}
                 </Text>
                 <Text className="text-xs font-sans-medium text-gray-700 leading-snug">{invoice.additional_note}</Text>
               </View>
             ) : null}
+
+            {/* Rejection / Dispute Input when in reject mode */}
+            {isRejectMode && (
+              <View className="bg-red-50/70 border border-red-200 rounded-xl p-3.5 mb-2">
+                <View className="flex-row items-center gap-x-2 mb-1.5">
+                  <Feather name="alert-circle" size={15} color={THEME_COLORS.dangerRed} />
+                  <Text className="text-xs font-sans-bold text-gray-900">
+                    {t('customer.requestChangesTitle', 'Request Invoice Changes')}
+                  </Text>
+                </View>
+                <Text className="text-[11px] font-sans-regular text-gray-600 mb-2.5 leading-relaxed">
+                  {t(
+                    'customer.requestChangesDesc',
+                    'Explain what needs to be changed in this invoice. The service provider will be notified to revise it.',
+                  )}
+                </Text>
+                <TextInput
+                  value={rejectionReason}
+                  onChangeText={(text) => {
+                    setRejectionReason(text);
+                    if (reasonError) setReasonError('');
+                  }}
+                  placeholder={t(
+                    'customer.requestChangesPlaceholder',
+                    'e.g. Charged for extra hours not worked, materials already paid, or incorrect rate...',
+                  )}
+                  placeholderTextColor="#94a3b8"
+                  multiline
+                  numberOfLines={3}
+                  style={{ minHeight: 70, textAlignVertical: 'top' }}
+                  className="bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-sans-medium text-gray-900 mb-1"
+                />
+                {reasonError ? (
+                  <Text className="text-[11px] font-sans-medium text-red-600 mt-1">{reasonError}</Text>
+                ) : null}
+              </View>
+            )}
           </ScrollView>
 
           {/* Footer Actions */}
-          <View className="px-5 pt-3 pb-6 border-t border-gray-100 bg-white">
-            <Button
-              title={`${t('customer.proceedToPay')} • Rs. ${totalPayableValue.toLocaleString()}`}
-              variant="primary"
-              size="lg"
-              onPress={() => {
-                onClose();
-                onProceedToPay();
-              }}
-              leftIcon={<Feather name="credit-card" size={16} color="#ffffff" />}
-            />
+          <View className="px-5 pt-3 pb-6 border-t border-gray-100 bg-white gap-y-2">
+            {isRejectMode ? (
+              <View className="flex-row items-center gap-x-3">
+                <View className="flex-1">
+                  <Button
+                    title={t('customer.cancelRequest', 'Cancel')}
+                    variant="outline"
+                    size="md"
+                    onPress={() => {
+                      setIsRejectMode(false);
+                      setReasonError('');
+                    }}
+                    disabled={isRejectingInvoice}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Button
+                    title={t('customer.submitRequest', 'Submit Request')}
+                    variant="primary"
+                    className="bg-red-600 active:bg-red-700"
+                    size="md"
+                    onPress={handleSubmitRejection}
+                    loading={isRejectingInvoice}
+                    disabled={isRejectingInvoice}
+                  />
+                </View>
+              </View>
+            ) : (
+              <>
+                <Button
+                  title={`${t('customer.proceedToPay')} • Rs. ${totalPayableValue.toLocaleString()}`}
+                  variant="primary"
+                  size="lg"
+                  onPress={() => {
+                    onClose();
+                    onProceedToPay();
+                  }}
+                  leftIcon={<Feather name="credit-card" size={16} color="#ffffff" />}
+                />
+                {onRejectInvoice && (
+                  <Pressable
+                    onPress={() => setIsRejectMode(true)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('customer.requestChanges')}
+                    hitSlop={8}
+                    className="py-2 items-center justify-center flex-row gap-x-1.5 rounded-lg active:bg-gray-50"
+                  >
+                    <Feather name="alert-circle" size={13} color={THEME_COLORS.slate500} />
+                    <Text className="text-xs font-sans-semibold text-gray-600">
+                      {t('customer.requestChanges', 'Request Changes / Raise Issue')}
+                    </Text>
+                  </Pressable>
+                )}
+              </>
+            )}
           </View>
         </View>
       </View>
