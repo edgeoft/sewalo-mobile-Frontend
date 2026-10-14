@@ -9,12 +9,14 @@ import {
   ScrollView,
   useWindowDimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
 import type { Booking } from '@/types';
 import Button from '@/components/ui/Button';
+import { formatDate } from '@/utils/time';
 
 interface InvoiceReviewModalProps {
   visible: boolean;
@@ -79,15 +81,39 @@ export default function InvoiceReviewModal({
   const providerName = booking.provider?.name || 'Service Provider';
   const serviceName = booking.service?.name || 'Service';
 
+  const primaryItems = items.filter((item) => item.is_primary_item);
+  const mainItems = primaryItems.length > 0 ? primaryItems : items.length > 0 ? [items[0]] : [];
+  const mainIdSet = new Set(mainItems.map((item) => item.id));
+  const additionalItems = items.filter((item) => !mainIdSet.has(item.id));
+
+  const matchingOffering = booking.service?.service_offerings?.find(
+    (offering) =>
+      offering?.sub_category?.name &&
+      booking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
+  );
+  const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
-        <View style={{ maxHeight: height * 0.88 }} className="bg-white rounded-t-3xl overflow-hidden flex flex-col">
+        <View style={{ maxHeight: height * 0.88 }} className="bg-white rounded-t-xl overflow-hidden flex flex-col">
           {/* Header */}
           <View className="px-5 pt-5 pb-4 border-b border-gray-100 flex-row items-center justify-between">
             <View className="flex-1 mr-3">
-              <Text className="text-lg font-sans-extrabold text-gray-950">{t('customer.invoiceDetails')}</Text>
-              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{invoiceId}</Text>
+              <View className="flex-row items-center gap-x-2 flex-wrap">
+                <Text className="text-lg font-sans-extrabold text-gray-950">{t('customer.invoiceDetails')}</Text>
+                {invoiceId ? (
+                  <View className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-200">
+                    <Text className="text-[11px] font-sans-bold text-gray-600 font-mono">
+                      #{invoiceId.replace(/^#/, '')}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
+                {serviceName} • {formatDate(booking.service_date || '')}
+              </Text>
             </View>
 
             <View className="flex-row items-center gap-x-2">
@@ -143,99 +169,127 @@ export default function InvoiceReviewModal({
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}
           >
-            {/* Provider & Service Info Card */}
-            <View className="bg-surface-indigo-subtle border border-indigo-100/60 rounded-xl p-3.5 mb-4">
-              <View className="flex-row items-center justify-between mb-1.5">
-                <Text className="text-[11px] font-sans-bold text-primary uppercase tracking-wider">
-                  {t('customer.serviceDetails')}
-                </Text>
-                <Text className="text-[11px] font-sans-medium text-gray-400">{booking.service_date}</Text>
-              </View>
-              <Text className="text-sm font-sans-bold text-gray-900 leading-tight">{serviceName}</Text>
-              <Text className="text-xs font-sans-medium text-gray-600 mt-0.5">{providerName}</Text>
+            {/* Service & Provider Details */}
+            <View className="pb-3 border-b border-gray-100 mb-4">
+              <Text className="text-[11px] font-sans-bold text-primary uppercase tracking-wider">
+                {t('customer.serviceDetails')}
+              </Text>
+              <Text className="text-sm font-sans-bold text-gray-900 mt-0.5">{serviceName}</Text>
+              <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{providerName}</Text>
             </View>
 
-            {/* Itemized Charges Section */}
+            {/* Section 1: Main Service Charges */}
             <View className="mb-4">
-              <Text className="text-xs font-sans-bold text-gray-900 uppercase tracking-wide mb-2">
-                {t('customer.itemizedCharges')}
-              </Text>
+              <View className="flex-row items-center gap-x-2 mb-2 pb-1.5 border-b border-gray-200">
+                <View className="w-1.5 h-3.5 rounded-full bg-primary" />
+                <Text className="text-xs font-sans-bold text-gray-900 uppercase tracking-wider">
+                  {t('customer.invoiceMainServiceCharges', 'Main Service Charges')}
+                </Text>
+              </View>
 
-              <View className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+              <View className="border border-gray-200 rounded-md overflow-hidden bg-white">
                 {/* Table Header */}
                 <View className="flex-row bg-gray-50/80 px-3 py-2 border-b border-gray-200">
                   <Text className="flex-1 text-[11px] font-sans-bold text-gray-500">{t('customer.itemName')}</Text>
-                  <Text className="w-12 text-center text-[11px] font-sans-bold text-gray-500">{t('customer.qty')}</Text>
+                  <Text className="w-28 text-center text-[11px] font-sans-bold text-gray-500">
+                    {t('customer.invoiceDurationUnits', 'Duration / Units')}
+                  </Text>
                   <Text className="w-20 text-right text-[11px] font-sans-bold text-gray-500">
                     {t('customer.amount')}
                   </Text>
                 </View>
 
-                {/* Table Rows */}
-                {items.length > 0 ? (
-                  items.map((item, idx) => {
-                    const matchingOffering = booking.service?.service_offerings?.find(
-                      (offering) =>
-                        offering?.sub_category?.name &&
-                        item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
-                    );
-                    const rawBillingLabel = matchingOffering?.billing_option?.label;
-                    const isFixedPrice =
-                      !rawBillingLabel ||
-                      rawBillingLabel.toLowerCase().includes('fixed') ||
-                      matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
-                    const billingLabel = isFixedPrice ? null : rawBillingLabel;
-
-                    return (
-                      <View
-                        key={item.id || idx}
-                        className={`flex-row items-center px-3 py-2.5 ${
-                          idx < items.length - 1 ? 'border-b border-gray-100' : ''
-                        }`}
-                      >
-                        <View className="flex-1 mr-2">
-                          <Text className="text-xs font-sans-semibold text-gray-900 leading-snug">{item.name}</Text>
-                          <Text className="text-[10px] font-sans-medium text-gray-400">
-                            @ Rs. {Number(item.unit_price).toLocaleString()}
-                            {billingLabel ? ` ${billingLabel}` : ''}
-                          </Text>
-                        </View>
-                        <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">{item.quantity}</Text>
-                        <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
-                          Rs. {Number(item.total_amount).toLocaleString()}
+                {/* Main Service Rows */}
+                {mainItems.length > 0 ? (
+                  mainItems.map((item, idx) => (
+                    <View
+                      key={item.id || idx}
+                      className={`flex-row items-center px-3 py-2.5 ${
+                        idx < mainItems.length - 1 ? 'border-b border-gray-100' : ''
+                      }`}
+                    >
+                      <View className="flex-1 mr-2">
+                        <Text className="text-xs font-sans-semibold text-gray-900 leading-snug">
+                          {item.name || serviceName}
                         </Text>
+                        {billingLabel ? (
+                          <Text className="text-[11px] font-sans-regular text-gray-400 mt-0.5">{billingLabel}</Text>
+                        ) : null}
                       </View>
-                    );
-                  })
+                      <Text className="w-28 text-center text-xs font-sans-medium text-gray-600">{item.quantity}</Text>
+                      <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
+                        Rs. {Number(item.total_amount).toLocaleString()}
+                      </Text>
+                    </View>
+                  ))
                 ) : (
                   <View className="flex-row items-center px-3 py-2.5">
                     <View className="flex-1 mr-2">
                       <Text className="text-xs font-sans-semibold text-gray-900">{serviceName}</Text>
-                      <Text className="text-[10px] font-sans-medium text-gray-400">{t('customer.basePrice')}</Text>
+                      {billingLabel ? (
+                        <Text className="text-[11px] font-sans-regular text-gray-400 mt-0.5">{billingLabel}</Text>
+                      ) : null}
                     </View>
-                    <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">1</Text>
+                    <Text className="w-28 text-center text-xs font-sans-medium text-gray-600">1</Text>
                     <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
                       Rs. {basePrice.toLocaleString()}
-                      {(() => {
-                        const defaultOpt = booking.service?.service_offerings?.[0]?.billing_option;
-                        const label = defaultOpt?.label;
-                        if (
-                          !label ||
-                          label.toLowerCase().includes('fixed') ||
-                          defaultOpt?.name?.toLowerCase().includes('fixed')
-                        ) {
-                          return '';
-                        }
-                        return ` ${label}`;
-                      })()}
                     </Text>
                   </View>
                 )}
               </View>
             </View>
 
+            {/* Section 2: Additional Charges */}
+            <View className="mb-4">
+              <View className="flex-row items-center gap-x-2 mb-2 pb-1.5 border-b border-gray-200">
+                <View className="w-1.5 h-3.5 rounded-full bg-amber-500" />
+                <Text className="text-xs font-sans-bold text-gray-900 uppercase tracking-wider">
+                  {t('customer.invoiceAdditionalCharges', 'Additional Charges')}
+                </Text>
+              </View>
+
+              {additionalItems.length === 0 ? (
+                <View className="py-3 px-4 rounded-md border border-dashed border-gray-200 bg-gray-50/50 items-center justify-center">
+                  <Text className="text-xs font-sans-medium text-gray-400 text-center">
+                    {t('customer.invoiceNoAdditionalCharges', 'No additional charges added.')}
+                  </Text>
+                </View>
+              ) : (
+                <View className="border border-gray-200 rounded-md overflow-hidden bg-white">
+                  {/* Table Header */}
+                  <View className="flex-row bg-gray-50/80 px-3 py-2 border-b border-gray-200">
+                    <Text className="flex-1 text-[11px] font-sans-bold text-gray-500">{t('customer.itemName')}</Text>
+                    <Text className="w-12 text-center text-[11px] font-sans-bold text-gray-500">
+                      {t('customer.qty')}
+                    </Text>
+                    <Text className="w-20 text-right text-[11px] font-sans-bold text-gray-500">
+                      {t('customer.amount')}
+                    </Text>
+                  </View>
+
+                  {/* Additional Items Rows */}
+                  {additionalItems.map((item, idx) => (
+                    <View
+                      key={item.id || idx}
+                      className={`flex-row items-center px-3 py-2.5 ${
+                        idx < additionalItems.length - 1 ? 'border-b border-gray-100' : ''
+                      }`}
+                    >
+                      <View className="flex-1 mr-2">
+                        <Text className="text-xs font-sans-semibold text-gray-900 leading-snug">{item.name}</Text>
+                      </View>
+                      <Text className="w-12 text-center text-xs font-sans-medium text-gray-600">{item.quantity}</Text>
+                      <Text className="w-20 text-right text-xs font-sans-semibold text-gray-900">
+                        Rs. {Number(item.total_amount).toLocaleString()}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+
             {/* Price Summary Breakdown */}
-            <View className="bg-gray-50/70 border border-gray-200/80 rounded-xl p-3.5 mb-4 gap-y-2">
+            <View className="bg-gray-50/70 border border-gray-200/80 rounded-md p-3.5 mb-4 gap-y-2">
               <View className="flex-row justify-between items-center">
                 <Text className="text-xs font-sans-medium text-gray-500">{t('customer.subtotal')}</Text>
                 <Text className="text-xs font-sans-semibold text-gray-800">Rs. {basePrice.toLocaleString()}</Text>
@@ -278,7 +332,7 @@ export default function InvoiceReviewModal({
 
             {/* Additional Notes (if any) */}
             {invoice?.additional_note ? (
-              <View className="bg-white border border-gray-100 rounded-xl p-3 mb-4">
+              <View className="bg-white border border-gray-200 rounded-md p-3 mb-4">
                 <Text className="text-[11px] font-sans-bold text-gray-500 uppercase tracking-wider mb-1">
                   {t('customer.specialInstructions')}
                 </Text>
@@ -288,7 +342,7 @@ export default function InvoiceReviewModal({
 
             {/* Rejection / Dispute Input when in reject mode */}
             {isRejectMode && (
-              <View className="bg-red-50/70 border border-red-200 rounded-xl p-3.5 mb-2">
+              <View className="bg-red-50/70 border border-red-200 rounded-md p-3.5 mb-2">
                 <View className="flex-row items-center gap-x-2 mb-1.5">
                   <Feather name="alert-circle" size={15} color={THEME_COLORS.dangerRed} />
                   <Text className="text-xs font-sans-bold text-gray-900">

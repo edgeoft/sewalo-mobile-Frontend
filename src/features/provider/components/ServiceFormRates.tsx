@@ -9,7 +9,7 @@ import { THEME_COLORS } from '@/constants/colors';
 import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
 import { ServiceFormData } from '@/types';
 import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
-import RateCard, { BillingBasisType, DurationUnitType } from './RateCard';
+import RateCard, { DurationUnitType } from './RateCard';
 import BillingBasisGuideModal from './BillingBasisGuideModal';
 
 interface ServiceFormRatesProps {
@@ -95,7 +95,7 @@ export default function ServiceFormRates({
     setValue('rates', currentRates, { shouldValidate: true });
   };
 
-  const handleBasisChange = (id: string, value: BillingBasisType) => {
+  const handleBasisChange = (id: string, value: string) => {
     const currentRates = { ...watchRates };
     currentRates[id] = {
       ...currentRates[id],
@@ -263,7 +263,7 @@ export default function ServiceFormRates({
                   priceValue={rate.price}
                   onPriceChange={(val) => handlePriceChange(id, val)}
                   priceError={rateErrors?.price?.message}
-                  billingBasisValue={rate.billingBasis as BillingBasisType}
+                  billingBasisValue={rate.billingBasis}
                   onBillingBasisChange={(val) => handleBasisChange(id, val)}
                   billingBasisError={rateErrors?.billingBasis?.message}
                   billingOptions={activeCategory?.billing_options}

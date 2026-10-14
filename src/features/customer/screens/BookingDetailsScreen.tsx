@@ -44,7 +44,7 @@ interface BookingDetailsScreenProps {
 }
 
 function SectionDivider() {
-  return <View className="h-px bg-border my-4" />;
+  return <View className="h-px bg-gray-200 my-5" />;
 }
 
 export default function BookingDetailsScreen({ booking }: BookingDetailsScreenProps) {
@@ -242,11 +242,28 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const phoneNumber = booking.provider?.phone || '';
   const additionalNote = booking.additional_note;
   const descriptionText = booking.service?.description;
+  const allInvoiceItems = invoice?.invoice_items || [];
+  const primaryInvoiceItems = allInvoiceItems.filter((item) => item.is_primary_item);
+  const mainInvoiceItems =
+    primaryInvoiceItems.length > 0 ? primaryInvoiceItems : allInvoiceItems.length > 0 ? [allInvoiceItems[0]] : [];
+
+  const matchingOffering = booking.service?.service_offerings?.find(
+    (offering) =>
+      offering?.sub_category?.name &&
+      (booking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()) ||
+        mainInvoiceItems[0]?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase())),
+  );
+  const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+
+  const bookedServiceName =
+    mainInvoiceItems[0]?.name ||
+    booking.service?.service_offerings?.[0]?.sub_category?.name ||
+    serviceName ||
+    t('home.service', 'Service');
+
   const totalPrice = invoice?.total ? Number(invoice.total) : 0;
   const basePrice = invoice?.sub_total ? Number(invoice.sub_total) : 0;
-  const billingOption = booking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = billingOption?.label;
-
   const showDetailsCards =
     booking.status === BOOKING_STATUSES.Pending ||
     booking.status === BOOKING_STATUSES.Confirmed ||
@@ -259,6 +276,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
   const isReadyToPay = booking.status === BOOKING_STATUSES.ReadyToPay;
   const isPaymentCompletedOrInitiated =
     booking.status === BOOKING_STATUSES.PaymentInitiated || booking.status === BOOKING_STATUSES.Paid;
+  const hasInvoiceSection =
+    Boolean(booking.invoice) ||
+    isReadyToPay ||
+    isPaymentCompletedOrInitiated ||
+    booking.status === BOOKING_STATUSES.Completed;
 
   const canCancel = booking.status === BOOKING_STATUSES.Pending || booking.status === BOOKING_STATUSES.Confirmed;
 
@@ -298,15 +320,13 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {booking.status === BOOKING_STATUSES.Completed && Boolean(booking.cancellation_reason) && (
           <View className="mb-5 p-3.5 rounded-xl border border-amber-200 bg-amber-50/80 flex-row items-start gap-x-2.5">
             <Feather name="clock" size={15} color="#d97706" style={{ marginTop: 2 }} />
-            <View className="flex-1 gap-y-1.5">
+            <View className="flex-1 gap-y-1">
               <Text className="text-xs font-sans-semibold text-amber-950">
                 {t('customer.invoiceChangeRequestedTitle', 'Invoice Revision Requested')}
               </Text>
-              <View className="rounded-lg border border-amber-200/70 bg-white/80 p-2">
-                <Text className="text-xs font-sans-medium text-amber-950 leading-tight">
-                  &ldquo;{booking.cancellation_reason}&rdquo;
-                </Text>
-              </View>
+              <Text className="text-xs font-sans-medium text-amber-950 leading-tight">
+                &ldquo;{booking.cancellation_reason}&rdquo;
+              </Text>
               <Text className="text-xs font-sans-regular text-amber-900/80 leading-snug">
                 {t(
                   'customer.invoiceChangeWaiting',
@@ -318,6 +338,14 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         )}
 
         <View style={styles.cardShadow} className="bg-white rounded-lg border border-border p-5 mb-6">
+          {/* Provider Details Section */}
+          <View className="flex-row items-center mb-3">
+            <Feather name="user" size={15} color={THEME_COLORS.primary} />
+            <Text className="text-sm font-sans-bold text-foreground ml-2">
+              {t('customer.providerInfo', 'Provider Details')}
+            </Text>
+          </View>
+
           {/* Provider Section */}
           <View className="flex-row items-center">
             {providerAvatar ? (
@@ -351,11 +379,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
           {/* Provider Details */}
           {showDetailsCards && (
             <>
-              <View className="mt-4 gap-y-2.5">
+              <View className="mt-2.5 gap-y-2">
                 <Pressable
                   onPress={() => phoneNumber && Linking.openURL(`tel:${phoneNumber}`)}
                   accessibilityRole="button"
-                  className="flex-row items-center active:opacity-70 min-h-[36px]"
+                  className="flex-row items-center active:opacity-70"
                 >
                   <Feather name="phone" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-muted-foreground ml-2">{phoneNumber || '-'}</Text>
@@ -369,7 +397,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                     />
                   ) : null}
                 </Pressable>
-                <View className="flex-row items-center min-h-[36px]">
+                <View className="flex-row items-center">
                   <Feather name="mail" size={13} color={THEME_COLORS.slate400} />
                   <Text className="text-xs font-sans-medium text-muted-foreground ml-2">
                     {booking.provider?.email || '-'}
@@ -387,7 +415,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                     }
                   }}
                   accessibilityRole="button"
-                  className="flex-row items-center active:opacity-70 min-h-[36px]"
+                  className="flex-row items-center active:opacity-70"
                 >
                   <Feather name="map-pin" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-muted-foreground ml-2 flex-1" numberOfLines={1}>
@@ -407,11 +435,11 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
               {/* Booking Details Section */}
               <View>
-                <View className="flex-row items-center mb-3">
+                <View className="flex-row items-center mb-2.5">
                   <Feather name="calendar" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-foreground ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
-                <View className="gap-y-2.5">
+                <View className="gap-y-2">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-xs font-sans-medium text-muted-foreground">{t('customer.date')}</Text>
                     <Text className="text-xs font-sans-semibold text-foreground">{serviceDate}</Text>
@@ -451,7 +479,9 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 <View className="gap-y-2.5">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-xs font-sans-medium text-muted-foreground">{t('home.service')}</Text>
-                    <Text className="text-xs font-sans-semibold text-foreground">{serviceName || categoryName}</Text>
+                    <Text className="text-xs font-sans-semibold text-foreground">
+                      {bookedServiceName || serviceName || categoryName}
+                    </Text>
                   </View>
                   {categoryName ? (
                     <View className="flex-row justify-between items-center">
@@ -470,30 +500,63 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 </View>
               </View>
 
-              <SectionDivider />
+              {!hasInvoiceSection && (
+                <>
+                  <SectionDivider />
 
-              {/* Price Details Section */}
-              <View>
-                <View className="flex-row items-center mb-3">
-                  <Feather name="tag" size={15} color={THEME_COLORS.primary} />
-                  <Text className="text-sm font-sans-bold text-foreground ml-2">{t('customer.priceDetails')}</Text>
-                </View>
-                <View className="gap-y-2.5">
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-muted-foreground">
-                      {serviceName || t('home.service')} {t('customer.price')}
-                    </Text>
-                    <Text className="text-xs font-sans-semibold text-foreground">
-                      Rs. {basePrice.toLocaleString()}
-                      {billingLabel ? ` ${billingLabel}` : ''}
-                    </Text>
+                  {/* Price Details Section (Only shown before invoice exists) */}
+                  <View>
+                    <View className="flex-row items-center mb-3">
+                      <Feather name="tag" size={15} color={THEME_COLORS.primary} />
+                      <Text className="text-sm font-sans-bold text-foreground ml-2">{t('customer.priceDetails')}</Text>
+                    </View>
+                    <View className="gap-y-2.5">
+                      {mainInvoiceItems.length > 0 ? (
+                        mainInvoiceItems.map((item, idx) => {
+                          const itemAmount =
+                            Number(item.total_amount) || Number(item.unit_price) * (item.quantity || 1) || basePrice;
+                          return (
+                            <View key={item.id || idx} className="flex-row justify-between items-start">
+                              <View className="flex-1 mr-3">
+                                <Text className="text-xs font-sans-medium text-foreground">{item.name}</Text>
+                                {billingLabel ? (
+                                  <Text className="text-[11px] font-sans-medium text-muted-foreground mt-0.5">
+                                    {billingLabel}
+                                    {item.quantity && item.quantity > 1 ? ` • Qty: ${item.quantity}` : ''}
+                                  </Text>
+                                ) : null}
+                              </View>
+                              <Text className="text-xs font-sans-semibold text-foreground">
+                                Rs. {itemAmount.toLocaleString()}
+                              </Text>
+                            </View>
+                          );
+                        })
+                      ) : (
+                        <View className="flex-row justify-between items-start">
+                          <View className="flex-1 mr-3">
+                            <Text className="text-xs font-sans-medium text-muted-foreground">{bookedServiceName}</Text>
+                            {billingLabel ? (
+                              <Text className="text-[11px] font-sans-medium text-muted-foreground mt-0.5">
+                                {billingLabel}
+                              </Text>
+                            ) : null}
+                          </View>
+                          <Text className="text-xs font-sans-semibold text-foreground">
+                            Rs. {basePrice.toLocaleString()}
+                          </Text>
+                        </View>
+                      )}
+                      <View className="pt-2 border-t border-border flex-row justify-between items-center">
+                        <Text className="text-sm font-sans-bold text-foreground">{t('customer.total')}</Text>
+                        <Text className="text-sm font-sans-extrabold text-primary">
+                          Rs. {totalPrice.toLocaleString()}
+                        </Text>
+                      </View>
+                    </View>
                   </View>
-                  <View className="pt-2 border-t border-border flex-row justify-between items-center">
-                    <Text className="text-sm font-sans-bold text-foreground">{t('customer.total')}</Text>
-                    <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
-                  </View>
-                </View>
-              </View>
+                </>
+              )}
             </>
           )}
 
@@ -574,6 +637,21 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
 
               <View className="gap-y-2.5">
                 <Pressable
+                  onPress={handleDownloadInvoice}
+                  disabled={downloadInvoice.isPending}
+                  accessibilityRole="button"
+                  className="border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 min-h-[44px] flex-row gap-x-2"
+                >
+                  {downloadInvoice.isPending ? (
+                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                  ) : (
+                    <>
+                      <Feather name="download" size={15} color={THEME_COLORS.primary} />
+                      <Text className="text-sm font-sans-bold text-primary">{t('customer.downloadInvoice')}</Text>
+                    </>
+                  )}
+                </Pressable>
+                <Pressable
                   onPress={() => setIsReviewInvoiceModalVisible(true)}
                   accessibilityRole="button"
                   className="border border-primary/40 bg-primary/5 py-3.5 rounded-lg items-center active:bg-primary/10 flex-row justify-center gap-x-2 min-h-[44px]"
@@ -614,34 +692,22 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
             </View>
 
             <View className="gap-y-2.5">
-              <View className="flex-row items-center gap-x-2">
-                <Pressable
-                  onPress={handleDownloadInvoice}
-                  disabled={downloadInvoice.isPending || isSharing}
-                  accessibilityRole="button"
-                  accessibilityState={{ disabled: downloadInvoice.isPending }}
-                  className="flex-1 border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 disabled:opacity-50 min-h-[44px]"
-                >
-                  {downloadInvoice.isPending ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
-                  ) : (
+              <Pressable
+                onPress={handleDownloadInvoice}
+                disabled={downloadInvoice.isPending}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: downloadInvoice.isPending }}
+                className="w-full border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 disabled:opacity-50 min-h-[44px] flex-row gap-x-2"
+              >
+                {downloadInvoice.isPending ? (
+                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                ) : (
+                  <>
+                    <Feather name="download" size={15} color={THEME_COLORS.primary} />
                     <Text className="text-sm font-sans-semibold text-primary">{t('customer.downloadInvoice')}</Text>
-                  )}
-                </Pressable>
-                <Pressable
-                  onPress={handleShareInvoice}
-                  disabled={isSharing || downloadInvoice.isPending}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('customer.shareInvoice')}
-                  className="border border-border px-3.5 py-3.5 rounded-lg items-center justify-center bg-white active:bg-muted disabled:opacity-50 min-h-[44px] min-w-[44px]"
-                >
-                  {isSharing ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.slate700} />
-                  ) : (
-                    <Feather name="share-2" size={16} color={THEME_COLORS.slate700} />
-                  )}
-                </Pressable>
-              </View>
+                  </>
+                )}
+              </Pressable>
               {booking.status === BOOKING_STATUSES.Paid && (
                 <Pressable
                   onPress={handleRateProvider}

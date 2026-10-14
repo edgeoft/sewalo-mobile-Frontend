@@ -16,7 +16,7 @@ import ProviderInvoiceEditorCard from '../components/ProviderInvoiceEditorCard';
 import Button from '@/components/ui/Button';
 
 import type { Booking } from '@/types';
-import { useUpdateBooking, useConfirmPayment } from '@/api';
+import { useUpdateBooking, useConfirmPayment, useDownloadInvoice } from '@/api';
 import { BOOKING_STATUSES } from '@/constants/bookings';
 import { getImageUrl } from '@/utils/image';
 
@@ -27,7 +27,7 @@ interface ProviderBookingDetailsScreenProps {
 }
 
 function SectionDivider() {
-  return <View className="h-px bg-gray-100 my-4" />;
+  return <View className="h-px bg-gray-200 my-5" />;
 }
 
 export default function ProviderBookingDetailsScreen({ booking: initialBooking }: ProviderBookingDetailsScreenProps) {
@@ -35,6 +35,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const { t } = useTranslation();
   const updateBooking = useUpdateBooking();
   const confirmPayment = useConfirmPayment();
+  const downloadInvoice = useDownloadInvoice();
 
   const [optimisticStatus, setOptimisticStatus] = useState<Booking['status'] | null>(null);
   const currentStatus = optimisticStatus ?? initialBooking.status;
@@ -52,14 +53,40 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   const serviceDate = formatDate(initialBooking.service_date || '');
   const startTime = formatTime(initialBooking.start_time || '');
   const location = initialBooking.address || 'Kathmandu Metropolitan City';
+  const coordinates = initialBooking.coordinates;
   const additionalNote = initialBooking.additional_note;
   const descriptionText = initialBooking.service?.description;
   const invoiceData = initialBooking.invoice;
+  const allInvoiceItems = invoiceData?.invoice_items || [];
+  const primaryInvoiceItems = allInvoiceItems.filter((item) => item.is_primary_item);
+  const mainInvoiceItems =
+    primaryInvoiceItems.length > 0 ? primaryInvoiceItems : allInvoiceItems.length > 0 ? [allInvoiceItems[0]] : [];
+
+  const matchingOffering = initialBooking.service?.service_offerings?.find(
+    (offering) =>
+      offering?.sub_category?.name &&
+      (initialBooking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()) ||
+        mainInvoiceItems[0]?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase())),
+  );
+  const primaryBillingOpt =
+    matchingOffering?.billing_option || initialBooking.service?.service_offerings?.[0]?.billing_option;
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+
+  const bookedServiceName =
+    mainInvoiceItems[0]?.name ||
+    initialBooking.service?.service_offerings?.[0]?.sub_category?.name ||
+    serviceName ||
+    t('provider.service', 'Service');
+
   const basePriceValue = invoiceData ? Number(invoiceData.sub_total) || 0 : 0;
-  const billingOption = initialBooking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = billingOption?.label;
   const totalPrice = invoiceData ? Number(invoiceData.total) || 0 : 0;
   const cancelReason = initialBooking.cancellation_reason;
+
+  const hasInvoiceSection =
+    currentStatus === BOOKING_STATUSES.Completed ||
+    currentStatus === BOOKING_STATUSES.ReadyToPay ||
+    currentStatus === BOOKING_STATUSES.PaymentInitiated ||
+    currentStatus === BOOKING_STATUSES.Paid;
 
   const showDetailsCards =
     currentStatus === BOOKING_STATUSES.Pending ||
@@ -168,6 +195,19 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
     });
   };
 
+  const handleDownloadInvoice = () => {
+    const id = invoiceData?.id || initialBooking.invoice?.id;
+    if (!id) return;
+    downloadInvoice.mutate(id, {
+      onSuccess: () => {
+        showSnackbar({ message: t('provider.invoiceDownloaded', 'Invoice downloaded successfully.'), type: 'success' });
+      },
+      onError: (error) => {
+        showSnackbar({ message: error.message || t('errors.generic'), type: 'error' });
+      },
+    });
+  };
+
   return (
     <View className="flex-1 bg-secondary">
       <Header variant="menu" showBackButton={true} showNotifications={false} />
@@ -190,7 +230,14 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
         <RadialStepper status={currentStatus} role="provider" />
 
         <View style={styles.cardShadow} className="bg-white rounded-lg border border-gray-100 p-5 mb-6">
-          {/* Customer Section */}
+          {/* Customer Details Section */}
+          <View className="flex-row items-center mb-3">
+            <Feather name="user" size={15} color={THEME_COLORS.primary} />
+            <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+              {t('provider.customerInfo', 'Customer Details')}
+            </Text>
+          </View>
+
           <View className="flex-row items-center">
             {customerAvatar ? (
               <Image
@@ -207,12 +254,15 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             )}
             <View className="ml-3 flex-1">
               <Text className="text-sm font-sans-bold text-gray-900">{customerName}</Text>
+              <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
+                {t('provider.customer', 'Customer')}
+              </Text>
             </View>
           </View>
 
           {showDetailsCards && (
             <>
-              <View className="mt-4 gap-y-2.5">
+              <View className="mt-2.5 gap-y-2">
                 <Pressable
                   onPress={() => phoneNumber && Linking.openURL(`tel:${phoneNumber}`)}
                   accessibilityRole="button"
@@ -234,17 +284,43 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   <Feather name="mail" size={13} color="#94a3b8" />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{email || '-'}</Text>
                 </View>
+                <Pressable
+                  onPress={() => {
+                    const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
+                    if (coordinates) {
+                      Linking.openURL(
+                        `${scheme}${coordinates.lat},${coordinates.lng}?q=${encodeURIComponent(location)}`,
+                      );
+                    } else {
+                      Linking.openURL(`${scheme}0,0?q=${encodeURIComponent(location)}`);
+                    }
+                  }}
+                  accessibilityRole="button"
+                  className="flex-row items-center active:opacity-70"
+                >
+                  <Feather name="map-pin" size={13} color="#94a3b8" accessible={false} />
+                  <Text className="text-xs font-sans-medium text-gray-500 ml-2 flex-1" numberOfLines={1}>
+                    {location}
+                  </Text>
+                  <Feather
+                    name="external-link"
+                    size={10}
+                    color="#94a3b8"
+                    style={{ marginLeft: 4 }}
+                    accessible={false}
+                  />
+                </Pressable>
               </View>
 
               <SectionDivider />
 
               {/* Booking Details Section */}
               <View>
-                <View className="flex-row items-center mb-3">
+                <View className="flex-row items-center mb-2.5">
                   <Feather name="calendar" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.bookingDetails')}</Text>
                 </View>
-                <View className="gap-y-2.5">
+                <View className="gap-y-2">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-xs font-sans-medium text-gray-500">{t('provider.date')}</Text>
                     <Text className="text-xs font-sans-semibold text-gray-800">{serviceDate}</Text>
@@ -261,11 +337,11 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   </View>
                 </View>
                 {additionalNote ? (
-                  <View className="mt-3 pt-3 border-t border-gray-100">
-                    <Text className="text-xs font-sans-medium text-gray-500 mb-1">
+                  <View className="mt-2.5 pt-2 border-t border-gray-100">
+                    <Text className="text-xs font-sans-medium text-gray-500 mb-0.5">
                       {t('customer.specialInstructions')}
                     </Text>
-                    <Text className="text-xs font-sans-medium text-gray-700 leading-5">{additionalNote}</Text>
+                    <Text className="text-xs font-sans-medium text-gray-700 leading-snug">{additionalNote}</Text>
                   </View>
                 ) : null}
               </View>
@@ -274,14 +350,16 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
               {/* Service Details Section */}
               <View>
-                <View className="flex-row items-center mb-3">
+                <View className="flex-row items-center mb-2.5">
                   <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
                   <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('customer.serviceDetails')}</Text>
                 </View>
-                <View className="gap-y-2.5">
+                <View className="gap-y-2">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-xs font-sans-medium text-gray-500">{t('provider.service')}</Text>
-                    <Text className="text-xs font-sans-semibold text-gray-800">{serviceName || categoryName}</Text>
+                    <Text className="text-xs font-sans-semibold text-gray-800">
+                      {bookedServiceName || serviceName || categoryName}
+                    </Text>
                   </View>
                   {categoryName ? (
                     <View className="flex-row justify-between items-center">
@@ -289,37 +367,78 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                       <Text className="text-xs font-sans-semibold text-gray-800">{categoryName}</Text>
                     </View>
                   ) : null}
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-xs font-sans-medium text-gray-500">{t('customer.location')}</Text>
+                    <Text className="text-xs font-sans-semibold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>
+                      {location}
+                    </Text>
+                  </View>
                   {descriptionText ? (
                     <View className="mt-1">
-                      <Text className="text-xs font-sans-medium text-gray-500 mb-1">{t('provider.description')}</Text>
-                      <Text className="text-xs font-sans-medium text-gray-700 leading-5">{descriptionText}</Text>
+                      <Text className="text-xs font-sans-medium text-gray-500 mb-0.5">{t('provider.description')}</Text>
+                      <Text className="text-xs font-sans-medium text-gray-700 leading-snug">{descriptionText}</Text>
                     </View>
                   ) : null}
                 </View>
               </View>
 
-              <SectionDivider />
+              {!hasInvoiceSection && (
+                <>
+                  <SectionDivider />
 
-              {/* Price Details Section */}
-              <View>
-                <View className="flex-row items-center mb-3">
-                  <Feather name="tag" size={15} color={THEME_COLORS.primary} />
-                  <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('provider.priceDetails')}</Text>
-                </View>
-                <View className="gap-y-2.5">
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-xs font-sans-medium text-gray-500">{serviceName || 'Service'} Price</Text>
-                    <Text className="text-xs font-sans-semibold text-gray-800">
-                      Rs. {basePriceValue.toLocaleString()}
-                      {billingLabel ? ` ${billingLabel}` : ''}
-                    </Text>
+                  {/* Price Details Section (Only shown before invoice exists) */}
+                  <View>
+                    <View className="flex-row items-center mb-2.5">
+                      <Feather name="tag" size={15} color={THEME_COLORS.primary} />
+                      <Text className="text-sm font-sans-bold text-gray-900 ml-2">{t('provider.priceDetails')}</Text>
+                    </View>
+                    <View className="gap-y-2">
+                      {mainInvoiceItems.length > 0 ? (
+                        mainInvoiceItems.map((item, idx) => {
+                          const itemAmount =
+                            Number(item.total_amount) ||
+                            Number(item.unit_price) * (item.quantity || 1) ||
+                            basePriceValue;
+                          return (
+                            <View key={item.id || idx} className="flex-row justify-between items-start">
+                              <View className="flex-1 mr-3">
+                                <Text className="text-xs font-sans-medium text-gray-700">{item.name}</Text>
+                                {billingLabel ? (
+                                  <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">
+                                    {billingLabel}
+                                    {item.quantity && item.quantity > 1 ? ` • Qty: ${item.quantity}` : ''}
+                                  </Text>
+                                ) : null}
+                              </View>
+                              <Text className="text-xs font-sans-bold text-gray-800">
+                                Rs. {itemAmount.toLocaleString()}
+                              </Text>
+                            </View>
+                          );
+                        })
+                      ) : (
+                        <View className="flex-row justify-between items-start">
+                          <View className="flex-1 mr-3">
+                            <Text className="text-xs font-sans-medium text-gray-700">{bookedServiceName}</Text>
+                            {billingLabel ? (
+                              <Text className="text-[11px] font-sans-medium text-gray-400 mt-0.5">{billingLabel}</Text>
+                            ) : null}
+                          </View>
+                          <Text className="text-xs font-sans-bold text-gray-800">
+                            Rs. {basePriceValue.toLocaleString()}
+                          </Text>
+                        </View>
+                      )}
+                      <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
+                        <Text className="text-sm font-sans-bold text-gray-900">{t('provider.total')}</Text>
+                        <Text className="text-sm font-sans-extrabold text-primary">
+                          Rs. {totalPrice.toLocaleString()}
+                        </Text>
+                      </View>
+                    </View>
                   </View>
-                  <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
-                    <Text className="text-sm font-sans-bold text-gray-900">{t('provider.total')}</Text>
-                    <Text className="text-sm font-sans-extrabold text-primary">Rs. {totalPrice.toLocaleString()}</Text>
-                  </View>
-                </View>
-              </View>
+                </>
+              )}
             </>
           )}
 
@@ -347,17 +466,13 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
 
         {/* Customer Rejection / Conflict Alert Banner */}
         {currentStatus === BOOKING_STATUSES.Completed && Boolean(cancelReason) && (
-          <View className="mb-5 p-3.5 rounded-xl border border-red-200 bg-red-50/80 flex-row items-start gap-x-2.5">
+          <View className="mb-5 p-3.5 rounded-lg border border-red-200 bg-red-50/80 flex-row items-start gap-x-2.5">
             <Feather name="alert-triangle" size={15} color={THEME_COLORS.dangerRed} style={{ marginTop: 2 }} />
-            <View className="flex-1 gap-y-1.5">
+            <View className="flex-1 gap-y-1">
               <Text className="text-xs font-sans-semibold text-red-950">
                 {t('provider.invoiceRejectedTitle', 'Customer Requested Changes to Invoice')}
               </Text>
-              <View className="rounded-lg border border-red-200/70 bg-white/80 p-2">
-                <Text className="text-xs font-sans-medium text-red-950 leading-tight">
-                  &ldquo;{cancelReason}&rdquo;
-                </Text>
-              </View>
+              <Text className="text-xs font-sans-medium text-red-950 leading-tight">&ldquo;{cancelReason}&rdquo;</Text>
               <Text className="text-xs font-sans-regular text-red-900/80 leading-snug">
                 {t(
                   'provider.invoiceRejectedAction',
@@ -380,6 +495,8 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             isEditing={currentStatus === BOOKING_STATUSES.Completed ? isEditingInvoice : false}
             onToggleEdit={currentStatus === BOOKING_STATUSES.Completed ? setIsEditingInvoice : () => {}}
             onTotalCalculated={setInvoiceTotal}
+            onDownloadInvoice={invoiceData?.id ? handleDownloadInvoice : undefined}
+            isDownloadingInvoice={downloadInvoice.isPending}
           />
         )}
       </ContentLayout>
@@ -401,11 +518,19 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             <Button
               title={t('provider.reject')}
               variant="outline"
+              size="sm"
               onPress={handleReject}
-              className="flex-1 border-gray-300"
-              textClassName="text-gray-600 font-sans-semibold"
+              className="flex-1 min-h-[42px] h-10 border-red-200 bg-red-50/70 active:bg-red-100"
+              textClassName="text-red-600 font-sans-bold text-xs"
             />
-            <Button title={t('provider.accept')} variant="primary" onPress={handleAccept} className="flex-1" />
+            <Button
+              title={t('provider.accept')}
+              variant="primary"
+              size="sm"
+              onPress={handleAccept}
+              className="flex-1 min-h-[42px] h-10"
+              textClassName="text-primary-foreground font-sans-bold text-xs"
+            />
           </View>
         )}
         {currentStatus === BOOKING_STATUSES.Confirmed && (

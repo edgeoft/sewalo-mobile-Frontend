@@ -106,18 +106,18 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
               onPress={() => onDecline?.(order.id)}
               accessibilityRole="button"
               hitSlop={8}
-              className="min-h-[44px] justify-center items-center rounded-md border border-destructive/30 bg-surface-danger-subtle px-3.5 py-2 active:opacity-75"
+              className="h-8 justify-center items-center rounded-lg border border-destructive/30 bg-surface-danger-subtle px-3 active:opacity-75"
             >
-              <Text className="text-xs font-sans-bold text-destructive">{t('home.decline')}</Text>
+              <Text className="text-xs font-sans-semibold text-destructive">{t('home.decline')}</Text>
             </Pressable>
 
             <Pressable
               onPress={() => onAccept?.(order.id)}
               accessibilityRole="button"
               hitSlop={8}
-              className="min-h-[44px] justify-center items-center rounded-md bg-primary px-4 py-2 active:opacity-90"
+              className="h-8 justify-center items-center rounded-lg bg-primary px-3.5 active:opacity-90"
             >
-              <Text className="text-xs font-sans-bold text-primary-foreground">{t('home.accept')}</Text>
+              <Text className="text-xs font-sans-semibold text-primary-foreground">{t('home.accept')}</Text>
             </Pressable>
           </View>
         ) : null}

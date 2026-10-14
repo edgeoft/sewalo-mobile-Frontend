@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
@@ -15,6 +15,8 @@ interface ProviderInvoiceEditorCardProps {
   canEdit?: boolean;
   onToggleEdit: (editing: boolean) => void;
   onTotalCalculated: (total: number) => void;
+  onDownloadInvoice?: () => void;
+  isDownloadingInvoice?: boolean;
 }
 
 interface FormInvoiceItem {
@@ -32,6 +34,8 @@ export default function ProviderInvoiceEditorCard({
   canEdit = booking.status === BOOKING_STATUSES.Completed,
   onToggleEdit,
   onTotalCalculated,
+  onDownloadInvoice,
+  isDownloadingInvoice = false,
 }: ProviderInvoiceEditorCardProps) {
   const { t } = useTranslation();
   const { showSnackbar } = useSnackbar();
@@ -42,6 +46,14 @@ export default function ProviderInvoiceEditorCard({
   const serviceDate = formatDate(booking.service_date || '');
   const originalServiceTitle = booking.service?.name || t('provider.service');
   const initialBasePrice = invoice ? Number(invoice.sub_total) || 0 : 0;
+
+  const matchingOffering = booking.service?.service_offerings?.find(
+    (offering) =>
+      offering?.sub_category?.name &&
+      booking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
+  );
+  const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
+  const billingOptionTooltip = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
 
   const originalItems: InvoiceItem[] = useMemo(() => {
     if (invoice?.invoice_items && invoice.invoice_items.length > 0) {
@@ -70,6 +82,14 @@ export default function ProviderInvoiceEditorCard({
     })),
   );
   const [notes, setNotes] = useState<string>(() => invoice?.additional_note || '');
+
+  const primaryItems = useMemo(() => items.filter((item) => item.is_primary_item), [items]);
+  const mainItems = useMemo(
+    () => (primaryItems.length > 0 ? primaryItems : items.length > 0 ? [items[0]] : []),
+    [primaryItems, items],
+  );
+  const mainIdSet = useMemo(() => new Set(mainItems.map((item) => item.id)), [mainItems]);
+  const additionalItems = useMemo(() => items.filter((item) => !mainIdSet.has(item.id)), [items, mainIdSet]);
 
   // Compute live subtotal and total
   const subtotal = useMemo(() => {
@@ -237,15 +257,20 @@ export default function ProviderInvoiceEditorCard({
       {/* Header */}
       <View className="flex-row items-center justify-between pb-3 border-b border-gray-100">
         <View className="flex-1 mr-2">
-          <View className="flex-row items-center gap-x-2">
+          <View className="flex-row items-center gap-x-2 flex-wrap">
             <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-bold text-gray-900">
               {isEditing ? t('provider.editInvoiceDetails') : t('provider.invoiceItemizedCharges')}
             </Text>
+            {invoiceId ? (
+              <View className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-200">
+                <Text className="text-[11px] font-sans-bold text-gray-600 font-mono">
+                  #{invoiceId.replace(/^#/, '')}
+                </Text>
+              </View>
+            ) : null}
           </View>
-          <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
-            {t('provider.invoiceNumber')} {invoiceId} {serviceDate ? `• ${serviceDate}` : ''}
-          </Text>
+          {serviceDate ? <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">{serviceDate}</Text> : null}
         </View>
 
         {canEdit &&
@@ -275,192 +300,286 @@ export default function ProviderInvoiceEditorCard({
 
       {/* Item List / Edit Fields */}
       {!isEditing ? (
-        /* VIEW MODE: Clean, comfortable item rows */
-        <View className="mt-3 gap-y-2.5">
-          {items.map((item, idx) => {
-            const price = parseFloat(item.unit_price) || 0;
-            const qty = parseInt(item.quantity, 10) || 1;
-            const matchingOffering = booking.service?.service_offerings?.find(
-              (offering) =>
-                offering?.sub_category?.name &&
-                item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
-            );
-            const rawBillingLabel =
-              matchingOffering?.billing_option?.label ||
-              (item.is_primary_item ? booking.service?.service_offerings?.[0]?.billing_option?.label : null);
-            const isFixedPrice =
-              !rawBillingLabel ||
-              rawBillingLabel.toLowerCase().includes('fixed') ||
-              matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
-            const billingLabel = isFixedPrice ? null : rawBillingLabel;
+        /* VIEW MODE: Flat layout matching app sections */
+        <View className="mt-4">
+          {/* Section 1: Service Charges */}
+          <View>
+            <View className="flex-row items-center mb-3">
+              <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+                {t('provider.invoiceServiceCharges', 'Service Charges')}
+              </Text>
+            </View>
 
-            return (
-              <View key={item.id || idx} className="flex-row items-center justify-between py-1">
-                <View className="flex-1 mr-3">
-                  <View className="flex-row items-center flex-wrap gap-1.5">
-                    <Text className="text-xs font-sans-medium text-gray-700 leading-tight">
-                      {item.name || originalServiceTitle}
-                    </Text>
-                    {item.is_primary_item && (
-                      <View className="bg-blue-50 border border-blue-100 rounded px-1.5 py-0.2">
-                        <Text className="text-[10px] font-sans-semibold text-primary">
-                          {t('provider.primaryService')}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text className="text-[10px] font-sans-medium text-gray-400 mt-0.5">
-                    {qty} × Rs. {price.toLocaleString()}
-                    {billingLabel ? ` ${billingLabel}` : ''}
-                  </Text>
-                </View>
-                <Text className="text-xs font-sans-semibold text-gray-900">Rs. {(qty * price).toLocaleString()}</Text>
-              </View>
-            );
-          })}
-        </View>
-      ) : (
-        /* EDIT MODE: Mobile-native item cards with touch-friendly inputs */
-        <View className="mt-3.5 gap-y-3">
-          {items.map((item, index) => {
-            const isPrimary = item.is_primary_item;
-            const matchingOffering = booking.service?.service_offerings?.find(
-              (offering) =>
-                offering?.sub_category?.name &&
-                item?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
-            );
-            const rawBillingLabel =
-              matchingOffering?.billing_option?.label ||
-              (isPrimary ? booking.service?.service_offerings?.[0]?.billing_option?.label : null);
-            const isFixedPrice =
-              !rawBillingLabel ||
-              rawBillingLabel.toLowerCase().includes('fixed') ||
-              matchingOffering?.billing_option?.name?.toLowerCase().includes('fixed');
-            const billingLabel = isFixedPrice ? null : rawBillingLabel;
+            {mainItems.map((item) => {
+              const price = parseFloat(item.unit_price) || 0;
+              const qty = parseInt(item.quantity, 10) || 1;
 
-            return (
-              <View
-                key={item.id || index}
-                className={`rounded-lg border p-3 ${
-                  isPrimary ? 'bg-gray-50/70 border-gray-200/80' : 'bg-white border-gray-200'
-                }`}
-              >
-                <View className="flex-row items-center justify-between mb-2">
-                  <View className="flex-row items-center gap-1.5">
-                    <Text className="text-xs font-sans-bold text-gray-800">
-                      {isPrimary ? t('provider.primaryService') : `${t('provider.additionalItem')} #${index}`}
-                    </Text>
-                    {isPrimary && (
-                      <View className="bg-blue-50 border border-blue-100 rounded px-1.5 py-0.2">
-                        <Text className="text-[9px] font-sans-bold text-primary">{t('provider.service')}</Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {!isPrimary && (
-                    <Pressable
-                      onPress={() => handleRemoveItem(index)}
-                      accessibilityRole="button"
-                      accessibilityLabel={t('provider.removeItem')}
-                      hitSlop={10}
-                      className="p-1 rounded active:bg-red-50"
-                    >
-                      <Feather name="trash-2" size={14} color={THEME_COLORS.dangerRed} />
-                    </Pressable>
-                  )}
-                </View>
-
-                {/* Description Input */}
-                <View className="mb-2.5">
-                  <Text className="text-xs font-sans-medium text-gray-600 mb-1">{t('provider.invoiceName')}</Text>
-                  {isPrimary ? (
-                    <View className="h-10 px-3 justify-center bg-gray-100/70 rounded-lg border border-gray-200">
-                      <Text className="text-xs font-sans-medium text-gray-700" numberOfLines={1}>
+              return (
+                <View key={item.id} className="py-1">
+                  <View className="flex-row items-start justify-between">
+                    <View className="flex-1 mr-3">
+                      <Text className="text-sm font-sans-bold text-gray-900 leading-snug">
                         {item.name || originalServiceTitle}
                       </Text>
-                    </View>
-                  ) : (
-                    <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
-                      <TextInput
-                        value={item.name}
-                        onChangeText={(text) => handleItemNameChange(text, index)}
-                        placeholder={t('provider.invoiceNamePlaceholder')}
-                        placeholderTextColor="#94a3b8"
-                        className="flex-1 text-xs font-sans-medium text-gray-900 p-0"
-                      />
-                    </View>
-                  )}
-                </View>
-
-                {/* Quantity and Price Inputs Side-by-Side */}
-                <View className="flex-row gap-3">
-                  {/* Quantity Input */}
-                  <View className="w-28">
-                    <Text className="text-xs font-sans-medium text-gray-600 mb-1">
-                      {t('provider.quantity', 'Quantity')}
-                    </Text>
-                    <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
-                      <TextInput
-                        value={item.quantity}
-                        onChangeText={(text) => handleItemQuantityChange(text, index)}
-                        placeholder="1"
-                        placeholderTextColor="#94a3b8"
-                        keyboardType="numeric"
-                        className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
-                      />
-                    </View>
-                  </View>
-
-                  {/* Price Input */}
-                  <View className="flex-1">
-                    <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-xs font-sans-medium text-gray-600">{t('provider.invoicePrice')}</Text>
-                      {billingLabel ? (
-                        <Text className="text-[10px] font-sans-medium text-gray-400">{billingLabel}</Text>
+                      {billingOptionTooltip ? (
+                        <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{billingOptionTooltip}</Text>
                       ) : null}
+                      <Text className="text-xs font-sans-medium text-gray-400 mt-1">
+                        {t('provider.invoiceDurationUnits', 'Duration / Units')}: {qty} × Rs. {price.toLocaleString()}
+                      </Text>
                     </View>
-                    <View className="h-10 px-3 flex-row items-center bg-white rounded-lg border border-gray-200">
-                      <Text className="text-xs font-sans-semibold text-gray-500 mr-2">Rs.</Text>
-                      <TextInput
-                        value={item.unit_price}
-                        onChangeText={(text) => handleItemPriceChange(text, index)}
-                        placeholder="0"
-                        placeholderTextColor="#94a3b8"
-                        keyboardType="numeric"
-                        className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
-                      />
-                    </View>
+                    <Text className="text-sm font-sans-bold text-gray-900">Rs. {(qty * price).toLocaleString()}</Text>
                   </View>
                 </View>
+              );
+            })}
+          </View>
 
-                {/* Live Line Item Total */}
-                <View className="mt-2 pt-2 border-t border-gray-100 flex-row justify-between items-center">
-                  <Text className="text-[10px] font-sans-medium text-gray-400">
-                    {t('provider.itemTotal', 'Item Total')}
-                  </Text>
-                  <Text className="text-xs font-sans-bold text-gray-800">
-                    Rs. {((parseInt(item.quantity, 10) || 0) * (parseFloat(item.unit_price) || 0)).toLocaleString()}
-                  </Text>
-                </View>
+          {/* Section Divider */}
+          <View className="h-px bg-gray-200 my-5" />
+
+          {/* Section 2: Additional Charges */}
+          <View>
+            <View className="flex-row items-center mb-3">
+              <Feather name="plus-circle" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+                {t('provider.invoiceAdditionalCharges', 'Additional Charges')}
+              </Text>
+            </View>
+
+            {additionalItems.length === 0 ? (
+              <Text className="text-xs font-sans-medium text-gray-400 py-1 italic">
+                {t('provider.invoiceNoAdditionalCharges', 'No additional charges added.')}
+              </Text>
+            ) : (
+              <View className="gap-y-2">
+                {additionalItems.map((item) => {
+                  const price = parseFloat(item.unit_price) || 0;
+                  const qty = parseInt(item.quantity, 10) || 1;
+
+                  return (
+                    <View key={item.id} className="flex-row items-center justify-between py-1">
+                      <View className="flex-1 mr-3">
+                        <Text className="text-sm font-sans-medium text-gray-800 leading-tight">{item.name}</Text>
+                        <Text className="text-xs font-sans-medium text-gray-400 mt-0.5">
+                          {t('provider.invoiceQty', 'Qty')}: {qty} × Rs. {price.toLocaleString()}
+                        </Text>
+                      </View>
+                      <Text className="text-sm font-sans-semibold text-gray-900">
+                        Rs. {(qty * price).toLocaleString()}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
-            );
-          })}
+            )}
+          </View>
+        </View>
+      ) : (
+        /* EDIT MODE: Flat rows without nested cards */
+        <View className="mt-4 gap-y-4">
+          {/* Section 1: Service Charges */}
+          <View className="space-y-3">
+            <View className="flex-row items-center mb-1">
+              <Feather name="briefcase" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+                {t('provider.invoiceServiceCharges', 'Service Charges')}
+              </Text>
+            </View>
 
-          {/* Add Item Button */}
-          <Pressable
-            onPress={handleAddItem}
-            accessibilityRole="button"
-            accessibilityLabel={t('provider.invoiceAddItem')}
-            className="flex-row items-center justify-center py-2.5 px-4 rounded-lg border border-dashed border-primary/40 bg-surface-indigo-subtle/50 active:bg-surface-indigo-subtle gap-x-2"
-          >
-            <Feather name="plus-circle" size={15} color={THEME_COLORS.primary} />
-            <Text className="text-xs font-sans-bold text-primary">{t('provider.invoiceAddItem')}</Text>
-          </Pressable>
+            {mainItems.map((item) => {
+              const originalIndex = items.findIndex((it) => it.id === item.id);
+
+              return (
+                <View key={item.id} className="space-y-3">
+                  {/* Service Title and Billing Basis Subtext */}
+                  <View>
+                    <Text className="text-sm font-sans-bold text-gray-900">{item.name || originalServiceTitle}</Text>
+                    {billingOptionTooltip ? (
+                      <Text className="text-xs font-sans-medium text-gray-500 mt-0.5">{billingOptionTooltip}</Text>
+                    ) : null}
+                  </View>
+
+                  {/* Duration / Units and Price Inputs Side-by-Side */}
+                  <View className="flex-row gap-3">
+                    {/* Duration / Units Input */}
+                    <View className="flex-1">
+                      <Text className="text-xs font-sans-medium text-gray-600 mb-1">
+                        {t('provider.invoiceDurationUnits', 'Duration / Units')}
+                      </Text>
+                      <View className="h-10 px-3 flex-row items-center bg-gray-50 rounded-lg border border-gray-200">
+                        <TextInput
+                          value={item.quantity}
+                          onChangeText={(text) => handleItemQuantityChange(text, originalIndex)}
+                          placeholder="1"
+                          placeholderTextColor="#94a3b8"
+                          keyboardType="numeric"
+                          className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Price Input */}
+                    <View className="flex-1">
+                      <Text className="text-xs font-sans-medium text-gray-600 mb-1">{t('provider.invoicePrice')}</Text>
+                      <View className="h-10 px-3 flex-row items-center bg-gray-50 rounded-lg border border-gray-200">
+                        <Text className="text-xs font-sans-semibold text-gray-500 mr-2">Rs.</Text>
+                        <TextInput
+                          value={item.unit_price}
+                          onChangeText={(text) => handleItemPriceChange(text, originalIndex)}
+                          placeholder="0"
+                          placeholderTextColor="#94a3b8"
+                          keyboardType="numeric"
+                          className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
+                        />
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Line Total */}
+                  <View className="pt-2 flex-row justify-between items-center">
+                    <Text className="text-[10px] font-sans-medium text-gray-400">
+                      {t('provider.itemTotal', 'Item Total')}
+                    </Text>
+                    <Text className="text-xs font-sans-bold text-gray-800">
+                      Rs. {((parseInt(item.quantity, 10) || 0) * (parseFloat(item.unit_price) || 0)).toLocaleString()}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+
+          {/* Section Divider */}
+          <View className="h-px bg-gray-200 my-4" />
+
+          {/* Section 2: Additional Charges */}
+          <View className="space-y-3">
+            <View className="flex-row items-center mb-1">
+              <Feather name="plus-circle" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+                {t('provider.invoiceAdditionalCharges', 'Additional Charges')}
+              </Text>
+            </View>
+
+            {additionalItems.length === 0 ? (
+              <View className="py-2.5 items-center justify-center">
+                <Text className="text-xs font-sans-medium text-gray-400 text-center italic">
+                  {t('provider.invoiceNoAdditionalCharges', 'No additional charges added.')}
+                </Text>
+              </View>
+            ) : (
+              additionalItems.map((item) => {
+                const originalIndex = items.findIndex((it) => it.id === item.id);
+
+                return (
+                  <View key={item.id} className="py-2.5 border-b border-gray-100 space-y-2.5">
+                    <View className="flex-row items-center justify-between">
+                      <Text className="text-xs font-sans-bold text-gray-800">
+                        {item.name || t('provider.invoiceNamePlaceholder')}
+                      </Text>
+                      <Pressable
+                        onPress={() => handleRemoveItem(originalIndex)}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('provider.removeItem')}
+                        hitSlop={10}
+                        className="p-1 rounded active:bg-red-50"
+                      >
+                        <Feather name="trash-2" size={14} color={THEME_COLORS.dangerRed} />
+                      </Pressable>
+                    </View>
+
+                    {/* Description Input for Additional Item */}
+                    <View>
+                      <Text className="text-xs font-sans-medium text-gray-600 mb-1">{t('provider.invoiceName')}</Text>
+                      <View className="h-10 px-3 flex-row items-center bg-gray-50 rounded-lg border border-gray-200">
+                        <TextInput
+                          value={item.name}
+                          onChangeText={(text) => handleItemNameChange(text, originalIndex)}
+                          placeholder={t('provider.invoiceNamePlaceholder')}
+                          placeholderTextColor="#94a3b8"
+                          className="flex-1 text-xs font-sans-medium text-gray-900 p-0"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Quantity and Price Inputs Side-by-Side */}
+                    <View className="flex-row gap-3">
+                      <View className="w-24">
+                        <Text className="text-xs font-sans-medium text-gray-600 mb-1">
+                          {t('provider.invoiceQty', 'Qty')}
+                        </Text>
+                        <View className="h-10 px-3 flex-row items-center bg-gray-50 rounded-lg border border-gray-200">
+                          <TextInput
+                            value={item.quantity}
+                            onChangeText={(text) => handleItemQuantityChange(text, originalIndex)}
+                            placeholder="1"
+                            placeholderTextColor="#94a3b8"
+                            keyboardType="numeric"
+                            className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
+                          />
+                        </View>
+                      </View>
+
+                      <View className="flex-1">
+                        <Text className="text-xs font-sans-medium text-gray-600 mb-1">
+                          {t('provider.invoicePrice')}
+                        </Text>
+                        <View className="h-10 px-3 flex-row items-center bg-gray-50 rounded-lg border border-gray-200">
+                          <Text className="text-xs font-sans-semibold text-gray-500 mr-2">Rs.</Text>
+                          <TextInput
+                            value={item.unit_price}
+                            onChangeText={(text) => handleItemPriceChange(text, originalIndex)}
+                            placeholder="0"
+                            placeholderTextColor="#94a3b8"
+                            keyboardType="numeric"
+                            className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
+                          />
+                        </View>
+                      </View>
+                    </View>
+
+                    {/* Line Total */}
+                    <View className="pt-1.5 flex-row justify-between items-center">
+                      <Text className="text-[10px] font-sans-medium text-gray-400">
+                        {t('provider.itemTotal', 'Item Total')}
+                      </Text>
+                      <Text className="text-xs font-sans-bold text-gray-800">
+                        Rs. {((parseInt(item.quantity, 10) || 0) * (parseFloat(item.unit_price) || 0)).toLocaleString()}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })
+            )}
+
+            {/* Add Additional Charge Button */}
+            <Pressable
+              onPress={handleAddItem}
+              accessibilityRole="button"
+              accessibilityLabel={t('provider.invoiceAddAdditionalCharge', 'Add Additional Charge')}
+              className="flex-row items-center justify-center py-2.5 px-4 rounded-lg border border-dashed border-primary/40 bg-surface-indigo-subtle/50 active:bg-surface-indigo-subtle gap-x-2 mt-1"
+            >
+              <Feather name="plus-circle" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-xs font-sans-bold text-primary">
+                {t('provider.invoiceAddAdditionalCharge', 'Add Additional Charge')}
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Section Divider */}
+          <View className="h-px bg-gray-200 my-4" />
 
           {/* Notes Input in Edit Mode */}
-          <View className="mt-1">
-            <Text className="text-xs font-sans-medium text-gray-600 mb-1">{t('provider.invoiceNotes')}</Text>
-            <View className="p-3 bg-white rounded-lg border border-gray-200">
+          <View>
+            <View className="flex-row items-center mb-2">
+              <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
+              <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+                {t('provider.invoiceNotes', 'Notes for Customer')}
+              </Text>
+            </View>
+            <View className="p-2.5 bg-gray-50 rounded-lg border border-gray-200">
               <TextInput
                 value={notes}
                 onChangeText={setNotes}
@@ -478,24 +597,52 @@ export default function ProviderInvoiceEditorCard({
 
       {/* Notes Display in View Mode (if any) */}
       {!isEditing && notes ? (
-        <View className="mt-3 pt-3 border-t border-gray-100">
-          <Text className="text-xs font-sans-medium text-gray-500 mb-1">{t('provider.invoiceNotes')}</Text>
-          <Text className="text-xs font-sans-medium text-gray-700 leading-5">{notes}</Text>
+        <View className="mt-4 pt-4 border-t border-gray-100">
+          <View className="flex-row items-center mb-1.5">
+            <Feather name="file-text" size={15} color={THEME_COLORS.primary} />
+            <Text className="text-sm font-sans-bold text-gray-900 ml-2">
+              {t('provider.invoiceNotes', 'Notes for Customer')}
+            </Text>
+          </View>
+          <Text className="text-xs font-sans-medium text-gray-600 leading-5">{notes}</Text>
         </View>
       ) : null}
 
       {/* Summary Breakdown */}
-      <View className="mt-4 pt-3 border-t border-gray-100 gap-y-2">
+      <View className="mt-4 pt-4 border-t border-gray-100 gap-y-2">
         <View className="flex-row justify-between items-center">
           <Text className="text-xs font-sans-medium text-gray-500">{t('provider.invoiceSubtotal')}</Text>
           <Text className="text-xs font-sans-semibold text-gray-800">Rs. {subtotal.toLocaleString()}</Text>
         </View>
 
-        <View className="pt-2 border-t border-gray-100 flex-row justify-between items-center">
+        <View className="flex-row justify-between items-center pt-1">
           <Text className="text-sm font-sans-bold text-gray-900">{t('provider.invoiceTotal')}</Text>
           <Text className="text-base font-sans-extrabold text-primary">Rs. {total.toLocaleString()}</Text>
         </View>
       </View>
+
+      {/* Download Invoice Button (View Mode) */}
+      {!isEditing && onDownloadInvoice ? (
+        <View className="mt-4 pt-3 border-t border-gray-100">
+          <Pressable
+            onPress={onDownloadInvoice}
+            disabled={isDownloadingInvoice}
+            accessibilityRole="button"
+            className="w-full flex-row items-center justify-center py-3 px-4 rounded-lg border border-primary bg-white active:bg-primary/5 min-h-[44px] gap-x-2 disabled:opacity-50"
+          >
+            {isDownloadingInvoice ? (
+              <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+            ) : (
+              <>
+                <Feather name="download" size={15} color={THEME_COLORS.primary} />
+                <Text className="text-xs font-sans-bold text-primary">
+                  {t('provider.downloadInvoice', 'Download Invoice')}
+                </Text>
+              </>
+            )}
+          </Pressable>
+        </View>
+      ) : null}
 
       {/* Edit Mode Footer Action Buttons */}
       {isEditing && (

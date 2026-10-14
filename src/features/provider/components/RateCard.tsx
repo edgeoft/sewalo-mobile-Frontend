@@ -17,7 +17,6 @@ import SelectionOption from '@/components/ui/SelectionOption';
 import { THEME_COLORS } from '@/constants/colors';
 import type { BillingOption } from '@/types';
 
-export type BillingBasisType = 'per_hour' | 'per_day' | 'per_job' | 'per_project' | 'per_session';
 export type DurationUnitType = 'minutes' | 'hours' | 'days' | 'weeks';
 
 interface RateCardProps {
@@ -26,8 +25,8 @@ interface RateCardProps {
   onPriceChange: (val: string) => void;
   priceError?: string;
 
-  billingBasisValue: BillingBasisType;
-  onBillingBasisChange: (val: BillingBasisType) => void;
+  billingBasisValue?: string;
+  onBillingBasisChange?: (val: string) => void;
   billingBasisError?: string;
 
   billingOptions?: BillingOption[];
@@ -41,14 +40,6 @@ interface RateCardProps {
   durationUnitValue: DurationUnitType;
   onDurationUnitChange: (val: DurationUnitType) => void;
 }
-
-const BILLING_BASIS_OPTIONS: { value: BillingBasisType; labelKey: string }[] = [
-  { value: 'per_hour', labelKey: 'services.billingBasisPerHour' },
-  { value: 'per_day', labelKey: 'services.billingBasisPerDay' },
-  { value: 'per_job', labelKey: 'services.billingBasisPerJob' },
-  { value: 'per_project', labelKey: 'services.billingBasisPerProject' },
-  { value: 'per_session', labelKey: 'services.billingBasisPerSession' },
-];
 
 const DURATION_UNIT_OPTIONS: { value: DurationUnitType; labelKey: string }[] = [
   { value: 'minutes', labelKey: 'services.durationUnitMinutes' },
@@ -84,18 +75,11 @@ export default function RateCard({
     billingOptions?.find((o) => o.is_default) ||
     billingOptions?.[0];
 
-  const selectedBasis = BILLING_BASIS_OPTIONS.find((o) => o.value === billingBasisValue) || BILLING_BASIS_OPTIONS[0];
   const selectedUnit = DURATION_UNIT_OPTIONS.find((o) => o.value === durationUnitValue) || DURATION_UNIT_OPTIONS[0];
-
-  const handleSelectBasis = (value: BillingBasisType) => {
-    onBillingBasisChange(value);
-    setBasisModalVisible(false);
-  };
 
   const handleSelectDynamicOption = (opt: BillingOption) => {
     onBillingOptionIdChange?.(opt.id);
-    const mappedBasis = (opt.name.toLowerCase().replace(/\s+/g, '_') as BillingBasisType) || 'per_job';
-    onBillingBasisChange(mappedBasis);
+    onBillingBasisChange?.(opt.name);
     setBasisModalVisible(false);
   };
 
