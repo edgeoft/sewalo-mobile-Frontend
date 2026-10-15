@@ -46,3 +46,9 @@ example
 
 .env
 
+# Agent skills (restore with `npx skills experimental_install`)
+.agents/skills/
+.claude/skills/
+.cursor/skills/
+
+

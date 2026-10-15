@@ -5,25 +5,73 @@
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/code-review/SKILL.md",
-      "computedHash": "caa9a086baaf9e0f7cd71f64edfa83da6821c05e826b083221f3d02e3d6a1905"
+      "computedHash": "57cfd4ceb011f05e58a1a4f4cad3b2e03419d371f8990f4bcb32ff0d435a039f"
     },
-    "sentry-react-native-sdk": {
-      "source": "getsentry/sentry-agent-skills",
+    "expo": {
+      "source": "pproenca/dot-skills",
       "sourceType": "github",
-      "skillPath": "skills/sentry-react-native-sdk/SKILL.md",
-      "computedHash": "e3fdf618d50b38ea457987bdcf4a928f9afe999c8e5e7180b814bceb723f0e52"
+      "skillPath": "skills/.curated/expo/SKILL.md",
+      "computedHash": "53897c7be29ab7712e692f62cafedde83960c8147b2a7cb03dc82afa37a466a7"
     },
-    "sentry-setup-ai-monitoring": {
-      "source": "getsentry/sentry-agent-skills",
+    "expo-ui": {
+      "source": "pproenca/dot-skills",
       "sourceType": "github",
-      "skillPath": "skills/sentry-setup-ai-monitoring/SKILL.md",
-      "computedHash": "91959d0839b0399b395c2a6200c457b99571050481a44894559cb2a5f3d8c165"
+      "skillPath": "skills/.curated/expo-ui/SKILL.md",
+      "computedHash": "2a37127ed29959d2d36bdd24e803345a5362411c4ef2cf083049ae1e5505d6fd"
     },
-    "typescript-pro": {
-      "source": "jeffallan/claude-skills",
+    "react": {
+      "source": "pproenca/dot-skills",
       "sourceType": "github",
-      "skillPath": "skills/typescript-pro/SKILL.md",
-      "computedHash": "b53b57340243eab4b75acee9096f0444319bb1b9e8530fdab4d1d75e1568fa6c"
+      "skillPath": "skills/.curated/react/SKILL.md",
+      "computedHash": "970c793b20753c3628c9bb17a0d0c2841ec8f11d745a97d6ab586f6dba048596"
+    },
+    "react-hook-form": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/react-hook-form/SKILL.md",
+      "computedHash": "e9881245bb3f993f93c9fce336ca7a517ce39864aa46c95d04238fc5ebc4e4d1"
+    },
+    "tailwind": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/tailwind/SKILL.md",
+      "computedHash": "973f01e905e679240c2e5a6ade87338d2d34719c8a5306f5d1ef71682be22f65"
+    },
+    "tanstack-query": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/tanstack-query/SKILL.md",
+      "computedHash": "f92abd0d7309c519f9947d749ecb20e79507a68d2d8752e9942228b019a52ccd"
+    },
+    "typescript": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/typescript/SKILL.md",
+      "computedHash": "5cf1c3714eca76e65eb40939540dc585fa4d7295b81d51ebba5490a3ec6012b5"
+    },
+    "uniwind": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/uniwind/SKILL.md",
+      "computedHash": "20011723a1efe575b6a15db5b5807140ed09fd69e3320fe900a9f8cc5107ce3d"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-skills/SKILL.md",
+      "computedHash": "2e9088a7333666d8c2833b8ff58bd51b955501c42b4c7244f72b4cbf22dafcc4"
+    },
+    "zod": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/zod/SKILL.md",
+      "computedHash": "c69b5133b65643317236707f2cd3e521b4fc6e5ee5fd6c6c00cf62a37dfd0144"
+    },
+    "zustand": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/zustand/SKILL.md",
+      "computedHash": "337c79809642db2ecec7677e47fe17f26115a000a35b66ec5da4c38e132b0a8d"
     }
   }
 }

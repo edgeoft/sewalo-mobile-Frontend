@@ -17,10 +17,9 @@
 - **State Management**: `@tanstack/react-query` v5 (server data) & `zustand` v5 (client UI/auth state)
 - **Forms & Validation**: `react-hook-form` v7 & `zod` v4
 - **Animations**: `react-native-reanimated` v4 (UI thread worklets)
-- **List Rendering**: `@shopify/flash-list` (Virtualized list recycling)
 - **Asset Caching**: `expo-image` (Native memory & disk caching)
 - **Secure Storage**: `expo-secure-store` (Hardware-backed keychain encryption)
-- **Observability**: `@sentry/react-native`
+- **Analytics & Observability**: `posthog-react-native`
 
 ---
 
@@ -103,21 +102,20 @@ sewalo-mobile-Frontend/
 
 ---
 
-## 6. Installed Agent Skills (`.agents/skills/`)
-The following official skills have been downloaded and installed directly into `.agents/skills/`:
+## 6. Installed Agent Skills
+Skills are locked in `skills-lock.json` and can be restored locally using `npx skills experimental_install`:
 - `code-review`: Mobile code review, scans for unhandled nulls, FlatList frame drops, insecure AsyncStorage token storage, and architecture compliance (`mattpocock/skills`).
-- `typescript-pro`: Strict typing, discriminated unions with exhaustive checks, and branded IDs (`jeffallan/claude-skills`).
-- `sentry-react-native-sdk`: Sentry React Native SDK configuration, crash tracing, breadcrumbs, and error boundaries (`getsentry/sentry-agent-skills`).
-- `sentry-setup-ai-monitoring`: Sentry error capture and monitoring configuration (`getsentry/sentry-agent-skills`).
 - `expo`: 42 mobile performance rules: Hermes bytecode precompilation, startup latency reduction, FlashList virtualization, and UI thread animations (`pproenca/dot-skills`).
 - `expo-ui`: SwiftUI component guidelines and Liquid Glass UI patterns for iOS (`pproenca/dot-skills`).
-- `vercel-react-native-skills`: React Native best practices, memory management, and architecture (`vercel-labs/agent-skills`).
-- `web-design-guidelines`: Mobile UI best practices, accessible touch targets (min 44x44pt), and UX design guidelines (`vercel-labs/agent-skills`).
 - `react`: React 19 concurrent features, hooks, and modern patterns (`pproenca/dot-skills`).
-- `tailwind`: Uniwind / Tailwind CSS styling rules and theme tokens (`pproenca/dot-skills`).
-- `tanstack-query`: Mobile data fetching, offline query caching, screen focus refetch gating, and key invalidation scoping (`pproenca/dot-skills`).
 - `react-hook-form`: Client-side mobile form performance and validation (`pproenca/dot-skills`).
+- `tailwind`: Tailwind CSS styling rules and theme tokens (`pproenca/dot-skills`).
+- `tanstack-query`: Mobile data fetching, offline query caching, screen focus refetch gating, and key invalidation scoping (`pproenca/dot-skills`).
+- `typescript`: Senior TypeScript standards, compiler configuration, and strict typing (`pproenca/dot-skills`).
+- `uniwind`: Uniwind best practices for React Native styling with Tailwind CSS (`pproenca/dot-skills`).
+- `vercel-react-native-skills`: React Native best practices, memory management, and architecture (`vercel-labs/agent-skills`).
 - `zod`: Zod runtime validation and type parsing (`pproenca/dot-skills`).
+- `zustand`: Zustand state management best practices for store structure and selectors (`pproenca/dot-skills`).
 
 ---
 
