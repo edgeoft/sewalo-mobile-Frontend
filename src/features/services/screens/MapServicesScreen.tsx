@@ -11,12 +11,14 @@ import { useGetCategoriesQuery, useGetNearbyProvidersQuery } from '@/api';
 import NearbyServicesMap from '@/components/map/NearbyServicesMap';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import { ROUTES } from '@/constants/routes';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthUser } from '@/providers/AuthProvider';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
 import { useServiceFilters } from '@/hooks/useServiceFilters';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useShallow } from 'zustand/react/shallow';
 import ErrorState from '@/components/ui/ErrorState';
 import LoadingState from '@/components/ui/LoadingState';
-import { MapViewport } from '@/types';
+import type { MapViewport } from '@/types';
 import { addBoundingBoxBuffer } from '@/utils/geohash';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import ServiceFilterModal from '../components/ServiceFilterModal';
@@ -28,7 +30,7 @@ export default function MapServicesScreen() {
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
   const { showError } = useErrorDialog();
-  const currentUser = useAuthStore((state) => state.user);
+  const currentUser = useAuthUser();
 
   const userLocation = useMemo(() => {
     if (currentUser?.coordinates) {
@@ -40,9 +42,13 @@ export default function MapServicesScreen() {
     return { lat: 27.700769, lng: 85.30014 };
   }, [currentUser]);
 
-  const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
-  const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
-  const setSelectedCategorySlugStore = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
+  const { searchQuery, selectedCategorySlug, setSelectedCategorySlugStore } = useServiceFiltersStore(
+    useShallow((s) => ({
+      searchQuery: s.searchQuery,
+      selectedCategorySlug: s.selectedCategorySlug,
+      setSelectedCategorySlugStore: s.setSelectedCategorySlug,
+    })),
+  );
   const {
     minPriceStore,
     maxPriceStore,
@@ -69,7 +75,7 @@ export default function MapServicesScreen() {
     activeFiltersCount,
   } = useServiceFilters();
 
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
@@ -109,13 +115,6 @@ export default function MapServicesScreen() {
     }, 500);
     return () => clearTimeout(handler);
   }, [viewport]);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
 
   const bufferedBounds = useMemo(() => {
     if (!debouncedViewport.bounds) return null;
@@ -160,23 +159,12 @@ export default function MapServicesScreen() {
     );
   }, [providersData, currentUser]);
 
+  const activeProviderId = selectedProviderId ?? providers[0]?.id ?? null;
+
   const selectedProvider = useMemo(() => {
-    if (!selectedProviderId) return null;
-    return providers.find((p) => p.id === selectedProviderId) || null;
-  }, [selectedProviderId, providers]);
-
-  const [hasAutoselected, setHasAutoselected] = useState(false);
-
-  useEffect(() => {
-    if (providers.length > 0 && !selectedProviderId && !hasAutoselected) {
-      const firstId = providers[0].id;
-      const timeout = setTimeout(() => {
-        setSelectedProviderId(firstId);
-        setHasAutoselected(true);
-      }, 0);
-      return () => clearTimeout(timeout);
-    }
-  }, [providers, selectedProviderId, hasAutoselected]);
+    if (!activeProviderId) return null;
+    return providers.find((p) => p.id === activeProviderId) || null;
+  }, [activeProviderId, providers]);
 
   const handleProviderPress = (providerSlugOrId: string) => {
     if (isGuest) {
@@ -219,7 +207,7 @@ export default function MapServicesScreen() {
             userLat={userLocation.lat}
             userLng={userLocation.lng}
             providers={providers}
-            selectedProviderId={selectedProviderId}
+            selectedProviderId={activeProviderId}
             onSelectProvider={setSelectedProviderId}
             onMapCenterChange={(lat, lng) => {
               setViewport((prev) => ({ ...prev, center: { lat, lng } }));
@@ -256,7 +244,7 @@ export default function MapServicesScreen() {
             <Feather
               name="grid"
               size={14}
-              color={selectedCategorySlug ? '#ffffff' : THEME_COLORS.primary}
+              color={selectedCategorySlug ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
               accessible={false}
             />
             <Text
@@ -268,7 +256,7 @@ export default function MapServicesScreen() {
             <Feather
               name="chevron-down"
               size={12}
-              color={selectedCategorySlug ? '#ffffff' : '#64748b'}
+              color={selectedCategorySlug ? THEME_COLORS.primaryForeground : THEME_COLORS.slate500}
               accessible={false}
             />
           </Pressable>
@@ -285,7 +273,7 @@ export default function MapServicesScreen() {
             <Feather
               name="sliders"
               size={14}
-              color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
+              color={activeFiltersCount > 0 ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
               accessible={false}
             />
             {activeFiltersCount > 0 && (
@@ -311,23 +299,8 @@ export default function MapServicesScreen() {
         <Pressable
           onPress={() => handleProviderPress(selectedProvider.slug || selectedProvider.id)}
           accessibilityRole="button"
-          style={{
-            position: 'absolute',
-            bottom: Math.max(insets.bottom, 12),
-            left: 14,
-            right: 14,
-            backgroundColor: '#ffffff',
-            borderRadius: 12,
-            paddingVertical: 12,
-            paddingLeft: 12,
-            paddingRight: 14,
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: '#e2e8f0',
-            zIndex: 30,
-          }}
-          className="active:opacity-95"
+          style={{ bottom: Math.max(insets.bottom, 12) }}
+          className="absolute left-3.5 right-3.5 bg-card rounded-xl py-3 pl-3 pr-3.5 flex-row items-center border border-border z-30 active:opacity-95"
         >
           <Pressable
             onPress={(e) => {
@@ -337,23 +310,9 @@ export default function MapServicesScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('common.close')}
             hitSlop={8}
-            style={{
-              position: 'absolute',
-              top: -8,
-              right: -4,
-              zIndex: 10,
-              backgroundColor: '#ffffff',
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: '#cbd5e1',
-            }}
-            className="active:opacity-60"
+            className="absolute -top-2 -right-1 z-10 bg-card w-[22px] h-[22px] rounded-full items-center justify-center border border-border active:opacity-60"
           >
-            <Feather name="x" size={10} color="#64748b" accessible={false} />
+            <Feather name="x" size={10} color={THEME_COLORS.slate500} accessible={false} />
           </Pressable>
 
           <View
@@ -396,13 +355,13 @@ export default function MapServicesScreen() {
 
             <View className="flex-row items-center mt-1.5" style={{ gap: 8 }}>
               <View className="flex-row items-center" style={{ gap: 2 }}>
-                <Feather name="star" size={10} color="#f59e0b" />
+                <Feather name="star" size={10} color={THEME_COLORS.amberStar} />
                 <Text className="text-[11px] font-sans-extrabold text-gray-800">
                   {selectedProvider.avg_rating.toFixed(1)}
                 </Text>
               </View>
               <Text className="text-[11px] font-sans-bold text-gray-300">|</Text>
-              <Feather name="map-pin" size={10} color="#64748b" />
+              <Feather name="map-pin" size={10} color={THEME_COLORS.slate500} />
               <Text className="text-[11px] font-sans-bold text-gray-700">
                 {selectedProvider.distance_km.toFixed(2)} km away
               </Text>
@@ -421,7 +380,7 @@ export default function MapServicesScreen() {
               marginLeft: 6,
             }}
           >
-            <Feather name="chevron-right" size={16} color="#ffffff" />
+            <Feather name="chevron-right" size={16} color={THEME_COLORS.primaryForeground} />
           </View>
         </Pressable>
       )}
@@ -432,10 +391,13 @@ export default function MapServicesScreen() {
         animationType="fade"
         transparent
         onRequestClose={() => setIsCategoryModalOpen(false)}
+        accessibilityViewIsModal={true}
       >
         <Pressable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' }}
           onPress={() => setIsCategoryModalOpen(false)}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.close')}
         >
           <Pressable
             onPress={(e) => e.stopPropagation()}
@@ -450,7 +412,7 @@ export default function MapServicesScreen() {
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
               >
-                <Feather name="x" size={18} color="#64748b" />
+                <Feather name="x" size={18} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -467,7 +429,11 @@ export default function MapServicesScreen() {
                 }`}
               >
                 <View className="flex-row items-center gap-2">
-                  <Feather name="grid" size={16} color={!selectedCategorySlug ? THEME_COLORS.primary : '#64748b'} />
+                  <Feather
+                    name="grid"
+                    size={16}
+                    color={!selectedCategorySlug ? THEME_COLORS.primary : THEME_COLORS.slate500}
+                  />
                   <Text
                     className={`text-sm font-sans-bold ${!selectedCategorySlug ? 'text-primary' : 'text-gray-800'}`}
                   >

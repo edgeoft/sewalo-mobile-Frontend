@@ -110,7 +110,7 @@ export default function DiscountLoyaltyCard({
           <View className="p-3 rounded-xl border border-green-200 bg-green-50/70 flex-row items-center justify-between">
             <View className="flex-1 mr-2">
               <View className="flex-row items-center gap-1.5 flex-wrap">
-                <Feather name="check-circle" size={14} color="#16a34a" />
+                <Feather name="check-circle" size={14} color={THEME_COLORS.emeraldSuccess} />
                 <View className="bg-green-100 border border-green-200 rounded px-1.5 py-0.5">
                   <Text className="text-[10px] font-sans-extrabold text-green-800 tracking-wider">
                     {selectedCoupon.code}

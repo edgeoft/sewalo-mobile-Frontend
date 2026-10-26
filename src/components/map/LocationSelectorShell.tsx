@@ -55,7 +55,7 @@ export default function LocationSelector({
       accessibilityRole="button"
       className="flex-row items-center px-4 py-3 border-b border-gray-200 active:bg-gray-50"
     >
-      <Feather name="map-pin" size={14} color="#64748b" accessible={false} />
+      <Feather name="map-pin" size={14} color={THEME_COLORS.slate500} accessible={false} />
       <Text className="text-sm text-gray-700 flex-1 ml-2" numberOfLines={1}>
         {item.description}
       </Text>

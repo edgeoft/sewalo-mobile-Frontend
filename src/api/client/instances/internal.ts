@@ -15,7 +15,6 @@ export const internalClient = createApiClient({
     onAuthFailure: () => {
       console.warn('[Auth] Internal backend authentication failed');
     },
-    proactiveRefreshSeconds: 60,
   },
   retry: {
     maxAttempts: 3,

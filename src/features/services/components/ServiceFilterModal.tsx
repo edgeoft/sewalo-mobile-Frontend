@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 import Button from '@/components/ui/Button';
 import { SERVICE_LOCATIONS } from '@/types';
 import { SERVICE_SORT, SORT_OPTIONS } from '@/constants/services';
@@ -46,7 +47,7 @@ export default function ServiceFilterModal({
   const { t } = useTranslation();
 
   return (
-    <Modal visible={isOpen} animationType="slide" transparent onRequestClose={onClose}>
+    <Modal visible={isOpen} animationType="slide" transparent onRequestClose={onClose} accessibilityViewIsModal={true}>
       <View className="flex-1 bg-black/50 justify-end">
         <View className="bg-white rounded-t-3xl p-6 gap-6 max-h-[85%]">
           <View className="flex-row justify-between items-center pb-2 border-b border-gray-100">
@@ -58,7 +59,7 @@ export default function ServiceFilterModal({
               hitSlop={8}
               className="p-1"
             >
-              <Feather name="x" size={20} color="#475569" accessible={false} />
+              <Feather name="x" size={20} color={THEME_COLORS.slate500} accessible={false} />
             </Pressable>
           </View>
 
@@ -162,7 +163,7 @@ export default function ServiceFilterModal({
                     <Feather
                       name="star"
                       size={11}
-                      color={minRating === star ? '#eab308' : '#94a3b8'}
+                      color={minRating === star ? THEME_COLORS.amberStar : THEME_COLORS.slate400}
                       accessible={false}
                     />
                   </Pressable>

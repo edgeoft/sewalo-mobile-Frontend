@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import LocationSelectorShell from './LocationSelectorShell';
 import type { MapGeocoderAdapter } from './useMapLocationSelector';
-import type { MapProviderProps, SearchResult } from './types';
+import type { MapProviderProps } from './types';
 import { CARTODB_VOYAGER_URL, CARTODB_ATTRIBUTION, MAP_CONSOLE_BRIDGE } from './mapShared';
 
 function generateOSMMapHTML(lat: number, lng: number) {
@@ -101,8 +101,8 @@ const createNominatimGeocoder = (): MapGeocoderAdapter => ({
     );
     if (!response.ok) return null;
     const data = await response.json();
-    if (data && data.display_name) {
-      return data.display_name as string;
+    if (data && typeof data.display_name === 'string') {
+      return data.display_name;
     }
     return null;
   },
@@ -126,13 +126,13 @@ const createNominatimGeocoder = (): MapGeocoderAdapter => ({
       { headers: { ...NOMINATIM_HEADERS } },
     );
     if (!response.ok) return [];
-    const data = (await response.json()) as { display_name: string; lat: string; lon: string }[];
-    return data.map((item) => ({
+    const data = (await response.json()) as { display_name: string; lat?: string; lon?: string }[];
+    return (data ?? []).map((item) => ({
       description: item.display_name,
       display_name: item.display_name,
       lat: item.lat,
       lon: item.lon,
-    })) as SearchResult[];
+    }));
   },
 
   resolveCityStateCountry: async (lat, lng) => {

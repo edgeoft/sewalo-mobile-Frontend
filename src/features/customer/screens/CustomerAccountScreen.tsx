@@ -12,7 +12,7 @@ import { LoadingOverlay } from '@/components/ui';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/constants/roles';
-import { AccountMenuItemId } from '@/types';
+import type { AccountMenuItemId } from '@/types';
 import { useAccountActions } from '@/hooks/useAccountActions';
 
 import AccountMenuSectionCard from '../components/AccountMenuSectionCard';

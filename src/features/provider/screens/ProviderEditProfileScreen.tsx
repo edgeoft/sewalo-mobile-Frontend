@@ -21,8 +21,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { getImageUrl } from '@/utils/image';
 import { formatPhone, unformatPhone } from '../../auth/utils/phone';
 import { useUpdateProfile, useUploadFile } from '@/api';
-import type { UpdateProfilePayload } from '@/types';
-import { Availability } from '@/types';
+import type { Availability, UpdateProfilePayload } from '@/types';
 import { AVAILABILITY_TYPES, DEFAULT_WORKING_HOURS_END, asAvailability } from '@/constants/availability';
 
 type EditProfileTab = 'basic' | 'skills' | 'availability';
@@ -50,11 +49,11 @@ export default function ProviderEditProfileScreen() {
 
   const activeTab = userTab.section === section ? userTab.tab : getInitialTab(section);
 
-  const tabItems = useMemo(
+  const tabItems = useMemo<{ id: EditProfileTab; label: string; icon: 'user' | 'award' | 'clock' }[]>(
     () => [
-      { id: 'basic' as EditProfileTab, label: t('components.basicInfo'), icon: 'user' as const },
-      { id: 'skills' as EditProfileTab, label: t('provider.skillsAndExperience'), icon: 'award' as const },
-      { id: 'availability' as EditProfileTab, label: t('provider.workingDays'), icon: 'clock' as const },
+      { id: 'basic', label: t('components.basicInfo'), icon: 'user' },
+      { id: 'skills', label: t('provider.skillsAndExperience'), icon: 'award' },
+      { id: 'availability', label: t('provider.workingDays'), icon: 'clock' },
     ],
     [t],
   );

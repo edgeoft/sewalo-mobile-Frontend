@@ -4,6 +4,7 @@ import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -46,7 +47,7 @@ export default function BlogDetailScreen() {
       <View className="flex-1 bg-secondary">
         <Header showBackButton />
         <View className="flex-1 justify-center items-center p-5">
-          <Feather name="alert-circle" size={48} color="#ef4444" />
+          <Feather name="alert-circle" size={48} color={THEME_COLORS.dangerRed} />
           <Text className="text-base font-sans-bold text-gray-900 mt-4">{t('blog.articleNotFound')}</Text>
           <Text className="text-sm font-sans-medium text-gray-500 text-center mt-2 leading-5">
             {t('blog.articleNotFoundDesc')}
@@ -81,7 +82,7 @@ export default function BlogDetailScreen() {
               </Text>
             </View>
             <View className="flex-row items-center gap-1.5">
-              <Feather name="clock" size={13} color="#94a3b8" />
+              <Feather name="clock" size={13} color={THEME_COLORS.slate400} />
               <Text className="text-xs font-sans-medium text-gray-500">{getReadTime(blog.description)}</Text>
             </View>
           </View>
@@ -96,7 +97,7 @@ export default function BlogDetailScreen() {
           {/* Author info */}
           <View className="flex-row items-center border-y border-gray-100 py-3 mb-6">
             <View className="h-9 w-9 rounded-full bg-gray-200 justify-center items-center mr-3">
-              <Feather name="user" size={16} color="#64748b" />
+              <Feather name="user" size={16} color={THEME_COLORS.slate500} />
             </View>
             <View>
               <Text className="text-xs font-sans-bold text-gray-800">

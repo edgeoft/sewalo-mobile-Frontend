@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { THEME_COLORS } from '@/constants/colors';
-import { useLocalSearchParams, useRouter, Href } from 'expo-router';
-import { useForm, Resolver, useWatch } from 'react-hook-form';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useForm, useWatch } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { View, ActivityIndicator } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,10 +11,12 @@ import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { serviceFormSchema } from '@/schemas/service';
-import { ServiceFormData, DELIVERY_TYPES, SERVICE_LOCATIONS, DeliveryType } from '@/types';
+import { DELIVERY_TYPES, SERVICE_LOCATIONS } from '@/types';
+import type { DeliveryType, ServiceFormData } from '@/types';
 import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
+import { THEME_COLORS } from '@/constants/colors';
 import { getImageUrl } from '@/utils/image';
 
 // Import subcomponents
@@ -76,11 +78,11 @@ export default function ServiceEditScreen() {
         minute: 'minutes',
       };
 
-      const parsedRates: Record<string, any> = {};
+      const parsedRates: ServiceFormData['rates'] = {};
       service.service_offerings?.forEach((offering) => {
         parsedRates[offering.sub_category_id] = {
           price: offering.price ? offering.price.toString() : '',
-          billingBasis: 'per_hour',
+          billingBasis: offering.billing_option?.name || offering.billing_option?.label || '',
           billingOptionId: offering.billing_option_id || '',
           duration: offering.duration ? offering.duration.toString() : '',
           durationUnit: offering.duration_unit ? unitMap[offering.duration_unit] || 'hours' : 'hours',
@@ -216,7 +218,7 @@ export default function ServiceEditScreen() {
       createService(payload, {
         onSuccess: () => {
           showSnackbar({ message: t('provider.serviceCreatedSuccess'), type: 'success' });
-          router.replace(ROUTES.provider.serviceCreated as Href);
+          router.replace(ROUTES.provider.serviceCreated);
         },
       });
     }

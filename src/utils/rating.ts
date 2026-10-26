@@ -12,7 +12,7 @@ export function getProviderRating(
     if (!source) continue;
     if (source.average_rating != null && source.average_rating !== '') {
       const parsed = parseFloat(source.average_rating);
-      if (!isNaN(parsed)) return parsed;
+      if (!Number.isNaN(parsed)) return parsed;
     }
     if (source.avg_rating != null) return source.avg_rating;
   }

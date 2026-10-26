@@ -172,7 +172,7 @@ export default function ApplyCouponModal({
                     <Text className="text-xs font-sans-semibold text-green-700 mt-0.5">{discountDisplay}</Text>
 
                     <View className="flex-row items-center mt-3 pt-2.5 border-t border-gray-100 gap-x-1.5 flex-wrap">
-                      <Feather name="clock" size={11} color="#94a3b8" />
+                      <Feather name="clock" size={11} color={THEME_COLORS.slate400} />
                       {coupon.end_date ? (
                         <Text className="text-[11px] font-sans-medium text-gray-500">
                           {t('customer.validUntil', { date: formatDate(coupon.end_date) })}

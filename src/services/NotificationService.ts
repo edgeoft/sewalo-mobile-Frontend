@@ -118,10 +118,12 @@ export function useNotificationObserver(): void {
   const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     responseListener.current = Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
 
     if (Platform.OS === 'web') {
       return () => {
+        isMounted = false;
         responseListener.current?.remove();
       };
     }
@@ -156,7 +158,7 @@ export function useNotificationObserver(): void {
 
       // 3. Cold Start: Check initial notification
       void getInitialNotification(messaging).then((remoteMessage: RemoteMessage | null) => {
-        if (remoteMessage) {
+        if (isMounted && remoteMessage) {
           navigateFromPushData(remoteMessage.data);
         }
       });
@@ -165,6 +167,7 @@ export function useNotificationObserver(): void {
     }
 
     return () => {
+      isMounted = false;
       responseListener.current?.remove();
       unsubscribeOnMessage?.();
       unsubscribeOnNotificationOpened?.();

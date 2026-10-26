@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
@@ -9,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Input from '@/components/ui/Input';
-import { ServiceFormData } from '@/types';
+import type { ServiceFormData } from '@/types';
 
 interface ServiceFormStandoutProps {
   control: Control<ServiceFormData>;
@@ -31,8 +32,15 @@ export default function ServiceFormStandout({
   const [isTagFocused, setIsTagFocused] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const uploadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { showSnackbar } = useSnackbar();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    return () => {
+      if (uploadIntervalRef.current) clearInterval(uploadIntervalRef.current);
+    };
+  }, []);
 
   // 1. Photo Grid Handlers
   const handlePickImage = async () => {
@@ -66,11 +74,14 @@ export default function ServiceFormStandout({
         setUploadProgress(0);
 
         let progress = 0;
-        const interval = setInterval(() => {
+        uploadIntervalRef.current = setInterval(() => {
           progress += 20;
           setUploadProgress(progress);
           if (progress >= 100) {
-            clearInterval(interval);
+            if (uploadIntervalRef.current) {
+              clearInterval(uploadIntervalRef.current);
+              uploadIntervalRef.current = null;
+            }
             setUploadingIndex(null);
 
             // Mark as uploaded: true

@@ -13,7 +13,8 @@ import { ROUTES } from '@/constants/routes';
 
 import Button from '@/components/ui/Button';
 import { useCommissionSummaryQuery, useCommissionsQuery } from '@/api';
-import { Commission, COMMISSION_TYPE, CommissionType, EARNINGS_FILTER_STATUS, EarningsFilterStatus } from '@/types';
+import { COMMISSION_TYPE, EARNINGS_FILTER_STATUS } from '@/types';
+import type { Commission, CommissionType, EarningsFilterStatus } from '@/types';
 import { formatDate } from '@/utils/time';
 
 type EarningsTab = CommissionType;
@@ -115,7 +116,7 @@ export default function ProviderEarningsScreen() {
         {isError ? (
           <View className="flex-1 justify-center items-center py-10 px-6 bg-white rounded-xl border border-gray-200 my-4">
             <View className="h-12 w-12 rounded-full bg-red-50 items-center justify-center mb-4">
-              <Feather name="alert-triangle" size={24} color="#dc2626" />
+              <Feather name="alert-triangle" size={24} color={THEME_COLORS.dangerRed} />
             </View>
             <Text className="text-base font-sans-bold text-gray-900 mb-1">{t('provider.failedToLoadEarnings')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 text-center mb-6 leading-5">
@@ -141,7 +142,7 @@ export default function ProviderEarningsScreen() {
                 >
                   <View className="flex-row items-center gap-3.5">
                     <View className="h-11 w-11 rounded-xl bg-emerald-50 items-center justify-center">
-                      <Feather name="trending-up" size={20} color="#059669" />
+                      <Feather name="trending-up" size={20} color={THEME_COLORS.emeraldSuccess} />
                     </View>
                     <View>
                       <Text className="text-[10px] font-sans-semibold text-gray-400 uppercase tracking-wider">
@@ -166,7 +167,7 @@ export default function ProviderEarningsScreen() {
                   >
                     <View className="flex-row items-center justify-between mb-2">
                       <View className="h-9 w-9 rounded-xl bg-red-50 items-center justify-center">
-                        <Feather name="arrow-up-right" size={16} color="#dc2626" />
+                        <Feather name="arrow-up-right" size={16} color={THEME_COLORS.dangerRed} />
                       </View>
                       <View className="rounded-full bg-red-50 px-1.5 py-0.5">
                         <Text className="text-[9px] font-sans-bold text-red-700">{t('provider.adminFee')}</Text>

@@ -3,6 +3,7 @@ import { THEME_COLORS } from '@/constants/colors';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Path, Circle, G } from 'react-native-svg';
 import Animated, {
+  cancelAnimation,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -10,12 +11,20 @@ import Animated, {
   withSequence,
   Easing,
 } from 'react-native-reanimated';
+import { useAppReducedMotion } from '@/utils/accessibility';
 
 export default function OnboardingIllustrationOne() {
   const armRotation = useSharedValue(0);
   const sparkleY = useSharedValue(0);
+  const reducesMotion = useAppReducedMotion();
 
   useEffect(() => {
+    if (reducesMotion) {
+      armRotation.value = 0;
+      sparkleY.value = 0;
+      return;
+    }
+
     // Waving arm animation
     armRotation.value = withRepeat(
       withSequence(
@@ -38,7 +47,12 @@ export default function OnboardingIllustrationOne() {
       -1,
       true,
     );
-  }, [armRotation, sparkleY]);
+
+    return () => {
+      cancelAnimation(armRotation);
+      cancelAnimation(sparkleY);
+    };
+  }, [armRotation, sparkleY, reducesMotion]);
 
   const armStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${armRotation.value}deg` }],

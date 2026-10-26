@@ -72,7 +72,7 @@ export default function ServiceCreatedScreen() {
         <View className="mb-6">
           {/* Success Icon Badge */}
           <View className="h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 border border-emerald-100 mb-4">
-            <Feather name="check-circle" size={28} color="#10b981" />
+            <Feather name="check-circle" size={28} color={THEME_COLORS.emeraldSuccess} />
           </View>
 
           {/* Celebration Heading */}
@@ -90,7 +90,7 @@ export default function ServiceCreatedScreen() {
               variant="primary"
               size="md"
               onPress={handleGoToServices}
-              rightIcon={<Feather name="arrow-right" size={14} color="#ffffff" />}
+              rightIcon={<Feather name="arrow-right" size={14} color={THEME_COLORS.primaryForeground} />}
             />
           </View>
         </View>

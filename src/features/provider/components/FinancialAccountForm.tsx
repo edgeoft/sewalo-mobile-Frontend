@@ -1,14 +1,16 @@
 import React from 'react';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { Control, FieldErrors } from 'react-hook-form';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Input } from '@/components/ui';
-import SelectSheet, { SelectOptionItem } from '@/components/ui/SelectSheet';
+import SelectSheet from '@/components/ui/SelectSheet';
+import type { SelectOptionItem } from '@/components/ui/SelectSheet';
 
-import { FINANCE_ACCOUNT_TYPE, FinanceAccountType } from '@/types';
+import { FINANCE_ACCOUNT_TYPE } from '@/types';
 import { NEPAL_BANKS, DIGITAL_WALLETS } from '../constants/finance';
-import { FinanceAccountFormValues } from '@/schemas/provider';
+import type { FinanceAccountFormValues } from '@/schemas/provider';
 
 interface FinancialAccountFormProps {
   control: Control<FinanceAccountFormValues>;
@@ -42,7 +44,11 @@ export default function FinancialAccountForm({ control, errors }: FinancialAccou
             label={t('provider.accountType')}
             options={TYPE_OPTIONS}
             value={value}
-            onSelect={(val) => onChange(val as FinanceAccountType)}
+            onSelect={(val) => {
+              if (val === FINANCE_ACCOUNT_TYPE.Bank || val === FINANCE_ACCOUNT_TYPE.DigitalWallet) {
+                onChange(val);
+              }
+            }}
             placeholder={t('provider.selectAccountType')}
             title={t('provider.accountType')}
             description={t('provider.accountTypeDesc')}

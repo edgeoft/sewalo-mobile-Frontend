@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -40,7 +40,14 @@ export default function ReportProblemScreen() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [screenshotUploaded, setScreenshotUploaded] = useState(false);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ISSUE_CATEGORIES = useIssueCategories();
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) clearTimeout(submitTimerRef.current);
+    };
+  }, []);
 
   const {
     control,
@@ -63,7 +70,8 @@ export default function ReportProblemScreen() {
 
   const handleReportSubmit = (data: ReportProblemFormData) => {
     setLoading(true);
-    setTimeout(() => {
+    if (submitTimerRef.current) clearTimeout(submitTimerRef.current);
+    submitTimerRef.current = setTimeout(() => {
       setLoading(false);
       showError({
         title: t('settings.problemReportedTitle'),
@@ -233,7 +241,7 @@ export default function ReportProblemScreen() {
             title={t('common.submit')}
             variant="primary"
             loading={loading}
-            onPress={handleSubmit(handleReportSubmit)}
+            onPress={() => void handleSubmit(handleReportSubmit)()}
             className="w-full h-12"
           />
         </View>

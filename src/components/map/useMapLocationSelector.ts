@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
-import { WebView, type WebViewMessageEvent } from 'react-native-webview';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+import { WebView } from 'react-native-webview';
+import type { WebViewMessageEvent } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
 
 import type { SearchResult } from './types';

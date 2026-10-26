@@ -68,7 +68,7 @@ export default function CustomerFavouritesScreen() {
         {isError ? (
           <View className="flex-1 justify-center items-center py-10 px-6 bg-white rounded-xl border border-gray-200 my-4">
             <View className="h-12 w-12 rounded-full bg-red-50 items-center justify-center mb-4">
-              <Feather name="alert-triangle" size={24} color="#dc2626" />
+              <Feather name="alert-triangle" size={24} color={THEME_COLORS.dangerRed} />
             </View>
             <Text className="text-base font-sans-bold text-gray-900 mb-1">{t('customer.failedToLoadFavorites')}</Text>
             <Text className="text-xs font-sans-medium text-gray-500 text-center mb-6 leading-5">

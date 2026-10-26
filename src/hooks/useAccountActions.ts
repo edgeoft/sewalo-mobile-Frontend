@@ -4,7 +4,7 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import { useAuth } from '@/providers/AuthProvider';
 import { ROUTES } from '@/constants/routes';
 import { USER_ROLES } from '@/constants/roles';
-import { AccountMenuItemId } from '@/types';
+import type { AccountMenuItemId } from '@/types';
 import { getMissingFields } from '@/api/client/query/errorHandler';
 
 export function useAccountActions() {

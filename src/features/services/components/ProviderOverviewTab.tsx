@@ -105,7 +105,7 @@ export default function ProviderOverviewTab({
           ) : (
             <View className="bg-slate-50/50 border border-slate-100 border-dashed rounded-lg p-3.5 flex-row items-center gap-3">
               <View className="h-8 w-8 rounded-full bg-slate-100 items-center justify-center">
-                <Feather name="briefcase" size={14} color="#64748b" />
+                <Feather name="briefcase" size={14} color={THEME_COLORS.slate500} />
               </View>
               <Text className="text-xs font-sans-medium text-gray-500 flex-1">{t('services.noExperienceAdded')}</Text>
             </View>
@@ -142,7 +142,7 @@ export default function ProviderOverviewTab({
           ) : (
             <View className="bg-slate-50/50 border border-slate-100 border-dashed rounded-lg p-3.5 flex-row items-center gap-3">
               <View className="h-8 w-8 rounded-full bg-slate-100 items-center justify-center">
-                <Feather name="book-open" size={14} color="#64748b" />
+                <Feather name="book-open" size={14} color={THEME_COLORS.slate500} />
               </View>
               <Text className="text-xs font-sans-medium text-gray-500 flex-1">{t('services.noEducationAdded')}</Text>
             </View>

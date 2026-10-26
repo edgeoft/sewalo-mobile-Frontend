@@ -56,7 +56,7 @@ export default function HomeServiceCategoriesSection({
         >
           {categories.map((category) => (
             <HomeServiceCategoryCard
-              key={category.label}
+              key={category.slug || category.label}
               icon={category.icon}
               imageUrl={category.imageUrl}
               label={category.label}

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { type WebViewMessageEvent } from 'react-native-webview';
+import type { WebViewMessageEvent } from 'react-native-webview';
 
-import type { MapViewport } from '@/types';
 import { getImageUrl } from '@/utils/image';
 
 import { SharedWebViewMap } from './SharedWebViewMap';
@@ -73,11 +72,11 @@ export default function NearbyServicesMapBase({
           if (data.center) {
             onMapCenterChange?.(data.center.lat, data.center.lng);
             onMapViewportChange?.({
-              center: data.center as { lat: number; lng: number },
-              bounds: data.bounds as MapViewport['bounds'],
-              zoom: data.zoom as number | undefined,
+              center: data.center,
+              bounds: data.bounds,
+              zoom: data.zoom,
             });
-          } else if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+          } else if (data.lat != null && data.lng != null) {
             onMapCenterChange?.(data.lat, data.lng);
             onMapViewportChange?.({
               center: { lat: data.lat, lng: data.lng },

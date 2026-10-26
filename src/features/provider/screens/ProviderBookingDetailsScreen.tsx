@@ -70,7 +70,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
   );
   const primaryBillingOpt =
     matchingOffering?.billing_option || initialBooking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label || '';
 
   const bookedServiceName =
     mainInvoiceItems[0]?.name ||
@@ -268,20 +268,20 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="phone" size={13} color="#94a3b8" accessible={false} />
+                  <Feather name="phone" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{phoneNumber || '-'}</Text>
                   {phoneNumber ? (
                     <Feather
                       name="external-link"
                       size={10}
-                      color="#94a3b8"
+                      color={THEME_COLORS.slate400}
                       style={{ marginLeft: 4 }}
                       accessible={false}
                     />
                   ) : null}
                 </Pressable>
                 <View className="flex-row items-center">
-                  <Feather name="mail" size={13} color="#94a3b8" />
+                  <Feather name="mail" size={13} color={THEME_COLORS.slate400} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2">{email || '-'}</Text>
                 </View>
                 <Pressable
@@ -298,14 +298,14 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                   accessibilityRole="button"
                   className="flex-row items-center active:opacity-70"
                 >
-                  <Feather name="map-pin" size={13} color="#94a3b8" accessible={false} />
+                  <Feather name="map-pin" size={13} color={THEME_COLORS.slate400} accessible={false} />
                   <Text className="text-xs font-sans-medium text-gray-500 ml-2 flex-1" numberOfLines={1}>
                     {location}
                   </Text>
                   <Feather
                     name="external-link"
                     size={10}
-                    color="#94a3b8"
+                    color={THEME_COLORS.slate400}
                     style={{ marginLeft: 4 }}
                     accessible={false}
                   />
@@ -449,7 +449,7 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
                 <SectionDivider />
                 <View>
                   <View className="flex-row items-center mb-3">
-                    <Feather name="alert-circle" size={15} color="#ef4444" />
+                    <Feather name="alert-circle" size={15} color={THEME_COLORS.dangerRed} />
                     <Text className="text-sm font-sans-bold text-gray-900 ml-2">
                       {currentStatus === BOOKING_STATUSES.Cancelled
                         ? t('provider.cancellationDetails')
@@ -551,7 +551,9 @@ export default function ProviderBookingDetailsScreen({ booking: initialBooking }
             onPress={handleSendInvoice}
             loading={updateBooking.isPending}
             className="w-full"
-            leftIcon={!updateBooking.isPending ? <Feather name="send" size={14} color="#ffffff" /> : null}
+            leftIcon={
+              !updateBooking.isPending ? <Feather name="send" size={14} color={THEME_COLORS.primaryForeground} /> : null
+            }
           />
         )}
         {currentStatus === BOOKING_STATUSES.PaymentInitiated && (

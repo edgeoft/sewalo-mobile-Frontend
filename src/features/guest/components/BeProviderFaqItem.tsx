@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 interface BeProviderFaqItemProps {
   question: string;
@@ -21,7 +22,7 @@ export default function BeProviderFaqItem({ question, answer, defaultOpen = fals
         accessibilityLabel={question}
       >
         <Text className="flex-1 text-sm font-sans-bold text-gray-900 pr-4">{question}</Text>
-        <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={18} color="#64748b" />
+        <Feather name={isOpen ? 'chevron-up' : 'chevron-down'} size={18} color={THEME_COLORS.slate500} />
       </Pressable>
 
       {isOpen ? (

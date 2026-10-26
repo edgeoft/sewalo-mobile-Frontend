@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -23,6 +24,13 @@ export default function RateAppScreen() {
   const [rating, setRating] = useState<number>(0);
   const [feedbackText, setFeedbackText] = useState('');
   const [loading, setLoading] = useState(false);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) clearTimeout(submitTimerRef.current);
+    };
+  }, []);
 
   const handleSubmitRating = () => {
     if (rating === 0) {
@@ -31,7 +39,8 @@ export default function RateAppScreen() {
     }
 
     setLoading(true);
-    setTimeout(() => {
+    if (submitTimerRef.current) clearTimeout(submitTimerRef.current);
+    submitTimerRef.current = setTimeout(() => {
       setLoading(false);
       showError({
         title: t('settings.feedbackSubmitted'),
@@ -80,7 +89,7 @@ export default function RateAppScreen() {
 
         <View style={cardShadow} className="bg-white border border-gray-200 rounded-xl p-6 mb-4 items-center">
           <View className="h-14 w-14 bg-amber-50 rounded-full items-center justify-center mb-3 border border-amber-100">
-            <Feather name="award" size={24} color="#f59e0b" />
+            <Feather name="award" size={24} color={THEME_COLORS.amberStar} />
           </View>
 
           <Text className="text-sm font-sans-bold text-gray-900 text-center mb-1">{t('settings.howIsExperience')}</Text>
@@ -102,8 +111,8 @@ export default function RateAppScreen() {
                 <Feather
                   name="star"
                   size={32}
-                  color={star <= rating ? '#f59e0b' : '#cbd5e1'}
-                  fill={star <= rating ? '#f59e0b' : 'transparent'}
+                  color={star <= rating ? THEME_COLORS.amberStar : THEME_COLORS.slate300}
+                  fill={star <= rating ? THEME_COLORS.amberStar : 'transparent'}
                 />
               </Pressable>
             ))}

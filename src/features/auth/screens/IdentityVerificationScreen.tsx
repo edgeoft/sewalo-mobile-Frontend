@@ -325,6 +325,7 @@ export default function IdentityVerificationScreen({ role }: IdentityVerificatio
         transparent={true}
         animationType="fade"
         onRequestClose={() => setPreviewImage(null)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalBackground}>
           <Pressable

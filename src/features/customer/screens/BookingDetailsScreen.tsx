@@ -254,7 +254,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         mainInvoiceItems[0]?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase())),
   );
   const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label || '';
 
   const bookedServiceName =
     mainInvoiceItems[0]?.name ||
@@ -319,7 +319,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
         {/* Change Request Pending Banner */}
         {booking.status === BOOKING_STATUSES.Completed && Boolean(booking.cancellation_reason) && (
           <View className="mb-5 p-3.5 rounded-xl border border-amber-200 bg-amber-50/80 flex-row items-start gap-x-2.5">
-            <Feather name="clock" size={15} color="#d97706" style={{ marginTop: 2 }} />
+            <Feather name="clock" size={15} color={THEME_COLORS.amberStar} className="mt-0.5" />
             <View className="flex-1 gap-y-1">
               <Text className="text-xs font-sans-semibold text-amber-950">
                 {t('customer.invoiceChangeRequestedTitle', 'Invoice Revision Requested')}
@@ -370,7 +370,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 </View>
               </View>
               <View className="flex-row items-center mt-0.5">
-                <Feather name="star" size={11} color="#f59e0b" />
+                <Feather name="star" size={11} color={THEME_COLORS.amberStar} />
                 <Text className="text-xs font-sans-medium text-muted-foreground ml-1">{providerRating}</Text>
               </View>
             </View>
@@ -664,7 +664,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   accessibilityRole="button"
                   className="bg-primary py-3.5 rounded-lg items-center active:opacity-90 flex-row justify-center gap-x-2 min-h-[44px]"
                 >
-                  <Feather name="credit-card" size={16} color="#ffffff" />
+                  <Feather name="credit-card" size={16} color={THEME_COLORS.primaryForeground} />
                   <Text className="text-sm font-sans-bold text-white">{t('customer.payNow')}</Text>
                 </Pressable>
               </View>

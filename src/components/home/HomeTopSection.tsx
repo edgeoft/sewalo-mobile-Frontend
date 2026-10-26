@@ -6,8 +6,9 @@ import { useTranslation, Trans } from 'react-i18next';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import { ROUTES } from '@/constants/routes';
-import { useAuthStore } from '@/store/useAuthStore';
-import { USER_ROLES, type Category, type DashboardStats } from '@/types';
+import { useAuthUser } from '@/providers/AuthProvider';
+import { USER_ROLES } from '@/types';
+import type { Category, DashboardStats } from '@/types';
 import HomeTopSectionBackground from './HomeTopSectionBackground';
 import HomeTopSectionSearchBar from './HomeTopSectionSearchBar';
 
@@ -69,7 +70,7 @@ export default function HomeTopSection({ variant, stats }: HomeTopSectionProps) 
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthUser();
   const firstName = user?.name ? user.name.trim().split(' ')[0] || '' : '';
 
   const heroCopyByVariant = {

@@ -39,8 +39,9 @@ const cleanPayloadInPlace = (data: unknown): unknown => {
   if (data instanceof FormData) {
     return data;
   }
-  for (const key of Object.keys(data as Record<string, unknown>)) {
-    (data as Record<string, unknown>)[key] = cleanPayloadInPlace((data as Record<string, unknown>)[key]);
+  const record = data as Record<string, unknown>;
+  for (const [key, val] of Object.entries(record)) {
+    record[key] = cleanPayloadInPlace(val);
   }
   return data;
 };
@@ -60,8 +61,7 @@ const redact = (obj: unknown): unknown => {
   if (!obj || typeof obj !== 'object') return obj;
   if (Array.isArray(obj)) return obj.map(redact);
   const result: Record<string, unknown> = {};
-  for (const key of Object.keys(obj as Record<string, unknown>)) {
-    const val = (obj as Record<string, unknown>)[key];
+  for (const [key, val] of Object.entries(obj as Record<string, unknown>)) {
     const lowKey = key.toLowerCase();
     if (
       lowKey.includes('password') ||
@@ -118,7 +118,7 @@ export const createApiClient = (
 
     if (tokenManager && axiosConfig.url) {
       if (!isCrossOrigin(axiosConfig.url, baseURL)) {
-        // Retrieve access token (handling automatic refresh if needed)
+        // Retrieve access token from storage
         const token = await tokenManager.getAccessToken();
         if (token) {
           axiosConfig.headers['Authorization'] = `Bearer ${token}`;
@@ -221,7 +221,7 @@ export const createApiClient = (
   );
 
   const request = async <T>(reqCtx: RequestCtx): Promise<T> => {
-    const res = await axiosInstance.request({
+    const res = await axiosInstance.request<T>({
       url: reqCtx.url,
       method: reqCtx.method,
       data: reqCtx.data,
@@ -229,29 +229,29 @@ export const createApiClient = (
       timeout: reqCtx.timeout,
       signal: reqCtx.signal,
     });
-    return res.data as T;
+    return res.data;
   };
 
   return {
     get: async <T>(url: string, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => {
-      const res = await axiosInstance.get(url, reqConfig);
-      return res.data as T;
+      const res = await axiosInstance.get<T>(url, reqConfig);
+      return res.data;
     },
     post: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
-      const res = await axiosInstance.post(url, data, reqConfig);
-      return res.data as T;
+      const res = await axiosInstance.post<T>(url, data, reqConfig);
+      return res.data;
     },
     put: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
-      const res = await axiosInstance.put(url, data, reqConfig);
-      return res.data as T;
+      const res = await axiosInstance.put<T>(url, data, reqConfig);
+      return res.data;
     },
     patch: async <T>(url: string, data?: unknown, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method' | 'data'>) => {
-      const res = await axiosInstance.patch(url, data, reqConfig);
-      return res.data as T;
+      const res = await axiosInstance.patch<T>(url, data, reqConfig);
+      return res.data;
     },
     delete: async <T>(url: string, reqConfig?: Omit<Partial<RequestCtx>, 'url' | 'method'>) => {
-      const res = await axiosInstance.delete(url, reqConfig);
-      return res.data as T;
+      const res = await axiosInstance.delete<T>(url, reqConfig);
+      return res.data;
     },
     request,
     tokenManager,

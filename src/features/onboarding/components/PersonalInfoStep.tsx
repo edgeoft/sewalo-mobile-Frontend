@@ -22,7 +22,7 @@ import { THEME_COLORS } from '@/constants/colors';
 import { MONTHS } from '@/constants/calendar';
 import LocationSelector from '@/components/ui/LocationSelector';
 
-import { PersonalInfoData } from '@/types';
+import type { PersonalInfoData } from '@/types';
 
 interface PersonalInfoStepProps {
   control: Control<PersonalInfoData>;
@@ -221,9 +221,10 @@ export default function PersonalInfoStep({
         transparent={true}
         visible={dobModalVisible}
         onRequestClose={() => setDobModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setDobModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setDobModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -239,7 +240,7 @@ export default function PersonalInfoStep({
                 accessibilityLabel={t('common.close')}
                 hitSlop={8}
               >
-                <Feather name="x" size={16} color="#64748b" accessible={false} />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} accessible={false} />
               </Pressable>
             </View>
 

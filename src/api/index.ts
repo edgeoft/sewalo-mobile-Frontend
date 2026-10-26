@@ -1,11 +1,10 @@
 // Core Types & Factory
 export { createApiClient } from './client/factory';
-export {
+export type {
   RequestCtx,
   ResponseCtx,
   ApiClientConfig,
   ApiError,
-  createApiError,
   Tokens,
   SingleTokenConfig,
   TokenSlotConfig,
@@ -19,8 +18,10 @@ export {
   ApiClient,
   ApiMethod,
 } from './client/types';
+export { createApiError } from './client/types';
 
-export { StorageAdapter, secureStorageAdapter, createFallbackStorageAdapter } from './client/auth/storage';
+export type { StorageAdapter } from './client/auth/storage';
+export { secureStorageAdapter, createFallbackStorageAdapter } from './client/auth/storage';
 
 // Query Integration
 export { queryClient } from './client/query/queryClient';

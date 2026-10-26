@@ -16,4 +16,6 @@ export const THEME_COLORS = {
   surfaceBrandSubtle: '#f7f9ff',
   surfaceIndigoSubtle: '#eef2ff',
   surfaceMuted: '#f1f5f9',
+  khaltiPurple: '#8b5cf6',
+  purple600: '#9333ea',
 } as const;

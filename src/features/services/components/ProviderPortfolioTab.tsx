@@ -3,10 +3,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Image } from 'expo-image';
+import { THEME_COLORS } from '@/constants/colors';
 
 import { FALLBACKS } from '@/utils/image';
 
-import { PortfolioItem } from '@/types';
+import type { PortfolioItem } from '@/types';
 
 interface ProviderPortfolioTabProps {
   portfolio: PortfolioItem[];
@@ -24,7 +25,7 @@ export default function ProviderPortfolioTab({ portfolio, onImagePress }: Provid
     return (
       <View className="bg-white border border-gray-200 rounded-lg px-5 py-8 items-center" style={styles.shadowMin}>
         <View className="h-16 w-16 bg-gray-50 rounded-full items-center justify-center mb-3">
-          <Feather name="image" size={28} color="#94a3b8" />
+          <Feather name="image" size={28} color={THEME_COLORS.slate400} />
         </View>
         <Text className="text-sm font-sans-semibold text-gray-900 mb-1">{t('services.noWorkSamples')}</Text>
         <Text className="text-xs font-sans-medium text-gray-400 text-center leading-4 max-w-[240px]">

@@ -1,5 +1,5 @@
-import { UserProfile, DeliveryType, BookingStatus } from '@/types';
-import { PaginatedResponse, DataEnvelope } from './common';
+import type { UserProfile, DeliveryType, BookingStatus } from '@/types';
+import type { PaginatedResponse, DataEnvelope } from './common';
 
 export interface ProviderBookingItem {
   id: string;

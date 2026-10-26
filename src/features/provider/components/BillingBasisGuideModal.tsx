@@ -66,7 +66,13 @@ export default function BillingBasisGuideModal({ visible, onClose }: BillingBasi
   ];
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.modalOverlay} className="flex-1 bg-black/40 justify-end">
         <View className="bg-white rounded-t-3xl overflow-hidden" style={{ maxHeight: '85%' }}>
           {/* Header */}

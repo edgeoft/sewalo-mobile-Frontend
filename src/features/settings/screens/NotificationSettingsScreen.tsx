@@ -9,21 +9,23 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { SectionHeader } from '@/components/common';
 import { cardShadow } from '@/constants/shadows';
-import { useNotificationSettingsStore } from '@/store/useNotificationSettingsStore';
+import { useNotificationSettings } from '@/store/useNotificationSettingsStore';
 
 export default function NotificationSettingsScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
 
-  const pushBookings = useNotificationSettingsStore((s) => s.pushBookings);
-  const pushOffers = useNotificationSettingsStore((s) => s.pushOffers);
-  const pushChat = useNotificationSettingsStore((s) => s.pushChat);
-  const emailWeekly = useNotificationSettingsStore((s) => s.emailWeekly);
-  const emailReceipts = useNotificationSettingsStore((s) => s.emailReceipts);
-  const smsStatus = useNotificationSettingsStore((s) => s.smsStatus);
-  const soundEnabled = useNotificationSettingsStore((s) => s.soundEnabled);
-  const vibrateEnabled = useNotificationSettingsStore((s) => s.vibrateEnabled);
-  const setToggle = useNotificationSettingsStore((s) => s.setToggle);
+  const {
+    pushBookings,
+    pushOffers,
+    pushChat,
+    emailWeekly,
+    emailReceipts,
+    smsStatus,
+    soundEnabled,
+    vibrateEnabled,
+    setToggle,
+  } = useNotificationSettings();
 
   const renderToggleItem = (
     icon: keyof typeof Feather.glyphMap,
@@ -35,7 +37,7 @@ export default function NotificationSettingsScreen() {
     <View className="flex-row items-center justify-between py-3.5 border-b border-gray-50 last:border-0">
       <View className="flex-row items-center flex-1 mr-4">
         <View className="h-8 w-8 rounded-full bg-gray-50 items-center justify-center mr-3">
-          <Feather name={icon} size={15} color="#64748b" />
+          <Feather name={icon} size={15} color={THEME_COLORS.slate500} />
         </View>
         <View className="flex-1">
           <Text className="text-sm font-sans-bold text-gray-900">{title}</Text>
@@ -45,7 +47,7 @@ export default function NotificationSettingsScreen() {
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#cbd5e1', true: '#a5b4fc' }}
+        trackColor={{ false: THEME_COLORS.slate300, true: '#a5b4fc' }}
         thumbColor={value ? THEME_COLORS.primary : '#f4f4f5'}
       />
     </View>

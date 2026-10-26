@@ -104,9 +104,16 @@ export default function RatingModal({
   };
 
   return (
-    <Modal key={modalKey} animationType="slide" transparent visible={visible} onRequestClose={handleClose}>
+    <Modal
+      key={modalKey}
+      animationType="slide"
+      transparent
+      visible={visible}
+      onRequestClose={handleClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={handleClose}>
+        <TouchableWithoutFeedback onPress={handleClose} accessible={false}>
           <View style={styles.backdrop} />
         </TouchableWithoutFeedback>
 
@@ -125,7 +132,7 @@ export default function RatingModal({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={20} color={THEME_COLORS.slate500} />
+                <Feather name="x" size={20} color={THEME_COLORS.slate500} accessible={false} />
               </Pressable>
             </View>
 

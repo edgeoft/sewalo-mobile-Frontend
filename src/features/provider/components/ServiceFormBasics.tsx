@@ -16,7 +16,7 @@ import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
 import { SERVICE_CATEGORIES, getServiceTypesByCategory } from '../constants/serviceOptions';
 import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
-import { ServiceFormData } from '@/types';
+import type { ServiceFormData } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 
 interface ServiceFormBasicsProps {
@@ -87,7 +87,7 @@ export default function ServiceFormBasics({
   return (
     <View
       style={{
-        shadowColor: '#0f172a',
+        shadowColor: THEME_COLORS.slate900,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.02,
         shadowRadius: 8,
@@ -130,7 +130,7 @@ export default function ServiceFormBasics({
               errors.categoryId ? 'border-destructive' : 'border-gray-200'
             }`}
             style={{
-              shadowColor: '#000',
+              shadowColor: THEME_COLORS.slate900,
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.015,
               shadowRadius: 2,
@@ -159,7 +159,7 @@ export default function ServiceFormBasics({
                 errors.serviceTypeIds ? 'border-destructive' : 'border-gray-200'
               }`}
               style={{
-                shadowColor: '#000',
+                shadowColor: THEME_COLORS.slate900,
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.015,
                 shadowRadius: 2,
@@ -230,9 +230,10 @@ export default function ServiceFormBasics({
         transparent={true}
         visible={catModalVisible}
         onRequestClose={() => setCatModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setCatModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setCatModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -248,7 +249,7 @@ export default function ServiceFormBasics({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -265,7 +266,6 @@ export default function ServiceFormBasics({
                       title={cat.name}
                       selected={isSelected}
                       indicatorType="radio"
-                      gradientColors={['#eef0ff', '#f8fafc']}
                     />
                   );
                 })}
@@ -281,9 +281,10 @@ export default function ServiceFormBasics({
         transparent={true}
         visible={typeModalVisible}
         onRequestClose={() => setTypeModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setTypeModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setTypeModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -299,7 +300,7 @@ export default function ServiceFormBasics({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -316,7 +317,6 @@ export default function ServiceFormBasics({
                       title={type.name}
                       selected={isSelected}
                       indicatorType="checkbox"
-                      gradientColors={['#eef0ff', '#f8fafc']}
                     />
                   );
                 })}
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   drawerContainer: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    shadowColor: '#000',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,

@@ -2,7 +2,6 @@ import axios from 'axios';
 import { createMutex } from './mutex';
 import { StorageAdapter } from './storage';
 import { TokenManager, SingleTokenConfig, Tokens } from '../types';
-import { isExpiring } from './jwt';
 
 export const createSingleTokenManager = (
   config: SingleTokenConfig,
@@ -14,16 +13,7 @@ export const createSingleTokenManager = (
   const REFRESH_KEY = 'single_refresh_token';
 
   const getAccessToken = async (): Promise<string | null> => {
-    let token = await storage.getItem(ACCESS_KEY);
-    const proactiveRefreshSeconds = config.proactiveRefreshSeconds ?? 60;
-    if (token && isExpiring(token, proactiveRefreshSeconds)) {
-      try {
-        token = await refreshToken();
-      } catch {
-        return null;
-      }
-    }
-    return token;
+    return storage.getItem(ACCESS_KEY);
   };
 
   const getRefreshToken = async (): Promise<string | null> => {
@@ -56,12 +46,6 @@ export const createSingleTokenManager = (
 
   const refreshToken = async (): Promise<string | null> => {
     return mutex.runExclusive(async () => {
-      const currentToken = await storage.getItem(ACCESS_KEY);
-      const proactiveRefreshSeconds = config.proactiveRefreshSeconds ?? 60;
-      if (currentToken && !isExpiring(currentToken, proactiveRefreshSeconds)) {
-        return currentToken;
-      }
-
       const refresh = await storage.getItem(REFRESH_KEY);
       if (!refresh) {
         handleAuthFailure();

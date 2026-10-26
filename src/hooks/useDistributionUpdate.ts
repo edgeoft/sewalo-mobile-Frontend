@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { distributionService, UpdateCheckResult, DistributionVersionInfo } from '@/services/distribution';
+import { distributionService } from '@/services/distribution';
+import type { UpdateCheckResult, DistributionVersionInfo } from '@/services/distribution';
 
 export function useDistributionUpdate() {
   const [isChecking, setIsChecking] = useState(false);

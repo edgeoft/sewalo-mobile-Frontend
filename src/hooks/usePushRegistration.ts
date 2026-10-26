@@ -3,6 +3,7 @@ import { AppState, type AppStateStatus, Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { getMessaging, onTokenRefresh } from '@react-native-firebase/messaging';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useShallow } from 'zustand/react/shallow';
 import { useRegisterDeviceToken } from '@/api/services/notifications/hooks';
 import { getFcmToken } from '@/services/NotificationService';
 import type { DeviceTokenPayload } from '@/types';
@@ -11,8 +12,12 @@ const SECURE_STORE_FCM_KEY = 'SEWALO_LAST_REGISTERED_FCM_TOKEN';
 const SECURE_STORE_USER_KEY = 'SEWALO_LAST_REGISTERED_USER_ID';
 
 export function usePushRegistration(): void {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const user = useAuthStore((state) => state.user);
+  const { isLoggedIn, user } = useAuthStore(
+    useShallow((state) => ({
+      isLoggedIn: state.isLoggedIn,
+      user: state.user,
+    })),
+  );
   const { mutate: registerToken } = useRegisterDeviceToken();
   const isRegisteringRef = useRef(false);
 

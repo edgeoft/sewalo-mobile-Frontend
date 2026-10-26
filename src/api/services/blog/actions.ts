@@ -16,17 +16,17 @@ export const getBlogsAction = async (
     show?: string;
   } = {},
 ): Promise<GetBlogsResponse> => {
-  return internalClient.get(API_ENDPOINTS.BLOG.LIST, { params });
+  return internalClient.get<GetBlogsResponse>(API_ENDPOINTS.BLOG.LIST, { params });
 };
 
 export const getFeaturedBlogAction = async (): Promise<GetFeaturedBlogResponse> => {
-  return internalClient.get(API_ENDPOINTS.BLOG.FEATURED);
+  return internalClient.get<GetFeaturedBlogResponse>(API_ENDPOINTS.BLOG.FEATURED);
 };
 
 export const getBlogBySlugAction = async (slug: string): Promise<GetBlogBySlugResponse> => {
-  return internalClient.get(API_ENDPOINTS.BLOG.DETAIL(slug));
+  return internalClient.get<GetBlogBySlugResponse>(API_ENDPOINTS.BLOG.DETAIL(slug));
 };
 
 export const getBlogCategoriesAction = async (): Promise<GetBlogCategoriesResponse> => {
-  return internalClient.get(API_ENDPOINTS.BLOG.CATEGORIES);
+  return internalClient.get<GetBlogCategoriesResponse>(API_ENDPOINTS.BLOG.CATEGORIES);
 };

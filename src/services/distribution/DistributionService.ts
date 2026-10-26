@@ -1,4 +1,4 @@
-import { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
+import type { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
 import { FirebaseDistributionProvider } from './FirebaseDistributionProvider';
 import { StoreDistributionProvider } from './StoreDistributionProvider';
 import { ENV } from '@/constants/env';

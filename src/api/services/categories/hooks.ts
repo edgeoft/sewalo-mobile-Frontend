@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { createQueryHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { getCategoriesAction, getSubCategoriesAction } from './actions';
@@ -10,6 +11,8 @@ const categoriesQueryHook = createQueryHook<CategoryResponse, 'all' | 'homepage'
 
 export const useGetCategoriesQuery = (show?: 'all' | 'homepage') => categoriesQueryHook(show);
 export const useCategoriesQuery = (show?: 'all' | 'homepage') => useGetCategoriesQuery(show);
+export const prefetchCategories = (client: QueryClient, show?: 'all' | 'homepage') =>
+  categoriesQueryHook.prefetch(client, show);
 
 const subCategoriesQueryHook = createQueryHook<SubCategoryListResponse, string>(
   (slug) => QUERY_KEYS.CATEGORIES.SUB(slug),
@@ -18,3 +21,5 @@ const subCategoriesQueryHook = createQueryHook<SubCategoryListResponse, string>(
 
 export const useGetSubCategoriesQuery = (slug: string, enabled: boolean = true) =>
   subCategoriesQueryHook(slug, { enabled: enabled && !!slug });
+export const prefetchSubCategories = (client: QueryClient, slug: string) =>
+  subCategoriesQueryHook.prefetch(client, slug);

@@ -15,7 +15,6 @@ import PhoneNumberField from '../components/PhoneNumberField';
 
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
-import { useAuthStore } from '@/store/useAuthStore';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 
 import { useLogin } from '@/api';
@@ -24,11 +23,7 @@ export default function SigninScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
-  const { setRole } = useAuth();
-
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const role = useAuthStore((state) => state.role);
-  const user = useAuthStore((state) => state.user);
+  const { setRole, isLoggedIn, role, user } = useAuth();
 
   useEffect(() => {
     if (isLoggedIn && user) {

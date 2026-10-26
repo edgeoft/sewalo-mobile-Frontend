@@ -23,9 +23,9 @@ export default function LanguageSelectionModal({
   const { height } = useWindowDimensions();
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose} accessibilityViewIsModal={true}>
       <View className="flex-1 justify-end">
-        <TouchableWithoutFeedback onPress={onClose}>
+        <TouchableWithoutFeedback onPress={onClose} accessible={false}>
           <View className="absolute inset-0 bg-slate-900/40" />
         </TouchableWithoutFeedback>
 
@@ -44,7 +44,7 @@ export default function LanguageSelectionModal({
               hitSlop={8}
               className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
             >
-              <Feather name="x" size={16} color={THEME_COLORS.slate500} />
+              <Feather name="x" size={16} color={THEME_COLORS.slate500} accessible={false} />
             </Pressable>
           </View>
 

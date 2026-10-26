@@ -196,13 +196,19 @@ ${formInputs}
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleConfirmClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={handleConfirmClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={[styles.container, { paddingTop: Platform.OS === 'ios' ? insets.top : 0 }]}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
             <View style={styles.lockBadge}>
-              <Feather name="lock" size={13} color="#10b981" />
+              <Feather name="lock" size={13} color={THEME_COLORS.emeraldSuccess} />
             </View>
             <View style={styles.titleContainer}>
               <Text style={styles.headerTitle}>{t('customer.esewaPayment', 'eSewa Payment')}</Text>
@@ -216,7 +222,7 @@ ${formInputs}
             accessibilityLabel={t('common.close', 'Close')}
             style={styles.closeButton}
           >
-            <Feather name="x" size={20} color="#64748b" />
+            <Feather name="x" size={20} color={THEME_COLORS.slate500} />
           </Pressable>
         </View>
 

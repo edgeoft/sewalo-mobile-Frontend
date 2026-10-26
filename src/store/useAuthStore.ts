@@ -4,7 +4,8 @@ import { queryClient } from '@/api/client/query/queryClient';
 import { isApiError } from '@/api/client/query/errorHandler';
 import { getProfileAction } from '@/api/services/auth/actions';
 import { unregisterDeviceTokenAction } from '@/api/services/notifications/actions';
-import { UserProfile, USER_ROLES, UserRole } from '@/types';
+import { USER_ROLES } from '@/types';
+import type { UserProfile, UserRole } from '@/types';
 import { create } from 'zustand';
 
 interface AuthState {

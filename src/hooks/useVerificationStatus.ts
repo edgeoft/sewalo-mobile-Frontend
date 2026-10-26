@@ -1,5 +1,6 @@
 import { useAuth } from '@/providers/AuthProvider';
-import { USER_ROLES, USER_STATUSES, UserStatus } from '@/types';
+import { USER_ROLES, USER_STATUSES } from '@/types';
+import type { UserStatus } from '@/types';
 
 type VerificationStatusResult = {
   isVerified: boolean;

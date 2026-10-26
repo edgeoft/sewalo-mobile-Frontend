@@ -2,8 +2,15 @@ import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useCategoriesQuery, useGetBookingsQuery, useGetFeaturedBlogQuery } from '@/api';
+import {
+  useCategoriesQuery,
+  useGetBookingsQuery,
+  useGetFeaturedBlogQuery,
+  prefetchCategories,
+  prefetchSubCategories,
+} from '@/api';
 import { HomeArticleSection, HomeServiceCategoriesSection, RecentBookingsSection } from '@/components/home';
 import HomeTopSection from '@/components/home/HomeTopSection';
 import ContentLayout from '@/components/layout/ContentLayout';
@@ -18,6 +25,7 @@ import { getReadTime, cleanDescriptionText } from '@/utils/text';
 export default function CustomerHomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: categoriesData } = useCategoriesQuery('homepage');
@@ -84,8 +92,16 @@ export default function CustomerHomeScreen() {
               title={t('home.serviceCategories')}
               actionLabel={t('common.viewAll')}
               categories={categories!}
-              onActionPress={() => router.push(ROUTES.customer.findServices)}
-              onCategoryPress={(cat) => router.push(`${ROUTES.customer.findServices}?category=${cat.slug}`)}
+              onActionPress={() => {
+                prefetchCategories(queryClient);
+                router.push(ROUTES.customer.findServices);
+              }}
+              onCategoryPress={(cat) => {
+                if (cat.slug) {
+                  prefetchSubCategories(queryClient, cat.slug);
+                }
+                router.push(`${ROUTES.customer.findServices}?category=${cat.slug}`);
+              }}
             />
           )}
 

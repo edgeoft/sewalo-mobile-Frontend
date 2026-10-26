@@ -1,6 +1,6 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
-import {
+import type {
   CommissionSummary,
   GetCommissionsParams,
   GetCommissionsResponse,

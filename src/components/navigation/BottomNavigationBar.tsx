@@ -4,7 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { BOTTOM_TAB_CONFIGS, TabConfig } from '@/constants/navigation';
+import { BOTTOM_TAB_CONFIGS } from '@/constants/navigation';
+import type { TabConfig } from '@/constants/navigation';
 import { THEME_COLORS } from '@/constants/colors';
 
 import type { ComponentProps } from 'react';
@@ -105,16 +106,13 @@ export default function BottomNavigationBar({ state, descriptors, navigation }: 
             });
           };
 
-          const opts = options as Record<string, string | undefined>;
-
           return (
             <Pressable
               key={route.key}
               accessibilityRole="tab"
               accessibilityState={isFocused ? { selected: true } : {}}
-              accessibilityLabel={opts.tabBarAccessibilityLabel ?? translatedLabel}
-              accessibilityHint={opts.tabBarAccessibilityHint}
-              testID={opts.tabBarTestID}
+              accessibilityLabel={options.tabBarAccessibilityLabel ?? translatedLabel}
+              testID={options.tabBarButtonTestID}
               onPress={onPress}
               onLongPress={onLongPress}
               className="flex-1 items-center justify-center pt-2 pb-0.5"

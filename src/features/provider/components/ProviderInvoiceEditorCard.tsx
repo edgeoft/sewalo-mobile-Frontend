@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
 import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useUpdateInvoiceItems } from '@/api';
-import { BOOKING_STATUSES, type Booking, type InvoiceItem } from '@/types';
+import { BOOKING_STATUSES } from '@/types';
+import type { Booking, InvoiceItem } from '@/types';
 import { formatDate } from '@/utils/time';
 
 interface ProviderInvoiceEditorCardProps {
@@ -53,7 +54,7 @@ export default function ProviderInvoiceEditorCard({
       booking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
   );
   const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
-  const billingOptionTooltip = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+  const billingOptionTooltip = primaryBillingOpt?.name || primaryBillingOpt?.label || '';
 
   const originalItems: InvoiceItem[] = useMemo(() => {
     if (invoice?.invoice_items && invoice.invoice_items.length > 0) {
@@ -413,7 +414,7 @@ export default function ProviderInvoiceEditorCard({
                           value={item.quantity}
                           onChangeText={(text) => handleItemQuantityChange(text, originalIndex)}
                           placeholder="1"
-                          placeholderTextColor="#94a3b8"
+                          placeholderTextColor={THEME_COLORS.slate400}
                           keyboardType="numeric"
                           className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
                         />
@@ -429,7 +430,7 @@ export default function ProviderInvoiceEditorCard({
                           value={item.unit_price}
                           onChangeText={(text) => handleItemPriceChange(text, originalIndex)}
                           placeholder="0"
-                          placeholderTextColor="#94a3b8"
+                          placeholderTextColor={THEME_COLORS.slate400}
                           keyboardType="numeric"
                           className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
                         />
@@ -498,7 +499,7 @@ export default function ProviderInvoiceEditorCard({
                           value={item.name}
                           onChangeText={(text) => handleItemNameChange(text, originalIndex)}
                           placeholder={t('provider.invoiceNamePlaceholder')}
-                          placeholderTextColor="#94a3b8"
+                          placeholderTextColor={THEME_COLORS.slate400}
                           className="flex-1 text-xs font-sans-medium text-gray-900 p-0"
                         />
                       </View>
@@ -515,7 +516,7 @@ export default function ProviderInvoiceEditorCard({
                             value={item.quantity}
                             onChangeText={(text) => handleItemQuantityChange(text, originalIndex)}
                             placeholder="1"
-                            placeholderTextColor="#94a3b8"
+                            placeholderTextColor={THEME_COLORS.slate400}
                             keyboardType="numeric"
                             className="flex-1 text-xs font-sans-semibold text-gray-900 p-0 text-center"
                           />
@@ -532,7 +533,7 @@ export default function ProviderInvoiceEditorCard({
                             value={item.unit_price}
                             onChangeText={(text) => handleItemPriceChange(text, originalIndex)}
                             placeholder="0"
-                            placeholderTextColor="#94a3b8"
+                            placeholderTextColor={THEME_COLORS.slate400}
                             keyboardType="numeric"
                             className="flex-1 text-xs font-sans-semibold text-gray-900 p-0"
                           />
@@ -584,7 +585,7 @@ export default function ProviderInvoiceEditorCard({
                 value={notes}
                 onChangeText={setNotes}
                 placeholder={t('provider.invoiceNotesPlaceholder')}
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={THEME_COLORS.slate400}
                 multiline
                 numberOfLines={3}
                 style={{ minHeight: 60, textAlignVertical: 'top', padding: 0 }}
@@ -663,7 +664,11 @@ export default function ProviderInvoiceEditorCard({
             onPress={handleSaveInvoice}
             loading={updateInvoiceMutation.isPending}
             className="flex-1"
-            leftIcon={!updateInvoiceMutation.isPending ? <Feather name="save" size={14} color="#ffffff" /> : null}
+            leftIcon={
+              !updateInvoiceMutation.isPending ? (
+                <Feather name="save" size={14} color={THEME_COLORS.primaryForeground} />
+              ) : null
+            }
           />
         </View>
       )}
@@ -673,7 +678,7 @@ export default function ProviderInvoiceEditorCard({
 
 const styles = StyleSheet.create({
   cardShadow: {
-    shadowColor: '#0f172a',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 8,

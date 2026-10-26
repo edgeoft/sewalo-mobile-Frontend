@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Button from '@/components/ui/Button';
 import SheetContainer from '@/components/ui/SheetContainer';
@@ -37,24 +38,20 @@ export default function AvailabilityEditor({
   const [timePickerVisible, setTimePickerVisible] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<'start' | 'end'>('start');
 
-  const [tempHour, setTempHour] = useState('10');
-  const [tempMinute, setTempMinute] = useState('00');
-  const [tempPeriod, setTempPeriod] = useState('AM');
+  const [tempTime, setTempTime] = useState({ hour: '10', minute: '00', period: 'AM' });
 
   const openTimePicker = (target: 'start' | 'end') => {
     setPickerTarget(target);
     const currentTime = target === 'start' ? workingHoursStart : workingHoursEnd;
     const match = currentTime.match(/(\d+):(\d+) (AM|PM)/);
     if (match) {
-      setTempHour(match[1]);
-      setTempMinute(match[2]);
-      setTempPeriod(match[3]);
+      setTempTime({ hour: match[1], minute: match[2], period: match[3] });
     }
     setTimePickerVisible(true);
   };
 
   const handleConfirmTime = () => {
-    const formattedTime = `${tempHour}:${tempMinute} ${tempPeriod}`;
+    const formattedTime = `${tempTime.hour}:${tempTime.minute} ${tempTime.period}`;
     if (pickerTarget === 'start') {
       onChangeHours(formattedTime, workingHoursEnd);
     } else {
@@ -90,7 +87,7 @@ export default function AvailabilityEditor({
         <>
           <View className="mb-3 flex-row items-center gap-x-2.5">
             <View className="w-8 h-8 rounded-full bg-emerald-50 items-center justify-center">
-              <Feather name="clock" size={16} color="#059669" />
+              <Feather name="clock" size={16} color={THEME_COLORS.emeraldSuccess} />
             </View>
             <View className="flex-1">
               <Text className="text-base font-sans-bold text-gray-950">{title}</Text>
@@ -170,7 +167,7 @@ export default function AvailabilityEditor({
               </Text>
               <Text className="text-sm font-sans-bold text-gray-900">{workingHoursStart}</Text>
             </View>
-            <Feather name="clock" size={16} color="#64748b" />
+            <Feather name="clock" size={16} color={THEME_COLORS.slate500} />
           </Pressable>
 
           <Text className="text-xs font-sans-semibold text-gray-400">{t('common.to')}</Text>
@@ -187,7 +184,7 @@ export default function AvailabilityEditor({
               </Text>
               <Text className="text-sm font-sans-bold text-gray-900">{workingHoursEnd}</Text>
             </View>
-            <Feather name="clock" size={16} color="#64748b" />
+            <Feather name="clock" size={16} color={THEME_COLORS.slate500} />
           </Pressable>
         </View>
       </View>
@@ -218,14 +215,14 @@ export default function AvailabilityEditor({
               {HOURS.map((h) => (
                 <Pressable
                   key={h}
-                  onPress={() => setTempHour(h)}
+                  onPress={() => setTempTime((t) => ({ ...t, hour: h }))}
                   className={`py-2 items-center rounded-lg my-0.5 ${
-                    tempHour === h ? 'bg-primary/10' : 'bg-transparent'
+                    tempTime.hour === h ? 'bg-primary/10' : 'bg-transparent'
                   }`}
                 >
                   <Text
                     className={`text-lg ${
-                      tempHour === h ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
+                      tempTime.hour === h ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
                     }`}
                   >
                     {h}
@@ -242,14 +239,14 @@ export default function AvailabilityEditor({
               {MINUTES.map((m) => (
                 <Pressable
                   key={m}
-                  onPress={() => setTempMinute(m)}
+                  onPress={() => setTempTime((t) => ({ ...t, minute: m }))}
                   className={`py-2 items-center rounded-lg my-0.5 ${
-                    tempMinute === m ? 'bg-primary/10' : 'bg-transparent'
+                    tempTime.minute === m ? 'bg-primary/10' : 'bg-transparent'
                   }`}
                 >
                   <Text
                     className={`text-lg ${
-                      tempMinute === m ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
+                      tempTime.minute === m ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
                     }`}
                   >
                     {m}
@@ -266,14 +263,14 @@ export default function AvailabilityEditor({
               {PERIODS.map((p) => (
                 <Pressable
                   key={p}
-                  onPress={() => setTempPeriod(p)}
+                  onPress={() => setTempTime((t) => ({ ...t, period: p }))}
                   className={`py-2 items-center rounded-lg my-0.5 ${
-                    tempPeriod === p ? 'bg-primary/10' : 'bg-transparent'
+                    tempTime.period === p ? 'bg-primary/10' : 'bg-transparent'
                   }`}
                 >
                   <Text
                     className={`text-lg ${
-                      tempPeriod === p ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
+                      tempTime.period === p ? 'font-sans-bold text-primary' : 'font-sans-medium text-gray-600'
                     }`}
                   >
                     {p}

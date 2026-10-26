@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { ENV } from '@/constants/env';
 import LocationSelectorShell from './LocationSelectorShell';
 import type { MapGeocoderAdapter } from './useMapLocationSelector';
-import type { MapProviderProps, SearchResult } from './types';
+import type { MapProviderProps } from './types';
 import { MAP_CONSOLE_BRIDGE } from './mapShared';
 
 function generateGoogleMapHTML(lat: number, lng: number, apiKey: string) {
@@ -102,8 +102,8 @@ const createGoogleGeocoder = (apiKey: string): MapGeocoderAdapter => ({
     );
     if (!response.ok) return null;
     const data = await response.json();
-    if (data.results && data.results.length > 0) {
-      return data.results[0].formatted_address as string;
+    if (data.results && data.results.length > 0 && typeof data.results[0].formatted_address === 'string') {
+      return data.results[0].formatted_address;
     }
     return null;
   },
@@ -126,8 +126,11 @@ const createGoogleGeocoder = (apiKey: string): MapGeocoderAdapter => ({
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&key=${apiKey}&components=country:np&${GOOGLE_GEO_LANGUAGE}`,
     );
     if (!response.ok) return [];
-    const data = await response.json();
-    return (data.predictions || []) as SearchResult[];
+    const data = (await response.json()) as { predictions?: { description: string; place_id?: string }[] };
+    return (data.predictions ?? []).map((item) => ({
+      description: item.description,
+      place_id: item.place_id,
+    }));
   },
 
   resolveSelection: async (result) => {
@@ -157,8 +160,8 @@ const createGoogleGeocoder = (apiKey: string): MapGeocoderAdapter => ({
     );
     if (response.ok) {
       const data = await response.json();
-      if (data.results && data.results.length > 0) {
-        const components = (data.results[0].address_components || []) as GoogleAddressComponent[];
+      if (data.results && data.results.length > 0 && Array.isArray(data.results[0].address_components)) {
+        const components: GoogleAddressComponent[] = data.results[0].address_components;
         city = extractComponent(components, ['locality', 'sublocality', 'postal_town', 'administrative_area_level_2']);
         state = extractComponent(components, ['administrative_area_level_1']);
         country = extractComponent(components, ['country']);

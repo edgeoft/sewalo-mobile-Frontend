@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Input from '@/components/ui/Input';
 
@@ -43,7 +44,12 @@ export default function PasswordField<TFieldValues extends FieldValues>({
               accessibilityRole="button"
               accessibilityLabel={isVisible ? 'Hide password' : 'Show password'}
             >
-              <Feather name={isVisible ? 'eye' : 'eye-off'} size={18} color="#898f8f" accessible={false} />
+              <Feather
+                name={isVisible ? 'eye' : 'eye-off'}
+                size={18}
+                color={THEME_COLORS.slate400}
+                accessible={false}
+              />
             </Pressable>
           }
         />

@@ -148,7 +148,7 @@ export const isProviderWorkingDay = (
   const [year, month, day] = serviceDate.split('-').map(Number);
   if (!year || !month || !day) return false;
   const selectedDate = new Date(year, month - 1, day);
-  if (isNaN(selectedDate.getTime())) return false;
+  if (Number.isNaN(selectedDate.getTime())) return false;
   const selectedDay = selectedDate.getDay();
   const allowedDays = getSelectedDayIndexes(provider);
   return allowedDays.includes(selectedDay);

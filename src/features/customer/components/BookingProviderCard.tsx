@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Image } from 'expo-image';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
 import { FALLBACKS, getAvatarUrl } from '@/utils/image';
@@ -31,7 +31,7 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
         <View className="flex-1 gap-1">
           <View className="flex-row items-center gap-1">
             <Text className="text-base font-sans-bold text-gray-900">{booking.name}</Text>
-            <MaterialIcons name="verified" size={16} color={THEME_COLORS.primary} />
+            <Feather name="check-circle" size={15} color={THEME_COLORS.primary} />
           </View>
 
           <View className="flex-row items-center bg-surface-indigo-subtle px-2 py-0.5 rounded-lg self-start gap-1">

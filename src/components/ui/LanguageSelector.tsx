@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 import {
   Modal,
   Pressable,
@@ -42,7 +43,7 @@ export default function LanguageSelector() {
       >
         <Text className="text-base mr-1">{activeLang.flag}</Text>
         <Text className="text-gray-800 font-sans-medium text-sm mr-1">{activeLang.name}</Text>
-        <Feather name="chevron-down" size={13} color="#9ca3af" />
+        <Feather name="chevron-down" size={13} color={THEME_COLORS.slate400} />
       </Pressable>
 
       <Modal
@@ -50,9 +51,10 @@ export default function LanguageSelector() {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -67,7 +69,7 @@ export default function LanguageSelector() {
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} accessible={false} />
               </Pressable>
             </View>
 

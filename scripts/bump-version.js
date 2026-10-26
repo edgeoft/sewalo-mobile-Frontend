@@ -7,7 +7,10 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
 function exec(cmd) {
   try {
-    return execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] })
+    return execSync(cmd, {
+      stdio: ['ignore', 'pipe', 'ignore'],
+      env: { ...process.env, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' },
+    })
       .toString()
       .trim();
   } catch {

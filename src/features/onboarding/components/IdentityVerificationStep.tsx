@@ -156,6 +156,7 @@ export default function IdentityVerificationStep({
         transparent={true}
         animationType="fade"
         onRequestClose={() => setPreviewVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.modalBackground}>
           <Pressable

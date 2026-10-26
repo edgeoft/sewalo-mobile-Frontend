@@ -1,10 +1,11 @@
-import React, { ComponentProps } from 'react';
+import React from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { THEME_COLORS } from '@/constants/colors';
 
 export interface GroupedListTileProps {
-  icon?: ComponentProps<typeof Feather>['name'] | React.ReactNode;
+  icon?: ComponentProps<typeof Feather>['name'] | ReactElement;
   title: string;
   subtitle?: string;
   destructive?: boolean;
@@ -26,8 +27,6 @@ export default function GroupedListTile({
   isFirst = false,
   isLast = false,
 }: GroupedListTileProps) {
-  const isFeatherIconName = typeof icon === 'string';
-
   return (
     <Pressable
       onPress={onPress}
@@ -45,9 +44,9 @@ export default function GroupedListTile({
               destructive ? 'bg-red-50' : 'bg-slate-100/80'
             }`}
           >
-            {isFeatherIconName ? (
+            {typeof icon === 'string' ? (
               <Feather
-                name={icon as ComponentProps<typeof Feather>['name']}
+                name={icon}
                 size={18}
                 color={destructive ? '#ef4444' : THEME_COLORS.slate700}
                 accessible={false}

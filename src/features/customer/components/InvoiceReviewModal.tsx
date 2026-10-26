@@ -9,7 +9,6 @@ import {
   ScrollView,
   useWindowDimensions,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -92,10 +91,16 @@ export default function InvoiceReviewModal({
       booking.service?.name?.toLowerCase().includes(offering.sub_category.name.toLowerCase()),
   );
   const primaryBillingOpt = matchingOffering?.billing_option || booking.service?.service_offerings?.[0]?.billing_option;
-  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label?.replace(/[()]/g, '') || '';
+  const billingLabel = primaryBillingOpt?.name || primaryBillingOpt?.label || '';
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
         <View style={{ maxHeight: height * 0.88 }} className="bg-white rounded-t-xl overflow-hidden flex flex-col">
           {/* Header */}
@@ -416,7 +421,7 @@ export default function InvoiceReviewModal({
                     onClose();
                     onProceedToPay();
                   }}
-                  leftIcon={<Feather name="credit-card" size={16} color="#ffffff" />}
+                  leftIcon={<Feather name="credit-card" size={16} color={THEME_COLORS.primaryForeground} />}
                 />
                 {onRejectInvoice && (
                   <Pressable

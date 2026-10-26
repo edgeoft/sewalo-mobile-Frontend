@@ -307,7 +307,7 @@ export default function ContactSupportScreen() {
             loading={isPending}
             onPress={handleSubmit(handleTicketSubmit)}
             className="w-full h-12 bg-primary border-primary rounded-xl"
-            leftIcon={<Feather name="send" size={16} color="#ffffff" />}
+            leftIcon={<Feather name="send" size={16} color={THEME_COLORS.primaryForeground} />}
           />
         </View>
 

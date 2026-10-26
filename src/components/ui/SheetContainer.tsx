@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
+import { THEME_COLORS } from '@/constants/colors';
 import {
   Modal,
   Pressable,
@@ -33,9 +34,15 @@ export default function SheetContainer({
   const { height } = useWindowDimensions();
 
   return (
-    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={onClose}>
+        <TouchableWithoutFeedback onPress={onClose} accessible={false}>
           <View style={styles.backdrop} />
         </TouchableWithoutFeedback>
 
@@ -54,7 +61,7 @@ export default function SheetContainer({
                 accessibilityRole="button"
                 accessibilityLabel={t('common.close')}
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} accessible={false} />
               </Pressable>
             </View>
           )}

@@ -10,7 +10,7 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import SearchBar from '@/components/ui/SearchBar';
 import { THEME_COLORS } from '@/constants/colors';
-import { BOOKING_STATUS_FILTER_OPTIONS, BOOKING_FILTER_STATUSES } from '@/constants/bookings';
+import { BOOKING_FILTER_STATUSES } from '@/constants/bookings';
 import type { BookingFilterStatus } from '@/types';
 import ErrorState from '@/components/ui/ErrorState';
 import LoadingState from '@/components/ui/LoadingState';
@@ -41,15 +41,11 @@ export default function CustomerBookingsScreen() {
   const bookings = useMemo(() => bookingsData?.data || [], [bookingsData?.data]);
 
   const countsByStatus = useMemo(() => {
-    const counts = {} as Record<BookingFilterStatus, number>;
-    for (const status of BOOKING_STATUS_FILTER_OPTIONS) counts[status] = 0;
-
-    counts[BOOKING_FILTER_STATUSES.All] = bookings.length;
+    const counts: Record<string, number> = { [BOOKING_FILTER_STATUSES.All]: bookings.length };
     bookings.forEach((booking) => {
-      counts[booking.status] += 1;
+      counts[booking.status] = (counts[booking.status] || 0) + 1;
     });
-
-    return counts;
+    return counts as Record<BookingFilterStatus, number>;
   }, [bookings]);
 
   const formatLocation = (b: (typeof bookings)[0]) => {

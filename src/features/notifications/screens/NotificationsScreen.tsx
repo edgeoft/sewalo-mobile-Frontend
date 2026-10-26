@@ -12,7 +12,8 @@ import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { SegmentedControl } from '@/components/ui';
 import type { SegmentedControlOption } from '@/components/ui/SegmentedControl';
-import { NOTIFICATION_FILTERS, type NotificationFilter, Notification } from '@/types';
+import { NOTIFICATION_FILTERS } from '@/types';
+import type { Notification, NotificationFilter } from '@/types';
 import {
   useGetNotificationsQuery,
   useUnreadCountQuery,
@@ -72,7 +73,7 @@ export default function NotificationsScreen() {
     () => (
       <View className="flex-1 items-center justify-center pb-20">
         <View className="h-16 w-16 rounded-lg bg-gray-100 items-center justify-center mb-4">
-          <Feather name="bell-off" size={28} color="#9ca3af" />
+          <Feather name="bell-off" size={28} color={THEME_COLORS.slate400} />
         </View>
         <Text className="text-base font-sans-semibold text-gray-900 mb-1">
           {activeFilter === NOTIFICATION_FILTERS.Unread ? t('notifications.emptyUnread') : t('notifications.emptyAll')}

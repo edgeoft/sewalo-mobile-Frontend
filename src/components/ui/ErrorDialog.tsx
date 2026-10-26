@@ -2,6 +2,8 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
+import { announceForAccessibility } from '@/utils/accessibility';
 
 interface ErrorDialogAction {
   text: string;
@@ -63,6 +65,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
     (c: ErrorDialogConfig) => {
       setConfig(c);
       setVisible(true);
+      announceForAccessibility(c.title ? `${c.title}. ${c.message}` : c.message);
       requestAnimationFrame(animateIn);
     },
     [animateIn],
@@ -71,15 +74,22 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
   return (
     <ErrorDialogContext.Provider value={{ showError, hideError }}>
       {children}
-      <Modal visible={visible} transparent animationType="none" onRequestClose={hideError}>
+      <Modal
+        visible={visible}
+        transparent
+        animationType="none"
+        onRequestClose={hideError}
+        accessibilityViewIsModal={true}
+      >
         <Animated.View className="flex-1 bg-black/50 justify-center items-center px-6" style={{ opacity }}>
           <Animated.View
             className="w-full max-w-sm bg-white rounded-lg p-6"
             style={{ opacity, transform: [{ scale }] }}
+            accessibilityRole="alert"
           >
             <View className="items-center mb-4">
               <View className="h-14 w-14 rounded-full bg-destructive/10 items-center justify-center mb-3">
-                <Feather name="alert-triangle" size={28} color="#dc2626" />
+                <Feather name="alert-triangle" size={28} color={THEME_COLORS.dangerRed} accessible={false} />
               </View>
               <Text className="text-lg font-sans-bold text-gray-900 text-center">{config?.title ?? ''}</Text>
             </View>
@@ -99,6 +109,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                         hideError();
                       }}
                       accessibilityRole="button"
+                      accessibilityLabel={action.text}
                       className={`py-3 rounded-lg items-center ${
                         isCancel ? 'bg-muted' : isDestructive ? 'bg-destructive' : 'bg-primary'
                       }`}
@@ -113,6 +124,7 @@ export function ErrorDialogProvider({ children }: { children: React.ReactNode })
                 <Pressable
                   onPress={hideError}
                   accessibilityRole="button"
+                  accessibilityLabel={t('common.ok')}
                   className="py-3 rounded-lg bg-primary items-center"
                 >
                   <Text className="font-sans-bold text-sm text-white">{t('common.ok')}</Text>

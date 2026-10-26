@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { createQueryHook, createMutationHook } from '@/api/client/query/factory';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import {
@@ -142,6 +143,8 @@ const providerDetailsQueryHook = createQueryHook<ProviderDetailsResponse, string
 
 export const useGetProviderDetailsQuery = (id: string, options?: { enabled?: boolean }) =>
   providerDetailsQueryHook(id, { enabled: (options?.enabled ?? true) && !!id });
+export const prefetchProviderDetails = (client: QueryClient, id: string) =>
+  providerDetailsQueryHook.prefetch(client, id);
 
 // Service Hooks
 const servicesQueryHook = createQueryHook<GetServiceListResponse, GetServiceListParams>(
@@ -150,6 +153,8 @@ const servicesQueryHook = createQueryHook<GetServiceListResponse, GetServiceList
 );
 
 export const useGetServicesQuery = (params: GetServiceListParams) => servicesQueryHook(params);
+export const prefetchServices = (client: QueryClient, params: GetServiceListParams) =>
+  servicesQueryHook.prefetch(client, params);
 
 // Nearby Providers Hooks
 const nearbyProvidersQueryHook = createQueryHook<GetNearbyProvidersResponse, GetNearbyProvidersParams>(

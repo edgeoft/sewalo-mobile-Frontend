@@ -101,7 +101,7 @@ export const formatDate = (dateStr: string | null | undefined): string => {
   }
 
   const d = new Date(trimmed);
-  return isNaN(d.getTime())
+  return Number.isNaN(d.getTime())
     ? trimmed
     : d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 };

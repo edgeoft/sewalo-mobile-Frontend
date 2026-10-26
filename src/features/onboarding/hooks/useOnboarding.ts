@@ -15,9 +15,10 @@ import {
   AVAILABILITY_TYPES,
   DEFAULT_WORKING_HOURS_START,
   DEFAULT_WORKING_HOURS_END,
-  AvailabilityType,
+  type AvailabilityType,
 } from '@/constants/availability';
-import { Availability, PersonalInfoData, UserRole, USER_ROLES } from '@/types';
+import { USER_ROLES } from '@/types';
+import type { Availability, PersonalInfoData, UserRole } from '@/types';
 
 import { personalInfoSchema } from '@/schemas/onboarding';
 

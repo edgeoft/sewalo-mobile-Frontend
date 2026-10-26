@@ -162,7 +162,7 @@ export default function BasicInfoSection({
                 accessibilityRole="button"
               >
                 <View className="w-3.5 h-3.5 items-center justify-center mr-1">
-                  <Feather name="rotate-ccw" size={11} color="#64748b" />
+                  <Feather name="rotate-ccw" size={11} color={THEME_COLORS.slate500} />
                 </View>
                 <Text className="text-[11px] font-sans-medium text-gray-700">{t('common.revert')}</Text>
               </Pressable>

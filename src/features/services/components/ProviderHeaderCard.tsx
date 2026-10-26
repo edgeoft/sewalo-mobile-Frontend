@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
-import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 import { FALLBACKS } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
@@ -61,15 +61,7 @@ export default function ProviderHeaderCard({
             <Text className="text-lg font-sans-extrabold text-slate-900 flex-shrink" numberOfLines={1}>
               {name}
             </Text>
-            {isVerified && (
-              <MaterialIcons
-                name="verified"
-                size={17}
-                color={THEME_COLORS.infoBlue}
-                accessible={false}
-                style={{ marginTop: 1 }}
-              />
-            )}
+            {isVerified && <Feather name="check-circle" size={15} color={THEME_COLORS.infoBlue} accessible={false} />}
           </View>
 
           {/* Service Category & Rating */}
@@ -130,10 +122,11 @@ export default function ProviderHeaderCard({
             isSaved ? 'border-rose-200 bg-rose-50/70 active:bg-rose-100' : 'border-gray-200 bg-white active:bg-gray-50'
           }`}
         >
-          <Ionicons
-            name={isSaved ? 'heart' : 'heart-outline'}
+          <Feather
+            name="heart"
             size={16}
             color={isSaved ? THEME_COLORS.dangerRed : THEME_COLORS.slate700}
+            fill={isSaved ? THEME_COLORS.dangerRed : 'none'}
             accessible={false}
           />
           <Text

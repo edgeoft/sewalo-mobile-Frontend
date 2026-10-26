@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import { File, Paths } from 'expo-file-system';
 
@@ -35,6 +36,16 @@ const fileStorage: StateStorage = {
   },
 };
 
+export type NotificationSettingKey =
+  | 'pushBookings'
+  | 'pushOffers'
+  | 'pushChat'
+  | 'emailWeekly'
+  | 'emailReceipts'
+  | 'smsStatus'
+  | 'soundEnabled'
+  | 'vibrateEnabled';
+
 export interface NotificationSettingsState {
   pushBookings: boolean;
   pushOffers: boolean;
@@ -44,7 +55,7 @@ export interface NotificationSettingsState {
   smsStatus: boolean;
   soundEnabled: boolean;
   vibrateEnabled: boolean;
-  setToggle: (key: keyof NotificationSettingsState, value: boolean) => void;
+  setToggle: (key: NotificationSettingKey, value: boolean) => void;
 }
 
 export const useNotificationSettingsStore = create<NotificationSettingsState>()(
@@ -58,7 +69,7 @@ export const useNotificationSettingsStore = create<NotificationSettingsState>()(
       smsStatus: false,
       soundEnabled: true,
       vibrateEnabled: true,
-      setToggle: (key, value) => set({ [key]: value } as Partial<NotificationSettingsState>),
+      setToggle: (key, value) => set({ [key]: value }),
     }),
     {
       name: SETTINGS_FILE,
@@ -66,3 +77,19 @@ export const useNotificationSettingsStore = create<NotificationSettingsState>()(
     },
   ),
 );
+
+export function useNotificationSettings() {
+  return useNotificationSettingsStore(
+    useShallow((s) => ({
+      pushBookings: s.pushBookings,
+      pushOffers: s.pushOffers,
+      pushChat: s.pushChat,
+      emailWeekly: s.emailWeekly,
+      emailReceipts: s.emailReceipts,
+      smsStatus: s.smsStatus,
+      soundEnabled: s.soundEnabled,
+      vibrateEnabled: s.vibrateEnabled,
+      setToggle: s.setToggle,
+    })),
+  );
+}

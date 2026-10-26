@@ -1,6 +1,8 @@
 import { forwardRef } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
-import { WebView, WebViewProps, type WebViewMessageEvent } from 'react-native-webview';
+import { StyleSheet, View } from 'react-native';
+import type { ViewStyle } from 'react-native';
+import { WebView } from 'react-native-webview';
+import type { WebViewMessageEvent, WebViewProps } from 'react-native-webview';
 import { MAP_USER_AGENT } from './mapShared';
 
 export interface SharedWebViewMapProps extends Omit<WebViewProps, 'source'> {

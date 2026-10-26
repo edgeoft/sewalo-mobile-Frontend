@@ -5,7 +5,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View, useWindowDim
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/constants/routes';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthState } from '@/providers/AuthProvider';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 import { useAppReducedMotion } from '@/utils/accessibility';
 import OnboardingFooter from '../components/OnboardingFooter';
@@ -24,14 +24,12 @@ export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const role = useAuthStore((state) => state.role);
-  const user = useAuthStore((state) => state.user);
-  const isLoading = useAuthStore((state) => state.isLoading);
+  const { isLoggedIn, role, user, isLoading } = useAuthState();
 
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const checkStatus = async () => {
       // 1. If user is logged in, redirect to dashboard or gettingStarted
       if (isLoggedIn && user) {
@@ -63,11 +61,16 @@ export default function OnboardingScreen() {
         } catch (e) {
           console.warn('Error reading onboarding completed flag:', e);
         }
-        setCheckingOnboarding(false);
+        if (isMounted) {
+          setCheckingOnboarding(false);
+        }
       }
     };
 
     checkStatus();
+    return () => {
+      isMounted = false;
+    };
   }, [isLoggedIn, role, user, isLoading, router, pathname]);
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -85,15 +88,15 @@ export default function OnboardingScreen() {
       {
         title: t('onboarding.screen2.title'),
         description: t('onboarding.screen2.description'),
-        illustration: <OnboardingIllustrationTwo />,
+        illustration: <OnboardingIllustrationTwo isActive={activeIndex === 1} />,
       },
       {
         title: t('onboarding.screen3.title'),
         description: t('onboarding.screen3.description'),
-        illustration: <OnboardingIllustrationThree />,
+        illustration: <OnboardingIllustrationThree isActive={activeIndex === 2} />,
       },
     ],
-    [t],
+    [t, activeIndex],
   );
 
   const isLastPage = activeIndex === pages.length - 1;

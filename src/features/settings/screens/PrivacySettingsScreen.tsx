@@ -22,10 +22,15 @@ export default function PrivacySettingsScreen() {
   const { showError } = useErrorDialog();
   const { t } = useTranslation();
 
-  const [profileVisible, setProfileVisible] = useState(true);
-  const [shareData, setShareData] = useState(true);
-  const [activityStatus, setActivityStatus] = useState(true);
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
+  const [privacyToggles, setPrivacyToggles] = useState({
+    profileVisible: true,
+    shareData: true,
+    activityStatus: true,
+    twoFactorAuth: false,
+  });
+
+  const handleToggle = (key: keyof typeof privacyToggles) => (val: boolean) =>
+    setPrivacyToggles((prev) => ({ ...prev, [key]: val }));
 
   const cardShadow = {
     shadowColor: '#0f172a',
@@ -90,7 +95,7 @@ export default function PrivacySettingsScreen() {
     <View className="flex-row items-center justify-between py-3.5 border-b border-gray-50 last:border-0">
       <View className="flex-row items-center flex-1 mr-4">
         <View className="h-8 w-8 rounded-full bg-gray-50 items-center justify-center mr-3">
-          <Feather name={icon} size={15} color="#64748b" />
+          <Feather name={icon} size={15} color={THEME_COLORS.slate500} />
         </View>
         <View className="flex-1">
           <Text className="text-sm font-sans-bold text-gray-900">{title}</Text>
@@ -100,7 +105,7 @@ export default function PrivacySettingsScreen() {
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#cbd5e1', true: '#a5b4fc' }}
+        trackColor={{ false: THEME_COLORS.slate300, true: '#a5b4fc' }}
         thumbColor={value ? THEME_COLORS.primary : '#f4f4f5'}
       />
     </View>
@@ -133,15 +138,15 @@ export default function PrivacySettingsScreen() {
             'eye',
             t('settings.publicProfileSearch'),
             t('settings.publicProfileSearchDesc'),
-            profileVisible,
-            setProfileVisible,
+            privacyToggles.profileVisible,
+            handleToggle('profileVisible'),
           )}
           {renderToggleItem(
             'circle',
             t('settings.onlineStatus'),
             t('settings.onlineStatusDesc'),
-            activityStatus,
-            setActivityStatus,
+            privacyToggles.activityStatus,
+            handleToggle('activityStatus'),
           )}
         </View>
 
@@ -152,15 +157,15 @@ export default function PrivacySettingsScreen() {
             'lock',
             t('settings.twoFactorAuth'),
             t('settings.twoFactorAuthDesc'),
-            twoFactorAuth,
-            setTwoFactorAuth,
+            privacyToggles.twoFactorAuth,
+            handleToggle('twoFactorAuth'),
           )}
           {renderToggleItem(
             'shield',
             t('settings.shareAnalyticsData'),
             t('settings.shareAnalyticsDataDesc'),
-            shareData,
-            setShareData,
+            privacyToggles.shareData,
+            handleToggle('shareData'),
           )}
         </View>
 
@@ -175,7 +180,7 @@ export default function PrivacySettingsScreen() {
           >
             <View className="flex-row items-center flex-1">
               <View className="h-8 w-8 rounded-full bg-blue-50 items-center justify-center mr-3">
-                <Feather name="download" size={15} color="#1d4ed8" accessible={false} />
+                <Feather name="download" size={15} color={THEME_COLORS.infoBlue} accessible={false} />
               </View>
               <View>
                 <Text className="text-sm font-sans-bold text-gray-900">{t('settings.downloadData')}</Text>
@@ -184,7 +189,7 @@ export default function PrivacySettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />
+            <Feather name="chevron-right" size={16} color={THEME_COLORS.slate400} accessible={false} />
           </Pressable>
 
           {/* Delete Account */}
@@ -195,7 +200,7 @@ export default function PrivacySettingsScreen() {
           >
             <View className="flex-row items-center flex-1">
               <View className="h-8 w-8 rounded-full bg-red-50 items-center justify-center mr-3">
-                <Feather name="trash-2" size={15} color="#ef4444" accessible={false} />
+                <Feather name="trash-2" size={15} color={THEME_COLORS.dangerRed} accessible={false} />
               </View>
               <View>
                 <Text className="text-sm font-sans-bold text-red-500">{t('settings.deleteAccount')}</Text>
@@ -204,7 +209,7 @@ export default function PrivacySettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={16} color="#94a3b8" accessible={false} />
+            <Feather name="chevron-right" size={16} color={THEME_COLORS.slate400} accessible={false} />
           </Pressable>
         </View>
       </ContentLayout>

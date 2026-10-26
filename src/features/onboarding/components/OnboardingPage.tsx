@@ -1,13 +1,14 @@
 import React from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';
-import { Image, type ImageSource } from 'expo-image';
+import { Image } from 'expo-image';
+import type { ImageSource } from 'expo-image';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 
 interface OnboardingPageProps {
   title: string;
   description: string;
-  illustration?: ImageSource | string | number | React.ReactNode;
+  illustration?: ImageSource | React.ReactElement;
 }
 
 export default function OnboardingPage({
@@ -24,7 +25,7 @@ export default function OnboardingPage({
           illustration
         ) : (
           <Image
-            source={illustration as ImageSource}
+            source={illustration}
             style={{ width: '100%', height: '100%' }}
             className="w-full h-full border-0"
             contentFit="contain"

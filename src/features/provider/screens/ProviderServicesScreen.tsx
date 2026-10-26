@@ -225,7 +225,7 @@ export default function ProviderServicesScreen() {
                     >
                       <View className="flex-row items-center gap-3 flex-1 mr-3">
                         <View className="h-7 w-7 rounded-full bg-emerald-50 items-center justify-center shrink-0">
-                          <Feather name="check" size={13} color="#059669" />
+                          <Feather name="check" size={13} color={THEME_COLORS.emeraldSuccess} />
                         </View>
                         <View className="flex-1">
                           <Text className="text-xs font-sans-bold text-gray-800 leading-snug">{sub.title}</Text>
@@ -413,7 +413,7 @@ export default function ProviderServicesScreen() {
                 variant="primary"
                 size="sm"
                 className="px-6 rounded-lg"
-                leftIcon={<Feather name="plus" size={14} color="#ffffff" />}
+                leftIcon={<Feather name="plus" size={14} color={THEME_COLORS.primaryForeground} />}
                 onPress={handleCreateService}
               />
             </View>

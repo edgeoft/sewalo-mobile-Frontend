@@ -1,7 +1,14 @@
 import { useEffect } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { StyleSheet, View } from 'react-native';
-import Animated, { Easing, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedProps,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
 
 import { useAppReducedMotion } from '@/utils/accessibility';
@@ -48,6 +55,12 @@ export default function OnboardingIllustrationTwo({ isActive }: { isActive?: boo
       planeOpacity.value = 0;
       successOpacity.value = 0;
     }
+
+    return () => {
+      cancelAnimation(progress);
+      cancelAnimation(planeOpacity);
+      cancelAnimation(successOpacity);
+    };
   }, [isActive, planeOpacity, progress, successOpacity, reducesMotion]);
 
   const planeProps = useAnimatedProps(() => {

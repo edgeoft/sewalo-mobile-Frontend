@@ -20,10 +20,10 @@ import {
   deleteRatingAction,
 } from './actions';
 
-import {
-  PAYMENT_METHODS,
-  type Booking,
-  type BookServiceFormData,
+import { PAYMENT_METHODS } from '@/types';
+import type {
+  Booking,
+  BookServiceFormData,
   GetBookingsResponse,
   GetBookingsParams,
   UpdateBookingPayload,
@@ -68,6 +68,7 @@ const bookingByIdQueryHook = createQueryHook<Booking, string>(
 );
 
 export const useGetBookingByIdQuery = (id: string) => bookingByIdQueryHook(id, { enabled: !!id });
+export const prefetchBookingDetail = (client: QueryClient, id: string) => bookingByIdQueryHook.prefetch(client, id);
 
 export const useUpdateBooking = () => {
   const queryClient = useQueryClient();
@@ -75,6 +76,10 @@ export const useUpdateBooking = () => {
     mutationFn: ({ id, data }) => updateBookingAction(id, data),
     onSuccess: (result) => {
       invalidateBookingDetail(queryClient, result.id, result);
+    },
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.DETAIL(variables.id) });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BOOKINGS.ALL });
     },
   });
 };

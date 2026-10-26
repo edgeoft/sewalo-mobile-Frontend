@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { UserProfile } from '@/types';
+import type { UserProfile } from '@/types';
 import { USER_ROLES, USER_STATUSES } from '@/constants/roles';
 import { THEME_COLORS } from '@/constants/colors';
 import { getImageUrl } from '@/utils/image';

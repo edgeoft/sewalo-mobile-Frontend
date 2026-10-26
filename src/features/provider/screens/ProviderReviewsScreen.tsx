@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Header from '@/components/navigation/Header';
 import ErrorState from '@/components/ui/ErrorState';
@@ -54,7 +55,7 @@ export default function ProviderReviewsScreen() {
             emptyContent={
               <View className="items-center justify-center py-12 px-6">
                 <View className="h-16 w-16 bg-gray-100 rounded-full items-center justify-center mb-4">
-                  <Feather name="star" size={28} color="#94a3b8" />
+                  <Feather name="star" size={28} color={THEME_COLORS.slate400} />
                 </View>
                 <Text className="text-base font-sans-bold text-gray-900 mb-1 text-center">
                   {t('customer.noReviewsYet')}

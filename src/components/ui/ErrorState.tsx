@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import Button from '@/components/ui/Button';
 
@@ -20,7 +21,7 @@ export default function ErrorState({ title, description, retryLabel, onRetry, cl
   return (
     <View className={`rounded-2xl border border-red-100 bg-white px-5 py-8 items-center ${className}`}>
       <View className="mb-4">
-        <Feather name="cloud-off" size={28} color="#ef4444" accessible={false} />
+        <Feather name="cloud-off" size={28} color={THEME_COLORS.dangerRed} accessible={false} />
       </View>
       <Text className="text-sm font-sans-semibold text-gray-900 mb-1 text-center">
         {title ?? t('common.errorTitle')}

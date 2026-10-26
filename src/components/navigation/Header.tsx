@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Animated, View, ViewStyle } from 'react-native';
+import { Animated, View } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 

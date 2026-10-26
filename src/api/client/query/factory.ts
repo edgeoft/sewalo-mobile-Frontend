@@ -5,6 +5,7 @@ import {
   type UseQueryOptions,
   type UseMutationOptions,
   type QueryKey,
+  type QueryClient,
 } from '@tanstack/react-query';
 
 import type { ApiError } from '@/api/client/types';
@@ -14,14 +15,25 @@ export function createQueryHook<TData, TParams = void, TError = ApiError>(
   fetcher: (params: TParams) => Promise<TData>,
   defaultOptions?: Partial<UseQueryOptions<TData, TError>>,
 ) {
-  return function useGeneratedQuery(params: TParams, options?: Partial<UseQueryOptions<TData, TError>>) {
+  function useGeneratedQuery(params: TParams, options?: Partial<UseQueryOptions<TData, TError>>) {
     return useQuery<TData, TError>({
       queryKey: getKey(params),
       queryFn: () => fetcher(params),
       ...defaultOptions,
       ...options,
     });
-  };
+  }
+
+  useGeneratedQuery.prefetch = (client: QueryClient, params: TParams) =>
+    client.prefetchQuery({
+      queryKey: getKey(params),
+      queryFn: () => fetcher(params),
+      ...defaultOptions,
+    });
+
+  useGeneratedQuery.getKey = getKey;
+
+  return useGeneratedQuery;
 }
 
 export function createMutationHook<TData, TVariables, TError = ApiError, TContext = unknown>(

@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  PressableProps,
-  StyleProp,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { THEME_COLORS } from '@/constants/colors';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
@@ -75,7 +67,7 @@ export default function Button({
       style={style}
       disabled={isDisabled}
       accessibilityRole="button"
-      accessibilityLabel={title}
+      accessibilityLabel={props.accessibilityLabel ?? title}
       accessibilityState={{
         disabled: isDisabled,
         busy: loading,
@@ -93,7 +85,9 @@ export default function Button({
             style={{ marginRight: 8 }}
           />
         ) : leftIcon ? (
-          <View className="mr-1.5">{leftIcon}</View>
+          <View className="mr-1.5" accessible={false} importantForAccessibility="no">
+            {leftIcon}
+          </View>
         ) : null}
 
         <Text
@@ -103,7 +97,11 @@ export default function Button({
           {title}
         </Text>
 
-        {!loading && rightIcon ? <View className="ml-1.5">{rightIcon}</View> : null}
+        {!loading && rightIcon ? (
+          <View className="ml-1.5" accessible={false} importantForAccessibility="no">
+            {rightIcon}
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );

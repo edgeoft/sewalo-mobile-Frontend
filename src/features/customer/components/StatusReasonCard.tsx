@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { BOOKING_STATUSES, type BookingStatus } from '@/types';
+import { BOOKING_STATUSES } from '@/types';
+import type { BookingStatus } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useTranslation } from 'react-i18next';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Control, FieldError, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import type { Control, FieldError, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import { THEME_COLORS } from '@/constants/colors';
 import { SERVICE_TYPES, SERVICE_CATEGORIES } from '../constants/serviceOptions';
-import { ServiceFormData } from '@/types';
+import type { ServiceFormData } from '@/types';
 import { useGetProviderCategoriesQuery, useGetProviderSubCategoriesQuery } from '@/api';
-import RateCard, { DurationUnitType } from './RateCard';
+import RateCard from './RateCard';
+import type { DurationUnitType } from './RateCard';
 import BillingBasisGuideModal from './BillingBasisGuideModal';
 
 interface ServiceFormRatesProps {
@@ -34,9 +35,7 @@ export default function ServiceFormRates({
   const { t } = useTranslation();
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPkgForm, setShowPkgForm] = useState(false);
-  const [pkgTitle, setPkgTitle] = useState('');
-  const [pkgPrice, setPkgPrice] = useState('');
-  const [pkgDescription, setPkgDescription] = useState('');
+  const [pkgDraft, setPkgDraft] = useState({ title: '', price: '', description: '' });
   const [pkgErrors, setPkgErrors] = useState<{ title?: string; price?: string; description?: string }>({});
 
   // Fetch categories and subcategories dynamically from the API to display rate card names
@@ -66,7 +65,7 @@ export default function ServiceFormRates({
       if (!currentRates[id]) {
         currentRates[id] = {
           price: '',
-          billingBasis: 'per_job',
+          billingBasis: defaultBillingOption?.name || '',
           billingOptionId: defaultBillingOption?.id,
           duration: '',
           durationUnit: 'hours',
@@ -133,16 +132,16 @@ export default function ServiceFormRates({
 
   const handleAddPackage = () => {
     const newErrors: { title?: string; price?: string; description?: string } = {};
-    if (!pkgTitle.trim() || pkgTitle.trim().length < 3) {
+    if (!pkgDraft.title.trim() || pkgDraft.title.trim().length < 3) {
       newErrors.title = 'Package title must be at least 3 characters';
     }
-    const priceNum = Number(pkgPrice);
-    if (!pkgPrice.trim()) {
+    const priceNum = Number(pkgDraft.price);
+    if (!pkgDraft.price.trim()) {
       newErrors.price = 'Price is required';
     } else if (isNaN(priceNum) || priceNum <= 0) {
       newErrors.price = 'Price must be a positive number';
     }
-    if (!pkgDescription.trim() || pkgDescription.trim().length < 10) {
+    if (!pkgDraft.description.trim() || pkgDraft.description.trim().length < 10) {
       newErrors.description = 'Description must be at least 10 characters';
     }
 
@@ -153,17 +152,15 @@ export default function ServiceFormRates({
 
     const newPkg = {
       id: `pkg-${Date.now()}`,
-      title: pkgTitle.trim(),
-      description: pkgDescription.trim(),
-      price: pkgPrice.trim(),
+      title: pkgDraft.title.trim(),
+      description: pkgDraft.description.trim(),
+      price: pkgDraft.price.trim(),
     };
 
     setValue('packages', [...(watchPackages || []), newPkg], { shouldValidate: true });
 
     // Reset inline form state
-    setPkgTitle('');
-    setPkgPrice('');
-    setPkgDescription('');
+    setPkgDraft({ title: '', price: '', description: '' });
     setPkgErrors({});
     setShowPkgForm(false);
   };
@@ -174,9 +171,7 @@ export default function ServiceFormRates({
   };
 
   const handleCancelCreate = () => {
-    setPkgTitle('');
-    setPkgPrice('');
-    setPkgDescription('');
+    setPkgDraft({ title: '', price: '', description: '' });
     setPkgErrors({});
     setShowPkgForm(false);
   };
@@ -244,7 +239,7 @@ export default function ServiceFormRates({
 
             const rate = watchRates[id] || {
               price: '',
-              billingBasis: 'per_hour',
+              billingBasis: defaultBillingOption?.name || '',
               duration: '',
               durationUnit: 'hours',
             };
@@ -272,7 +267,7 @@ export default function ServiceFormRates({
                   durationValue={rate.duration || ''}
                   onDurationChange={(val) => handleDurationChange(id, val)}
                   durationError={rateErrors?.duration?.message}
-                  durationUnitValue={(rate.durationUnit as DurationUnitType) || 'hours'}
+                  durationUnitValue={rate.durationUnit ?? 'hours'}
                   onDurationUnitChange={(val) => handleUnitChange(id, val)}
                 />
               </View>
@@ -318,8 +313,8 @@ export default function ServiceFormRates({
                   <Input
                     label="Package Title"
                     placeholder="e.g. Standard Home Makeover"
-                    value={pkgTitle}
-                    onChangeText={setPkgTitle}
+                    value={pkgDraft.title}
+                    onChangeText={(title) => setPkgDraft((prev) => ({ ...prev, title }))}
                     error={pkgErrors.title}
                   />
 
@@ -327,8 +322,8 @@ export default function ServiceFormRates({
                     label="Price"
                     placeholder="e.g. 4500"
                     keyboardType="numeric"
-                    value={pkgPrice}
-                    onChangeText={setPkgPrice}
+                    value={pkgDraft.price}
+                    onChangeText={(price) => setPkgDraft((prev) => ({ ...prev, price }))}
                     error={pkgErrors.price}
                     leftIcon={<Text className="text-xs font-sans-bold text-gray-500">Rs.</Text>}
                   />
@@ -338,8 +333,8 @@ export default function ServiceFormRates({
                     placeholder="Describe what is included in this package..."
                     multiline
                     numberOfLines={3}
-                    value={pkgDescription}
-                    onChangeText={setPkgDescription}
+                    value={pkgDraft.description}
+                    onChangeText={(description) => setPkgDraft((prev) => ({ ...prev, description }))}
                     error={pkgErrors.description}
                   />
                 </View>

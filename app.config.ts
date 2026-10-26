@@ -1,4 +1,4 @@
-import { ExpoConfig, ConfigContext } from 'expo/config';
+import type { ExpoConfig, ConfigContext } from 'expo/config';
 import packageJson from './package.json';
 
 export default ({ config }: ConfigContext): ExpoConfig => {

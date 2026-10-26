@@ -184,7 +184,7 @@ export default function GettingStartedScreen() {
               accessibilityLabel={t('navigation.logout')}
               hitSlop={8}
             >
-              <Feather name="log-out" size={18} color="#ef4444" />
+              <Feather name="log-out" size={18} color={THEME_COLORS.dangerRed} />
             </Pressable>
           </View>
         }

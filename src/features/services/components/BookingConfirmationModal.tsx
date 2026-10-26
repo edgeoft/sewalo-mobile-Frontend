@@ -19,14 +19,13 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import LocationSelector from '@/components/ui/LocationSelector';
 import { MONTHS, HOURS_12 as HOURS, MINUTES_15 as MINUTES, PERIODS } from '@/constants/calendar';
-import { ServiceItem } from '@/types';
+import type { LocationData, ServiceItem } from '@/types';
 import {
   getProviderAvailabilityError,
   getProviderWorkingHours,
   isPastDate,
   type ProviderAvailabilityInfo,
 } from '../utils/providerAvailability';
-import type { LocationData } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 import { getBookingDetailsSchema, type BookingDetailsFormData, type BookingDetails } from '@/schemas/booking';
 
@@ -210,7 +209,13 @@ export default function BookingConfirmationModal({
   };
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -345,9 +350,10 @@ export default function BookingConfirmationModal({
         transparent={true}
         visible={datePickerVisible}
         onRequestClose={() => setDatePickerVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setDatePickerVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setDatePickerVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -513,9 +519,10 @@ export default function BookingConfirmationModal({
         transparent={true}
         visible={timePickerVisible}
         onRequestClose={() => setTimePickerVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setTimePickerVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setTimePickerVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 

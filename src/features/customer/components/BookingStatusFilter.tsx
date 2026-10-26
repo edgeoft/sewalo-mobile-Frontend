@@ -53,7 +53,13 @@ export default function BookingStatusFilter({
           />
         </Pressable>
 
-        <Modal visible={isOpen} transparent animationType="fade" onRequestClose={() => setIsOpen(false)}>
+        <Modal
+          visible={isOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setIsOpen(false)}
+          accessibilityViewIsModal={true}
+        >
           <View className="flex-1">
             <Pressable
               className="flex-1 bg-black/20"

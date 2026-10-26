@@ -3,11 +3,11 @@ import {
   type Availability,
   type EducationItemPayload,
   type ExperienceItemPayload,
-  PersonalInfoData,
-  UpdateProfilePayload,
-  CompleteProfilePayload,
-  UserProfile,
-  UserRole,
+  type PersonalInfoData,
+  type UpdateProfilePayload,
+  type CompleteProfilePayload,
+  type UserProfile,
+  type UserRole,
 } from '@/types';
 import { asAvailability, AVAILABILITY_TYPES } from '@/constants/availability';
 import { convertTimeTo24h } from '@/utils/time';

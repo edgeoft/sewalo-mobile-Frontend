@@ -3,7 +3,8 @@ import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { ServiceFormData, DELIVERY_TYPES, DeliveryType } from '@/types';
+import { DELIVERY_TYPES } from '@/types';
+import type { DeliveryType, ServiceFormData } from '@/types';
 import DeliveryOptionCard from './DeliveryOptionCard';
 
 interface ServiceFormDeliveryProps {

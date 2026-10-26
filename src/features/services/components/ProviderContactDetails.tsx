@@ -41,7 +41,7 @@ export default function ProviderContactDetails({
           </Text>
           <Text className="text-xs font-sans-medium text-gray-700 leading-4">{fullLocation}</Text>
         </View>
-        <Feather name="chevron-right" size={14} color="#94a3b8" accessible={false} />
+        <Feather name="chevron-right" size={14} color={THEME_COLORS.slate400} accessible={false} />
       </Pressable>
 
       <View className="border-t border-gray-100/70" />
@@ -57,7 +57,7 @@ export default function ProviderContactDetails({
           </Text>
           <Text className="text-xs font-sans-bold text-primary">{phone}</Text>
         </View>
-        <Feather name="chevron-right" size={14} color="#94a3b8" accessible={false} />
+        <Feather name="chevron-right" size={14} color={THEME_COLORS.slate400} accessible={false} />
       </Pressable>
 
       <View className="border-t border-gray-100/70" />
@@ -73,7 +73,7 @@ export default function ProviderContactDetails({
           </Text>
           <Text className="text-xs font-sans-bold text-primary">{email}</Text>
         </View>
-        <Feather name="chevron-right" size={14} color="#94a3b8" accessible={false} />
+        <Feather name="chevron-right" size={14} color={THEME_COLORS.slate400} accessible={false} />
       </Pressable>
 
       <View className="border-t border-gray-100/70" />

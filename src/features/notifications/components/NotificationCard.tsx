@@ -17,11 +17,11 @@ function getTypeIcon(type: string): keyof typeof Feather.glyphMap {
 
 function getTypeColor(type: string): string {
   if (type.includes('booking')) return THEME_COLORS.primary;
-  if (type.includes('payment') || type.includes('payout')) return '#10b981';
-  if (type.includes('rating') || type.includes('review')) return '#f59e0b';
-  if (type.includes('coupon') || type.includes('promo')) return '#8b5cf6';
-  if (type.includes('welcome') || type.includes('account')) return '#06b6d4';
-  return '#6b7280';
+  if (type.includes('payment') || type.includes('payout')) return THEME_COLORS.emeraldSuccess;
+  if (type.includes('rating') || type.includes('review')) return THEME_COLORS.amberStar;
+  if (type.includes('coupon') || type.includes('promo')) return THEME_COLORS.primary;
+  if (type.includes('welcome') || type.includes('account')) return THEME_COLORS.infoBlue;
+  return THEME_COLORS.slate500;
 }
 
 function getTypeBgColor(type: string): string {
@@ -61,9 +61,8 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
 
   return (
     <View
-      className={`border rounded-lg p-4 mb-3 ${isUnread ? 'border-primary/10' : 'bg-white border-gray-200/80'}`}
+      className={`border rounded-lg p-4 mb-3 ${isUnread ? 'bg-primary/5 border-primary/20' : 'bg-card border-border'}`}
       style={{
-        backgroundColor: isUnread ? '#f0f1ff' : '#ffffff',
         shadowColor: '#0f172a',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.02,
@@ -126,7 +125,7 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
               <Feather
                 name={showActions ? 'chevron-up' : 'more-horizontal'}
                 size={14}
-                color="#6b7280"
+                color={THEME_COLORS.slate500}
                 accessible={false}
               />
             </Pressable>
@@ -159,7 +158,7 @@ function NotificationCard({ item, onMarkRead, onDelete, onPress }: NotificationC
             accessibilityLabel="Delete notification"
             className="flex-row items-center rounded-lg bg-red-50 border border-red-100 px-3 py-1.5 active:opacity-80"
           >
-            <Feather name="trash-2" size={13} color="#ef4444" accessible={false} />
+            <Feather name="trash-2" size={13} color={THEME_COLORS.dangerRed} accessible={false} />
             <Text className="text-[11px] font-sans-semibold text-red-500 ml-1.5">{t('notifications.delete')}</Text>
           </Pressable>
         </View>

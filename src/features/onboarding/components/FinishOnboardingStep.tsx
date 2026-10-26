@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import ContentLayout from '@/components/layout/ContentLayout';
 import OnboardingStickyFooter from './OnboardingStickyFooter';
@@ -19,7 +20,7 @@ export default function FinishOnboardingStep({ onFinish }: FinishOnboardingStepP
         <View className="flex-1 items-center justify-center py-8">
           {/* Celebration Circle */}
           <View className="h-28 w-28 rounded-full bg-emerald-50 items-center justify-center mb-6 shadow-sm border border-emerald-100">
-            <Feather name="check" size={56} color="#059669" />
+            <Feather name="check" size={56} color={THEME_COLORS.emeraldSuccess} />
           </View>
 
           <Text className="text-2xl font-sans-extrabold text-gray-950 text-center mb-2">

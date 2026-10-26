@@ -1,5 +1,6 @@
 import React, { useId, useRef, useState } from 'react';
-import { Pressable, StyleProp, Text, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import type { StyleProp, TextInputProps, TextStyle, ViewStyle } from 'react-native';
 import { THEME_COLORS } from '@/constants/colors';
 
 export interface InputProps extends TextInputProps {
@@ -58,6 +59,7 @@ export default function Input({
 
       <Pressable
         onPress={handleContainerPress}
+        accessible={false}
         className={`form-input-container ${
           props.multiline ? 'form-input-container-multiline' : 'form-input-container-single'
         } ${error ? 'form-input-container-error' : isFocused ? 'form-input-container-focus' : ''} ${containerClassName}`}

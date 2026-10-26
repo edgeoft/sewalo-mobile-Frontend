@@ -150,7 +150,7 @@ export default function GuestBeProviderScreen() {
             title={t('guest.startAsProvider')}
             variant="primary"
             onPress={handleGetStarted}
-            rightIcon={<Feather name="arrow-right" size={16} color="#ffffff" />}
+            rightIcon={<Feather name="arrow-right" size={16} color={THEME_COLORS.primaryForeground} />}
             accessibilityLabel="Start as provider"
           />
         </View>

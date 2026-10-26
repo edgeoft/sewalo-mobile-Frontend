@@ -121,7 +121,7 @@ export default function DynamicProviderDetailRoute() {
         <Header variant="language" showBackButton={true} includeBottomBorder={true} />
         <View className="flex-1 items-center justify-center p-6">
           <View className="h-16 w-16 bg-red-50 rounded-full items-center justify-center mb-4">
-            <Feather name="alert-triangle" size={30} color="#ef4444" />
+            <Feather name="alert-triangle" size={30} color={THEME_COLORS.dangerRed} />
           </View>
           <Text className="text-lg font-sans-bold text-gray-950 text-center mb-2">
             {t('services.providerNotFound')}

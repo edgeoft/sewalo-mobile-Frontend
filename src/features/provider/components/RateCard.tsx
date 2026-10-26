@@ -210,9 +210,10 @@ export default function RateCard({
         transparent={true}
         visible={basisModalVisible}
         onRequestClose={() => setBasisModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setBasisModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setBasisModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -243,7 +244,7 @@ export default function RateCard({
                       <SelectionOption
                         key={opt.id}
                         onPress={() => handleSelectDynamicOption(opt)}
-                        title={`${opt.name} (${opt.label})`}
+                        title={opt.name || opt.label}
                         selected={isSelected}
                         indicatorType="radio"
                         gradientColors={[THEME_COLORS.surfaceIndigoSubtle, THEME_COLORS.surfaceMuted]}
@@ -273,9 +274,10 @@ export default function RateCard({
         transparent={true}
         visible={unitModalVisible}
         onRequestClose={() => setUnitModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setUnitModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setUnitModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 

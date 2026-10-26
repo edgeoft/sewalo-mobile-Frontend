@@ -1,15 +1,12 @@
 import { ROUTES } from '@/constants/routes';
 import { THEME_COLORS } from '@/constants/colors';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthState } from '@/providers/AuthProvider';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function ProviderLayout() {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const role = useAuthStore((state) => state.role);
-  const user = useAuthStore((state) => state.user);
-  const isLoading = useAuthStore((state) => state.isLoading);
+  const { isLoggedIn, role, user, isLoading } = useAuthState();
 
   if (isLoading) {
     return (

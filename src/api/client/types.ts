@@ -78,7 +78,6 @@ export type SingleTokenConfig = {
   getRefreshToken?: () => Promise<string | null>;
   onTokenRefreshed?: (tokens: Tokens) => void;
   onAuthFailure?: () => void;
-  proactiveRefreshSeconds?: number;
 };
 
 export type TokenSlotConfig = {
@@ -87,7 +86,6 @@ export type TokenSlotConfig = {
   getRefreshToken: () => Promise<string | null>;
   onTokenRefreshed?: (tokens: Tokens) => void;
   onTokenExpired?: () => void;
-  proactiveRefreshSeconds?: number;
 };
 
 export type MultiSlotConfig = {

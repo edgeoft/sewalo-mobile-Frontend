@@ -1,6 +1,6 @@
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
-import { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
+import type { IDistributionService, DistributionVersionInfo, UpdateCheckResult } from './types';
 import { ENV } from '@/constants/env';
 
 /**

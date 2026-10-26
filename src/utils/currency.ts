@@ -18,7 +18,7 @@ interface PricedOffering {
 /** Lowest priced offering of a service, formatted for display. */
 export function getStartingPrice(serviceOfferings?: PricedOffering[] | null): string {
   if (!serviceOfferings || serviceOfferings.length === 0) return 'N/A';
-  const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !isNaN(p));
+  const prices = serviceOfferings.map((o) => parseFloat(o.price)).filter((p) => !Number.isNaN(p));
   if (prices.length === 0) return 'N/A';
   return formatNpr(Math.min(...prices));
 }

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
@@ -23,11 +24,11 @@ import { ROUTES } from '@/constants/routes';
 import { WEB_URLS } from '@/constants/urls';
 import { useAuth } from '@/providers/AuthProvider';
 import { useCreateBooking, useAddRemoveFavorite } from '@/api';
-import { BookServiceFormData, ProviderDetail, USER_ROLES } from '@/types';
+import { USER_ROLES } from '@/types';
+import type { BookServiceFormData, ProviderDetail } from '@/types';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { extractErrorMessage } from '@/api/client/query/errorHandler';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
-import { useAuthStore } from '@/store/useAuthStore';
 
 // Import subcomponents
 import BookingConfirmationModal, { type BookingDetails } from '../components/BookingConfirmationModal';
@@ -49,10 +50,9 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { role } = useAuth();
+  const { role, user: currentUser } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { showError } = useErrorDialog();
-  const currentUser = useAuthStore((state) => state.user);
 
   const isOwnProfile = Boolean(
     currentUser && (provider.id === currentUser.id || (provider.slug && provider.slug === currentUser.slug)),
@@ -427,7 +427,13 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
       )}
 
       {/* Portfolio Full Screen Zoom Modal */}
-      <Modal visible={!!zoomedImage} transparent={true} animationType="fade">
+      <Modal
+        visible={!!zoomedImage}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setZoomedImage(null)}
+        accessibilityViewIsModal={true}
+      >
         <View className="flex-1 bg-black/90 items-center justify-center px-4">
           <Pressable
             onPress={() => setZoomedImage(null)}
@@ -435,7 +441,7 @@ export default function ProviderDetailsScreen({ provider }: ProviderDetailsScree
             accessibilityLabel="Close"
             className="absolute top-12 right-6 h-10 w-10 bg-white/10 rounded-full items-center justify-center z-50 active:bg-white/20"
           >
-            <Feather name="x" size={24} color="#ffffff" accessible={false} />
+            <Feather name="x" size={24} color={THEME_COLORS.primaryForeground} accessible={false} />
           </Pressable>
 
           {zoomedImage && (

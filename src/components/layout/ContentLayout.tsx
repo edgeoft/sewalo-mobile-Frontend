@@ -1,6 +1,8 @@
-import { memo, ReactNode } from 'react';
+import { memo } from 'react';
+import type { ReactNode, Ref } from 'react';
+import { RefreshControl, ScrollView, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { THEME_COLORS } from '@/constants/colors';
-import { RefreshControl, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
 
 interface ContentLayoutProps {
   children: ReactNode;
@@ -11,7 +13,7 @@ interface ContentLayoutProps {
   showsVerticalScrollIndicator?: boolean;
   onRefresh?: () => Promise<void> | void;
   refreshing?: boolean;
-  scrollRef?: React.Ref<ScrollView>;
+  scrollRef?: Ref<ScrollView>;
 }
 
 function ContentLayout({

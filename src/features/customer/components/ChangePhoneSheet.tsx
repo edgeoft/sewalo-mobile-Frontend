@@ -30,13 +30,14 @@ export default function ChangePhoneSheet({ visible, onClose, newPhone }: ChangeP
     onClose();
   };
 
+  const isCounting = timer > 0;
   useEffect(() => {
-    if (!visible || timer === 0) return;
+    if (!visible || !isCounting) return;
     const interval = setInterval(() => {
-      setTimer((prev) => prev - 1);
+      setTimer((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [visible, timer]);
+  }, [visible, isCounting]);
 
   const requestPhoneOtpMutation = useRequestPhoneChange(() => {
     setTimer(60);

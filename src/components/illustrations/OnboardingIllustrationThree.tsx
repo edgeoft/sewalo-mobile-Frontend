@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
+  cancelAnimation,
   Easing,
   useAnimatedProps,
   useAnimatedStyle,
@@ -85,6 +86,15 @@ export default function OnboardingIllustrationThree({ isActive }: { isActive?: b
       rippleScale.value = 0.2;
       rippleOpacity.value = 0;
     }
+
+    return () => {
+      cancelAnimation(handX);
+      cancelAnimation(handY);
+      cancelAnimation(starFillScale);
+      cancelAnimation(lineDash);
+      cancelAnimation(rippleScale);
+      cancelAnimation(rippleOpacity);
+    };
   }, [isActive, handX, handY, lineDash, rippleOpacity, rippleScale, starFillScale, reducesMotion]);
 
   const handStyle = useAnimatedStyle(() => ({

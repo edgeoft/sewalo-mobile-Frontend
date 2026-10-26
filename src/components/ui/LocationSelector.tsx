@@ -67,6 +67,7 @@ export default function LocationSelector({
         transparent={false}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View className="flex-1 bg-white">
           <NativeMapProvider

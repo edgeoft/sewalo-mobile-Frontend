@@ -3,6 +3,7 @@ import { Animated, Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import { announceForAccessibility, useAppReducedMotion } from '@/utils/accessibility';
+import { THEME_COLORS } from '@/constants/colors';
 
 export type SnackbarType = 'success' | 'error' | 'info';
 
@@ -60,7 +61,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
   const showSnackbar = useCallback(
     (c: SnackbarConfig) => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      const resolved = { type: 'info' as SnackbarType, duration: 3000, ...c };
+      const resolved: SnackbarConfig = { type: 'info', duration: 3000, ...c };
       setConfig(resolved);
       announceForAccessibility(resolved.message);
       if (reducesMotion) {
@@ -102,7 +103,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
             className={`flex-row items-center px-4 py-3 rounded-lg ${BG_MAP[type]} shadow-lg`}
           >
             <View importantForAccessibility="no" accessibilityElementsHidden>
-              <Feather name={ICON_MAP[type]} size={18} color="#fff" />
+              <Feather name={ICON_MAP[type]} size={18} color={THEME_COLORS.primaryForeground} />
             </View>
             <Text className="flex-1 text-white font-sans-medium text-sm ml-2.5">{config.message}</Text>
             {config.action ? (

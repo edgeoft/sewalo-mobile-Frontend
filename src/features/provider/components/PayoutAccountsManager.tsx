@@ -14,8 +14,10 @@ import Button from '@/components/ui/Button';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import FinancialAccountForm from './FinancialAccountForm';
-import { financeAccountSchema, FinanceAccountFormValues } from '@/schemas/provider';
-import { FINANCE_ACCOUNT_TYPE, FinanceAccount } from '@/types';
+import { financeAccountSchema } from '@/schemas/provider';
+import type { FinanceAccountFormValues } from '@/schemas/provider';
+import { FINANCE_ACCOUNT_TYPE } from '@/types';
+import type { FinanceAccount } from '@/types';
 import {
   useCreateFinanceAccount,
   useDeleteFinanceAccount,
@@ -24,7 +26,7 @@ import {
 } from '@/api';
 
 const cardShadow = {
-  shadowColor: '#0f172a',
+  shadowColor: THEME_COLORS.slate900,
   shadowOffset: { width: 0, height: 4 },
   shadowOpacity: 0.03,
   shadowRadius: 8,
@@ -147,6 +149,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           setShowAddForm(false);
           reset();
         }}
+        accessibilityViewIsModal={true}
       >
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' }}>
           <Pressable
@@ -181,7 +184,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                 hitSlop={8}
                 className="p-2 bg-gray-50 rounded-full"
               >
-                <Feather name="x" size={20} color="#64748b" />
+                <Feather name="x" size={20} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -225,7 +228,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
                       <Feather
                         name={isEsewa ? 'smartphone' : 'phone'}
                         size={20}
-                        color={isEsewa ? '#10b981' : '#8b5cf6'}
+                        color={isEsewa ? THEME_COLORS.emeraldSuccess : THEME_COLORS.khaltiPurple}
                       />
                     </View>
                     <View className="flex-1">
@@ -291,7 +294,7 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
               <View className="flex-row justify-between items-start">
                 <View className="flex-row items-center flex-1">
                   <View className="h-10 w-10 rounded-full bg-blue-50 items-center justify-center mr-3 border border-blue-100">
-                    <Feather name="home" size={18} color="#1d4ed8" />
+                    <Feather name="home" size={18} color={THEME_COLORS.infoBlue} />
                   </View>
                   <View className="flex-1">
                     <View className="flex-row items-center">

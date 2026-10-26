@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
-import { PackageDeal, ServiceItem } from '@/types';
+import type { PackageDeal, ServiceItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
 
 interface ProviderServicesTabProps {

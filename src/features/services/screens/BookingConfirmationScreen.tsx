@@ -54,7 +54,7 @@ export default function BookingConfirmationScreen() {
   if (!booking && !isProviderNotFound) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center px-6">
-        <Feather name="alert-triangle" size={40} color="#ef4444" />
+        <Feather name="alert-triangle" size={40} color={THEME_COLORS.dangerRed} />
         <Text className="text-lg font-sans-bold text-gray-950 mt-4 mb-2">{t('services.bookingNotFound')}</Text>
         <Text className="text-sm font-sans-medium text-gray-500 text-center mb-6">
           {t('services.bookingNotFoundDesc')}
@@ -129,7 +129,7 @@ export default function BookingConfirmationScreen() {
           <View className="gap-y-3.5 mb-5">
             <View className="flex-row justify-between items-center">
               <View className="flex-row items-center">
-                <Feather name="briefcase" size={15} color="#94a3b8" />
+                <Feather name="briefcase" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.service')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800">{serviceName || providerCategory}</Text>
@@ -137,7 +137,7 @@ export default function BookingConfirmationScreen() {
 
             <View className="flex-row justify-between items-center">
               <View className="flex-row items-center">
-                <Feather name="calendar" size={15} color="#94a3b8" />
+                <Feather name="calendar" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.dateTime')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800">
@@ -148,7 +148,7 @@ export default function BookingConfirmationScreen() {
 
             <View className="flex-row justify-between items-start">
               <View className="flex-row items-center mt-0.5">
-                <Feather name="map-pin" size={15} color="#94a3b8" />
+                <Feather name="map-pin" size={15} color={THEME_COLORS.slate400} />
                 <Text className="text-xs font-sans-medium text-gray-500 ml-2">{t('services.location')}</Text>
               </View>
               <Text className="text-xs font-sans-bold text-gray-800 flex-1 text-right ml-4" numberOfLines={1}>

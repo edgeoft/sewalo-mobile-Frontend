@@ -43,6 +43,40 @@
 
 ---
 
+## 2.1 Important Code Rules
+Write code like an experienced engineer maintaining a production codebase, not an AI trying to maximize the number of lines it generates.
+
+1. **Prefer Simplicity Over Defensive Boilerplate**:
+   - Do not add redundant null checks, repeated `typeof` checks, chained property-existence checks, or defensive fallbacks without a concrete reason.
+   - Do not guard against impossible states or inputs that are already prevented by the type system, framework, or established application contracts.
+   - Trust well-defined library and API contracts. Handle realistic failure cases, not every theoretically imaginable combination of malformed values.
+   - Never turn a straightforward operation into deeply nested conditionals when a simple expression, early return, or helper function is sufficient.
+2. **Use Types and Existing Abstractions**:
+   - Leverage TypeScript types, existing interfaces, API response types, and established error-handling utilities.
+   - Do not repeatedly narrow `unknown` objects manually when a typed error interface, type guard, or existing utility can express the same intent.
+   - Do not introduce `as` casts merely to silence the compiler. Fix the underlying type when practical.
+   - Reuse existing abstractions instead of inventing new ones for trivial operations.
+3. **No Unnecessary Complexity**:
+   - Do not introduce abstractions, helper functions, generic utilities, or additional layers for one-off logic unless they materially improve readability or maintainability.
+   - Avoid nested ternaries, excessive branching, redundant temporary variables, and duplicated fallback logic.
+   - Prefer the smallest correct implementation that fits the existing architecture.
+4. **Respect Existing Project Conventions**:
+   - Inspect nearby code and reuse the project's existing patterns before implementing anything.
+   - Use existing API clients, error handlers, translation utilities, validation schemas, and shared types where available.
+   - Do not refactor unrelated code or expand the scope of a task without a clear reason.
+5. **Error Handling Must Be Intentional**:
+   - Handle errors according to the actual error types and response contracts used by the application.
+   - Prefer existing error normalization utilities (`extractErrorMessage`) over manually traversing nested objects.
+   - Do not silently swallow errors or display raw technical errors to users without justification.
+6. **Optimize for Readability, Not Line Count Alone**:
+   - Obvious control flow, meaningful names, explicit types, and minimal nesting.
+7. **Required Before Adding Complexity**:
+   - Is this failure mode realistic? Is it already handled by a type, framework, library, or existing utility? Does it materially improve correctness? Is there a simpler implementation? If not justified, do NOT add it.
+8. **Final Standard**:
+   - **Default rule**: Prefer simple, typed, maintainable code. Add complexity only when a concrete requirement justifies it.
+
+---
+
 ## 3. Folder Structure & Placement
 ```
 sewalo-mobile-Frontend/

@@ -1,5 +1,5 @@
 import type { TFunction } from 'i18next';
-import { UserProfile, AccountMenuSection } from '@/types';
+import type { UserProfile, AccountMenuSection } from '@/types';
 import { ROUTES } from '@/constants/routes';
 
 type AccountRole = 'customer' | 'provider';

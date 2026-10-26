@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
-import { ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
 import { Pressable, View, Text } from 'react-native';
+import { THEME_COLORS } from '@/constants/colors';
 
 type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
@@ -21,7 +22,7 @@ export default function HeaderIconButton({ icon, accessibilityLabel, onPress, ba
       accessibilityHint={badgeCount ? `${badgeCount} unread` : undefined}
     >
       <View importantForAccessibility="no" accessibilityElementsHidden>
-        <Feather name={icon} size={18} color="#0f172a" />
+        <Feather name={icon} size={18} color={THEME_COLORS.slate900} />
       </View>
       {badgeCount != null && badgeCount > 0 && (
         <View

@@ -11,6 +11,7 @@ import { PushRegistration } from '@/components/notifications/PushRegistration';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { FontProvider } from '@/providers/FontProvider';
 import { PostHogProvider } from '@/providers/PostHogProvider';
+import { THEME_COLORS } from '@/constants/colors';
 import { useNotificationObserver } from '@/services/NotificationService';
 
 import '../global.css';
@@ -34,7 +35,7 @@ export default function RootLayout() {
                     screenOptions={{
                       headerShown: false,
                       contentStyle: {
-                        backgroundColor: '#f1f5f9',
+                        backgroundColor: THEME_COLORS.slate100,
                       },
                     }}
                   />

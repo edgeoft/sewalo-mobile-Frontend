@@ -12,6 +12,7 @@ import LoadMoreList from '@/components/common/LoadMoreList';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
+import { THEME_COLORS } from '@/constants/colors';
 import type { Blog } from '@/types';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 
@@ -64,7 +65,7 @@ export default function BlogListScreen() {
                 <Pressable
                   onPress={() => handleArticlePress(item)}
                   style={{
-                    shadowColor: '#0f172a',
+                    shadowColor: THEME_COLORS.slate900,
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.04,
                     shadowRadius: 10,
@@ -101,11 +102,11 @@ export default function BlogListScreen() {
                   <View className="flex-row items-center justify-between">
                     <View className="flex-row items-center gap-3">
                       <View className="flex-row items-center gap-1">
-                        <Feather name="user" size={11} color="#94a3b8" />
+                        <Feather name="user" size={11} color={THEME_COLORS.slate400} />
                         <Text className="text-[11px] font-sans-medium text-gray-400">{item.author}</Text>
                       </View>
                       <View className="flex-row items-center gap-1">
-                        <Feather name="clock" size={11} color="#94a3b8" />
+                        <Feather name="clock" size={11} color={THEME_COLORS.slate400} />
                         <Text className="text-[11px] font-sans-medium text-gray-400">
                           {getReadTime(item.description)}
                         </Text>

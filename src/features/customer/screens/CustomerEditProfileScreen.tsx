@@ -36,8 +36,10 @@ export default function CustomerEditProfileScreen() {
     setSectionLayouts((prev) => ({ ...prev, [key]: y }));
   };
 
+  const hasScrolledRef = useRef(false);
+
   useEffect(() => {
-    if (!section) return;
+    if (!section || hasScrolledRef.current) return;
 
     let targetKey = section;
     if (section === 'avatar' || section === 'contact' || section === 'address') {
@@ -48,6 +50,7 @@ export default function CustomerEditProfileScreen() {
 
     const targetY = sectionLayouts[targetKey];
     if (targetY !== undefined) {
+      hasScrolledRef.current = true;
       const timeout = setTimeout(() => {
         scrollRef.current?.scrollTo({ y: Math.max(0, targetY - 12), animated: true });
       }, 100);

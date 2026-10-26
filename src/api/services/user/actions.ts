@@ -1,6 +1,7 @@
 import { internalClient } from '@/api/client/instances/internal';
 import { API_ENDPOINTS } from '@/constants/api';
-import {
+import { USER_ROLES } from '@/types';
+import type {
   AddRemoveFavoritePayload,
   GetFavoritesResponse,
   CompleteProfilePayload,
@@ -21,7 +22,6 @@ import {
   SwitchRoleWithDetailsResponse,
   GetNearbyProvidersParams,
   GetNearbyProvidersResponse,
-  USER_ROLES,
 } from '@/types';
 
 // Favourite Actions

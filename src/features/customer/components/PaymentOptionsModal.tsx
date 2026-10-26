@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Button from '@/components/ui/Button';
-import { PAYMENT_METHODS, type PaymentMethod } from '@/types';
+import { THEME_COLORS } from '@/constants/colors';
+import { PAYMENT_METHODS } from '@/types';
+import type { PaymentMethod } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 interface PaymentOptionsModalProps {
@@ -23,7 +25,13 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
   };
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+      accessibilityViewIsModal={true}
+    >
       <View style={styles.modalOverlay} className="flex-1 bg-black/50 justify-end">
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -43,7 +51,7 @@ export default function PaymentOptionsModal({ visible, onClose, onConfirm, total
               hitSlop={8}
               className="h-8 w-8 bg-gray-50 rounded-full items-center justify-center active:bg-gray-100"
             >
-              <Feather name="x" size={18} color="#64748b" />
+              <Feather name="x" size={18} color={THEME_COLORS.slate500} accessible={false} />
             </Pressable>
           </View>
 

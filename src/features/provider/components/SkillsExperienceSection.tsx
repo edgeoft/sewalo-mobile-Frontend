@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { THEME_COLORS } from '@/constants/colors';
 
 import { useSnackbar } from '@/components/ui/Snackbar';
 import Input from '@/components/ui/Input';
@@ -49,55 +50,50 @@ export default function SkillsExperienceSection({
   const [eduModalVisible, setEduModalVisible] = useState(false);
   const [expModalVisible, setExpModalVisible] = useState(false);
 
-  // Temp form states for adding Education
-  const [degree, setDegree] = useState('');
-  const [institution, setInstitution] = useState('');
-  const [eduStartYear, setEduStartYear] = useState('');
-  const [eduEndYear, setEduEndYear] = useState('');
+  // Grouped form states for adding Education and Experience
+  const [eduForm, setEduForm] = useState({
+    degree: '',
+    institution: '',
+    startYear: '',
+    endYear: '',
+  });
 
-  // Temp form states for adding Experience
-  const [jobTitle, setJobTitle] = useState('');
-  const [company, setCompany] = useState('');
-  const [expStartYear, setExpStartYear] = useState('');
-  const [expEndYear, setExpEndYear] = useState('');
+  const [expForm, setExpForm] = useState({
+    title: '',
+    company: '',
+    startYear: '',
+    endYear: '',
+  });
 
   const handleAddEduSubmit = () => {
-    if (!degree || !institution) {
+    if (!eduForm.degree || !eduForm.institution) {
       showSnackbar({ message: 'Degree and Institution are required.', type: 'error' });
       return;
     }
     onAddEducation({
       id: Date.now(),
-      degree,
-      institution,
-      startYear: eduStartYear,
-      endYear: eduEndYear || 'Present',
+      degree: eduForm.degree,
+      institution: eduForm.institution,
+      startYear: eduForm.startYear,
+      endYear: eduForm.endYear || 'Present',
     });
-    // Reset fields
-    setDegree('');
-    setInstitution('');
-    setEduStartYear('');
-    setEduEndYear('');
+    setEduForm({ degree: '', institution: '', startYear: '', endYear: '' });
     setEduModalVisible(false);
   };
 
   const handleAddExpSubmit = () => {
-    if (!jobTitle || !company) {
+    if (!expForm.title || !expForm.company) {
       showSnackbar({ message: 'Job Title and Company are required.', type: 'error' });
       return;
     }
     onAddExperience({
       id: Date.now(),
-      title: jobTitle,
-      company,
-      startYear: expStartYear,
-      endYear: expEndYear || 'Present',
+      title: expForm.title,
+      company: expForm.company,
+      startYear: expForm.startYear,
+      endYear: expForm.endYear || 'Present',
     });
-    // Reset fields
-    setJobTitle('');
-    setCompany('');
-    setExpStartYear('');
-    setExpEndYear('');
+    setExpForm({ title: '', company: '', startYear: '', endYear: '' });
     setExpModalVisible(false);
   };
 
@@ -105,7 +101,7 @@ export default function SkillsExperienceSection({
     <View className="rounded-2xl border border-gray-200 bg-white p-5 mb-6 shadow-sm">
       <View className="mb-3 flex-row items-center gap-x-2.5">
         <View className="w-8 h-8 rounded-full bg-purple-50 items-center justify-center">
-          <Feather name="award" size={16} color="#9333ea" />
+          <Feather name="award" size={16} color={THEME_COLORS.purple600} />
         </View>
         <View className="flex-1">
           <Text className="text-base font-sans-bold text-gray-950">{t('provider.skillsAndExperience')}</Text>
@@ -144,7 +140,7 @@ export default function SkillsExperienceSection({
                     hitSlop={8}
                     className="p-1 active:opacity-75"
                   >
-                    <Feather name="trash-2" size={16} color="#ef4444" />
+                    <Feather name="trash-2" size={16} color={THEME_COLORS.dangerRed} />
                   </Pressable>
                 </View>
               ))}
@@ -187,7 +183,7 @@ export default function SkillsExperienceSection({
                     hitSlop={8}
                     className="p-1 active:opacity-75"
                   >
-                    <Feather name="trash-2" size={16} color="#ef4444" />
+                    <Feather name="trash-2" size={16} color={THEME_COLORS.dangerRed} />
                   </Pressable>
                 </View>
               ))}
@@ -220,9 +216,10 @@ export default function SkillsExperienceSection({
         transparent={true}
         visible={eduModalVisible}
         onRequestClose={() => setEduModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setEduModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setEduModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -238,7 +235,7 @@ export default function SkillsExperienceSection({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -247,16 +244,16 @@ export default function SkillsExperienceSection({
                 <Input
                   label="Degree / Certification *"
                   placeholder="e.g. Bachelor in Civil Engineering"
-                  value={degree}
-                  onChangeText={setDegree}
+                  value={eduForm.degree}
+                  onChangeText={(degree) => setEduForm((prev) => ({ ...prev, degree }))}
                   inputStyle={{ padding: 0 }}
                 />
 
                 <Input
                   label="School / Institution *"
                   placeholder="e.g. Tribhuvan University"
-                  value={institution}
-                  onChangeText={setInstitution}
+                  value={eduForm.institution}
+                  onChangeText={(institution) => setEduForm((prev) => ({ ...prev, institution }))}
                   inputStyle={{ padding: 0 }}
                 />
 
@@ -265,8 +262,8 @@ export default function SkillsExperienceSection({
                     <Input
                       label="Start Year"
                       placeholder="e.g. 2018"
-                      value={eduStartYear}
-                      onChangeText={setEduStartYear}
+                      value={eduForm.startYear}
+                      onChangeText={(startYear) => setEduForm((prev) => ({ ...prev, startYear }))}
                       keyboardType="number-pad"
                       inputStyle={{ padding: 0 }}
                     />
@@ -275,8 +272,8 @@ export default function SkillsExperienceSection({
                     <Input
                       label="End Year (Leave blank if present)"
                       placeholder="e.g. 2022"
-                      value={eduEndYear}
-                      onChangeText={setEduEndYear}
+                      value={eduForm.endYear}
+                      onChangeText={(endYear) => setEduForm((prev) => ({ ...prev, endYear }))}
                       keyboardType="number-pad"
                       inputStyle={{ padding: 0 }}
                     />
@@ -296,9 +293,10 @@ export default function SkillsExperienceSection({
         transparent={true}
         visible={expModalVisible}
         onRequestClose={() => setExpModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => setExpModalVisible(false)}>
+          <TouchableWithoutFeedback onPress={() => setExpModalVisible(false)} accessible={false}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
@@ -314,7 +312,7 @@ export default function SkillsExperienceSection({
                 hitSlop={8}
                 className="w-8 h-8 rounded-full items-center justify-center bg-gray-100 active:opacity-75"
               >
-                <Feather name="x" size={16} color="#64748b" />
+                <Feather name="x" size={16} color={THEME_COLORS.slate500} />
               </Pressable>
             </View>
 
@@ -323,16 +321,16 @@ export default function SkillsExperienceSection({
                 <Input
                   label="Job Title *"
                   placeholder="e.g. Senior Home Decorator"
-                  value={jobTitle}
-                  onChangeText={setJobTitle}
+                  value={expForm.title}
+                  onChangeText={(title) => setExpForm((prev) => ({ ...prev, title }))}
                   inputStyle={{ padding: 0 }}
                 />
 
                 <Input
                   label="Company / Employer *"
                   placeholder="e.g. Kathmandu Cleaners & Decor"
-                  value={company}
-                  onChangeText={setCompany}
+                  value={expForm.company}
+                  onChangeText={(company) => setExpForm((prev) => ({ ...prev, company }))}
                   inputStyle={{ padding: 0 }}
                 />
 
@@ -341,8 +339,8 @@ export default function SkillsExperienceSection({
                     <Input
                       label="Start Year"
                       placeholder="e.g. 2020"
-                      value={expStartYear}
-                      onChangeText={setExpStartYear}
+                      value={expForm.startYear}
+                      onChangeText={(startYear) => setExpForm((prev) => ({ ...prev, startYear }))}
                       keyboardType="number-pad"
                       inputStyle={{ padding: 0 }}
                     />
@@ -351,8 +349,8 @@ export default function SkillsExperienceSection({
                     <Input
                       label="End Year (Leave blank if present)"
                       placeholder="e.g. 2024"
-                      value={expEndYear}
-                      onChangeText={setExpEndYear}
+                      value={expForm.endYear}
+                      onChangeText={(endYear) => setExpForm((prev) => ({ ...prev, endYear }))}
                       keyboardType="number-pad"
                       inputStyle={{ padding: 0 }}
                     />
@@ -381,7 +379,7 @@ const styles = StyleSheet.create({
   drawerContainer: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    shadowColor: '#000',
+    shadowColor: THEME_COLORS.slate900,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,

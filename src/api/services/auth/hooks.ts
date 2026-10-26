@@ -4,7 +4,8 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
 import { formatPhone } from '@/features/auth/utils/phone';
 import { useAuth } from '@/providers/AuthProvider';
-import {
+import { USER_ROLES, USER_STATUSES } from '@/types';
+import type {
   ForgotPasswordInput,
   LoginInput,
   LoginResponse,
@@ -12,11 +13,9 @@ import {
   ResetPasswordInput,
   SignupInput,
   SignupResponse,
-  USER_ROLES,
-  USER_STATUSES,
   VerifyOtpInput,
 } from '@/types';
-import { ApiError } from '@/api/client/types';
+import type { ApiError } from '@/api/client/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import {

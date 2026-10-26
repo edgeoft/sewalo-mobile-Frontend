@@ -2,6 +2,7 @@ import BottomNavigationBar, { type BottomTabBarProps } from '@/components/naviga
 import { Tabs } from 'expo-router';
 import { useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { THEME_COLORS } from '@/constants/colors';
 
 export default function ProviderLayout() {
   const insets = useSafeAreaInsets();
@@ -13,7 +14,7 @@ export default function ProviderLayout() {
         headerShown: false,
         animation: 'shift',
         sceneStyle: {
-          backgroundColor: '#f1f5f9',
+          backgroundColor: THEME_COLORS.slate100,
         },
         tabBarStyle: {
           height: 56 + insets.bottom,

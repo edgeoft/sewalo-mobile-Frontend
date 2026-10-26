@@ -27,7 +27,8 @@ import { useServiceFilters } from '@/hooks/useServiceFilters';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { formatProviderSchedule, getProviderAvailabilityBadge } from '@/features/services/utils/providerAvailability';
 import { USER_STATUSES } from '@/constants/roles';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthUser } from '@/providers/AuthProvider';
+import { useShallow } from 'zustand/react/shallow';
 
 const ItemSeparator = () => <View className="h-4" />;
 
@@ -38,13 +39,17 @@ export default function FindServicesScreen() {
   const segments = useSegments() as string[];
   const isGuest = segments.includes('(guest)');
   const { showError } = useErrorDialog();
-  const currentUser = useAuthStore((state) => state.user);
+  const currentUser = useAuthUser();
   const { category: categoryParam } = useLocalSearchParams<{ category?: string }>();
 
-  const searchQuery = useServiceFiltersStore((s) => s.searchQuery);
-  const setSearchQuery = useServiceFiltersStore((s) => s.setSearchQuery);
-  const selectedCategorySlug = useServiceFiltersStore((s) => s.selectedCategorySlug);
-  const setSelectedCategorySlug = useServiceFiltersStore((s) => s.setSelectedCategorySlug);
+  const { searchQuery, setSearchQuery, selectedCategorySlug, setSelectedCategorySlug } = useServiceFiltersStore(
+    useShallow((s) => ({
+      searchQuery: s.searchQuery,
+      setSearchQuery: s.setSearchQuery,
+      selectedCategorySlug: s.selectedCategorySlug,
+      setSelectedCategorySlug: s.setSelectedCategorySlug,
+    })),
+  );
 
   // Shared filter-draft lifecycle (modal editing -> apply commits to store)
   const {
@@ -269,7 +274,7 @@ export default function FindServicesScreen() {
           <Feather
             name="sliders"
             size={16}
-            color={activeFiltersCount > 0 ? '#ffffff' : THEME_COLORS.primary}
+            color={activeFiltersCount > 0 ? THEME_COLORS.primaryForeground : THEME_COLORS.primary}
             accessible={false}
           />
           <Text className={`text-xs font-sans-bold ${activeFiltersCount > 0 ? 'text-white' : 'text-gray-800'}`}>
@@ -401,7 +406,7 @@ export default function FindServicesScreen() {
             <ErrorState onRetry={() => refetchServices()} className="py-6 mt-2" />
           ) : (
             <View className="py-12 items-center justify-center">
-              <Feather name="search" size={40} color="#64748b" />
+              <Feather name="search" size={40} color={THEME_COLORS.slate500} />
               <Text className="text-sm font-sans-semibold text-gray-900 mt-4">{t('services.noProvidersFound')}</Text>
               <Text className="text-xs font-sans-medium text-gray-400 mt-1 text-center px-6">
                 {t('services.noProvidersFoundDesc')}
