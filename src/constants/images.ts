@@ -9,12 +9,12 @@ export const ILLUSTRATION = {
 } as const;
 
 export const BECOME_PROVIDER = {
-  hero: require('@/assets/become_provider/bp-1.png'),
-  process: require('@/assets/become_provider/bp-2.png'),
-  benefits: require('@/assets/become_provider/bp-3.png'),
+  hero: require('@/assets/become_provider/bp-1.webp'),
+  process: require('@/assets/become_provider/bp-2.webp'),
+  benefits: require('@/assets/become_provider/bp-3.webp'),
   banners: [
-    require('@/assets/become_provider/bp-1.png'),
-    require('@/assets/become_provider/bp-2.png'),
-    require('@/assets/become_provider/bp-3.png'),
+    require('@/assets/become_provider/bp-1.webp'),
+    require('@/assets/become_provider/bp-2.webp'),
+    require('@/assets/become_provider/bp-3.webp'),
   ],
 } as const;
