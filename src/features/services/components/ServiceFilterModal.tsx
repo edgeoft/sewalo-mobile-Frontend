@@ -67,7 +67,7 @@ export default function ServiceFilterModal({
             {/* Sort By */}
             <View className="gap-2">
               <Text className="text-sm font-sans-bold text-gray-800">{t('services.sortBy')}</Text>
-              <View className="flex-row gap-2">
+              <View className="gap-2">
                 {SORT_OPTIONS.map((opt) => {
                   const isSelected = (sortBy || SERVICE_SORT.ALPHABETICAL) === opt.value;
                   return (
@@ -76,16 +76,20 @@ export default function ServiceFilterModal({
                       onPress={() => setSortBy?.(opt.value)}
                       accessibilityRole="button"
                       accessibilityState={{ selected: isSelected }}
-                      className={`flex-1 py-2.5 px-2 rounded-xl border items-center justify-center ${
+                      className={`p-3 min-h-[44px] rounded-xl border flex-row justify-between items-center ${
                         isSelected ? 'bg-primary/10 border-primary' : 'bg-white border-gray-200'
                       }`}
                     >
                       <Text
-                        numberOfLines={1}
-                        className={`text-xs font-sans-bold ${isSelected ? 'text-primary' : 'text-gray-700'}`}
+                        className={`text-sm font-sans-medium ${
+                          isSelected ? 'text-primary font-sans-semibold' : 'text-gray-700'
+                        }`}
                       >
                         {t(opt.labelKey)}
                       </Text>
+                      {isSelected ? (
+                        <Feather name="check" size={16} color={THEME_COLORS.primary} accessible={false} />
+                      ) : null}
                     </Pressable>
                   );
                 })}
@@ -197,7 +201,7 @@ export default function ServiceFilterModal({
                       {loc.label}
                     </Text>
                     {serviceLocation === loc.value ? (
-                      <Feather name="check" size={16} color="var(--primary)" accessible={false} />
+                      <Feather name="check" size={16} color={THEME_COLORS.primary} accessible={false} />
                     ) : null}
                   </Pressable>
                 ))}
