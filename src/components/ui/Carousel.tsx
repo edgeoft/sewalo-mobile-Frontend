@@ -149,7 +149,7 @@ export default function Carousel<T>({
         onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={handleScrollEnd}
         onMomentumScrollEnd={handleScrollEnd}
-        contentContainerStyle={[{ gap, paddingRight: 4 }, contentContainerStyle]}
+        contentContainerStyle={[{ gap, paddingRight: 4, alignItems: 'stretch' }, contentContainerStyle]}
       >
         {renderedData.map((item, index) => {
           // Adjust real index mapping for keys
@@ -166,7 +166,7 @@ export default function Carousel<T>({
           const key = `${baseKey}-${index}`;
 
           return (
-            <View key={key} style={{ width: cardWidth }}>
+            <View key={key} style={{ width: cardWidth }} className="h-full">
               {renderItem({ item, index: originalIndex, cardWidth })}
             </View>
           );

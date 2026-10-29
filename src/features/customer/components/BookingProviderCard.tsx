@@ -2,6 +2,7 @@ import { memo, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { type CustomerBookingItem } from '../constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
 import { FALLBACKS, getAvatarUrl } from '@/utils/image';
@@ -12,6 +13,7 @@ interface BookingProviderCardProps {
 }
 
 function BookingProviderCard({ booking }: BookingProviderCardProps) {
+  const { t } = useTranslation();
   const [imgError, setImgError] = useState(false);
   const resolvedAvatar = imgError ? FALLBACKS.avatar : getAvatarUrl(booking.avatarUri);
 
@@ -28,24 +30,34 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
           style={IMAGE_PRESETS.avatar.xl}
           className="h-16 w-16 rounded-xl bg-gray-50 shrink-0"
         />
-        <View className="flex-1 gap-1">
+        <View className="flex-1 gap-1 min-w-0">
           <View className="flex-row items-center gap-1">
-            <Text className="text-base font-sans-bold text-gray-900">{booking.name}</Text>
+            <Text className="text-base font-sans-bold text-gray-900 shrink" numberOfLines={1}>
+              {booking.name}
+            </Text>
             <Feather name="check-circle" size={15} color={THEME_COLORS.primary} />
           </View>
 
-          <View className="flex-row items-center bg-surface-indigo-subtle px-2 py-0.5 rounded-lg self-start gap-1">
+          <View className="flex-row items-center bg-surface-indigo-subtle px-2 py-0.5 rounded-lg self-start gap-1 max-w-full">
             <Feather name="tag" size={10} color={THEME_COLORS.primary} />
-            <Text className="text-xs font-sans-semibold text-primary uppercase">{booking.serviceLabel}</Text>
+            <Text className="text-xs font-sans-semibold text-primary uppercase shrink" numberOfLines={1}>
+              {booking.serviceLabel}
+            </Text>
           </View>
 
-          <View className="flex-row items-center gap-1 mt-0.5 flex-wrap">
+          <View className="flex-row items-center gap-1 mt-0.5 min-w-0">
             <Feather name="star" size={11} color={THEME_COLORS.amberStar} fill={THEME_COLORS.amberStar} />
-            <Text className="text-xs font-sans-bold text-gray-900">{booking.rating}</Text>
-            <Text className="text-xs font-sans-medium text-gray-500">({booking.reviewsCount ?? 13} Reviews)</Text>
+            <Text className="text-xs font-sans-bold text-gray-900">{booking.rating || '0.0'}</Text>
+            <Text className="text-xs font-sans-medium text-gray-500 shrink" numberOfLines={1}>
+              (
+              {booking.reviewsCount !== undefined
+                ? t('services.reviewsCountShort', { count: booking.reviewsCount })
+                : t('services.noReviewsCount')}
+              )
+            </Text>
             <Text className="text-xs text-gray-300">|</Text>
             <Feather name="map-pin" size={11} color={THEME_COLORS.slate500} />
-            <Text className="text-xs font-sans-medium text-gray-500" numberOfLines={1}>
+            <Text className="text-xs font-sans-medium text-gray-500 flex-1" numberOfLines={1}>
               {booking.location}
             </Text>
           </View>
@@ -60,7 +72,7 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
             <Feather name="phone" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Mobile Number</Text>
           </View>
-          <Text className="text-xs font-sans-semibold text-gray-900">{booking.phoneNumber ?? '+9779802117361'}</Text>
+          <Text className="text-xs font-sans-semibold text-gray-900">{booking.phoneNumber || t('home.na')}</Text>
         </View>
 
         {/* Email */}
@@ -69,7 +81,7 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
             <Feather name="mail" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Email</Text>
           </View>
-          <Text className="text-xs font-sans-semibold text-gray-900">{booking.email ?? 'pepperpotts@gmail.com'}</Text>
+          <Text className="text-xs font-sans-semibold text-gray-900">{booking.email || t('home.na')}</Text>
         </View>
 
         {/* Location */}
@@ -78,7 +90,7 @@ function BookingProviderCard({ booking }: BookingProviderCardProps) {
             <Feather name="map-pin" size={14} color={THEME_COLORS.slate500} />
             <Text className="text-xs font-sans-medium text-gray-500">Location</Text>
           </View>
-          <Text className="text-xs font-sans-semibold text-gray-900" numberOfLines={1}>
+          <Text className="text-xs font-sans-semibold text-gray-900 flex-1 text-right ml-2" numberOfLines={1}>
             {booking.location}
           </Text>
         </View>

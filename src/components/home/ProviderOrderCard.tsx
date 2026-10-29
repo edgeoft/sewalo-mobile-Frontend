@@ -65,14 +65,16 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             )}
           </View>
 
-          <Text className="text-xs font-sans-bold text-primary mb-1.5">{order.serviceLabel}</Text>
+          <Text className="text-xs font-sans-bold text-primary mb-1.5" numberOfLines={1}>
+            {order.serviceLabel}
+          </Text>
 
           <View className="gap-y-1">
             {/* Scheduled Date/Time */}
             <View className="flex-row items-center gap-1.5">
               <Feather name="calendar" size={12} color={THEME_COLORS.slate500} />
               <Text className="flex-1 text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
-                {order.bookingDate}
+                {order.bookingDate || t('home.na')}
               </Text>
             </View>
 
@@ -80,7 +82,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
             <View className="flex-row items-center gap-1.5">
               <Feather name="map-pin" size={12} color={THEME_COLORS.slate500} />
               <Text className="flex-1 text-xs font-sans-medium text-muted-foreground" numberOfLines={1}>
-                {order.location}
+                {order.location || t('home.nepal')}
               </Text>
             </View>
           </View>
@@ -96,7 +98,7 @@ export default function ProviderOrderCard({ order, onAccept, onDecline, onPress 
           <Text className="text-[10px] font-sans-medium text-muted-foreground">{t('home.totalPrice')}</Text>
           <View className="flex-row items-center gap-1.5 mt-0.5">
             <Feather name="tag" size={13} color={THEME_COLORS.primary} />
-            <Text className="text-base font-sans-bold text-primary">{order.bookedPrice}</Text>
+            <Text className="text-base font-sans-bold text-primary">{order.bookedPrice || t('home.na')}</Text>
           </View>
         </View>
 

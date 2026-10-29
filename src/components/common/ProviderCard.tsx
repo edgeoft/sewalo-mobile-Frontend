@@ -24,6 +24,7 @@ export interface ProviderCardProps {
   bookingStatus?: BookingStatus;
   actionLabel?: string;
   width?: number;
+  height?: number;
   onPress?: () => void;
   onFavouritePress?: () => void;
   isFavourite?: boolean;
@@ -46,6 +47,7 @@ function ProviderCard({
   bookingStatus,
   actionLabel,
   width,
+  height,
   onPress,
   onFavouritePress,
   isFavourite = false,
@@ -70,8 +72,9 @@ function ProviderCard({
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
         },
         width ? { width } : {},
+        height ? { height } : {},
       ]}
-      className="shrink-0 rounded-2xl border border-border bg-background p-3.5"
+      className="shrink-0 rounded-2xl border border-border bg-background p-3.5 justify-between h-[204px] min-h-[204px]"
       accessibilityRole="button"
       accessibilityLabel={name}
     >
@@ -106,23 +109,25 @@ function ProviderCard({
           cachePolicy="memory-disk"
         />
 
-        <View className="flex-1 justify-center gap-1">
-          <View className="flex-row items-center gap-1.5">
-            <Text className="text-base font-sans-bold text-slate-900" numberOfLines={1}>
-              {name}
+        <View className="flex-1 justify-center gap-1 min-w-0">
+          <View className="flex-row items-center gap-1.5 min-w-0">
+            <Text className="text-base font-sans-bold text-slate-900 shrink" numberOfLines={1}>
+              {name || t('home.serviceProvider')}
             </Text>
             {isVerified ? (
               <Feather name="check-circle" size={14} color={THEME_COLORS.infoBlue} accessible={false} />
             ) : null}
           </View>
 
-          <View className="flex-row items-center flex-wrap gap-1.5">
-            <View className="flex-row items-center gap-1 rounded-md bg-surface-indigo-subtle px-2 py-0.5">
+          <View className="flex-row items-center gap-1.5 min-w-0">
+            <View className="flex-row items-center gap-1 rounded-md bg-surface-indigo-subtle px-2 py-0.5 shrink">
               <Feather name="tag" size={10} color={THEME_COLORS.primary} accessible={false} />
-              <Text className="text-[11px] font-sans-semibold text-primary">{serviceLabel}</Text>
+              <Text className="text-[11px] font-sans-semibold text-primary" numberOfLines={1} ellipsizeMode="tail">
+                {serviceLabel || t('home.service')}
+              </Text>
             </View>
 
-            <View className="flex-row items-center gap-1 rounded-md bg-surface-warning-subtle px-1.5 py-0.5">
+            <View className="flex-row items-center gap-1 rounded-md bg-surface-warning-subtle px-1.5 py-0.5 shrink-0">
               <Feather
                 name="star"
                 size={10}
@@ -135,75 +140,101 @@ function ProviderCard({
               </Text>
             </View>
 
-            {reviewsText && <Text className="text-[11px] font-sans-medium text-slate-500">{reviewsText}</Text>}
+            {reviewsText ? (
+              <Text className="text-[11px] font-sans-medium text-slate-500 shrink-0" numberOfLines={1}>
+                {reviewsText}
+              </Text>
+            ) : null}
           </View>
         </View>
       </View>
 
       {/* Middle Section: Metadata Rows (Location, Orders Completed, Schedule) */}
       <View className="mt-2.5 gap-y-1.5">
-        <View className="flex-row items-center justify-between gap-2">
-          <View className="flex-1 flex-row items-center gap-1.5 mr-1">
-            <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-warning-subtle">
+        <View className="flex-row items-center justify-between gap-2 h-5">
+          <View className="flex-1 flex-row items-center gap-1.5 min-w-0">
+            <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-warning-subtle shrink-0">
               <Feather name="map-pin" size={10} color={THEME_COLORS.amberStar} accessible={false} />
             </View>
             <Text className="flex-1 text-[11.5px] font-sans-medium text-slate-700" numberOfLines={1}>
-              {location}
+              {location || t('home.nepal')}
             </Text>
           </View>
 
           {ordersCompleted ? (
-            <View className="flex-row items-center gap-1.5 shrink-0">
-              <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-indigo-subtle">
+            <View className="flex-row items-center gap-1.5 shrink-0 max-w-[48%]">
+              <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-indigo-subtle shrink-0">
                 <Feather name="shopping-bag" size={10} color={THEME_COLORS.primary} accessible={false} />
               </View>
-              <Text className="text-[11.5px] font-sans-medium text-slate-700">{ordersCompleted}</Text>
+              <Text className="text-[11.5px] font-sans-medium text-slate-700 shrink" numberOfLines={1}>
+                {ordersCompleted}
+              </Text>
             </View>
           ) : null}
         </View>
 
-        {schedule ? (
-          <View className="flex-row items-center gap-1.5">
-            <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-success-subtle">
-              <Feather name="calendar" size={10} color={THEME_COLORS.emeraldSuccess} accessible={false} />
+        <View className="h-5 justify-center">
+          {schedule ? (
+            <View className="flex-row items-center gap-1.5 min-w-0">
+              <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-success-subtle shrink-0">
+                <Feather name="calendar" size={10} color={THEME_COLORS.emeraldSuccess} accessible={false} />
+              </View>
+              <Text
+                className="flex-1 text-[11.5px] font-sans-medium text-slate-700"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {schedule}
+              </Text>
             </View>
-            <Text className="text-[11.5px] font-sans-medium text-slate-700">{schedule}</Text>
-          </View>
-        ) : null}
+          ) : null}
+        </View>
       </View>
 
       {/* Bottom Section: Starting Price / Booking Info & Availability / Status Badge */}
       <View className="mt-2.5 flex-row items-end justify-between border-t border-border pt-2.5">
-        <View className="gap-0.5">
+        <View className="gap-0.5 min-h-[38px] justify-center">
           <View className="flex-row items-center gap-1">
-            <View className="h-3.5 w-3.5 items-center justify-center rounded-full bg-surface-success-subtle">
+            <View className="h-3.5 w-3.5 items-center justify-center rounded-full bg-surface-success-subtle shrink-0">
               <Feather name="dollar-sign" size={9} color={THEME_COLORS.emeraldSuccess} accessible={false} />
             </View>
-            <Text className="text-[11px] font-sans-medium text-slate-500">{t('home.startingFrom')}</Text>
+            <Text className="text-[11px] font-sans-medium text-slate-500" numberOfLines={1}>
+              {t('home.startingFrom')}
+            </Text>
           </View>
-          <Text className="text-base font-sans-bold text-primary">{startingFromPrice}</Text>
+          <Text className="text-base font-sans-bold text-primary" numberOfLines={1}>
+            {startingFromPrice || t('home.na')}
+          </Text>
         </View>
 
         {statusPresentation ? (
           <View
-            className="flex-row items-center rounded-lg px-2.5 py-1"
+            className="flex-row items-center rounded-lg px-2.5 py-1 max-h-7"
             style={{ backgroundColor: statusPresentation.backgroundColor }}
           >
             <View
-              className="mr-1.5 h-1.5 w-1.5 rounded-full"
+              className="mr-1.5 h-1.5 w-1.5 rounded-full shrink-0"
               style={{ backgroundColor: statusPresentation.dotColor }}
             />
-            <Text className="text-[11px] font-sans-semibold" style={{ color: statusPresentation.textColor }}>
+            <Text
+              className="text-[11px] font-sans-semibold"
+              numberOfLines={1}
+              style={{ color: statusPresentation.textColor }}
+            >
               {statusPresentation.label}
             </Text>
           </View>
         ) : showCustomAction ? (
-          <View className="rounded-lg bg-primary px-3.5 py-1.5">
-            <Text className="text-xs font-sans-semibold text-primary-foreground">{actionLabel}</Text>
+          <View className="rounded-lg bg-primary px-3.5 py-1.5 max-h-7 justify-center">
+            <Text className="text-xs font-sans-semibold text-primary-foreground" numberOfLines={1}>
+              {actionLabel}
+            </Text>
           </View>
         ) : availabilityStatus ? (
-          <View className="rounded-lg bg-surface-success-subtle px-3 py-1.5">
-            <Text className="text-xs font-sans-semibold text-emerald-700">{availabilityStatus}</Text>
+          <View className="rounded-lg bg-surface-success-subtle px-3 py-1.5 max-h-7 justify-center">
+            <Text className="text-xs font-sans-semibold text-emerald-700" numberOfLines={1}>
+              {availabilityStatus}
+            </Text>
           </View>
         ) : null}
       </View>
