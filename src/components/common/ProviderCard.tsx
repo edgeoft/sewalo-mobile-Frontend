@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { Pressable, Text, View } from 'react-native';
 
@@ -85,11 +85,10 @@ function ProviderCard({
           hitSlop={12}
           className="absolute top-2 right-2 z-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full active:opacity-70"
         >
-          <Feather
-            name="heart"
-            size={18}
+          <Ionicons
+            name={isFavourite ? 'heart' : 'heart-outline'}
+            size={20}
             color={isFavourite ? THEME_COLORS.dangerRed : THEME_COLORS.slate400}
-            fill={isFavourite ? THEME_COLORS.dangerRed : 'none'}
             accessible={false}
           />
         </Pressable>

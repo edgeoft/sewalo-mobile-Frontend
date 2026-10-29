@@ -7,6 +7,7 @@ import {
   Manrope_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/manrope';
+import { Ionicons } from '@expo/vector-icons';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
 
@@ -18,6 +19,7 @@ interface FontProviderProps {
 
 export function FontProvider({ children }: FontProviderProps) {
   const [loaded, error] = useFonts({
+    ...Ionicons.font,
     'Manrope-Light': Manrope_300Light,
     'Manrope-Regular': Manrope_400Regular,
     'Manrope-Medium': Manrope_500Medium,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 
 import { FALLBACKS } from '@/utils/image';
 import { THEME_COLORS } from '@/constants/colors';
@@ -122,11 +122,10 @@ export default function ProviderHeaderCard({
             isSaved ? 'border-rose-200 bg-rose-50/70 active:bg-rose-100' : 'border-gray-200 bg-white active:bg-gray-50'
           }`}
         >
-          <Feather
-            name="heart"
-            size={16}
+          <Ionicons
+            name={isSaved ? 'heart' : 'heart-outline'}
+            size={18}
             color={isSaved ? THEME_COLORS.dangerRed : THEME_COLORS.slate700}
-            fill={isSaved ? THEME_COLORS.dangerRed : 'none'}
             accessible={false}
           />
           <Text
