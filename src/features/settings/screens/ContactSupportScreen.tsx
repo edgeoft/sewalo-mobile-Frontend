@@ -16,7 +16,7 @@ import PhoneNumberField from '@/features/auth/components/PhoneNumberField';
 
 import { useSubmitContact } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
-import { useErrorDialog } from '@/components/ui/ErrorDialog';
+import { cardShadow } from '@/constants/shadows';
 
 interface SupportTicketFormData {
   fullName: string;
@@ -26,12 +26,24 @@ interface SupportTicketFormData {
   message: string;
 }
 
+const SUPPORT_NUMBERS = [
+  {
+    key: 'ntc',
+    labelKey: 'settings.ntcSupport',
+    phone: '9744985161',
+  },
+  {
+    key: 'ncell',
+    labelKey: 'settings.ncellSupport',
+    phone: '9713969243',
+  },
+] as const;
+
 export default function ContactSupportScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { mutate: submitContact, isPending } = useSubmitContact();
   const { showSnackbar } = useSnackbar();
-  const { showError } = useErrorDialog();
   const { t } = useTranslation();
 
   const {
@@ -52,34 +64,10 @@ export default function ContactSupportScreen() {
   const watchSubject = useWatch({ control, name: 'subject' }) || '';
   const watchMessage = useWatch({ control, name: 'message' }) || '';
 
-  const handleCallSupport = () => {
-    showError({
-      title: t('settings.callSupport'),
-      message: t('settings.selectSupportNumber'),
-      actions: [
-        {
-          text: 'NTC (9744985161)',
-          onPress: () => {
-            Linking.openURL('tel:+9779744985161').catch(() => {
-              showSnackbar({ message: t('settings.callNotSupported'), type: 'error' });
-            });
-          },
-        },
-        {
-          text: 'Ncell (9713969243)',
-          onPress: () => {
-            Linking.openURL('tel:+9779713969243').catch(() => {
-              showSnackbar({ message: t('settings.callNotSupported'), type: 'error' });
-            });
-          },
-        },
-        { text: t('common.cancel'), style: 'cancel' },
-      ],
+  const handleCallSupport = (phoneNumber: string) => {
+    Linking.openURL(`tel:+977${phoneNumber}`).catch(() => {
+      showSnackbar({ message: t('settings.callNotSupported'), type: 'error' });
     });
-  };
-
-  const handleLiveChat = () => {
-    showSnackbar({ message: t('customer.connectingToSupport'), type: 'info' });
   };
 
   const handleTicketSubmit = (data: SupportTicketFormData) => {
@@ -115,14 +103,6 @@ export default function ContactSupportScreen() {
     );
   };
 
-  const cardShadow = {
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 0,
-  };
-
   return (
     <View className="flex-1 bg-secondary">
       <Header variant="menu" showBackButton={true} showNotifications={false} />
@@ -145,35 +125,24 @@ export default function ContactSupportScreen() {
 
         {/* Support channels dashboard */}
         <View className="flex-row gap-x-3 mb-6">
-          {/* Live Chat */}
-          <Pressable
-            onPress={handleLiveChat}
-            accessibilityRole="button"
-            style={cardShadow}
-            className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
-          >
-            <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="message-circle" size={20} color={THEME_COLORS.primary} accessible={false} />
-            </View>
-            <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.liveChat')}</Text>
-            <Text className="text-[10px] font-sans-medium text-emerald-500 text-center mt-1">
-              {t('settings.onlineWait')}
-            </Text>
-          </Pressable>
-
-          {/* Hotline */}
-          <Pressable
-            onPress={handleCallSupport}
-            accessibilityRole="button"
-            style={cardShadow}
-            className="flex-1 bg-white rounded-xl p-4 items-center justify-center active:bg-gray-50/50"
-          >
-            <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
-              <Feather name="phone-call" size={18} color={THEME_COLORS.primary} accessible={false} />
-            </View>
-            <Text className="text-xs font-sans-bold text-gray-900 text-center">{t('settings.callSupport')}</Text>
-            <Text className="text-[10px] font-sans-medium text-gray-400 text-center mt-1">9744985161 / 9713969243</Text>
-          </Pressable>
+          {SUPPORT_NUMBERS.map((support) => (
+            <Pressable
+              key={support.key}
+              onPress={() => handleCallSupport(support.phone)}
+              accessibilityRole="button"
+              accessibilityLabel={`${t(support.labelKey)}: ${support.phone}`}
+              style={cardShadow}
+              className="flex-1 min-h-[44px] bg-card rounded-xl p-4 items-center justify-center active:opacity-75"
+            >
+              <View className="h-10 w-10 bg-primary/10 rounded-full items-center justify-center mb-2">
+                <Feather name="phone-call" size={18} color={THEME_COLORS.primary} accessible={false} />
+              </View>
+              <Text className="text-xs font-sans-bold text-foreground text-center">{t(support.labelKey)}</Text>
+              <Text className="text-[10px] font-sans-medium text-muted-foreground text-center mt-1">
+                {support.phone}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         {/* Contact Form Container */}
