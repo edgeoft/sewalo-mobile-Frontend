@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-import { EmptyStateCard, ProviderCard, SectionHeader } from '@/components/common';
+import { EmptyStateCard, ProviderCard, SectionHeader, ProviderCardSkeleton } from '@/components/common';
 import type { CustomerBookingItem } from '@/features/customer/constants/customerBookings';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -11,6 +11,7 @@ export interface RecentBookingsSectionProps {
   title: string;
   actionLabel?: string;
   bookings: CustomerBookingItem[];
+  isLoading?: boolean;
   onActionPress?: () => void;
   onBookingPress?: (booking: CustomerBookingItem) => void;
   onExplorePress?: () => void;
@@ -20,6 +21,7 @@ export default function RecentBookingsSection({
   title,
   actionLabel,
   bookings,
+  isLoading = false,
   onActionPress,
   onBookingPress,
   onExplorePress,
@@ -35,7 +37,12 @@ export default function RecentBookingsSection({
         className="mb-5"
       />
 
-      {bookings.length > 0 ? (
+      {isLoading ? (
+        <View className="gap-4">
+          <ProviderCardSkeleton />
+          <ProviderCardSkeleton />
+        </View>
+      ) : bookings.length > 0 ? (
         <View className="gap-4">
           {bookings.slice(0, 2).map((booking) => (
             <ProviderCard

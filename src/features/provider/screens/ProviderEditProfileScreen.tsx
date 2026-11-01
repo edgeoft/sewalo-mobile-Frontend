@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { THEME_COLORS } from '@/constants/colors';
-import { View, ActivityIndicator, ScrollView, Pressable, Text } from 'react-native';
+import { View, ScrollView, Pressable, Text } from 'react-native';
+import { Skeleton } from '@/components/ui';
 import { useForm, useWatch } from 'react-hook-form';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -246,9 +246,19 @@ export default function ProviderEditProfileScreen() {
       <Header variant="menu" showBackButton={true} showNotifications={false} />
 
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-        </View>
+        <ContentLayout className="flex-1 pt-6 gap-6">
+          <View className="items-center py-2">
+            <Skeleton.Avatar size={100} />
+          </View>
+          <View className="gap-4">
+            <Skeleton className="h-4 w-28 rounded-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-4 w-32 rounded-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+            <Skeleton className="h-4 w-24 rounded-full" />
+            <Skeleton className="h-12 w-full rounded-xl" />
+          </View>
+        </ContentLayout>
       ) : (
         <>
           <ContentLayout

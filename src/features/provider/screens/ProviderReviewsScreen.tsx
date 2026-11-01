@@ -7,9 +7,8 @@ import { THEME_COLORS } from '@/constants/colors';
 
 import Header from '@/components/navigation/Header';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
 import ContentLayout from '@/components/layout/ContentLayout';
-import { SectionHeader, LoadMoreList } from '@/components/common';
+import { SectionHeader, LoadMoreList, ReviewsListSkeleton } from '@/components/common';
 import ReviewCard from '@/components/common/ReviewCard';
 import { useGetMyRatingsQuery } from '@/api';
 
@@ -41,7 +40,7 @@ export default function ProviderReviewsScreen() {
         />
 
         {isLoading ? (
-          <LoadingState className="items-center justify-center py-20" />
+          <ReviewsListSkeleton count={4} />
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} className="py-6" />
         ) : (

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, useWatch } from 'react-hook-form';
 import type { Resolver } from 'react-hook-form';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +10,13 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
+import { Skeleton } from '@/components/ui';
 import { serviceFormSchema } from '@/schemas/service';
 import { DELIVERY_TYPES, SERVICE_LOCATIONS } from '@/types';
 import type { DeliveryType, ServiceFormData } from '@/types';
 import { useCreateServiceMutation, useGetMyServicesQuery, useUpdateServiceMutation, useUploadFile } from '@/api';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { ROUTES } from '@/constants/routes';
-import { THEME_COLORS } from '@/constants/colors';
 import { getImageUrl } from '@/utils/image';
 
 // Import subcomponents
@@ -134,8 +134,22 @@ export default function ServiceEditScreen() {
 
   if (isEditMode && isServiceLoading) {
     return (
-      <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+      <View className="flex-1 bg-secondary">
+        <Header variant="menu" showBackButton={true} showNotifications={false} />
+        <ContentLayout scrollable className="flex-1">
+          <View className="py-5 gap-4">
+            <View className="rounded-xl border border-border bg-background p-4 gap-3">
+              <Skeleton className="h-4 w-32 rounded-full" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-4 w-28 rounded-full" />
+              <Skeleton className="h-24 w-full rounded-lg" />
+            </View>
+            <View className="rounded-xl border border-border bg-background p-4 gap-3">
+              <Skeleton className="h-4 w-36 rounded-full" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </View>
+          </View>
+        </ContentLayout>
       </View>
     );
   }

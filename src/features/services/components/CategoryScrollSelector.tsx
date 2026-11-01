@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { CategorySelectorSkeleton } from '@/components/common';
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
@@ -41,9 +42,7 @@ export default function CategoryScrollSelector({
       </View>
 
       {isLoading ? (
-        <View className="items-center justify-center py-8">
-          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-        </View>
+        <CategorySelectorSkeleton variant="chips" count={5} />
       ) : (
         <ScrollView
           horizontal

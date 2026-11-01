@@ -1,14 +1,14 @@
 import React from 'react';
-import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import LanguageSelector from '@/components/ui/LanguageSelector';
+import { LoadingOverlay } from '@/components/ui';
 import { ROUTES } from '@/constants/routes';
 import { useAuth } from '@/providers/AuthProvider';
 import { USER_ROLES } from '@/constants/roles';
@@ -87,14 +87,7 @@ export default function ProviderAccountScreen() {
           ))}
         </View>
       </ContentLayout>
-      {isSwitching && (
-        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
-          <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">Switching profile...</Text>
-          </View>
-        </View>
-      )}
+      <LoadingOverlay visible={isSwitching} message="Switching profile..." />
     </View>
   );
 }

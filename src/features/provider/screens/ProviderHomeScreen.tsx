@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { THEME_COLORS } from '@/constants/colors';
 
@@ -30,7 +30,7 @@ export default function ProviderHomeScreen() {
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
   const { data: dashboardData, isLoading, refetch, isRefetching } = useProviderDashboardQuery();
-  const { data: featuredBlogData } = useGetFeaturedBlogQuery();
+  const { data: featuredBlogData, isLoading: isBlogLoading } = useGetFeaturedBlogQuery();
   const { data: myServicesData } = useGetMyServicesQuery();
   const { data: profileData } = useGetProfileQuery();
   const updateBooking = useUpdateBooking();
@@ -76,14 +76,6 @@ export default function ProviderHomeScreen() {
     );
   }, [dashboardData?.recentBookings]);
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-      </View>
-    );
-  }
-
   const featuredBlog = featuredBlogData?.data;
 
   return (
@@ -115,6 +107,7 @@ export default function ProviderHomeScreen() {
             title={t('home.recentOrders')}
             actionLabel={t('common.viewAll')}
             orders={recentOrders}
+            isLoading={isLoading}
             onActionPress={() => router.push(ROUTES.provider.bookings)}
             onOrderPress={(order) => router.push(ROUTES.provider.bookingDetail(order.id))}
             onAcceptOrder={handleAcceptOrder}
@@ -129,17 +122,19 @@ export default function ProviderHomeScreen() {
             title={t('home.performanceInsights')}
             actionLabel={t('home.viewAnalytics')}
             metrics={dashboardData?.metrics}
+            isLoading={isLoading}
             onActionPress={() => router.push(ROUTES.provider.earnings)}
           />
 
-          {featuredBlog && (
+          {(featuredBlog || isBlogLoading) && (
             <HomeArticleSection
               title={t('home.insightsAndTips')}
-              category={featuredBlog.category?.name || t('home.growth')}
-              readTime={getReadTime(featuredBlog.description)}
-              articleTitle={featuredBlog.title}
-              articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
-              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
+              category={featuredBlog?.category?.name || t('home.growth')}
+              readTime={getReadTime(featuredBlog?.description)}
+              articleTitle={featuredBlog?.title}
+              articleDescription={cleanDescriptionText(featuredBlog?.subtitle || featuredBlog?.description)}
+              isLoading={isBlogLoading}
+              onPress={() => featuredBlog?.slug && router.push(ROUTES.blog.detail(featuredBlog.slug))}
               onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}

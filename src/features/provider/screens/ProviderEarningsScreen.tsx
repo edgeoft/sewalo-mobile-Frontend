@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Pressable, Text, View, ActivityIndicator } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { PaginationList, SectionHeader } from '@/components/common';
+import { PaginationList, PerformanceMetricsSkeleton, SectionHeader } from '@/components/common';
+import { Skeleton } from '@/components/ui';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
@@ -130,9 +131,7 @@ export default function ProviderEarningsScreen() {
           <>
             {/* Dashboard Financial Summary Cards */}
             {isSummaryLoading ? (
-              <View className="items-center justify-center py-12">
-                <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-              </View>
+              <PerformanceMetricsSkeleton count={3} className="mb-4" />
             ) : (
               <View className="gap-3.5 mb-4">
                 {/* Main Net Earnings */}
@@ -293,8 +292,23 @@ export default function ProviderEarningsScreen() {
             {/* Transactions List Section with independent loading */}
             <View className="flex-1">
               {isCommissionsLoading ? (
-                <View className="flex-1 items-center justify-center py-12">
-                  <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+                <View className="gap-3">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <View
+                      key={index}
+                      className="rounded-xl border border-border bg-background p-3.5 flex-row justify-between items-center"
+                    >
+                      <View className="flex-1 mr-3 gap-1.5">
+                        <Skeleton className="h-3 w-20 rounded-full" />
+                        <Skeleton className="h-4 w-32 rounded-full" />
+                        <Skeleton className="h-3 w-28 rounded-full" />
+                      </View>
+                      <View className="items-end gap-1.5">
+                        <Skeleton className="h-5 w-24 rounded-full" />
+                        <Skeleton className="h-4 w-14 rounded-full" />
+                      </View>
+                    </View>
+                  ))}
                 </View>
               ) : activeTab === COMMISSION_TYPE.MyEarnings ? (
                 <PaginationList

@@ -10,7 +10,7 @@ import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
 import { useGetBlogBySlugQuery } from '@/api';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
+import Skeleton from '@/components/ui/Skeleton';
 import { FALLBACKS, getImageUrl } from '@/utils/image';
 import { formatDate } from '@/utils/time';
 
@@ -26,7 +26,22 @@ export default function BlogDetailScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary">
-        <LoadingState />
+        <Header showBackButton />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="p-4 gap-4">
+          <Skeleton.Block height={220} borderRadius={16} />
+          <View className="flex-row items-center justify-between">
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-4 w-20 rounded-full" />
+          </View>
+          <Skeleton className="h-6 w-4/5 rounded-full" />
+          <Skeleton className="h-6 w-3/5 rounded-full" />
+          <View className="gap-2 pt-2">
+            <Skeleton className="h-4 w-full rounded-full" />
+            <Skeleton className="h-4 w-full rounded-full" />
+            <Skeleton className="h-4 w-3/4 rounded-full" />
+            <Skeleton className="h-4 w-5/6 rounded-full" />
+          </View>
+        </ScrollView>
       </View>
     );
   }

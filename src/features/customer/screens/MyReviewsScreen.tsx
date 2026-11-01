@@ -7,7 +7,7 @@ import { THEME_COLORS } from '@/constants/colors';
 
 import Header from '@/components/navigation/Header';
 import ContentLayout from '@/components/layout/ContentLayout';
-import { SectionHeader, LoadMoreList } from '@/components/common';
+import { SectionHeader, LoadMoreList, ReviewsListSkeleton } from '@/components/common';
 import { useGetMyRatingsQuery, useDeleteRating } from '@/api';
 import type { Rating } from '@/types';
 import RatingModal from '../components/RatingModal';
@@ -15,7 +15,6 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
 import ReviewCard from '@/components/common/ReviewCard';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
 
 export default function MyReviewsScreen() {
   const insets = useSafeAreaInsets();
@@ -68,7 +67,7 @@ export default function MyReviewsScreen() {
         />
 
         {isLoading ? (
-          <LoadingState className="items-center justify-center py-20" />
+          <ReviewsListSkeleton count={4} />
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} className="py-6" />
         ) : (

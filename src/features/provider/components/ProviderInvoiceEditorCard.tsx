@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
@@ -632,7 +633,7 @@ export default function ProviderInvoiceEditorCard({
             className="w-full flex-row items-center justify-center py-3 px-4 rounded-lg border border-primary bg-white active:bg-primary/5 min-h-[44px] gap-x-2 disabled:opacity-50"
           >
             {isDownloadingInvoice ? (
-              <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+              <Spinner size="inline" color={THEME_COLORS.primary} />
             ) : (
               <>
                 <Feather name="download" size={15} color={THEME_COLORS.primary} />

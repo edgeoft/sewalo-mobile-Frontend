@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { THEME_COLORS } from '@/constants/colors';
+import Spinner from './Spinner';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
   title: string;
@@ -79,10 +80,14 @@ export default function Button({
     >
       <View className="flex-row items-center justify-center">
         {loading ? (
-          <ActivityIndicator
-            size="small"
-            color={variant === 'light' ? THEME_COLORS.primary : THEME_COLORS.primaryForeground}
-            style={{ marginRight: 8 }}
+          <Spinner
+            size="inline"
+            color={
+              variant === 'light' || variant === 'outline' || variant === 'ghost'
+                ? THEME_COLORS.primary
+                : THEME_COLORS.primaryForeground
+            }
+            className="mr-2"
           />
         ) : leftIcon ? (
           <View className="mr-1.5" accessible={false} importantForAccessibility="no">

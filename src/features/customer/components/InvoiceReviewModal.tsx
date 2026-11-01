@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  useWindowDimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { Modal, View, Text, TextInput, StyleSheet, Pressable, ScrollView, useWindowDimensions } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
@@ -131,7 +122,7 @@ export default function InvoiceReviewModal({
                 className="h-8 px-2.5 rounded-lg border border-primary/20 bg-primary/5 active:bg-primary/10 flex-row items-center gap-x-1.5"
               >
                 {isDownloadingInvoice ? (
-                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                  <Spinner size="inline" color={THEME_COLORS.primary} />
                 ) : (
                   <>
                     <Feather name="download" size={13} color={THEME_COLORS.primary} />
@@ -150,7 +141,7 @@ export default function InvoiceReviewModal({
                   className="h-8 w-8 rounded-lg border border-gray-200 bg-gray-50 active:bg-gray-100 items-center justify-center"
                 >
                   {isSharingInvoice ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.slate700} />
+                    <Spinner size="inline" color={THEME_COLORS.slate700} />
                   ) : (
                     <Feather name="share-2" size={13} color={THEME_COLORS.slate700} />
                   )}

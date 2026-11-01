@@ -5,9 +5,8 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { LoadMoreList, SectionHeader } from '@/components/common';
+import { LoadMoreList, ProviderOrderCardSkeleton, SectionHeader } from '@/components/common';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
 import { ProviderOrderCard } from '@/components/home';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
@@ -172,7 +171,12 @@ export default function ProviderBookingsScreen() {
         ) : null}
 
         {isLoading ? (
-          <LoadingState className="flex-1 items-center justify-center py-20" />
+          <View className="gap-4">
+            <ProviderOrderCardSkeleton />
+            <ProviderOrderCardSkeleton />
+            <ProviderOrderCardSkeleton />
+            <ProviderOrderCardSkeleton />
+          </View>
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} className="py-6 mt-4" />
         ) : (

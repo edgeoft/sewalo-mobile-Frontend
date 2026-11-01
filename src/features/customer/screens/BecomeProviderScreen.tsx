@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import Header from '@/components/navigation/Header';
+import { LoadingOverlay } from '@/components/ui';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import { useSwitchRoleWithDetails, useUploadFile } from '@/api';
 import { convertTimeTo24h } from '@/utils/time';
@@ -171,14 +172,7 @@ export default function BecomeProviderScreen() {
         ) : null}
       </View>
 
-      {isSubmitting && (
-        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
-          <View className="bg-card p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-            <Text className="text-sm font-sans-semibold text-card-foreground mt-3">Registering profile...</Text>
-          </View>
-        </View>
-      )}
+      <LoadingOverlay visible={isSubmitting} message="Registering profile..." />
     </View>
   );
 }

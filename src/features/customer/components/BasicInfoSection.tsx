@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { useTranslation } from 'react-i18next';
 
 import { AvatarPicker, DateOfBirthPickerModal } from '@/components/common';
@@ -176,11 +177,7 @@ export default function BasicInfoSection({
               >
                 <View className="w-3.5 h-3.5 items-center justify-center mr-1">
                   {requestPhoneOtpMutation.isPending ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={THEME_COLORS.primary}
-                      style={{ transform: [{ scale: 0.6 }] }}
-                    />
+                    <Spinner size={14} strokeWidth={2} color={THEME_COLORS.primary} />
                   ) : (
                     <Feather name="smartphone" size={11} color={THEME_COLORS.primary} />
                   )}

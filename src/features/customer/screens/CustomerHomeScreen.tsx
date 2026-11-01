@@ -28,9 +28,9 @@ export default function CustomerHomeScreen() {
   const queryClient = useQueryClient();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
-  const { data: categoriesData } = useCategoriesQuery('homepage');
-  const { data: bookingsData } = useGetBookingsQuery({ page: 1, limit: 5 });
-  const { data: featuredBlogData } = useGetFeaturedBlogQuery();
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useCategoriesQuery('homepage');
+  const { data: bookingsData, isLoading: isBookingsLoading } = useGetBookingsQuery({ page: 1, limit: 5 });
+  const { data: featuredBlogData, isLoading: isBlogLoading } = useGetFeaturedBlogQuery();
 
   const categories = useMemo(() => {
     if (!categoriesData?.data) return null;
@@ -87,11 +87,12 @@ export default function CustomerHomeScreen() {
         <HomeTopSection variant="customer" categories={categoriesData?.data} />
 
         <ContentLayout>
-          {showCategories && (
+          {(showCategories || isCategoriesLoading) && (
             <HomeServiceCategoriesSection
               title={t('home.serviceCategories')}
               actionLabel={t('common.viewAll')}
-              categories={categories!}
+              categories={categories || []}
+              isLoading={isCategoriesLoading}
               onActionPress={() => {
                 prefetchCategories(queryClient);
                 router.push(ROUTES.customer.findServices);
@@ -109,19 +110,21 @@ export default function CustomerHomeScreen() {
             title={t('home.recentBookings')}
             actionLabel={t('common.viewAll')}
             bookings={bookings}
+            isLoading={isBookingsLoading}
             onActionPress={() => router.push(ROUTES.customer.bookings)}
             onBookingPress={(booking) => router.push(ROUTES.customer.bookingDetail(booking.id))}
             onExplorePress={() => router.push(ROUTES.customer.findServices)}
           />
 
-          {featuredBlog && (
+          {(featuredBlog || isBlogLoading) && (
             <HomeArticleSection
               title={t('home.insightsAndTips')}
-              category={featuredBlog.category?.name || t('home.growth')}
-              readTime={getReadTime(featuredBlog.description)}
-              articleTitle={featuredBlog.title}
-              articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
-              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
+              category={featuredBlog?.category?.name || t('home.growth')}
+              readTime={getReadTime(featuredBlog?.description)}
+              articleTitle={featuredBlog?.title}
+              articleDescription={cleanDescriptionText(featuredBlog?.subtitle || featuredBlog?.description)}
+              isLoading={isBlogLoading}
+              onPress={() => featuredBlog?.slug && router.push(ROUTES.blog.detail(featuredBlog.slug))}
               onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}

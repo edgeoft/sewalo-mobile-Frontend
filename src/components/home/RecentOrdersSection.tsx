@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Share, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-import { EmptyStateCard, SectionHeader } from '@/components/common';
+import { EmptyStateCard, ProviderOrderCardSkeleton, SectionHeader } from '@/components/common';
 import ProviderOrderCard from './ProviderOrderCard';
 import type { ProviderBookingItem } from '@/types';
 import { THEME_COLORS } from '@/constants/colors';
@@ -13,6 +13,7 @@ export interface RecentOrdersSectionProps {
   title: string;
   actionLabel?: string;
   orders: ProviderBookingItem[];
+  isLoading?: boolean;
   onActionPress?: () => void;
   onOrderPress?: (order: ProviderBookingItem) => void;
   onAcceptOrder?: (id: string) => void;
@@ -27,6 +28,7 @@ export default function RecentOrdersSection({
   title,
   actionLabel,
   orders,
+  isLoading = false,
   onActionPress,
   onOrderPress,
   onAcceptOrder,
@@ -59,7 +61,12 @@ export default function RecentOrdersSection({
         className="mb-5"
       />
 
-      {orders.length > 0 ? (
+      {isLoading ? (
+        <View className="gap-4">
+          <ProviderOrderCardSkeleton />
+          <ProviderOrderCardSkeleton />
+        </View>
+      ) : orders.length > 0 ? (
         <View className="gap-4">
           {orders.slice(0, 2).map((order) => (
             <ProviderOrderCard

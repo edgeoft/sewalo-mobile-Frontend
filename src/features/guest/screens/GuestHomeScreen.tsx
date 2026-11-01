@@ -24,9 +24,9 @@ export default function GuestHomeScreen() {
   const { showError } = useErrorDialog();
   const { isScrolled, scrollYAnimated, handleScroll } = useScroll({ threshold: 10 });
 
-  const { data: categoriesData } = useCategoriesQuery('homepage');
-  const { data: servicesData } = useGetServicesQuery({ limit: 5 });
-  const { data: featuredBlogData } = useGetFeaturedBlogQuery();
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useCategoriesQuery('homepage');
+  const { data: servicesData, isLoading: isServicesLoading } = useGetServicesQuery({ limit: 5 });
+  const { data: featuredBlogData, isLoading: isBlogLoading } = useGetFeaturedBlogQuery();
 
   const categories = useMemo(() => {
     if (!categoriesData?.data) return null;
@@ -55,21 +55,23 @@ export default function GuestHomeScreen() {
         <HomeTopSection variant="guest" categories={categoriesData?.data} />
 
         <ContentLayout>
-          {showCategories && (
+          {(showCategories || isCategoriesLoading) && (
             <HomeServiceCategoriesSection
               title={t('home.serviceCategories')}
               actionLabel={t('common.viewAll')}
-              categories={categories!}
+              categories={categories || []}
+              isLoading={isCategoriesLoading}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
               onCategoryPress={(cat) => router.push(`${ROUTES.guest.findServices}?category=${cat.slug}`)}
             />
           )}
 
-          {servicesData?.data && servicesData.data.length > 0 && (
+          {(servicesData?.data && servicesData.data.length > 0) || isServicesLoading ? (
             <PopularProvidersSection
               title={t('home.availableServices')}
               actionLabel={t('common.viewAll')}
-              services={servicesData.data}
+              services={servicesData?.data || []}
+              isLoading={isServicesLoading}
               isGuest={true}
               onActionPress={() => router.push(ROUTES.guest.findServices)}
               onProviderPress={() => {
@@ -86,16 +88,17 @@ export default function GuestHomeScreen() {
                 });
               }}
             />
-          )}
+          ) : null}
 
-          {featuredBlog && (
+          {(featuredBlog || isBlogLoading) && (
             <HomeArticleSection
               title={t('home.insightsAndTips')}
-              category={featuredBlog.category?.name || t('home.growth')}
-              readTime={getReadTime(featuredBlog.description)}
-              articleTitle={featuredBlog.title}
-              articleDescription={cleanDescriptionText(featuredBlog.subtitle || featuredBlog.description)}
-              onPress={() => router.push(ROUTES.blog.detail(featuredBlog.slug))}
+              category={featuredBlog?.category?.name || t('home.growth')}
+              readTime={getReadTime(featuredBlog?.description)}
+              articleTitle={featuredBlog?.title}
+              articleDescription={cleanDescriptionText(featuredBlog?.subtitle || featuredBlog?.description)}
+              isLoading={isBlogLoading}
+              onPress={() => featuredBlog?.slug && router.push(ROUTES.blog.detail(featuredBlog.slug))}
               onViewAllPress={() => router.push(ROUTES.blog.list)}
             />
           )}

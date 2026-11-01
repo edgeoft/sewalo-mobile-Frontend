@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { WebView } from 'react-native-webview';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import Button from '../ui/Button';
 import SearchBar from '../ui/SearchBar';
+import Spinner from '../ui/Spinner';
 import { THEME_COLORS } from '@/constants/colors';
 
 import { SharedWebViewMap } from './SharedWebViewMap';
@@ -74,9 +75,7 @@ export default function LocationSelector({
             value={selector.searchQuery}
             onChangeText={selector.handleSearchChange}
             onClear={selector.handleClearSearch}
-            rightIcon={
-              selector.isSearching ? <ActivityIndicator size="small" color={THEME_COLORS.primary} /> : undefined
-            }
+            rightIcon={selector.isSearching ? <Spinner size="inline" color={THEME_COLORS.primary} /> : undefined}
             iconPosition="left"
             className="mb-0"
           />

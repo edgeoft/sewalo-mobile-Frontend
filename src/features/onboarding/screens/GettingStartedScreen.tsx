@@ -1,6 +1,7 @@
 import React from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { KeyboardAvoidingView, Platform, Text, View, ActivityIndicator, StyleSheet, Pressable } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View, Pressable } from 'react-native';
+import { LoadingOverlay } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
@@ -197,14 +198,7 @@ export default function GettingStartedScreen() {
       </Animated.View>
 
       {/* Loading overlay for step updates & final complete profile requests */}
-      {loading && (
-        <View style={StyleSheet.absoluteFill} className="bg-black/25 justify-center items-center z-50">
-          <View className="bg-white p-6 rounded-2xl shadow-xl items-center">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-            <Text className="text-sm font-sans-semibold text-gray-800 mt-3">{t('onboarding.savingProgress')}</Text>
-          </View>
-        </View>
-      )}
+      <LoadingOverlay visible={loading} message={t('onboarding.savingProgress')} />
     </KeyboardAvoidingView>
   );
 }

@@ -5,9 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { LoadMoreList } from '@/components/common';
+import { LoadMoreList, NotificationsListSkeleton } from '@/components/common';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { SegmentedControl } from '@/components/ui';
@@ -134,7 +133,7 @@ export default function NotificationsScreen() {
         />
 
         {isLoading ? (
-          <LoadingState className="items-center justify-center py-20" />
+          <NotificationsListSkeleton count={5} />
         ) : isError ? (
           <ErrorState onRetry={() => refetch()} className="py-6 mt-2" />
         ) : (

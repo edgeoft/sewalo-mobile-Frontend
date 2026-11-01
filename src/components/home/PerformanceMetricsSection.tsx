@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { SectionHeader } from '@/components/common';
+import { SectionHeader, PerformanceMetricsSkeleton } from '@/components/common';
 import { THEME_COLORS } from '@/constants/colors';
 
 import type { DashboardMetrics } from '@/types';
@@ -13,6 +13,7 @@ export interface PerformanceMetricsSectionProps {
   actionLabel?: string;
   onActionPress?: () => void;
   metrics?: DashboardMetrics;
+  isLoading?: boolean;
 }
 
 export default function PerformanceMetricsSection({
@@ -20,6 +21,7 @@ export default function PerformanceMetricsSection({
   actionLabel,
   onActionPress,
   metrics,
+  isLoading = false,
 }: PerformanceMetricsSectionProps) {
   const { t } = useTranslation();
   const resolvedTitle = title ?? t('home.performanceInsights');
@@ -40,58 +42,62 @@ export default function PerformanceMetricsSection({
         className="mb-5"
       />
 
-      <View className="gap-y-4">
-        {/* Earnings Card */}
-        <View className="rounded-xl border border-gray-200 bg-white p-3.5 flex-row items-center justify-between">
-          <View className="flex-row items-center gap-3.5">
-            <View className="h-11 w-11 rounded-xl bg-emerald-50 items-center justify-center">
-              <Feather name="dollar-sign" size={20} color={THEME_COLORS.emeraldSuccess} />
-            </View>
-            <View>
-              <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
-                {t('home.totalEarnings')}
-              </Text>
-              <Text className="text-xl font-sans-extrabold text-gray-900 mt-0.5">{displayMetrics.totalEarnings}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Info row (Profile Views & Acceptance Rate in 2 columns) */}
-        <View className="flex-row gap-3">
-          {/* Profile Views */}
-          <View className="flex-1 rounded-xl border border-gray-200 bg-white p-3.5 justify-between">
-            <View className="flex-row items-center justify-between mb-3">
-              <View className="h-9 w-9 rounded-xl bg-blue-50 items-center justify-center">
-                <Feather name="eye" size={16} color={THEME_COLORS.infoBlue} />
+      {isLoading ? (
+        <PerformanceMetricsSkeleton count={3} />
+      ) : (
+        <View className="gap-y-4">
+          {/* Earnings Card */}
+          <View className="rounded-xl border border-gray-200 bg-white p-3.5 flex-row items-center justify-between">
+            <View className="flex-row items-center gap-3.5">
+              <View className="h-11 w-11 rounded-xl bg-emerald-50 items-center justify-center">
+                <Feather name="dollar-sign" size={20} color={THEME_COLORS.emeraldSuccess} />
               </View>
-            </View>
-            <View>
-              <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
-                {t('home.profileViews')}
-              </Text>
-              <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.profileViews}</Text>
+              <View>
+                <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
+                  {t('home.totalEarnings')}
+                </Text>
+                <Text className="text-xl font-sans-extrabold text-gray-900 mt-0.5">{displayMetrics.totalEarnings}</Text>
+              </View>
             </View>
           </View>
 
-          {/* Acceptance Rate */}
-          <View className="flex-1 rounded-xl border border-gray-200 bg-white p-3.5 justify-between">
-            <View className="flex-row items-center justify-between mb-3">
-              <View className="h-9 w-9 rounded-xl bg-amber-50 items-center justify-center">
-                <Feather name="check-square" size={16} color={THEME_COLORS.amberStar} />
+          {/* Info row (Profile Views & Acceptance Rate in 2 columns) */}
+          <View className="flex-row gap-3">
+            {/* Profile Views */}
+            <View className="flex-1 rounded-xl border border-gray-200 bg-white p-3.5 justify-between">
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="h-9 w-9 rounded-xl bg-blue-50 items-center justify-center">
+                  <Feather name="eye" size={16} color={THEME_COLORS.infoBlue} />
+                </View>
               </View>
-              <View className="rounded-full bg-amber-50 px-2 py-0.5">
-                <Text className="text-[10px] font-sans-bold text-amber-700">{displayMetrics.acceptanceRating}</Text>
+              <View>
+                <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
+                  {t('home.profileViews')}
+                </Text>
+                <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.profileViews}</Text>
               </View>
             </View>
-            <View>
-              <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
-                {t('home.acceptanceRate')}
-              </Text>
-              <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.acceptanceRate}</Text>
+
+            {/* Acceptance Rate */}
+            <View className="flex-1 rounded-xl border border-gray-200 bg-white p-3.5 justify-between">
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="h-9 w-9 rounded-xl bg-amber-50 items-center justify-center">
+                  <Feather name="check-square" size={16} color={THEME_COLORS.amberStar} />
+                </View>
+                <View className="rounded-full bg-amber-50 px-2 py-0.5">
+                  <Text className="text-[10px] font-sans-bold text-amber-700">{displayMetrics.acceptanceRating}</Text>
+                </View>
+              </View>
+              <View>
+                <Text className="text-[10px] font-sans-medium text-gray-400 uppercase tracking-wider">
+                  {t('home.acceptanceRate')}
+                </Text>
+                <Text className="text-lg font-sans-bold text-gray-900 mt-0.5">{displayMetrics.acceptanceRate}</Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }

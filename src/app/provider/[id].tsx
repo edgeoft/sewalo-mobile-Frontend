@@ -8,7 +8,7 @@ import { Feather } from '@expo/vector-icons';
 import ProviderDetailsScreen from '@/features/services/screens/ProviderDetailsScreen';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
-import LoadingState from '@/components/ui/LoadingState';
+import ProviderDetailsSkeleton from '@/components/common/skeletons/ProviderDetailsSkeleton';
 import ErrorState from '@/components/ui/ErrorState';
 import { useGetProviderDetailsQuery, useGetProviderRatingsQuery } from '@/api';
 import { mapApiToProviderDetail, mapRatingToReviewItem } from '@/features/services/utils/providerDetailMapper';
@@ -62,7 +62,8 @@ export default function DynamicProviderDetailRoute() {
   if (isLoadingProvider) {
     return (
       <View className="flex-1 bg-secondary">
-        <LoadingState />
+        <Header showBackButton />
+        <ProviderDetailsSkeleton />
       </View>
     );
   }

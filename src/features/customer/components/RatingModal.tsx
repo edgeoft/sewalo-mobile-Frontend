@@ -11,8 +11,8 @@ import {
   useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { useCreateRating, useUpdateRating } from '@/api';
 import type { Rating } from '@/types';
@@ -204,7 +204,7 @@ export default function RatingModal({
                   className="flex-1 py-3.5 rounded-lg bg-primary items-center active:opacity-90 disabled:opacity-50"
                 >
                   {isPending ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.primaryForeground} />
+                    <Spinner size="inline" color={THEME_COLORS.primaryForeground} />
                   ) : (
                     <Text className="text-sm font-sans-bold text-white">
                       {isEditing ? t('customer.updateReview') : t('customer.submitReview')}

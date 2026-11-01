@@ -12,7 +12,6 @@ import { ROUTES } from '@/constants/routes';
 import { SERVICES_CONFIG } from '@/constants/services';
 import { useGetCategoriesQuery, useGetServicesQuery, useAddRemoveFavorite } from '@/api';
 import { useErrorDialog } from '@/components/ui/ErrorDialog';
-import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
 import { useSnackbar } from '@/components/ui/Snackbar';
 import type { Service } from '@/types';
@@ -20,6 +19,7 @@ import { getAvatarUrl } from '@/utils/image';
 import { getStartingPrice } from '@/utils/currency';
 import { formatProviderLocation } from '@/utils/location';
 import ProviderCard from '@/components/common/ProviderCard';
+import ProviderCardSkeleton from '@/components/common/skeletons/ProviderCardSkeleton';
 import ServiceFilterModal from '../components/ServiceFilterModal';
 import CategoryScrollSelector from '../components/CategoryScrollSelector';
 import { useServiceFiltersStore } from '@/store/useServiceFiltersStore';
@@ -401,7 +401,12 @@ export default function FindServicesScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           isLoadingServices ? (
-            <LoadingState className="py-20" />
+            <View className="gap-4">
+              <ProviderCardSkeleton />
+              <ProviderCardSkeleton />
+              <ProviderCardSkeleton />
+              <ProviderCardSkeleton />
+            </View>
           ) : isServicesError ? (
             <ErrorState onRetry={() => refetchServices()} className="py-6 mt-2" />
           ) : (

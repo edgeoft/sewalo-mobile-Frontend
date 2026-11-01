@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { THEME_COLORS } from '@/constants/colors';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 import ProviderBookingDetailsScreen from '@/features/provider/screens/ProviderBookingDetailsScreen';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
+import BookingDetailsSkeleton from '@/components/common/skeletons/BookingDetailsSkeleton';
 import { useGetBookingByIdQuery } from '@/api';
 
 export default function ProviderBookingDetailRoute() {
@@ -18,8 +19,9 @@ export default function ProviderBookingDetailRoute() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+      <View className="flex-1 bg-secondary">
+        <Header variant="menu" showBackButton={true} />
+        <BookingDetailsSkeleton />
       </View>
     );
   }

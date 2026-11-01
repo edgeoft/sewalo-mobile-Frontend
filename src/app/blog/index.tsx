@@ -7,8 +7,8 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useGetBlogsQuery } from '@/api';
 import ErrorState from '@/components/ui/ErrorState';
-import LoadingState from '@/components/ui/LoadingState';
 import LoadMoreList from '@/components/common/LoadMoreList';
+import BlogCardSkeleton from '@/components/common/skeletons/BlogCardSkeleton';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
@@ -51,7 +51,11 @@ export default function BlogListScreen() {
 
           {/* Blogs List */}
           {blogsLoading ? (
-            <LoadingState className="py-20" />
+            <View className="gap-4">
+              <BlogCardSkeleton />
+              <BlogCardSkeleton />
+              <BlogCardSkeleton />
+            </View>
           ) : blogsError ? (
             <ErrorState onRetry={() => refetchBlogs()} className="my-4" />
           ) : (

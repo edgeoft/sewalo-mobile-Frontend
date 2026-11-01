@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
+import { Spinner } from '@/components/ui';
 import EmptyStateCard from './EmptyStateCard';
 
 export interface LoadMoreListProps<T> {
@@ -17,6 +18,7 @@ export interface LoadMoreListProps<T> {
   emptyContent?: React.ReactNode;
   itemHeight?: number;
   listClassName?: string;
+  isLoadingMore?: boolean;
 }
 
 export default function LoadMoreList<T>({
@@ -32,6 +34,7 @@ export default function LoadMoreList<T>({
   emptyDescription,
   emptyContent,
   listClassName = 'gap-4',
+  isLoadingMore = false,
 }: LoadMoreListProps<T>) {
   const { t } = useTranslation();
   const resolvedLoadMoreLabel = loadMoreLabel ?? t('common.loadMore');
@@ -65,8 +68,12 @@ export default function LoadMoreList<T>({
         ))}
       </View>
 
-      <View className="items-center pt-4 pb-4">
-        {hasMore ? (
+      <View className="items-center justify-center min-h-[56px] py-2">
+        {isLoadingMore ? (
+          <View className="h-14 items-center justify-center">
+            <Spinner size="refresh" />
+          </View>
+        ) : hasMore ? (
           <Pressable
             onPress={handleLoadMore}
             accessibilityRole="button"

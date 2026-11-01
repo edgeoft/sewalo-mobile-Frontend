@@ -1,7 +1,8 @@
 import { usePostHog } from 'posthog-react-native';
 import { THEME_COLORS } from '@/constants/colors';
 import React, { lazy, Suspense } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { ENV } from '@/constants/env';
 import { FEATURE_FLAGS } from '@/constants/featureFlags';
 import type { NearbyServicesMapProps } from './types';
@@ -12,7 +13,7 @@ const OSMNearbyServicesMap = lazy(() => import('./OSMNearbyServicesMap'));
 function MapLoader() {
   return (
     <View className="flex-1 bg-gray-50 items-center justify-center">
-      <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+      <Spinner size="refresh" color={THEME_COLORS.primary} />
     </View>
   );
 }

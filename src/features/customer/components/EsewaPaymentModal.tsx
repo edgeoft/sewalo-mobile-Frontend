@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { Modal, View, Text, Pressable, ActivityIndicator, Platform, StyleSheet, Alert } from 'react-native';
+import { Modal, View, Text, Pressable, Platform, StyleSheet, Alert } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { WebView, type WebViewNavigation } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -229,7 +230,7 @@ ${formInputs}
         {/* Progress Bar / Loader */}
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+            <Spinner size="inline" color={THEME_COLORS.primary} />
             <Text style={styles.loadingText}>{t('common.loading', 'Loading payment gateway...')}</Text>
           </View>
         )}
@@ -250,7 +251,7 @@ ${formInputs}
             onLoadEnd={() => setIsLoading(false)}
             renderLoading={() => (
               <View style={styles.webViewLoader}>
-                <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+                <Spinner size="refresh" color={THEME_COLORS.primary} />
               </View>
             )}
             style={styles.webView}

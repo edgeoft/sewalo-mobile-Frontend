@@ -3,7 +3,8 @@ import { THEME_COLORS } from '@/constants/colors';
 import { useAuthState } from '@/providers/AuthProvider';
 import { USER_ROLES, USER_STATUSES } from '@/types';
 import { Redirect, Stack, usePathname } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
+import { Spinner } from '@/components/ui';
 
 export default function AuthLayout() {
   const { isLoggedIn, role, user, isLoading } = useAuthState();
@@ -12,7 +13,7 @@ export default function AuthLayout() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+        <Spinner size="blocking" color={THEME_COLORS.primary} />
       </View>
     );
   }

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { useShallow } from 'zustand/react/shallow';
 import { useAuthStore } from '@/store/useAuthStore';
 import { THEME_COLORS } from '@/constants/colors';
@@ -17,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
       {isLoading && (
         <View className="absolute inset-0 z-50 bg-secondary justify-center items-center">
-          <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <Spinner size="blocking" color={THEME_COLORS.primary} label="Authenticating" />
         </View>
       )}
     </View>

@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { THEME_COLORS } from '@/constants/colors';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Linking, Pressable, Text, View } from 'react-native';
+import { Linking, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
@@ -11,7 +11,7 @@ import { useSnackbar } from '@/components/ui/Snackbar';
 import { SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
-import { Carousel } from '@/components/ui';
+import { Carousel, Skeleton } from '@/components/ui';
 import Button from '@/components/ui/Button';
 import { ROUTES } from '@/constants/routes';
 import { SERVICE_LOCATIONS, USER_STATUSES } from '@/types';
@@ -49,8 +49,31 @@ export default function ProviderServicesScreen() {
       <View className="flex-1 bg-secondary">
         <Header variant="menu" showNotifications={false} />
         <ContentLayout scrollable className="flex-1">
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <View className="py-5 gap-4">
+            <View className="rounded-xl border border-border bg-background p-4 gap-3">
+              <Skeleton className="h-5 w-40 rounded-full" />
+              <Skeleton className="h-3.5 w-full rounded-full" />
+              <Skeleton className="h-3.5 w-3/4 rounded-full" />
+              <View className="flex-row gap-2 pt-2">
+                <Skeleton className="h-6 w-20 rounded-md" />
+                <Skeleton className="h-6 w-24 rounded-md" />
+              </View>
+            </View>
+
+            <View className="rounded-xl border border-border bg-background p-4 gap-3">
+              <Skeleton className="h-4 w-32 rounded-full" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </View>
+
+            <View className="rounded-xl border border-border bg-background p-4 gap-3">
+              <Skeleton className="h-4 w-28 rounded-full" />
+              <View className="flex-row gap-3">
+                <Skeleton className="h-24 w-24 rounded-lg" />
+                <Skeleton className="h-24 w-24 rounded-lg" />
+                <Skeleton className="h-24 w-24 rounded-lg" />
+              </View>
+            </View>
           </View>
         </ContentLayout>
       </View>

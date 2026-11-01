@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { ProviderCard, SectionHeader } from '@/components/common';
+import { ProviderCard, ProviderCardSkeleton, SectionHeader } from '@/components/common';
 import { Carousel } from '@/components/ui';
 import { getAvatarUrl } from '@/utils/image';
 import { getStartingPrice } from '@/utils/currency';
@@ -16,6 +16,7 @@ export interface PopularProvidersSectionProps {
   actionLabel: string;
   services: Service[];
   isGuest?: boolean;
+  isLoading?: boolean;
   onActionPress?: () => void;
   onProviderPress?: (service: Service) => void;
 }
@@ -25,6 +26,7 @@ export default function PopularProvidersSection({
   actionLabel,
   services,
   isGuest = false,
+  isLoading = false,
   onActionPress,
   onProviderPress,
 }: PopularProvidersSectionProps) {
@@ -58,14 +60,20 @@ export default function PopularProvidersSection({
     <View className="pt-5">
       <SectionHeader title={title} actionLabel={actionLabel} onActionPress={onActionPress} className="mb-5" />
 
-      <Carousel
-        data={services}
-        keyExtractor={(service) => service.id}
-        gap={16}
-        autoplay={true}
-        autoplayInterval={10000}
-        renderItem={renderItem}
-      />
+      {isLoading ? (
+        <View className="gap-4">
+          <ProviderCardSkeleton />
+        </View>
+      ) : (
+        <Carousel
+          data={services}
+          keyExtractor={(service) => service.id}
+          gap={16}
+          autoplay={true}
+          autoplayInterval={10000}
+          renderItem={renderItem}
+        />
+      )}
     </View>
   );
 }

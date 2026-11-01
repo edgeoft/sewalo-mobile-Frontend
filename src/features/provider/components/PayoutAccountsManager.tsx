@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import { View, Text, Pressable, Modal, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, Modal, ScrollView } from 'react-native';
+import { Spinner, Skeleton } from '@/components/ui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
@@ -208,8 +209,11 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('components.digitalWallets')}</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
-          <View className="items-center justify-center py-8">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <View className="gap-3">
+            <View className="bg-white rounded-xl border border-gray-100 p-4 gap-2">
+              <Skeleton className="h-4 w-32 rounded-full" />
+              <Skeleton className="h-3 w-48 rounded-full" />
+            </View>
           </View>
         ) : wallets.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
@@ -281,8 +285,11 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
       <Text className="text-sm font-sans-bold text-gray-900 mb-3 ml-1">{t('components.bankAccounts')}</Text>
       <View className="gap-y-4 mb-6">
         {isLoading ? (
-          <View className="items-center justify-center py-8">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <View className="gap-3">
+            <View className="bg-white rounded-xl border border-gray-100 p-4 gap-2">
+              <Skeleton className="h-4 w-36 rounded-full" />
+              <Skeleton className="h-3 w-44 rounded-full" />
+            </View>
           </View>
         ) : banks.length === 0 ? (
           <View className="bg-white rounded-xl border border-gray-100 p-6 items-center">
@@ -345,8 +352,8 @@ export default function PayoutAccountsManager({ header }: PayoutAccountsManagerP
           className="absolute inset-0 bg-black/20 items-center justify-center z-50 rounded-xl"
           style={{ margin: -16 }}
         >
-          <View className="bg-white p-4 rounded-xl items-center shadow-lg">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <View className="bg-white p-6 rounded-2xl items-center shadow-lg border border-border">
+            <Spinner size="blocking" color={THEME_COLORS.primary} />
             <Text className="text-sm font-sans-bold text-gray-800 mt-3">{t('components.processingEllipsis')}</Text>
           </View>
         </View>

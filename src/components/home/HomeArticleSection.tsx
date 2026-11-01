@@ -3,6 +3,7 @@ import { Feather } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
 
 import SectionHeader from '@/components/common/SectionHeader';
+import BlogCardSkeleton from '@/components/common/skeletons/BlogCardSkeleton';
 import { THEME_COLORS } from '@/constants/colors';
 
 export interface HomeArticleSectionProps {
@@ -11,6 +12,7 @@ export interface HomeArticleSectionProps {
   readTime?: string;
   articleTitle?: string;
   articleDescription?: string;
+  isLoading?: boolean;
   onPress?: () => void;
   onViewAllPress?: () => void;
 }
@@ -21,6 +23,7 @@ export default function HomeArticleSection({
   readTime,
   articleTitle,
   articleDescription,
+  isLoading = false,
   onPress,
   onViewAllPress,
 }: HomeArticleSectionProps) {
@@ -39,35 +42,41 @@ export default function HomeArticleSection({
         className="mb-5"
       />
 
-      <Pressable
-        onPress={onPress}
-        className="border border-gray-200 bg-white p-5 rounded-xl active:opacity-95"
-        accessibilityRole="button"
-        accessibilityLabel={`Read article: ${resolvedArticleTitle}`}
-      >
-        <View className="flex-row items-center justify-between mb-4">
-          <View className="rounded-xl bg-surface-indigo-subtle px-2.5 py-1">
-            <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">{resolvedCategory}</Text>
+      {isLoading ? (
+        <BlogCardSkeleton />
+      ) : (
+        <Pressable
+          onPress={onPress}
+          className="border border-gray-200 bg-white p-5 rounded-xl active:opacity-95"
+          accessibilityRole="button"
+          accessibilityLabel={`Read article: ${resolvedArticleTitle}`}
+        >
+          <View className="flex-row items-center justify-between mb-4">
+            <View className="rounded-xl bg-surface-indigo-subtle px-2.5 py-1">
+              <Text className="text-[10px] font-sans-bold uppercase tracking-wider text-primary">
+                {resolvedCategory}
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-1.5">
+              <Feather name="clock" size={12} color={THEME_COLORS.slate400} />
+              <Text className="text-xs font-sans-medium text-gray-400">{resolvedReadTime}</Text>
+            </View>
           </View>
-          <View className="flex-row items-center gap-1.5">
-            <Feather name="clock" size={12} color={THEME_COLORS.slate400} />
-            <Text className="text-xs font-sans-medium text-gray-400">{resolvedReadTime}</Text>
+
+          <Text className="text-base font-sans-bold text-gray-900 leading-6 mb-2">{resolvedArticleTitle}</Text>
+
+          <Text className="text-xs font-sans-medium text-gray-500 leading-5 mb-4">{resolvedArticleDescription}</Text>
+
+          <View className="border-t border-gray-100 my-1" />
+
+          <View className="flex-row items-center justify-between pt-3">
+            <Text className="text-xs font-sans-bold text-primary">{t('home.readFullArticle')}</Text>
+            <View className="h-7 w-7 items-center justify-center rounded-full bg-surface-indigo-subtle">
+              <Feather name="arrow-right" size={13} color={THEME_COLORS.primary} />
+            </View>
           </View>
-        </View>
-
-        <Text className="text-base font-sans-bold text-gray-900 leading-6 mb-2">{resolvedArticleTitle}</Text>
-
-        <Text className="text-xs font-sans-medium text-gray-500 leading-5 mb-4">{resolvedArticleDescription}</Text>
-
-        <View className="border-t border-gray-100 my-1" />
-
-        <View className="flex-row items-center justify-between pt-3">
-          <Text className="text-xs font-sans-bold text-primary">{t('home.readFullArticle')}</Text>
-          <View className="h-7 w-7 items-center justify-center rounded-full bg-surface-indigo-subtle">
-            <Feather name="arrow-right" size={13} color={THEME_COLORS.primary} />
-          </View>
-        </View>
-      </Pressable>
+        </Pressable>
+      )}
     </View>
   );
 }

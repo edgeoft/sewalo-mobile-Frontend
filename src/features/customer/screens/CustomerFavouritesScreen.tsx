@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
 import { useRouter } from 'expo-router';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { LoadMoreList, ProviderCard, SectionHeader } from '@/components/common';
+import { LoadMoreList, ProviderCard, ProviderCardSkeleton, SectionHeader } from '@/components/common';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import { ROUTES } from '@/constants/routes';
@@ -79,8 +79,11 @@ export default function CustomerFavouritesScreen() {
             </View>
           </View>
         ) : isLoading ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+          <View className="gap-4">
+            <ProviderCardSkeleton />
+            <ProviderCardSkeleton />
+            <ProviderCardSkeleton />
+            <ProviderCardSkeleton />
           </View>
         ) : (
           <LoadMoreList

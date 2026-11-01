@@ -1,6 +1,6 @@
 import React from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import ContentLayout from '@/components/layout/ContentLayout';
 import Header from '@/components/navigation/Header';
 import Button from '@/components/ui/Button';
+import BookingDetailsSkeleton from '@/components/common/skeletons/BookingDetailsSkeleton';
 import { ROUTES } from '@/constants/routes';
 import { useGetBookingByIdQuery } from '@/api';
 import { BOOKING_STATUSES } from '@/types';
@@ -29,8 +30,9 @@ export default function BookingConfirmationScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-secondary justify-center items-center">
-        <ActivityIndicator size="large" color={THEME_COLORS.primary} />
+      <View className="flex-1 bg-secondary">
+        <Header showBackButton={false} />
+        <BookingDetailsSkeleton />
       </View>
     );
   }

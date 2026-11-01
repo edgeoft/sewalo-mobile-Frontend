@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { View, Text, Share, ActivityIndicator } from 'react-native';
+import { View, Text, Share } from 'react-native';
+import { Skeleton } from '@/components/ui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -252,9 +253,10 @@ export default function ReferFriendScreen() {
             className="my-4"
           />
         ) : isLoading ? (
-          <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color={THEME_COLORS.primary} />
-            <Text className="text-xs font-sans-medium text-gray-400 mt-3">{t('customer.referralLoading')}</Text>
+          <View className="gap-4 my-2">
+            <Skeleton.Block height={180} borderRadius={12} />
+            <Skeleton.Block height={90} borderRadius={12} />
+            <Skeleton.Block height={70} borderRadius={12} />
           </View>
         ) : (
           <>

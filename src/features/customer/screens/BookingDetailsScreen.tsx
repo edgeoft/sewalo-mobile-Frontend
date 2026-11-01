@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { THEME_COLORS } from '@/constants/colors';
-import { View, Text, Pressable, StyleSheet, Linking, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { Spinner } from '@/components/ui';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -643,7 +644,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                   className="border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 min-h-[44px] flex-row gap-x-2"
                 >
                   {downloadInvoice.isPending ? (
-                    <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                    <Spinner size="inline" color={THEME_COLORS.primary} />
                   ) : (
                     <>
                       <Feather name="download" size={15} color={THEME_COLORS.primary} />
@@ -700,7 +701,7 @@ export default function BookingDetailsScreen({ booking }: BookingDetailsScreenPr
                 className="w-full border border-primary py-3.5 rounded-lg items-center justify-center bg-white active:bg-primary/5 disabled:opacity-50 min-h-[44px] flex-row gap-x-2"
               >
                 {downloadInvoice.isPending ? (
-                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                  <Spinner size="inline" color={THEME_COLORS.primary} />
                 ) : (
                   <>
                     <Feather name="download" size={15} color={THEME_COLORS.primary} />
