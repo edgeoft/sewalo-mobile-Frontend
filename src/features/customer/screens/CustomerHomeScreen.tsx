@@ -21,6 +21,7 @@ import { getAvatarUrl } from '@/utils/image';
 import { formatProviderLocation } from '@/utils/location';
 import { getProviderRating } from '@/utils/rating';
 import { getReadTime, cleanDescriptionText } from '@/utils/text';
+import { formatDate, parseTime12h, formatTime } from '@/utils/time';
 
 export default function CustomerHomeScreen() {
   const { t } = useTranslation();
@@ -48,6 +49,9 @@ export default function CustomerHomeScreen() {
       const service = b.service;
 
       const bookedPrice = b.invoice?.total ? `Rs. ${Number(b.invoice.total).toFixed(0)}` : t('home.na');
+      const formattedDate = formatDate(b.service_date);
+      const formattedTime = parseTime12h(b.start_time) || formatTime(b.start_time);
+      const dateTime = [formattedDate, formattedTime].filter(Boolean).join(', ');
 
       return {
         id: b.id,
@@ -59,6 +63,7 @@ export default function CustomerHomeScreen() {
         rating: getProviderRating([provider]).toString(),
         bookedPrice,
         status: b.status,
+        dateTime: dateTime || undefined,
       };
     });
   }, [bookingsData, t]);

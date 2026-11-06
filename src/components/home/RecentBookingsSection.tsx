@@ -54,6 +54,7 @@ export default function RecentBookingsSection({
               rating={booking.rating}
               startingFromPrice={booking.bookedPrice}
               bookingStatus={booking.status}
+              schedule={booking.dateTime}
               onPress={() => onBookingPress?.(booking)}
               variant="booking"
             />

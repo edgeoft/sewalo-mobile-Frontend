@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormClearErrors,
+  UseFormGetValues,
+  UseFormSetValue,
+} from 'react-hook-form';
+import {
+  ActivityIndicator,
   Modal,
   Pressable,
   ScrollView,
@@ -11,6 +19,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import Input from '@/components/ui/Input';
 import SelectionOption from '@/components/ui/SelectionOption';
@@ -24,6 +33,7 @@ interface ServiceFormBasicsProps {
   errors: FieldErrors<ServiceFormData>;
   setValue: UseFormSetValue<ServiceFormData>;
   getValues: UseFormGetValues<ServiceFormData>;
+  clearErrors: UseFormClearErrors<ServiceFormData>;
   watchCategoryId: string;
   watchServiceTypeIds: string[];
 }
@@ -33,9 +43,11 @@ export default function ServiceFormBasics({
   errors,
   setValue,
   getValues,
+  clearErrors,
   watchCategoryId,
   watchServiceTypeIds,
 }: ServiceFormBasicsProps) {
+  const { t } = useTranslation();
   const { height } = useWindowDimensions();
   const [catModalVisible, setCatModalVisible] = useState(false);
 
@@ -50,7 +62,10 @@ export default function ServiceFormBasics({
   const activeCategory = categoriesList.find((cat) => cat.id === watchCategoryId);
   const activeCategorySlug = activeCategory?.slug ?? '';
 
-  const { data: subcategoriesData } = useGetProviderSubCategoriesQuery(activeCategorySlug || '', !!activeCategorySlug);
+  const { data: subcategoriesData, isLoading: isSubcategoriesLoading } = useGetProviderSubCategoriesQuery(
+    activeCategorySlug || '',
+    !!activeCategorySlug,
+  );
 
   const availableServiceTypes = activeCategory
     ? subcategoriesData?.data && subcategoriesData.data.length > 0
@@ -59,10 +74,12 @@ export default function ServiceFormBasics({
     : [];
 
   const handleCategorySelect = (categoryId: string) => {
-    setValue('categoryId', categoryId, { shouldValidate: true });
-    // Reset service types and rates when category changes
-    setValue('serviceTypeIds', [], { shouldValidate: true });
-    setValue('rates', {}, { shouldValidate: true });
+    setValue('categoryId', categoryId, { shouldValidate: false, shouldDirty: true });
+    clearErrors('categoryId');
+    // Reset service types and rates when category changes without premature validation
+    setValue('serviceTypeIds', [], { shouldValidate: false, shouldDirty: true });
+    setValue('rates', {}, { shouldValidate: false, shouldDirty: true });
+    clearErrors(['serviceTypeIds', 'rates']);
     setCatModalVisible(false);
   };
 
@@ -76,12 +93,15 @@ export default function ServiceFormBasics({
       const currentRates = getValues('rates');
       const rates = { ...currentRates };
       delete rates[typeId];
-      setValue('rates', rates, { shouldValidate: true });
+      setValue('rates', rates, { shouldValidate: false, shouldDirty: true });
     } else {
       currentSelected.push(typeId);
     }
 
-    setValue('serviceTypeIds', currentSelected, { shouldValidate: true });
+    setValue('serviceTypeIds', currentSelected, { shouldValidate: false, shouldDirty: true });
+    if (currentSelected.length > 0) {
+      clearErrors('serviceTypeIds');
+    }
   };
 
   return (
@@ -191,6 +211,11 @@ export default function ServiceFormBasics({
                 Please select a category first to see available service types.
               </Text>
             </View>
+          )}
+          {watchCategoryId && !isSubcategoriesLoading && availableServiceTypes.length === 0 && (
+            <Text className="text-xs font-sans-medium text-amber-600 mt-1.5 ml-1">
+              {t('services.noSubcategoriesHelper')}
+            </Text>
           )}
           {errors.serviceTypeIds && (
             <Text className="text-xs font-sans-medium text-destructive mt-1.5 ml-1">
@@ -307,20 +332,41 @@ export default function ServiceFormBasics({
             <Text className="text-gray-500 text-sm font-sans-medium mb-4">Choose services you offer</Text>
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }}>
-              <View className="gap-y-2.5 pb-4">
-                {availableServiceTypes.map((type) => {
-                  const isSelected = watchServiceTypeIds.includes(type.id);
-                  return (
-                    <SelectionOption
-                      key={type.id}
-                      onPress={() => handleServiceTypeToggle(type.id)}
-                      title={type.name}
-                      selected={isSelected}
-                      indicatorType="checkbox"
-                    />
-                  );
-                })}
-              </View>
+              {isSubcategoriesLoading ? (
+                <View className="py-12 items-center justify-center">
+                  <ActivityIndicator size="small" color={THEME_COLORS.primary} />
+                  <Text className="text-xs font-sans-medium text-slate-500 mt-2.5">
+                    {t('services.loadingServiceTypes')}
+                  </Text>
+                </View>
+              ) : availableServiceTypes.length === 0 ? (
+                <View className="py-8 px-4 items-center justify-center">
+                  <View className="h-12 w-12 rounded-full bg-slate-100 items-center justify-center mb-3">
+                    <Feather name="folder-minus" size={22} color={THEME_COLORS.slate400} accessible={false} />
+                  </View>
+                  <Text className="text-sm font-sans-bold text-slate-800 text-center mb-1">
+                    {t('services.noServiceTypesAvailable')}
+                  </Text>
+                  <Text className="text-xs font-sans-medium text-slate-500 text-center leading-normal">
+                    {t('services.noServiceTypesDesc')}
+                  </Text>
+                </View>
+              ) : (
+                <View className="gap-y-2.5 pb-4">
+                  {availableServiceTypes.map((type) => {
+                    const isSelected = watchServiceTypeIds.includes(type.id);
+                    return (
+                      <SelectionOption
+                        key={type.id}
+                        onPress={() => handleServiceTypeToggle(type.id)}
+                        title={type.name}
+                        selected={isSelected}
+                        indicatorType="checkbox"
+                      />
+                    );
+                  })}
+                </View>
+              )}
             </ScrollView>
           </View>
         </View>

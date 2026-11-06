@@ -19,6 +19,7 @@ import { ROUTES } from '@/constants/routes';
 import { useGetBookingsQuery } from '@/api';
 import { getAvatarUrl } from '@/utils/image';
 import { getProviderRating } from '@/utils/rating';
+import { formatDate, parseTime12h, formatTime } from '@/utils/time';
 
 export default function CustomerBookingsScreen() {
   const router = useRouter();
@@ -162,22 +163,29 @@ export default function CustomerBookingsScreen() {
                 description={t('customer.noBookingsMatchFilterDesc')}
               />
             }
-            renderItem={(booking) => (
-              <ProviderCard
-                avatarUri={getAvatarUrl(booking.provider?.avatar)}
-                name={booking.provider?.name || 'Service Provider'}
-                serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
-                location={formatLocation(booking)}
-                rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
-                ordersCompleted=""
-                startingFromPrice={formatPrice(booking.invoice)}
-                bookingStatus={booking.status}
-                variant="booking"
-                onPress={() => {
-                  router.push(ROUTES.customer.bookingDetail(booking.id));
-                }}
-              />
-            )}
+            renderItem={(booking) => {
+              const formattedDate = formatDate(booking.service_date);
+              const formattedTime = parseTime12h(booking.start_time) || formatTime(booking.start_time);
+              const schedule = [formattedDate, formattedTime].filter(Boolean).join(', ');
+
+              return (
+                <ProviderCard
+                  avatarUri={getAvatarUrl(booking.provider?.avatar)}
+                  name={booking.provider?.name || 'Service Provider'}
+                  serviceLabel={booking.service?.name || booking.service?.category?.name || 'Service'}
+                  location={formatLocation(booking)}
+                  rating={getProviderRating([booking.service, booking.provider]).toFixed(1)}
+                  ordersCompleted=""
+                  startingFromPrice={formatPrice(booking.invoice)}
+                  bookingStatus={booking.status}
+                  schedule={schedule || undefined}
+                  variant="booking"
+                  onPress={() => {
+                    router.push(ROUTES.customer.bookingDetail(booking.id));
+                  }}
+                />
+              );
+            }}
           />
         )}
 

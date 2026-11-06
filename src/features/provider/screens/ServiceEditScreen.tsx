@@ -59,11 +59,12 @@ export default function ServiceEditScreen() {
     setValue,
     getValues,
     reset,
+    clearErrors,
     formState: { errors },
   } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceFormSchema) as Resolver<ServiceFormData>,
     defaultValues: defaultValues,
-    mode: 'onBlur',
+    mode: 'onSubmit',
   });
 
   const hasInitializedRef = useRef(false);
@@ -266,6 +267,7 @@ export default function ServiceEditScreen() {
           errors={errors}
           setValue={setValue}
           getValues={getValues}
+          clearErrors={clearErrors}
           watchCategoryId={watchCategoryId}
           watchServiceTypeIds={watchServiceTypeIds}
         />

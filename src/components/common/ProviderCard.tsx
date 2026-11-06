@@ -150,32 +150,32 @@ function ProviderCard({
       </View>
 
       {/* Middle Section: Metadata Rows (Location, Orders Completed, Schedule) */}
-      <View className="mt-2.5 gap-y-1.5">
-        <View className="flex-row items-center justify-between gap-2 h-5">
-          <View className="flex-1 flex-row items-center gap-1.5 min-w-0">
-            <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-warning-subtle shrink-0">
-              <Feather name="map-pin" size={10} color={THEME_COLORS.amberStar} accessible={false} />
-            </View>
-            <Text className="flex-1 text-[11.5px] font-sans-medium text-slate-700" numberOfLines={1}>
-              {location || t('home.nepal')}
-            </Text>
-          </View>
-
-          {ordersCompleted ? (
-            <View className="flex-row items-center gap-1.5 shrink-0 max-w-[48%]">
-              <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-indigo-subtle shrink-0">
-                <Feather name="shopping-bag" size={10} color={THEME_COLORS.primary} accessible={false} />
+      <View className="mt-2.5 gap-y-1.5 min-h-[46px] justify-center">
+        {schedule ? (
+          <>
+            <View className="flex-row items-center justify-between gap-2 h-5">
+              <View className="flex-1 flex-row items-center gap-1.5 min-w-0">
+                <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-warning-subtle shrink-0">
+                  <Feather name="map-pin" size={10} color={THEME_COLORS.amberStar} accessible={false} />
+                </View>
+                <Text className="flex-1 text-[11.5px] font-sans-medium text-slate-700" numberOfLines={1}>
+                  {location || t('home.nepal')}
+                </Text>
               </View>
-              <Text className="text-[11.5px] font-sans-medium text-slate-700 shrink" numberOfLines={1}>
-                {ordersCompleted}
-              </Text>
-            </View>
-          ) : null}
-        </View>
 
-        <View className="h-5 justify-center">
-          {schedule ? (
-            <View className="flex-row items-center gap-1.5 min-w-0">
+              {ordersCompleted ? (
+                <View className="flex-row items-center gap-1.5 shrink-0 max-w-[48%]">
+                  <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-indigo-subtle shrink-0">
+                    <Feather name="shopping-bag" size={10} color={THEME_COLORS.primary} accessible={false} />
+                  </View>
+                  <Text className="text-[11.5px] font-sans-medium text-slate-700 shrink" numberOfLines={1}>
+                    {ordersCompleted}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            <View className="flex-row items-center gap-1.5 min-w-0 h-5">
               <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-success-subtle shrink-0">
                 <Feather name="calendar" size={10} color={THEME_COLORS.emeraldSuccess} accessible={false} />
               </View>
@@ -187,8 +187,34 @@ function ProviderCard({
                 {schedule}
               </Text>
             </View>
-          ) : null}
-        </View>
+          </>
+        ) : (
+          <View className="flex-row items-start justify-between gap-2">
+            <View className="flex-1 flex-row items-start gap-1.5 min-w-0">
+              <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-warning-subtle shrink-0 mt-0.5">
+                <Feather name="map-pin" size={10} color={THEME_COLORS.amberStar} accessible={false} />
+              </View>
+              <Text
+                className="flex-1 text-[11.5px] font-sans-medium text-slate-700 leading-snug"
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {location || t('home.nepal')}
+              </Text>
+            </View>
+
+            {ordersCompleted ? (
+              <View className="flex-row items-center gap-1.5 shrink-0 max-w-[48%] mt-0.5">
+                <View className="h-4 w-4 items-center justify-center rounded-full bg-surface-indigo-subtle shrink-0">
+                  <Feather name="shopping-bag" size={10} color={THEME_COLORS.primary} accessible={false} />
+                </View>
+                <Text className="text-[11.5px] font-sans-medium text-slate-700 shrink" numberOfLines={1}>
+                  {ordersCompleted}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        )}
       </View>
 
       {/* Bottom Section: Starting Price / Booking Info & Availability / Status Badge */}
