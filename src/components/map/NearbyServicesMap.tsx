@@ -2,7 +2,7 @@ import { usePostHog } from 'posthog-react-native';
 import { THEME_COLORS } from '@/constants/colors';
 import React, { lazy, Suspense } from 'react';
 import { View } from 'react-native';
-import { Spinner } from '@/components/ui';
+import Spinner from '@/components/ui/Spinner';
 import { ENV } from '@/constants/env';
 import { FEATURE_FLAGS } from '@/constants/featureFlags';
 import type { NearbyServicesMapProps } from './types';
